@@ -6,48 +6,42 @@ import java.sql.*;
 import Root.Model.JdbcConnectionInfo;
 
 public class DatabaseUtil implements AbstractDatabase {
-	public String driver = "";
-	public String jdbc_url = "";
-	public String id = "";
-	public String pw = "";
-	public String validationQuery = "";
-	public int connCount = 1;
+	public JdbcConnectionInfo jdbcConnectionInfo;
 	public DatabaseConnectionPool connPool = null;
 	public boolean driverLoaded = false;
 	
+	/**
+	 * JdbcConnectionInfo 객체를 이용한 생성자
+	 * @param jdbcConnectionInfo
+	 */
 	public DatabaseUtil(JdbcConnectionInfo jdbcConnectionInfo){
-		this.driver = jdbcConnectionInfo.getJdbcDriver();
-		this.jdbc_url = jdbcConnectionInfo.getJdbcUrl();
-		this.id = jdbcConnectionInfo.getJdbcId();
-		this.pw = jdbcConnectionInfo.getJdbcPw();
-		this.validationQuery = jdbcConnectionInfo.getJdbcValidation();
-		this.connCount = Integer.parseInt(jdbcConnectionInfo.getJdbcConnections());
+		this.jdbcConnectionInfo = jdbcConnectionInfo;
 	}
 	
 	public DatabaseUtil(String driver, String jdbc_url, String id, String pw, String validationQuery) {
-		this.driver = driver;
-		this.jdbc_url = jdbc_url;
-		this.id = id;
-		this.pw = pw;
-		this.validationQuery = validationQuery;
-		this.connCount = 1;
+		jdbcConnectionInfo.setJdbcDriver(driver);
+		jdbcConnectionInfo.setJdbcUrl(jdbc_url);
+		jdbcConnectionInfo.setJdbcId(id);
+		jdbcConnectionInfo.setJdbcPw(pw);
+		jdbcConnectionInfo.setJdbcValidation(validationQuery);
+		jdbcConnectionInfo.setJdbcConnections(1);
 	}
 	
 	public DatabaseUtil(String driver, String jdbc_url, String id, String pw, String validationQuery, int connCount) {
-		this.driver = driver;
-		this.jdbc_url = jdbc_url;
-		this.id = id;
-		this.pw = pw;
-		this.validationQuery = validationQuery;
-		this.connCount = connCount;
+		jdbcConnectionInfo.setJdbcDriver(driver);
+		jdbcConnectionInfo.setJdbcUrl(jdbc_url);
+		jdbcConnectionInfo.setJdbcId(id);
+		jdbcConnectionInfo.setJdbcPw(pw);
+		jdbcConnectionInfo.setJdbcValidation(validationQuery);
+		jdbcConnectionInfo.setJdbcConnections(connCount);
 	}
 
 	@Override
 	public void init() {
-		if(driver == null || driver.length()==0) {
+		if(jdbcConnectionInfo.getJdbcDriver() == null || jdbcConnectionInfo.getJdbcDriver().length()==0) {
 			return;
 		}
-		this.connPool = new DatabaseConnectionPool(connCount, driver, jdbc_url, id, pw, validationQuery);
+		this.connPool = new DatabaseConnectionPool(jdbcConnectionInfo);
 		this.connPool.createPool();
 	}
 	

@@ -6,12 +6,12 @@ public class JdbcConnectionInfo {
 	private String jdbcId;
 	private String jdbcPw;
 	private String jdbcValidation;
-	private String jdbcConnections;
+	private int jdbcConnections;
 
 	public JdbcConnectionInfo() { }
 	
 	public JdbcConnectionInfo(String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw, String jdbcValidation,
-			String jdbcConnections) {
+			int jdbcConnections) {
 		super();
 		this.jdbcDriver = jdbcDriver;
 		this.jdbcUrl = jdbcUrl;
@@ -61,11 +61,11 @@ public class JdbcConnectionInfo {
 		this.jdbcValidation = jdbcValidation;
 	}
 
-	public String getJdbcConnections() {
+	public int getJdbcConnections() {
 		return jdbcConnections;
 	}
 
-	public void setJdbcConnections(String jdbcConnections) {
+	public void setJdbcConnections(int jdbcConnections) {
 		this.jdbcConnections = jdbcConnections;
 	}
 
