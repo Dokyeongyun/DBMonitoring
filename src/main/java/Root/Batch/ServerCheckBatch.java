@@ -1,5 +1,6 @@
 package Root.Batch;
 
+import Root.Model.AlertLogCommand;
 import Root.Usecases.ServerCheckUsecase;
 
 public class ServerCheckBatch {
@@ -9,9 +10,17 @@ public class ServerCheckBatch {
 		this.serverCheckUsecase = serverCheckUsecase;
 	}
 	
-	public void startBatchAlertLogCheck() {
+	public void startBatchAlertLogCheck(AlertLogCommand alc) {
 		try {
-			this.serverCheckUsecase.printAlertLog();
+			this.serverCheckUsecase.printAlertLog(alc);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void startBatchOSDiskUsageCheck(String command) {
+		try {
+			this.serverCheckUsecase.printOSDiskUsage(command);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
