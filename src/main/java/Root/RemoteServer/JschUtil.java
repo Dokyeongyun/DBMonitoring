@@ -92,6 +92,5 @@ public class JschUtil {
 	
 	public void disConnectChannel(Channel channel) {
 	    channel.disconnect();
-	    System.out.println("Channel DisConnected!");
 	}
 }

@@ -1,9 +1,7 @@
 package Root.Application;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -13,11 +11,10 @@ import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParamet
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 
-import com.jcraft.jsch.Session;
-
 import Root.Batch.DBCheckBatch;
 import Root.Batch.ServerCheckBatch;
 import Root.Database.DatabaseUtil;
+import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.RemoteServer.JschUtil;
@@ -29,13 +26,13 @@ import Root.Usecases.DBCheckUsecase;
 import Root.Usecases.DBCheckUsecaseImpl;
 import Root.Usecases.ServerCheckUsecase;
 import Root.Usecases.ServerCheckUsecaseImpl;
+import Root.Utils.ConsoleUtils;
 
 public class Application {
 
 	public static PropertiesConfiguration propConfig = null;
 
 	public static void main(String[] args) {
-		
     	try {    		
     		String propertyFilePathName = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\config\\application.properties";
     		
@@ -45,35 +42,45 @@ public class Application {
     			System.out.println("configuration loading error\n"+e+"\n");
     			return;
     		}
-    		
+
+    		System.out.println("\n==================================================================================================================================");
+    		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ DB Monitoring을 시작합니다." + ConsoleUtils.RESET);
+    		System.out.println("==================================================================================================================================\n");
+
     		// DB Usage Check   		
-//    		Map<String, JdbcConnectionInfo> jdbcConnectionMap = getJdbcConnectionMap();
-//    		for(String key : jdbcConnectionMap.keySet()) {
-//    			System.out.println("■ [ " + key + " Monitoring Start ]\n");
-//    			DatabaseUtil db = new DatabaseUtil(jdbcConnectionMap.get(key));
-//    			db.init();
-//        		DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-//        		DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
-//        		DBCheckBatch dbBatch = new DBCheckBatch(usecase);
-//    			//dbBatch.startBatchArchiveUsageCheck();
-//    			//dbBatch.startBatchTableSpaceUsageCheck();
-//    			//dbBatch.startBatchASMDiskUsageCheck();
-//    			//System.out.println("■ [ " + key + " Monitoring End ]\n\n");
-//    		} 
+    		Map<String, JdbcConnectionInfo> jdbcConnectionMap = getJdbcConnectionMap();
+    		for(String dbName : jdbcConnectionMap.keySet()) {
+    			System.out.println("■ [ " + dbName + " Monitoring Start ]\n");
+    			DatabaseUtil db = new DatabaseUtil(jdbcConnectionMap.get(dbName));
+    			db.init();
+        		DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+        		DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
+        		DBCheckBatch dbBatch = new DBCheckBatch(usecase);
+    			dbBatch.startBatchArchiveUsageCheck();
+    			//dbBatch.startBatchTableSpaceUsageCheck();
+    			//dbBatch.startBatchASMDiskUsageCheck();
+    			//System.out.println("□ [ " + dbName + " Monitoring End ]\n\n");
+    		} 
     		
+    		System.out.println("\n==================================================================================================================================");
+    		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ Server Monitoring을 시작합니다." + ConsoleUtils.RESET);
+    		System.out.println("==================================================================================================================================\n");
+
     		// Server Usage Check   		
     		Map<String, JschConnectionInfo> jschConnectionMap = getJschConnectionMap();
-    		for(String key : jschConnectionMap.keySet()) {
-    			System.out.println("■ [ " + key + " Monitoring Start ]\n");
-    			JschUtil server = new JschUtil(jschConnectionMap.get(key));
+    		for(String serverName : jschConnectionMap.keySet()) {
+    			System.out.println("■ [ " + serverName + " Monitoring Start ]\n");
+    			JschUtil server = new JschUtil(jschConnectionMap.get(serverName));
     			server.init();
         		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
         		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
         		ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
-    			serverBatch.startBatchAlertLogCheck();
-    			//dbBatch.startBatchTableSpaceUsageCheck();
-    			//dbBatch.startBatchASMDiskUsageCheck();
-    			//System.out.println("■ [ " + key + " Monitoring End ]\n\n");
+
+        		String alertLogFilePath = propConfig.getString(serverName.toLowerCase() + ".server.alertlog.filepath");
+        		AlertLogCommand alc = new AlertLogCommand("tail", "3000", alertLogFilePath);
+    			serverBatch.startBatchAlertLogCheck(alc);
+    			serverBatch.startBatchOSDiskUsageCheck("df -Ph | column -t");
+    			//System.out.println("□ [ " + serverName + " Monitoring End ]\n\n");
     		} 
     	}catch (Exception e) {
     		e.printStackTrace();
