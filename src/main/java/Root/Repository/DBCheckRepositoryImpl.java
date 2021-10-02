@@ -11,6 +11,7 @@ import java.util.Map;
 
 import Root.Database.DatabaseUtil;
 
+@SuppressWarnings("rawtypes")
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private DatabaseUtil db;
 

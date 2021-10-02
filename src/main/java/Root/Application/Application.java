@@ -68,9 +68,10 @@ public class Application {
         		ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
 
         		String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-        		AlertLogCommand alc = new AlertLogCommand("tail", "3000", alertLogFilePath);
-    			//serverBatch.startBatchAlertLogCheck(alc);
-    			//serverBatch.startBatchOSDiskUsageCheck("df -Ph | column -t");
+        		String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+        		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
+    			serverBatch.startBatchAlertLogCheck(alc);
+    			serverBatch.startBatchOSDiskUsageCheck("df -Ph | column -t");
     			//System.out.println("□ [ " + serverName + " Monitoring End ]\n\n");
     		} 
     	}catch (Exception e) {
@@ -91,5 +92,5 @@ public class Application {
  4. AlertLog Error 발생 시, 해당 부분의 로그 출력
  5. 각 조회결과 사용량 기준치 초과 시 알람 전송
  6. Console 출력내용 파일 형태로 저장
- 7. DB 조회결과 테이블형태로 출력
+ 7. DB 조회결과 테이블형태로 출력 (j-text-utils 라이브러리 이용하여 구현. 더 나은 라이브러리 조사 필요)
 */
