@@ -18,7 +18,8 @@ public class DatabaseUtil implements AbstractDatabase {
 		this.jdbcConnectionInfo = jdbcConnectionInfo;
 	}
 	
-	public DatabaseUtil(String driver, String jdbc_url, String id, String pw, String validationQuery) {
+	public DatabaseUtil(String dbName, String driver, String jdbc_url, String id, String pw, String validationQuery) {
+		jdbcConnectionInfo.setJdbcDBName(dbName);
 		jdbcConnectionInfo.setJdbcDriver(driver);
 		jdbcConnectionInfo.setJdbcUrl(jdbc_url);
 		jdbcConnectionInfo.setJdbcId(id);
@@ -27,7 +28,8 @@ public class DatabaseUtil implements AbstractDatabase {
 		jdbcConnectionInfo.setJdbcConnections(1);
 	}
 	
-	public DatabaseUtil(String driver, String jdbc_url, String id, String pw, String validationQuery, int connCount) {
+	public DatabaseUtil(String dbName, String driver, String jdbc_url, String id, String pw, String validationQuery, int connCount) {
+		jdbcConnectionInfo.setJdbcDBName(dbName);
 		jdbcConnectionInfo.setJdbcDriver(driver);
 		jdbcConnectionInfo.setJdbcUrl(jdbc_url);
 		jdbcConnectionInfo.setJdbcId(id);
@@ -111,7 +113,6 @@ public class DatabaseUtil implements AbstractDatabase {
 			return false;
 		}
 	}
-	
 
 	/**
 	 * Check if {@code conn} is valid with {@code validationQuery}
