@@ -1,6 +1,7 @@
 package Root.Usecases;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 import Root.Repository.DBCheckRepository;
 import dnl.utils.text.table.MapBasedTableModel;
@@ -46,6 +47,8 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		// List<Map> 형태의 data 리스트
 		TextTable tt = new TextTable(new MapBasedTableModel(mapList));
 		tt.printTable(System.out, 8);
+		System.out.println();
+		
 	}
 	
 	public String mapListToTableFormatString(List<Map> mapList) {
