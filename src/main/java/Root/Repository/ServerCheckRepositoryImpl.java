@@ -9,6 +9,7 @@ import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import Root.Model.AlertLogCommand;
 import Root.RemoteServer.JschUtil;
 
 public class ServerCheckRepositoryImpl implements ServerCheckRepository {
@@ -41,13 +42,30 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public String checkAlertLog() {
+	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
 			Session session = this.getSession();
 			session = this.connectSession(session);
-			
-			Channel channel = jsch.openExecChannel(session, "tail -10000 /u01/app/oracle/diag/rdbms/dberp/DBERP1/trace/alert_DBERP1.log | grep 'ORA'");
+			Channel channel = jsch.openExecChannel(session, alc.getCommand());
+			InputStream in = jsch.connectChannel(channel);
+			result = IOUtils.toString(in, "UTF-8");
+			jsch.disConnectChannel(channel);
+		}		
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public String checkOSDiskUsage(String command) {
+		String result = "";
+		try {
+			Session session = this.getSession();
+			session = this.connectSession(session);
+			Channel channel = jsch.openExecChannel(session, command);
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);

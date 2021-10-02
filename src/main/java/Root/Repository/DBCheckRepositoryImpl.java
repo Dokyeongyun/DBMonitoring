@@ -30,9 +30,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 
 	@Override
-	public List<Map<String, Object>> checkArchiveUsage() {
+	public List<Map> checkArchiveUsage() {
 
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -80,9 +80,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 	
 	@Override
-	public List<Map<String, Object>> checkTableSpaceUsage() {
+	public List<Map> checkTableSpaceUsage() {
 
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -138,9 +138,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 	
 	@Override
-	public List<Map<String, Object>> checkASMDiskUsage() {
+	public List<Map> checkASMDiskUsage() {
 
-		List<Map<String, Object>> result = new ArrayList<>();
+		List<Map> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;

@@ -1,20 +1,29 @@
 package Root.Model;
 
 public class JschConnectionInfo {
+	private String serverName;
 	private String host;
 	private int port;
 	private String userName;
 	private String password;
 	
 	public JschConnectionInfo() { }
-	public JschConnectionInfo(String host, int port, String userName, String password) {
-		super();
+	public JschConnectionInfo(String serverName, String host, int port, String userName, String password) {
+		this.serverName = serverName;
 		this.host = host;
 		this.port = port;
 		this.userName = userName;
 		this.password = password;
 	}
 
+	public String getServerName() {
+		return serverName;
+	}
+
+	public void setServerName(String serverName) {
+		this.serverName = serverName;
+	}
+	
 	public String getHost() {
 		return host;
 	}
@@ -43,15 +52,13 @@ public class JschConnectionInfo {
 		return password;
 	}
 
-
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
-
 	@Override
 	public String toString() {
-		return "JschConnectionInfo [host=" + host + ", port=" + port + ", userName=" + userName + ", password="
-				+ password + "]";
+		return "JschConnectionInfo [serverName=" + serverName + ", host=" + host + ", port=" + port + ", userName="
+				+ userName + ", password=" + password + "]";
 	}
 }

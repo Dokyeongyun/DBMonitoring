@@ -1,10 +1,12 @@
 package Root.Usecases;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import Root.Repository.DBCheckRepository;
+import dnl.utils.text.table.MapBasedTableModel;
+import dnl.utils.text.table.TextTable;
 
+@SuppressWarnings("rawtypes")
 public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	private DBCheckRepository dbCheckRepository;
 
@@ -14,44 +16,40 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printArchiveUsageCheck() {
-		List<Map<String, Object>> result = dbCheckRepository.checkArchiveUsage();
+		List<Map> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t▶ Archive Usage Check");
-		System.out.println(mapListToString(result));
+		printMapListToTableFormat(result, 8);
 	}
 
 	@Override
 	public void printTableSpaceCheck() {
-		List<Map<String, Object>> result = dbCheckRepository.checkTableSpaceUsage();
+		List<Map> result = dbCheckRepository.checkTableSpaceUsage();
 		System.out.println("\t▶ TableSpace Usage Check");
-		System.out.println(mapListToString(result));
+		printMapListToTableFormat(result, 8);
 	}
 
 	@Override
 	public void printASMDiskCheck() {
-		List<Map<String, Object>> result = dbCheckRepository.checkASMDiskUsage();
+		List<Map> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t▶ ASM Disk Usage Check");
-		System.out.println(mapListToString(result));
+		printMapListToTableFormat(result, 8);
 	}
 
-	public String mapListToString(List<Map<String, Object>> mapList) {
+	/**
+	 * List<Map> 형태의 데이터를 테이블 포맷으로 출력한다.
+	 * 
+	 * @param mapList 출력할 데이터
+	 * @param indent  들여쓰기
+	 */
+	public void printMapListToTableFormat(List<Map> mapList, int indent) {
+		// List<String> 형태의 header 리스트
+		// List<Map> 형태의 data 리스트
+		TextTable tt = new TextTable(new MapBasedTableModel(mapList));
+		tt.printTable(System.out, 8);
+	}
+	
+	public String mapListToTableFormatString(List<Map> mapList) {
 		StringBuffer sb = new StringBuffer();
-
-		sb.append("\t========================================================================================================\n");
-		for(Map<String, Object> data : mapList) {
-			for(String key : data.keySet()) {
-				sb.append("\t"+key+" | ");
-			}
-			sb.append("\n");
-			break;
-		}
-
-		for(Map<String, Object> data : mapList) {
-			for(String key : data.keySet()) {
-				sb.append("\t"+data.get(key)+" | ");
-			}
-			sb.append("\n");
-		}
-		sb.append("\t========================================================================================================\n");
 		return sb.toString();
 	}
 }

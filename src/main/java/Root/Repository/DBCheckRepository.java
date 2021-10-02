@@ -7,7 +7,7 @@ public interface DBCheckRepository {
 	Object getTran();
 	void endTran(Object conn);
 	
-	List<Map<String, Object>> checkArchiveUsage();
-	List<Map<String, Object>> checkTableSpaceUsage();
-	List<Map<String, Object>> checkASMDiskUsage();
+	List<Map> checkArchiveUsage();
+	List<Map> checkTableSpaceUsage();
+	List<Map> checkASMDiskUsage();
 }
