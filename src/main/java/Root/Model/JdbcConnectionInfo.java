@@ -1,6 +1,7 @@
 package Root.Model;
 
 public class JdbcConnectionInfo {
+	private String jdbcDBName;
 	private String jdbcDriver;
 	private String jdbcUrl;
 	private String jdbcId;
@@ -10,15 +11,23 @@ public class JdbcConnectionInfo {
 
 	public JdbcConnectionInfo() { }
 	
-	public JdbcConnectionInfo(String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw, String jdbcValidation,
+	public JdbcConnectionInfo(String jdbcDBName, String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw, String jdbcValidation,
 			int jdbcConnections) {
-		super();
+		this.jdbcDBName = jdbcDBName;
 		this.jdbcDriver = jdbcDriver;
 		this.jdbcUrl = jdbcUrl;
 		this.jdbcId = jdbcId;
 		this.jdbcPw = jdbcPw;
 		this.jdbcValidation = jdbcValidation;
 		this.jdbcConnections = jdbcConnections;
+	}
+
+	public String getJdbcDBName() {
+		return jdbcDBName;
+	}
+
+	public void setJdbcDBName(String jdbcDBName) {
+		this.jdbcDBName = jdbcDBName;
 	}
 
 	public String getJdbcDriver() {
@@ -71,8 +80,8 @@ public class JdbcConnectionInfo {
 
 	@Override
 	public String toString() {
-		return "JdbcConnectionInfo [jdbcDriver=" + jdbcDriver + ", jdbcUrl=" + jdbcUrl + ", jdbcId=" + jdbcId
-				+ ", jdbcPw=" + jdbcPw + ", jdbcValidation=" + jdbcValidation + ", jdbcConnections=" + jdbcConnections
-				+ "]";
+		return "JdbcConnectionInfo [jdbcDBName=" + jdbcDBName + ", jdbcDriver=" + jdbcDriver + ", jdbcUrl=" + jdbcUrl
+				+ ", jdbcId=" + jdbcId + ", jdbcPw=" + jdbcPw + ", jdbcValidation=" + jdbcValidation
+				+ ", jdbcConnections=" + jdbcConnections + "]";
 	}
 }
