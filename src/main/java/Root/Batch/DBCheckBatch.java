@@ -32,4 +32,12 @@ public class DBCheckBatch {
 			e.printStackTrace();
 		}
 	}
+	
+	public void writeExcelArchiveUsageCheck() {
+		try {
+			this.dbCheckUsecase.writeExcelArchiveUsageCheck();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
