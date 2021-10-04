@@ -12,6 +12,7 @@ public class DBCheckBatch {
 	public void startBatchArchiveUsageCheck() {
 		try {
 			this.dbCheckUsecase.printArchiveUsageCheck();
+			this.dbCheckUsecase.writeExcelArchiveUsageCheck();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

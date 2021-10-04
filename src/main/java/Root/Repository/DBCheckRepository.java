@@ -5,6 +5,8 @@ import java.util.Map;
 
 @SuppressWarnings("rawtypes")
 public interface DBCheckRepository {
+	String getDBName();
+	
 	Object getTran();
 	void endTran(Object conn);
 	

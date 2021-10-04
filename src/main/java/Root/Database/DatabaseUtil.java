@@ -6,9 +6,9 @@ import java.sql.*;
 import Root.Model.JdbcConnectionInfo;
 
 public class DatabaseUtil implements AbstractDatabase {
-	public JdbcConnectionInfo jdbcConnectionInfo;
-	public DatabaseConnectionPool connPool = null;
-	public boolean driverLoaded = false;
+	private JdbcConnectionInfo jdbcConnectionInfo;
+	private DatabaseConnectionPool connPool = null;
+	private boolean driverLoaded = false;
 	
 	/**
 	 * JdbcConnectionInfo 객체를 이용한 생성자
@@ -36,6 +36,30 @@ public class DatabaseUtil implements AbstractDatabase {
 		jdbcConnectionInfo.setJdbcPw(pw);
 		jdbcConnectionInfo.setJdbcValidation(validationQuery);
 		jdbcConnectionInfo.setJdbcConnections(connCount);
+	}
+	
+	public JdbcConnectionInfo getJdbcConnectionInfo() {
+		return jdbcConnectionInfo;
+	}
+
+	public void setJdbcConnectionInfo(JdbcConnectionInfo jdbcConnectionInfo) {
+		this.jdbcConnectionInfo = jdbcConnectionInfo;
+	}
+
+	public DatabaseConnectionPool getConnPool() {
+		return connPool;
+	}
+
+	public void setConnPool(DatabaseConnectionPool connPool) {
+		this.connPool = connPool;
+	}
+
+	public boolean isDriverLoaded() {
+		return driverLoaded;
+	}
+
+	public void setDriverLoaded(boolean driverLoaded) {
+		this.driverLoaded = driverLoaded;
 	}
 
 	@Override

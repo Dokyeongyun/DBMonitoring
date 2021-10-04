@@ -5,7 +5,6 @@ import java.io.InputStream;
 import org.apache.commons.io.IOUtils;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
@@ -17,6 +16,11 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	
 	public ServerCheckRepositoryImpl(JschUtil jsch) {
 		this.jsch = jsch;
+	}
+	
+	@Override
+	public String getServerName() {
+		return jsch.getServerName();
 	}
 	
 	@Override
@@ -51,10 +55,10 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);
-		}		
-		catch (Exception e) {
+			jsch.disConnect(session);
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 		
 		return result;
 	}
