@@ -18,6 +18,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	public DBCheckRepositoryImpl(DatabaseUtil db) {
 		this.db = db;
 	}
+	
+	@Override
+	public String getDBName() {
+		return db.getJdbcConnectionInfo().getJdbcDBName();
+	}
 
 	@Override
 	public Connection getTran() {

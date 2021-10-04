@@ -411,7 +411,7 @@ public class ExcelUtils {
 		return readExcel(is, "xlsx", 0);
 	}
 
-	private static Workbook getWorkbook(InputStream inputStream, String fileName) throws IOException {
+	public static Workbook getWorkbook(InputStream inputStream, String fileName) throws IOException {
 		Workbook workbook = null;
 
 		if (fileName.endsWith("xlsx")) {

@@ -93,4 +93,8 @@ public class JschUtil {
 	public void disConnectChannel(Channel channel) {
 	    channel.disconnect();
 	}
+	
+	public String getServerName() {
+		return this.jschConnectionInfo.getServerName();
+	}
 }

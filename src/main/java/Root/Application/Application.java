@@ -47,7 +47,6 @@ public class Application {
         		DBCheckRepository repo = new DBCheckRepositoryImpl(db);
         		DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
         		DBCheckBatch dbBatch = new DBCheckBatch(usecase);
-    			dbBatch.writeExcelArchiveUsageCheck();
     			//dbBatch.startBatchArchiveUsageCheck();
     			//dbBatch.startBatchTableSpaceUsageCheck();
     			//dbBatch.startBatchASMDiskUsageCheck();
@@ -59,22 +58,22 @@ public class Application {
     		System.out.println("==================================================================================================================================\n");
 
     		// Server Usage Check   		
-//    		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
-//    		for(JschConnectionInfo jsch : jschConnectionList) {
-//    			System.out.println("бс [ " + jsch.getServerName() + " Monitoring Start ]\n");
-//    			JschUtil server = new JschUtil(jsch);
-//    			server.init();
-//        		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-//        		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
-//        		ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
-//
-//        		String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-//        		String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-//        		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
-//    			serverBatch.startBatchAlertLogCheck(alc);
-//    			serverBatch.startBatchOSDiskUsageCheck("df -Ph | column -t");
+    		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
+    		for(JschConnectionInfo jsch : jschConnectionList) {
+    			System.out.println("бс [ " + jsch.getServerName() + " Monitoring Start ]\n");
+    			JschUtil server = new JschUtil(jsch);
+    			server.init();
+        		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+        		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+        		ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
+
+        		String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+        		String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+        		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
+    			//serverBatch.startBatchAlertLogCheck(alc);
+    			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
     			//System.out.println("бр [ " + serverName + " Monitoring End ]\n\n");
-//    		} 
+    		} 
     	} catch (Exception e) {
     		e.printStackTrace();
     	}

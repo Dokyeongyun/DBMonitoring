@@ -21,6 +21,7 @@ public class ServerCheckBatch {
 	public void startBatchOSDiskUsageCheck(String command) {
 		try {
 			this.serverCheckUsecase.printOSDiskUsage(command);
+			this.serverCheckUsecase.writeExcelOSDiskUsage(command);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
