@@ -55,7 +55,6 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);
-			jsch.disConnect(session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
