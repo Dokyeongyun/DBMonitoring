@@ -1,7 +1,6 @@
 package Root.Application;
 
 import java.util.List;
-import java.util.Map;
 
 import Root.Batch.DBCheckBatch;
 import Root.Batch.ServerCheckBatch;
@@ -34,51 +33,67 @@ public class Application {
     			return;
     		}
 
-    		System.out.println("\n==================================================================================================================================");
-    		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ DB Monitoring을 시작합니다." + ConsoleUtils.RESET);
-    		System.out.println("==================================================================================================================================\n");
-
-    		// DB Usage Check   		
-    		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
-    		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
-    			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
-    			DatabaseUtil db = new DatabaseUtil(jdbc);
-    			db.init();
-        		DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-        		DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
-        		DBCheckBatch dbBatch = new DBCheckBatch(usecase);
-    			//dbBatch.startBatchArchiveUsageCheck();
-    			//dbBatch.startBatchTableSpaceUsageCheck();
-    			//dbBatch.startBatchASMDiskUsageCheck();
-    			//System.out.println("□ [ " + dbName + " Monitoring End ]\n\n");
-    		} 
+    		String dbMonitoring = PropertiesUtils.propConfig.getString("monitoring.db");
+    		String serverMonitoring = PropertiesUtils.propConfig.getString("monitoring.server");
     		
-    		System.out.println("\n==================================================================================================================================");
-    		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ Server Monitoring을 시작합니다." + ConsoleUtils.RESET);
-    		System.out.println("==================================================================================================================================\n");
+    		if("on".equals(dbMonitoring)) {
+    			dbMonitoring();	
+    		}
 
-    		// Server Usage Check   		
-    		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
-    		for(JschConnectionInfo jsch : jschConnectionList) {
-    			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
-    			JschUtil server = new JschUtil(jsch);
-    			server.init();
-        		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-        		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
-        		ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
-
-        		String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-        		String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-        		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
-    			//serverBatch.startBatchAlertLogCheck(alc);
-    			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
-    			//System.out.println("□ [ " + serverName + " Monitoring End ]\n\n");
-    		} 
+    		if("on".equals(serverMonitoring)) {
+    			serverMonitoring();
+    		}
+    		
     	} catch (Exception e) {
-    		e.printStackTrace();
+    		e.printStackTrace(); 
     	}
     	
     	System.out.println("END");
+	}
+	
+	public static void dbMonitoring() {
+		System.out.println("\n==================================================================================================================================");
+		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ DB Monitoring을 시작합니다." + ConsoleUtils.RESET);
+		System.out.println("==================================================================================================================================\n");
+
+		// DB Usage Check   		
+		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
+		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			DatabaseUtil db = new DatabaseUtil(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
+			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
+			dbBatch.startBatchArchiveUsageCheck();
+			//dbBatch.startBatchTableSpaceUsageCheck();
+			//dbBatch.startBatchASMDiskUsageCheck();
+			//System.out.println("□ [ " + dbName + " Monitoring End ]\n\n");
+		} 
+	}
+
+	public static void serverMonitoring() {
+		System.out.println("\n==================================================================================================================================");
+		System.out.println(ConsoleUtils.BACKGROUND_CYAN + "※ Server Monitoring을 시작합니다." + ConsoleUtils.RESET);
+		System.out.println("==================================================================================================================================\n");
+
+		// Server Usage Check   		
+		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
+		for(JschConnectionInfo jsch : jschConnectionList) {
+			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
+			JschUtil server = new JschUtil(jsch);
+			server.init();
+			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
+
+			String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+			String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
+			serverBatch.startBatchAlertLogCheck(alc);
+			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
+			//System.out.println("□ [ " + serverName + " Monitoring End ]\n\n");
+		} 
 	}
 }
 
