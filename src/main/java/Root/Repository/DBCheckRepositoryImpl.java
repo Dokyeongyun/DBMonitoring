@@ -11,11 +11,17 @@ import java.util.Map;
 
 import Root.Database.DatabaseUtil;
 
+@SuppressWarnings("rawtypes")
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private DatabaseUtil db;
 
 	public DBCheckRepositoryImpl(DatabaseUtil db) {
 		this.db = db;
+	}
+	
+	@Override
+	public String getDBName() {
+		return db.getJdbcConnectionInfo().getJdbcDBName();
 	}
 
 	@Override
