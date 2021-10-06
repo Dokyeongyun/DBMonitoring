@@ -12,5 +12,6 @@ public interface ServerCheckRepository {
 	void disConnectSession(Session session);
 	
 	String checkAlertLog(AlertLogCommand alc);
+	String checkAlertLogDuringPeriod(AlertLogCommand alc);
 	String checkOSDiskUsage(String command);
 }
