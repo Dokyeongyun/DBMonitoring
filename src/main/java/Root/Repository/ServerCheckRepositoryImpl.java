@@ -1,9 +1,9 @@
 package Root.Repository;
 
 import java.io.InputStream;
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -13,6 +13,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import Root.Model.AlertLogCommand;
+import Root.Model.AlertLogCommandPeriod;
 import Root.RemoteServer.JschUtil;
 import Root.Utils.DateUtils;
 
@@ -30,7 +31,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	
 	@Override
 	public Session getSession() {
-		return jsch.getSession();
+		return jsch.getSession();	
 	}
 	
 	@Override
@@ -68,63 +69,94 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public String checkAlertLogDuringPeriod(AlertLogCommand alc) {
-		System.out.println("ALC READ LINE: "+alc.getReadLine());
-		String result = "";
+	public String checkAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
+		String alertLog = this.checkAlertLog(alcp);
+		String dateFormat = alcp.getDateFormat();
+		String dateFormatRegex = alcp.getDateFormatRegex();
+		int dateLength = dateFormat.equals("yyyy-MM-dd") ? 11 : 24;
+		
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, alc.getCommand());
-			InputStream in = jsch.connectChannel(channel);
-			result = IOUtils.toString(in, "UTF-8");
+			String startDate = alcp.getFromDate();
+			String endDate = alcp.getToDate();
 			
-			String startDate = DateUtils.addDate(new Date(), "yyyy-MM-dd", 0, 0, -1);
-			String endDate = DateUtils.getToday("yyyy-MM-dd");
-			
-			String dateRegEx = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T"; 
-			
+			// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
 			while(true) {
-				Matcher dates = Pattern.compile(dateRegEx).matcher(result);	// 'yyyy-MM-ddT' 포맷의 날짜를 찾아냄
-				if(dates.find()) {
-					String logDate = dates.group();
-					long dateDiff = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
-					if(dateDiff >= 0) {
-						// 조회 Line 수를 더 늘려서 다시 조회
-						alc.setReadLine(String.valueOf(Integer.parseInt(alc.getReadLine()) * 2));
-						result = this.checkAlertLog(alc);
+				String[] lines = alertLog.split("\n");
+
+				// 조회한 로그 내에서 가장 처음으로 나타나는 로그의 기록일자를 얻어낸다.
+				String logDate = "";
+				for(String line : lines) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						logDate = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						break;
+					}
+				}
+
+				// 조회시작일자와 로그의 처음 기록일자를 비교한다.
+				long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
+		        if(diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
+		        	alcp.setReadLine(String.valueOf(Integer.parseInt(alcp.getReadLine()) * 2));
+					alertLog = this.checkAlertLog(alcp);
+		        } else {
+		        	break;
+		        }
+			}
+			
+			// 조회기간동안의 로그만을 취하여 StringBuffer에 저장한다.
+			String[] lines = alertLog.split("\n");
+			
+			boolean isStartDate = false;
+			boolean isEndDate = false;
+			int readStartIndex = 0;
+			int readEndIndex = lines.length;
+			int realNumberOfReadLine = 0;
+			StringBuffer sb = new StringBuffer();
+			
+			for(int i=0; i<lines.length; i++) {
+				String line = lines[i];
+				
+				// 조회시작일자 찾기
+				if(isStartDate == false) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						linePrefix = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						if(linePrefix.startsWith(startDate)) {
+							isStartDate = true;
+							readStartIndex = i;
+						}
+					}
+				} 
+				
+				// 로그 저장 시작 & 조회종료일자 찾기
+				if(isStartDate == true) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						linePrefix = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						if(linePrefix.startsWith(DateUtils.addDate(endDate, 0, 0, 1))) {
+							isEndDate = true;
+							readEndIndex = i;
+						}
+					}
+					
+					// 로그 저장 중지
+					if(isEndDate == false) {
+						sb.append(line);	
 					} else {
 						break;
 					}
 				}
 			}
 			
-			boolean isStartDay = false;
-			StringBuffer sb = new StringBuffer();
-			
-			dateRegEx = "^\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T"; 
-			
-			String[] lines = result.split("\n");
-			for(String line : lines) {
-				String linePrefix = line.substring(0, line.length() < 11 ? line.length() : 11);
-				if(Pattern.matches(dateRegEx, linePrefix)) {
-					if(linePrefix.startsWith(startDate)) {
-						isStartDay = true;
-					}
-				}
-				
-				if(isStartDay) {
-					sb.append(line);
-				}
-			}
-			
-			result = sb.toString();
-			
-			jsch.disConnectChannel(channel);
+			alertLog = sb.toString();
+			realNumberOfReadLine = readEndIndex - readStartIndex;
+			System.out.println("\t▶ Alert Log READ LINE: " + realNumberOfReadLine + "/" + alcp.getReadLine());
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		
-		return result;
+		return alertLog;
 	}
 	
 	@Override

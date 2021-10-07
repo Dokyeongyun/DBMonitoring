@@ -96,6 +96,29 @@ public class DateUtils {
 	}
 	
 	/**
+	 * 기준일자에서 년, 월, 일을 더한 날짜를 반환한다.
+	 * 빼기도 가능하다.
+	 * @param dateStringYMD 	yyyy-MM-dd 형태의 날짜 문자열
+	 * @param year			
+	 * @param month
+	 * @param day
+	 * @return
+	 */
+	public static String addDate(String dateStringYMD, int year, int month, int day) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cal = Calendar.getInstance();
+		try {
+			cal.setTime(sdf.parse(dateStringYMD));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		cal.add(Calendar.YEAR, year);
+		cal.add(Calendar.MONTH, month);
+		cal.add(Calendar.DATE, day);
+		return sdf.format(cal.getTime());
+	}
+	
+	/**
 	 * 두 날짜간 차이를 반환한다. (첫번째날짜 - 두번째날짜)
 	 * 이 때, 각 날짜의 포맷은 첫번째 인자로 전달한 dateFormat과 동일해야한다.
 	 * @param dateFormat
@@ -114,5 +137,26 @@ public class DateUtils {
 			e.printStackTrace();
 		}
 		return diffTime / 1000;
+	}
+	
+	/**
+	 * 날짜 표현 포맷을 변환한다.
+	 * @param fromFormat
+	 * @param toFormat
+	 * @param dateString
+	 * @param locale
+	 * @return
+	 */
+	public static String convertDateFormat(String fromFormat, String toFormat, String dateString, Locale locale) {
+		SimpleDateFormat from = new SimpleDateFormat(fromFormat, locale);
+		SimpleDateFormat to = new SimpleDateFormat(toFormat, locale);
+		String convertedDateString = "";
+		try {
+			Date date = from.parse(dateString);
+			convertedDateString = to.format(date);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return convertedDateString;
 	}
 }
