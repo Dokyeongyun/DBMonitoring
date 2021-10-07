@@ -16,6 +16,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 import Root.Repository.DBCheckRepository;
+import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
 import Root.Utils.DateUtils;
 import Root.Utils.ExcelUtils;
@@ -56,6 +57,12 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<Map> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
 		String archiveUsage = (String) result.get(0).get("USED_RATE") + "%";
+		
+		if(Integer.parseInt((String) result.get(0).get("USED_RATE")) >= 90) {
+			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "¢º Archive Usage Check : Usage 90% ÃÊ°ú!"+ConsoleUtils.RESET+"\n");
+		} else {
+			System.out.println("\t¢º Archive Usage Check : SUCCESS\n");
+		}
 		
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
