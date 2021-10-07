@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import Root.Model.AlertLogCommand;
+import Root.Model.AlertLogCommandPeriod;
 import Root.Repository.ServerCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
@@ -36,11 +37,20 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	@Override
 	public void printAlertLog(AlertLogCommand alc) {
 		String result = serverCheckRepository.checkAlertLog(alc);
-		
 		if(result.indexOf("ORA") >= 0) {
-			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET);
+			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET+"\n");
 		} else {
-			System.out.println("\t▶ SUCCESS!");
+			System.out.println("\t▶ Alert Log : SUCCESS!\n");
+		}
+	}
+	
+	@Override
+	public void printAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
+		String result = serverCheckRepository.checkAlertLogDuringPeriod(alcp);
+		if(result.indexOf("ORA") >= 0) {
+			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET+"\n");
+		} else {
+			System.out.println("\t▶ Alert Log : SUCCESS!\n");
 		}
 	}
 	

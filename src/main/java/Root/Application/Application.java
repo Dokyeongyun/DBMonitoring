@@ -6,6 +6,7 @@ import Root.Batch.DBCheckBatch;
 import Root.Batch.ServerCheckBatch;
 import Root.Database.DatabaseUtil;
 import Root.Model.AlertLogCommand;
+import Root.Model.AlertLogCommandPeriod;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.RemoteServer.JschUtil;
@@ -18,6 +19,7 @@ import Root.Usecases.DBCheckUsecaseImpl;
 import Root.Usecases.ServerCheckUsecase;
 import Root.Usecases.ServerCheckUsecaseImpl;
 import Root.Utils.ConsoleUtils;
+import Root.Utils.DateUtils;
 import Root.Utils.PropertiesUtils;
 
 public class Application {
@@ -32,7 +34,7 @@ public class Application {
     			System.out.println("configuration loading error\n"+e+"\n");
     			return;
     		}
-
+    		
     		String dbMonitoring = PropertiesUtils.propConfig.getString("monitoring.db");
     		String serverMonitoring = PropertiesUtils.propConfig.getString("monitoring.server");
     		
@@ -89,9 +91,12 @@ public class Application {
 
 			String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
 			String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath);
-			serverBatch.startBatchAlertLogCheck(alc);
-			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
+			String alertLogDateFormat = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
+			String alertLogDateFormatRegex = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
+			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
+			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
+			//serverBatch.startBatchOSDiskUsageCheck("df -Ph");
 			//System.out.println("бр [ " + serverName + " Monitoring End ]\n\n");
 		} 
 	}

@@ -1,6 +1,10 @@
 package Root.Repository;
 
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
 
@@ -9,7 +13,9 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import Root.Model.AlertLogCommand;
+import Root.Model.AlertLogCommandPeriod;
 import Root.RemoteServer.JschUtil;
+import Root.Utils.DateUtils;
 
 public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	private JschUtil jsch;
@@ -25,7 +31,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	
 	@Override
 	public Session getSession() {
-		return jsch.getSession();
+		return jsch.getSession();	
 	}
 	
 	@Override
@@ -55,12 +61,102 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);
-			jsch.disConnect(session);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		
 		return result;
+	}
+	
+	@Override
+	public String checkAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
+		String alertLog = this.checkAlertLog(alcp);
+		String dateFormat = alcp.getDateFormat();
+		String dateFormatRegex = alcp.getDateFormatRegex();
+		int dateLength = dateFormat.equals("yyyy-MM-dd") ? 11 : 24;
+		
+		try {
+			String startDate = alcp.getFromDate();
+			String endDate = alcp.getToDate();
+			
+			// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
+			while(true) {
+				String[] lines = alertLog.split("\n");
+
+				// 조회한 로그 내에서 가장 처음으로 나타나는 로그의 기록일자를 얻어낸다.
+				String logDate = "";
+				for(String line : lines) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						logDate = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						break;
+					}
+				}
+
+				// 조회시작일자와 로그의 처음 기록일자를 비교한다.
+				long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
+		        if(diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
+		        	alcp.setReadLine(String.valueOf(Integer.parseInt(alcp.getReadLine()) * 2));
+					alertLog = this.checkAlertLog(alcp);
+		        } else {
+		        	break;
+		        }
+			}
+			
+			// 조회기간동안의 로그만을 취하여 StringBuffer에 저장한다.
+			String[] lines = alertLog.split("\n");
+			
+			boolean isStartDate = false;
+			boolean isEndDate = false;
+			int readStartIndex = 0;
+			int readEndIndex = lines.length;
+			int realNumberOfReadLine = 0;
+			StringBuffer sb = new StringBuffer();
+			
+			for(int i=0; i<lines.length; i++) {
+				String line = lines[i];
+				
+				// 조회시작일자 찾기
+				if(isStartDate == false) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						linePrefix = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						if(linePrefix.startsWith(startDate)) {
+							isStartDate = true;
+							readStartIndex = i;
+						}
+					}
+				} 
+				
+				// 로그 저장 시작 & 조회종료일자 찾기
+				if(isStartDate == true) {
+					String linePrefix = line.substring(0, line.length() < dateLength ? line.length() : dateLength);
+					if(Pattern.matches("^"+dateFormatRegex, linePrefix)) {
+						linePrefix = DateUtils.convertDateFormat(dateFormat, "yyyy-MM-dd", linePrefix, Locale.ENGLISH);
+						if(linePrefix.startsWith(DateUtils.addDate(endDate, 0, 0, 1))) {
+							isEndDate = true;
+							readEndIndex = i;
+						}
+					}
+					
+					// 로그 저장 중지
+					if(isEndDate == false) {
+						sb.append(line);	
+					} else {
+						break;
+					}
+				}
+			}
+			
+			alertLog = sb.toString();
+			realNumberOfReadLine = readEndIndex - readStartIndex;
+			System.out.println("\t▶ Alert Log READ LINE: " + realNumberOfReadLine + "/" + alcp.getReadLine());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		return alertLog;
 	}
 	
 	@Override

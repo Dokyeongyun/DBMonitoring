@@ -1,9 +1,13 @@
 package Root.Model;
 
+import java.util.Arrays;
+
 public class AlertLogCommand {
 	private String readCommand;
 	private String readLine;
 	private String readFilePath;
+	private String dateFormat;
+	private String dateFormatRegex;
 	private String[] catchErrorMsg;
 
 	public AlertLogCommand() {
@@ -13,6 +17,14 @@ public class AlertLogCommand {
 		this.readCommand = readCommand;
 		this.readLine = readLine;
 		this.readFilePath = readFilePath;
+	}
+	
+	public AlertLogCommand(String readCommand, String readLine, String readFilePath, String dateFormat, String dateFormatRegex) {
+		this.readCommand = readCommand;
+		this.readLine = readLine;
+		this.readFilePath = readFilePath;
+		this.dateFormat = dateFormat;
+		this.dateFormatRegex = dateFormatRegex;
 	}
 
 	public AlertLogCommand(String readCommand, String readLine, String readFilePath, String... catchErrorMsg) {
@@ -46,6 +58,22 @@ public class AlertLogCommand {
 		this.readFilePath = readFilePath;
 	}
 
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public String getDateFormatRegex() {
+		return dateFormatRegex;
+	}
+
+	public void setDateFormatRegex(String dateFormatRegex) {
+		this.dateFormatRegex = dateFormatRegex;
+	}
+
 	public String[] getCatchErrorMsg() {
 		return catchErrorMsg;
 	}
@@ -57,7 +85,8 @@ public class AlertLogCommand {
 	@Override
 	public String toString() {
 		return "AlertLogCommand [readCommand=" + readCommand + ", readLine=" + readLine + ", readFilePath="
-				+ readFilePath + ", catchErrorMsg=" + catchErrorMsg + "]";
+				+ readFilePath + ", dateFormat=" + dateFormat + ", dateFormatRegex=" + dateFormatRegex
+				+ ", catchErrorMsg=" + Arrays.toString(catchErrorMsg) + "]";
 	}
 
 	public String getCommand() {
