@@ -1,6 +1,7 @@
 package Root.Batch;
 
 import Root.Model.AlertLogCommand;
+import Root.Model.AlertLogCommandPeriod;
 import Root.Usecases.ServerCheckUsecase;
 
 public class ServerCheckBatch {
@@ -13,6 +14,14 @@ public class ServerCheckBatch {
 	public void startBatchAlertLogCheck(AlertLogCommand alc) {
 		try {
 			this.serverCheckUsecase.printAlertLog(alc);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void startBatchAlertLogCheckDuringPeriod(AlertLogCommandPeriod alcp) {
+		try {
+			this.serverCheckUsecase.printAlertLogDuringPeriod(alcp);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
