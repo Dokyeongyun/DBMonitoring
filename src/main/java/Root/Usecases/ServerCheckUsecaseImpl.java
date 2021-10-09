@@ -1,10 +1,12 @@
 package Root.Usecases;
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,9 +65,93 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		if(isError == true) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET+"\n");
-			for(Log errorLog : errorLogContents) {
-				System.out.print(errorLog.getLogTimeStamp());
-				System.out.println(errorLog.getFullLogString());
+			System.out.println("\t※" + errorLogContents.size() + "개의 ERROR가 발생했습니다. Alert Log를 확인하시겠습니까? (Y/N)※");
+			
+			boolean isCheck = false;
+			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+			while(true) {
+				try {
+					String input = br.readLine().trim().toUpperCase();
+					
+					if("Y".equals(input)) {
+						isCheck = true;
+						break;
+					} else if ("N".equals(input)) {
+						isCheck = false;
+						break;
+					} else {
+						System.out.println("\t" + ConsoleUtils.FONT_RED + "잘못 입력하셨습니다. Y 또는 N을 입력해주세요." + ConsoleUtils.RESET);
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if(isCheck == true) {
+				int errorLogIndex = 0;
+				System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size() + "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
+				System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
+				
+				boolean isExit = false;
+				while(true) {
+					try {
+						String input = br.readLine().trim().toUpperCase();
+						
+						if("".equals(input) || "ENTER".equals(input)) {
+							errorLogIndex++;
+							if(errorLogIndex >= errorLogContents.size()) {
+								System.out.println("\t※마지막 ERROR입니다. 종료하시겠습니까? (Y/N)※");
+								
+								while(true) {
+									String exitInput = br.readLine().trim().toUpperCase();
+									
+									if("Y".equals(exitInput)) {
+										isExit = true;
+										break;
+									} else if("N".equals(exitInput)) {
+										isExit = false;
+										break;
+									}
+								}
+								
+								if(isExit == true) {
+									System.out.println("\t※종료※");
+									break;
+								} else {
+									System.out.println("\t※명령어를 입력해주세요. (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)");
+								}
+							} else {
+								System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size() + "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
+								System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());	
+							}
+						} else if ("Q".equals(input)) {
+							System.out.println("\t※종료※");
+							break;
+						} else {
+							boolean isWrongInput = false;
+							try {
+								int inputIndex = Integer.parseInt(input) -1;
+								if(inputIndex >= errorLogContents.size() || inputIndex < 0) {
+									isWrongInput = true;
+								} else {
+									errorLogIndex = inputIndex;	
+									System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size() + "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
+									System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());	
+								}
+							} catch (NumberFormatException e) {
+								isWrongInput = true;
+							}
+							
+							if(isWrongInput == true) {
+								System.out.println("\t" + ConsoleUtils.FONT_RED + "잘못 입력하셨습니다. (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)" + ConsoleUtils.RESET);
+							}
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}	
+				}
+			} else {
+				System.out.println("\t※종료※");
 			}
 		} else {
 			System.out.println("\t▶ Alert Log : SUCCESS!\n");
