@@ -22,13 +22,14 @@ import Root.Model.AlertLog;
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
 import Root.Model.Log;
+import Root.Model.OSDiskUsage;
 import Root.Repository.ServerCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
 import Root.Utils.DateUtils;
 import Root.Utils.ExcelUtils;
-import dnl.utils.text.table.MapBasedTableModel;
 import dnl.utils.text.table.TextTable;
+import dnl.utils.text.table.csv.CsvTableModel;
 
 @SuppressWarnings("rawtypes")
 public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
@@ -160,11 +161,15 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	
 	@Override
 	public void printOSDiskUsage(String command) {
-		String result = serverCheckRepository.checkOSDiskUsage(command);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
 		System.out.println("\t¢º OS Disk Usage");
-		List<Map> rows = osDiskCheckResultToMap(result);
-		TextTable tt = new TextTable(new MapBasedTableModel(rows));
-		tt.printTable(System.out, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		System.out.println();
 	}
 	
@@ -172,8 +177,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	public void writeExcelOSDiskUsage(String command) throws Exception {
 		if(!"STS".equals(serverCheckRepository.getServerName())) return;
 		
-		String result = serverCheckRepository.checkOSDiskUsage(command);
-		List<Map> rows = osDiskCheckResultToMap(result);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
 		
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -196,41 +200,16 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
 
-		for(Map data : rows) {
-			String mountedOn = (String) data.get("Mounted on");
-			String usePercent = (String) data.get("Use%");
+		for(OSDiskUsage data : result) {
+			String mountedOn = data.getMountedOn();
+			double usePercent = data.getUsedPercent();
 			if(!mountedOn.startsWith("/oradata")) continue;
 			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
-			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent);
+			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent+"%");
 		}
 
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 		workbook.close();
-	}
-	
-	public List<Map> osDiskCheckResultToMap(String result) {
-		StringTokenizer st = new StringTokenizer(result);
-		List<String> header = Arrays.asList(new String[] {"Filesystem", "Size", "Used", "Avail", "Use%", "Mounted on"});
-		List<Map> rows = new ArrayList<>();
-		
-		boolean isHeader = true;
-		int index = 0;
-
-		Map<String, String> row = new HashMap<>();
-		while(st.hasMoreElements()) {
-			String next = st.nextToken();
-			if(!isHeader) {
-				row.put(header.get(index++), next);
-				if(index == 6) {
-					rows.add(row);
-					row = new HashMap<>();
-					index = 0;
-				}
-			}
-			if(next.equals("on")) isHeader = false;
-		}
-		
-		return rows;
 	}
 }
