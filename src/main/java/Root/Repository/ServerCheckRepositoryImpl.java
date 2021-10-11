@@ -245,7 +245,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 				case "Use%":
 					double usedPercent = Double.parseDouble(next.substring(0, next.length()-1));
 					row.setUsedPercent(usedPercent);
-					row.setUsedPercentString(next);
+					row.setUsedPercentString(next.trim());
 					break;
 				case "Mounted on":
 					row.setMountedOn(next);

@@ -1,19 +1,19 @@
 package Root.Usecases;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -31,7 +31,6 @@ import Root.Utils.ExcelUtils;
 import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 
-@SuppressWarnings("rawtypes")
 public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	private ServerCheckRepository serverCheckRepository;
 
@@ -162,12 +161,25 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	@Override
 	public void printOSDiskUsage(String command) {
 		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
-		System.out.println("\t▶ OS Disk Usage");
-		try {
-			TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
-			tt.printTable(System.out, 8);
-		} catch (IOException e) {
-			e.printStackTrace();
+		
+		boolean isError = false;
+		for(OSDiskUsage data : result) {
+			if(data.getUsedPercent() >= 80) {
+				isError = true;
+			//	data.setUsedPercentString(ConsoleUtils.FONT_RED + data.getUsedPercentString() + ConsoleUtils.RESET);
+			} 
+		}
+		
+		if(isError == true) {
+			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ OS Disk Usage : 80% 초과!! 확인 필요" + ConsoleUtils.RESET);
+			try {
+				TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+				tt.printTable(System.out, 8);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("\t▶ OS Disk Usage : SUCCESS!");
 		}
 		
 		System.out.println();
@@ -202,14 +214,39 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 
 		for(OSDiskUsage data : result) {
 			String mountedOn = data.getMountedOn();
-			double usePercent = data.getUsedPercent();
+			String usePercent = data.getUsedPercentString();
 			if(!mountedOn.startsWith("/oradata")) continue;
 			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
-			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent+"%");
+			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent);
 		}
 
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 		workbook.close();
+		is.close();
+	}
+	
+	@Override
+	public void writeCsvOSDiskUsage(String command) throws Exception {
+		String serverName = serverCheckRepository.getServerName();
+
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\OSDiskUsage\\";
+		String fileName = serverName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(OSDiskUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
 	}
 }

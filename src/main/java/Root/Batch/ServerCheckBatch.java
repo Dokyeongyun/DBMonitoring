@@ -31,6 +31,7 @@ public class ServerCheckBatch {
 		try {
 			this.serverCheckUsecase.printOSDiskUsage(command);
 			this.serverCheckUsecase.writeExcelOSDiskUsage(command);
+			this.serverCheckUsecase.writeCsvOSDiskUsage(command);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
