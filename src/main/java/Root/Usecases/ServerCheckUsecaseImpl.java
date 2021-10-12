@@ -41,7 +41,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	@Override
 	public void printAlertLog(AlertLogCommand alc) {
 		String result = serverCheckRepository.checkAlertLog(alc);
-		if(result.indexOf("ORA") >= 0) {
+		if(result.indexOf("ORA-") >= 0) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t▶ Alert Log : SUCCESS!\n");
@@ -57,7 +57,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		List<Log> errorLogContents = new ArrayList<>();
 		for(Log log : logContents) {
 			String logContent = log.getFullLogString();
-			if(logContent.indexOf("ORA") >= 0) {
+			if(logContent.indexOf("ORA-") >= 0) {
 				isError = true;
 				errorLogContents.add(log);				
 			}

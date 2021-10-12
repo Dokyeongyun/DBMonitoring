@@ -48,7 +48,7 @@ public class Log {
 		result.append("===========================================================================\n\n");
 		result.append(this.getLogTimeStamp()).append("\n");
 		for(String line : this.getLogContents()) {
-			if(line.indexOf("ORA") >= 0) {
+			if(line.indexOf("ORA-") >= 0) {
 				result.append(ConsoleUtils.FONT_RED + line + ConsoleUtils.RESET);
 			} else {
 				result.append(line);

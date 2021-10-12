@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import Root.Database.DatabaseUtil;
+import Root.Model.TableSpaceUsage;
 
 @SuppressWarnings("rawtypes")
 public class DBCheckRepositoryImpl implements DBCheckRepository {
@@ -86,9 +87,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 	
 	@Override
-	public List<Map> checkTableSpaceUsage() {
+	public List<TableSpaceUsage> checkTableSpaceUsage() {
 
-		List<Map> result = new ArrayList<>();
+		List<TableSpaceUsage> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -125,12 +126,12 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	            String usedPercent = rs.getString("Used(%)");
 	            String freeSpaceGb = rs.getString("FreeSpace(G)");
 	           
-				Map<String, Object> data = new HashMap<>();
-				data.put("TableSpace", tableSpace);
-				data.put("Total(G)", totalGb);
-				data.put("UsedSpace(G)", usedSpaceGb);
-				data.put("Used(%)", usedPercent);
-				data.put("FreeSpace(G)", freeSpaceGb);
+				TableSpaceUsage data = new TableSpaceUsage(tableSpace, freeSpaceGb + "G", usedSpaceGb + "G", usedPercent + "%", totalGb + "G");
+				data.setAvailableSpace(Double.parseDouble(freeSpaceGb));
+				data.setUsedSpace(Double.parseDouble(usedSpaceGb));
+				data.setUsedPercent(Double.parseDouble(usedPercent));
+				data.setTotalSpace(Double.parseDouble(totalGb));
+				
 				result.add(data);
 			}
 			

@@ -21,6 +21,7 @@ public class DBCheckBatch {
 	public void startBatchTableSpaceUsageCheck() {
 		try {
 			this.dbCheckUsecase.printTableSpaceCheck();
+			this.dbCheckUsecase.writeCsvTableSpaceUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
