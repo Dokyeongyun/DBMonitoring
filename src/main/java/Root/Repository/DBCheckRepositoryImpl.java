@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import Root.Database.DatabaseUtil;
+import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
 
 @SuppressWarnings("rawtypes")
@@ -37,9 +38,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 
 	@Override
-	public List<Map> checkArchiveUsage() {
+	public List<ArchiveUsage> checkArchiveUsage() {
 
-		List<Map> result = new ArrayList<>();
+		List<ArchiveUsage> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -63,17 +64,15 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	            String spaceLimitGb = rs.getString("SPACE_LIMIT_GB");
 	            String spaceUsedGb = rs.getString("SPACE_USED_GB");
 	            String spaceReclaimableGb = rs.getString("SPACE_RECLAIMABLE_GB");
-	            String numberOfFiles = rs.getString("NUMBER_OF_FILES");
+	            int numberOfFiles = rs.getInt("NUMBER_OF_FILES");
 	            String dnt = rs.getString("DNT");
 	            
-				Map<String, Object> data = new HashMap<>();
-				data.put("NAME", name);
-				data.put("USED_RATE", usedRate);
-				data.put("SPACE_LIMIT_GB", spaceLimitGb);
-				data.put("SPACE_USED_GB", spaceUsedGb);
-				data.put("SPACE_RECLAIMABLE_GB", spaceReclaimableGb);
-				data.put("NUMBER_OF_FILES", numberOfFiles);
-				data.put("DNT", dnt);
+	            ArchiveUsage data = new ArchiveUsage(name, numberOfFiles, spaceReclaimableGb + "G", spaceUsedGb + "G", usedRate + "%", spaceLimitGb + "G", dnt);
+	            data.setReclaimableSpace(Double.parseDouble(spaceReclaimableGb));
+	            data.setUsedSpace(Double.parseDouble(spaceUsedGb));
+	            data.setUsedPercent(Double.parseDouble(usedRate));
+	            data.setTotalSpace(Double.parseDouble(spaceLimitGb));
+
 				result.add(data);
 			}
 			

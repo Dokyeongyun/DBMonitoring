@@ -16,7 +16,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import Root.Model.OSDiskUsage;
+import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
 import Root.Repository.DBCheckRepository;
 import Root.Utils.ConsoleUtils;
@@ -37,9 +37,15 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printArchiveUsageCheck() {
-		List<Map> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t¢º Archive Usage Check");
-		printMapListToTableFormat(result, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(ArchiveUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 
 	@Override
@@ -49,6 +55,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		try {
 			TextTable tt = new TextTable(new CsvTableModel(TableSpaceUsage.toCsvString(result)));
 			tt.printTable(System.out, 8);
+			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -63,11 +70,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	
 	@Override
 	public void writeExcelArchiveUsageCheck() throws Exception {
-		List<Map> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		String archiveUsage = (String) result.get(0).get("USED_RATE") + "%";
+		String archiveUsage = result.get(0).getUsedPercentString();
 		
-		if(Integer.parseInt((String) result.get(0).get("USED_RATE")) >= 90) {
+		if(result.get(0).getUsedPercent() >= 90) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "¢º Archive Usage Check : Usage 90% ÃÊ°ú!"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t¢º Archive Usage Check : SUCCESS\n");
@@ -105,6 +112,30 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage);
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
+	}
+
+	@Override
+	public void writeCsvArchiveUsage() throws IOException {
+		String dbName = dbCheckRepository.getDBName();
+
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\ArchiveUsage\\";
+		String fileName = dbName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(ArchiveUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
 	}
 
 	@Override

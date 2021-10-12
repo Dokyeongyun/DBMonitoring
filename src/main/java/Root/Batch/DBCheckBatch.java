@@ -13,6 +13,7 @@ public class DBCheckBatch {
 		try {
 			this.dbCheckUsecase.printArchiveUsageCheck();
 			this.dbCheckUsecase.writeExcelArchiveUsageCheck();
+			this.dbCheckUsecase.writeCsvArchiveUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

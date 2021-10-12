@@ -6,5 +6,6 @@ public interface DBCheckUsecase {
 	void printASMDiskCheck();
 	
 	void writeExcelArchiveUsageCheck() throws Exception;
+	void writeCsvArchiveUsage() throws Exception;
 	void writeCsvTableSpaceUsage() throws Exception;
 }
