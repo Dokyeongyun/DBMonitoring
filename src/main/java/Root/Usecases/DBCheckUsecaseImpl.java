@@ -1,16 +1,24 @@
 package Root.Usecases;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Root.Model.ASMDiskUsage;
+import Root.Model.ArchiveUsage;
+import Root.Model.TableSpaceUsage;
 import Root.Repository.DBCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
@@ -18,6 +26,7 @@ import Root.Utils.DateUtils;
 import Root.Utils.ExcelUtils;
 import dnl.utils.text.table.MapBasedTableModel;
 import dnl.utils.text.table.TextTable;
+import dnl.utils.text.table.csv.CsvTableModel;
 
 @SuppressWarnings("rawtypes")
 public class DBCheckUsecaseImpl implements DBCheckUsecase {
@@ -29,32 +38,50 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printArchiveUsageCheck() {
-		List<Map> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t▶ Archive Usage Check");
-		printMapListToTableFormat(result, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(ArchiveUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 
 	@Override
 	public void printTableSpaceCheck() {
-		List<Map> result = dbCheckRepository.checkTableSpaceUsage();
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
 		System.out.println("\t▶ TableSpace Usage Check");
-		printMapListToTableFormat(result, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(TableSpaceUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void printASMDiskCheck() {
-		List<Map> result = dbCheckRepository.checkASMDiskUsage();
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t▶ ASM Disk Usage Check");
-		printMapListToTableFormat(result, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(ASMDiskUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void writeExcelArchiveUsageCheck() throws Exception {
-		List<Map> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		String archiveUsage = (String) result.get(0).get("USED_RATE") + "%";
+		String archiveUsage = result.get(0).getUsedPercentString();
 		
-		if(Integer.parseInt((String) result.get(0).get("USED_RATE")) >= 90) {
+		if(result.get(0).getUsedPercent() >= 90) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Archive Usage Check : Usage 90% 초과!"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
@@ -94,6 +121,77 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		workbook.write(os);
 	}
 
+	@Override
+	public void writeCsvArchiveUsage() throws IOException {
+		String dbName = dbCheckRepository.getDBName();
+
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\ArchiveUsage\\";
+		String fileName = dbName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(ArchiveUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
+	}
+
+	@Override
+	public void writeCsvTableSpaceUsage() throws IOException {
+		String dbName = dbCheckRepository.getDBName();
+
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\TableSpaceUsage\\";
+		String fileName = dbName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(TableSpaceUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
+	}
+	
+	@Override
+	public void writeCsvASMDiskUsage() throws IOException {
+		String dbName = dbCheckRepository.getDBName();
+
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\ASMDiskUsage\\";
+		String fileName = dbName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(ASMDiskUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
+	}
 
 	/**
 	 * List<Map> 형태의 데이터를 테이블 포맷으로 출력한다.
@@ -105,12 +203,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		// List<String> 형태의 header 리스트
 		// List<Map> 형태의 data 리스트
 		TextTable tt = new TextTable(new MapBasedTableModel(mapList));
-		tt.printTable(System.out, 8);
+		tt.printTable(System.out, indent);
 		System.out.println();
-	}
-	
-	public String mapListToTableFormatString(List<Map> mapList) {
-		StringBuffer sb = new StringBuffer();
-		return sb.toString();
 	}
 }

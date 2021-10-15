@@ -1,11 +1,11 @@
 package Root.Repository;
 
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.IOUtils;
@@ -18,6 +18,7 @@ import Root.Model.AlertLog;
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
 import Root.Model.Log;
+import Root.Model.OSDiskUsage;
 import Root.RemoteServer.JschUtil;
 import Root.Utils.DateUtils;
 
@@ -181,20 +182,85 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public String checkOSDiskUsage(String command) {
-		String result = "";
+	public List<OSDiskUsage> checkOSDiskUsage(String command) {
+		List<OSDiskUsage> list = new ArrayList<>();
 		try {
 			Session session = this.getSession();
 			session = this.connectSession(session);
 			Channel channel = jsch.openExecChannel(session, command);
 			InputStream in = jsch.connectChannel(channel);
-			result = IOUtils.toString(in, "UTF-8");
+			String result = IOUtils.toString(in, "UTF-8");
+			list = stringToOsDiskUsageList(result);
 			jsch.disConnectChannel(channel);
 		}		
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return result;
+		return list;
+	}
+	
+	public List<OSDiskUsage> stringToOsDiskUsageList (String result) {
+		StringTokenizer st = new StringTokenizer(result);
+		List<String> header = Arrays.asList(new String[] {"Filesystem", "Size", "Used", "Avail", "Use%", "Mounted on"});
+		List<OSDiskUsage> list = new ArrayList<>();
+		
+		boolean isHeader = true;
+		int index = 0;
+
+		OSDiskUsage row = new OSDiskUsage();
+		while(st.hasMoreElements()) {
+			String next = st.nextToken();
+			if(!isHeader) {
+				String headerName = header.get(index++);
+				
+				switch(headerName) {
+				case "Filesystem":
+					row.setFileSystem(next);
+					break;
+				case "Size":
+					double totalSpace = Double.parseDouble(next.substring(0, next.length()-1));
+					if(next.substring(next.length()-1).equals("G")) {
+						totalSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
+					} 
+					row.setTotalSpace(totalSpace);
+					row.setTotalSpaceString(next);
+					break;
+				case "Used":
+					double usedSpace = Double.parseDouble(next.substring(0, next.length()-1));
+					if(next.substring(next.length()-1).equals("G")) {
+						usedSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
+					}
+					row.setUsedSpace(usedSpace);
+					row.setUsedSpaceString(next);
+					break;
+				case "Avail":
+					double availableSpace = Double.parseDouble(next.substring(0, next.length()-1));
+					if(next.substring(next.length()-1).equals("G")) {
+						availableSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
+					}
+					row.setAvailableSpace(availableSpace);
+					row.setAvailableSpaceString(next);
+					break;
+				case "Use%":
+					double usedPercent = Double.parseDouble(next.substring(0, next.length()-1));
+					row.setUsedPercent(usedPercent);
+					row.setUsedPercentString(next.trim());
+					break;
+				case "Mounted on":
+					row.setMountedOn(next);
+					break;
+				}
+				
+				if(index == 6) {
+					list.add(row);
+					row = new OSDiskUsage();
+					index = 0;
+				}
+			}
+			if(next.equals("on")) isHeader = false;
+		}
+		
+		return list;
 	}
 }
