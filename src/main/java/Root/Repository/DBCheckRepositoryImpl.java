@@ -5,15 +5,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import Root.Database.DatabaseUtil;
+import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
 
-@SuppressWarnings("rawtypes")
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private DatabaseUtil db;
 
@@ -144,54 +142,35 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 	
 	@Override
-	public List<Map> checkASMDiskUsage() {
+	public List<ASMDiskUsage> checkASMDiskUsage() {
 
-		List<Map> result = new ArrayList<>();
+		List<ASMDiskUsage> result = new ArrayList<>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append(" SELECT NAME \"Name\", ");
-		sb.append(" TYPE \"Type\", ");
-		sb.append(" TOTAL_MB \"Tot_RAW(MB)\", ");
-		sb.append(" CASE WHEN TYPE='EXTERN' THEN TOTAL_MB ");
-		sb.append(" WHEN TYPE='NORMAL' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2 ");
-		sb.append(" WHEN TYPE='HIGH' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3 ");
-		sb.append(" ELSE 0 END AS \"Tot_Usable(MB)\", ");
-		sb.append(" CASE WHEN TYPE='EXTERN' THEN COLD_USED_MB ");
-		sb.append(" WHEN TYPE='NORMAL' THEN COLD_USED_MB/2 ");
-		sb.append(" WHEN TYPE='HIGH' THEN COLD_USED_MB/3 ");
-		sb.append(" ELSE 0 END AS \"Used(MB)\", ");
-		sb.append(" USABLE_FILE_MB \"Free(MB)\", ");
-		sb.append(" CASE WHEN TYPE = 'EXTERN' THEN (TOTAL_MB-USABLE_FILE_MB)/TOTAL_MB*100 ");
-		sb.append(" WHEN TYPE='NORMAL' THEN ((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2- ");
-		sb.append("USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2)*100 ");
-		sb.append(" WHEN TYPE='HIGH' THEN ((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3- ");
-		sb.append("USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3)*100 ");
-		sb.append(" ELSE 0 END AS \"Used(%)\", ");
-		sb.append(" 'Used < 90%' \"Standard\", ");
-		sb.append(" CASE WHEN TYPE='EXTERN' AND (TOTAL_MB-USABLE_FILE_MB)/TOTAL_MB*100 >= ");
-		sb.append("90 THEN '<span style=\"color:red\"><b> WARNING</b></span>' ");
-		sb.append(" WHEN TYPE='NORMAL' AND ((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2- ");
-		sb.append("USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2)*100 >= 90 ");
-		sb.append(" THEN '<span style=\"color:red\"><b> WARNING</b></span>' ");
-		sb.append(" WHEN TYPE='HIGH' AND ((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3- ");
-		sb.append("USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3)*100 >= 90 ");
-		sb.append(" THEN '<span style=\"color:red\"><b> WARNING</b></span>' ");
-		sb.append(" ELSE 'GOOD' END AS \"Result\" ");
-		sb.append("FROM V$ASM_DISKGROUP ");
-		sb.append("UNION ALL ");
-		sb.append("SELECT 'N/A' \"Name\", ");
-		sb.append(" ' ' \"Type\", ");
-		sb.append(" 0 \"Total_RAW(MB)\", ");
-		sb.append(" 0 \"Total-Usable(MB)\", ");
-		sb.append(" 0 \"Used(MB)\", ");
-		sb.append(" 0 \"Free_Usable(MB)\", ");
-		sb.append(" 0 \"Used%\", ");
-		sb.append(" 'Used < 90%' \"Standard\", ");
-		sb.append(" ' ' \"Result\" ");
-		sb.append("FROM DUAL ");
+		sb.append("SELECT S1.*, ");
+		sb.append("	      CASE WHEN S1.\"Used(%)\" >= 90 THEN 'WARNING' ELSE 'GOOD' END AS \"Result\" ");
+		sb.append("FROM (");
+		sb.append("		SELECT NAME \"ASM_DISK_GROUP_NAME\", ");
+		sb.append("     	TYPE \"Type\", ");
+		sb.append("         TOTAL_MB \"Tot_RAW(MB)\", ");
+		sb.append("         CASE WHEN TYPE='EXTERN' THEN TOTAL_MB ");
+		sb.append("              WHEN TYPE='NORMAL' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2 ");
+		sb.append("              WHEN TYPE='HIGH' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3 ");
+		sb.append(" 	    ELSE 0 END AS \"Tot_Usable(MB)\", ");
+		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN COLD_USED_MB ");
+		sb.append(" 		 	 WHEN TYPE='NORMAL' THEN COLD_USED_MB/2 ");
+		sb.append(" 		 	 WHEN TYPE='HIGH' THEN COLD_USED_MB/3 ");
+		sb.append(" 	    ELSE 0 END AS \"Used(MB)\", ");
+		sb.append(" 	    USABLE_FILE_MB \"Free(MB)\", ");
+		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN ROUND((TOTAL_MB-USABLE_FILE_MB)/TOTAL_MB*100,2) ");
+		sb.append("				 WHEN TYPE='NORMAL' THEN ROUND(((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2-USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2)*100,2) ");
+		sb.append("				 WHEN TYPE='HIGH'   THEN ROUND(((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3-USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3)*100,2) ");
+		sb.append("		    ELSE 0 END AS \"Used(%)\" ");
+		sb.append("		FROM V$ASM_DISKGROUP ");
+		sb.append("		) S1	");
 
 		try {
 			conn = this.getTran();
@@ -199,26 +178,21 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
-	            String name = rs.getString("Name");
-	            String type = rs.getString("Type");
-	            String totRawMb = rs.getString("Tot_RAW(MB)");
-	            String totUsableMb = rs.getString("Tot_Usable(MB)");
-	            String usedMb = rs.getString("Used(MB)");
-	            String freeMb = rs.getString("Free(MB)");
+	            String asmDiskGroupName = rs.getString("ASM_DISK_GROUP_NAME");
+	            String asmDiskGroupType = rs.getString("Type");
+	            String totalRawSpace = rs.getString("Tot_RAW(MB)");
+	            String totalAvailableSpace = rs.getString("Tot_Usable(MB)");
+	            String availableSpace = rs.getString("Free(MB)");
+	            String usedSpace = rs.getString("Used(MB)");
 	            String usedPercent = rs.getString("Used(%)");
-	            String standard = rs.getString("Standard");
 	            String resultMsg = rs.getString("Result");
 	            
-				Map<String, Object> data = new HashMap<>();
-				data.put("Name", name);
-				data.put("Type", type);
-				data.put("Tot_RAW(MB)", totRawMb);
-				data.put("Tot_Usable(MB)", totUsableMb);
-				data.put("Used(MB)", usedMb);
-				data.put("Free(MB)", freeMb);
-				data.put("Used(%)", usedPercent);
-				data.put("Standard", standard);
-				data.put("Result", resultMsg);
+	            ASMDiskUsage data = new ASMDiskUsage(asmDiskGroupName, asmDiskGroupType, totalRawSpace + "MB", totalAvailableSpace + "MB", availableSpace + "MB", usedSpace + "MB", usedPercent + "%", resultMsg);
+	            data.setTotalRawSpace(Double.parseDouble(totalRawSpace));
+	            data.setTotalAvailableSpace(Double.parseDouble(totalAvailableSpace));
+	            data.setAvailableSpace(Double.parseDouble(availableSpace));
+	            data.setUsedSpace(Double.parseDouble(usedSpace));
+	            data.setUsedPercent(Double.parseDouble(usedPercent));
 				result.add(data);
 			}
 			

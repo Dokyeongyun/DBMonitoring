@@ -16,6 +16,7 @@ import java.util.Map;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
+import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
 import Root.Repository.DBCheckRepository;
@@ -63,9 +64,15 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printASMDiskCheck() {
-		List<Map> result = dbCheckRepository.checkASMDiskUsage();
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t¢º ASM Disk Usage Check");
-		printMapListToTableFormat(result, 8);
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(ASMDiskUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+			System.out.println();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -158,6 +165,30 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 		bw.append(new Date().toString()).append("\n");
 		bw.append(TableSpaceUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
+	}
+	
+	@Override
+	public void writeCsvASMDiskUsage() throws IOException {
+		String dbName = dbCheckRepository.getDBName();
+
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\ASMDiskUsage\\";
+		String fileName = dbName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
+		}
+		
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(ASMDiskUsage.toCsvString(result)).append("\n");
 		bw.flush();
 		bw.close();
 	}

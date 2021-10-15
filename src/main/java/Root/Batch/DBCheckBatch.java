@@ -31,6 +31,7 @@ public class DBCheckBatch {
 	public void startBatchASMDiskUsageCheck() {
 		try {
 			this.dbCheckUsecase.printASMDiskCheck();
+			this.dbCheckUsecase.writeCsvASMDiskUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
