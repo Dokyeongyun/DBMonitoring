@@ -1,19 +1,19 @@
 package Root.Usecases;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.StringTokenizer;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -22,15 +22,15 @@ import Root.Model.AlertLog;
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
 import Root.Model.Log;
+import Root.Model.OSDiskUsage;
 import Root.Repository.ServerCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
 import Root.Utils.DateUtils;
 import Root.Utils.ExcelUtils;
-import dnl.utils.text.table.MapBasedTableModel;
 import dnl.utils.text.table.TextTable;
+import dnl.utils.text.table.csv.CsvTableModel;
 
-@SuppressWarnings("rawtypes")
 public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	private ServerCheckRepository serverCheckRepository;
 
@@ -41,7 +41,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	@Override
 	public void printAlertLog(AlertLogCommand alc) {
 		String result = serverCheckRepository.checkAlertLog(alc);
-		if(result.indexOf("ORA") >= 0) {
+		if(result.indexOf("ORA-") >= 0) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t▶ Alert Log : SUCCESS!\n");
@@ -57,7 +57,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		List<Log> errorLogContents = new ArrayList<>();
 		for(Log log : logContents) {
 			String logContent = log.getFullLogString();
-			if(logContent.indexOf("ORA") >= 0) {
+			if(logContent.indexOf("ORA-") >= 0) {
 				isError = true;
 				errorLogContents.add(log);				
 			}
@@ -160,11 +160,28 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	
 	@Override
 	public void printOSDiskUsage(String command) {
-		String result = serverCheckRepository.checkOSDiskUsage(command);
-		System.out.println("\t▶ OS Disk Usage");
-		List<Map> rows = osDiskCheckResultToMap(result);
-		TextTable tt = new TextTable(new MapBasedTableModel(rows));
-		tt.printTable(System.out, 8);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		
+		boolean isError = false;
+		for(OSDiskUsage data : result) {
+			if(data.getUsedPercent() >= 80) {
+				isError = true;
+			//	data.setUsedPercentString(ConsoleUtils.FONT_RED + data.getUsedPercentString() + ConsoleUtils.RESET);
+			} 
+		}
+		
+		if(isError == true) {
+			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ OS Disk Usage : 80% 초과!! 확인 필요" + ConsoleUtils.RESET);
+			try {
+				TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+				tt.printTable(System.out, 8);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("\t▶ OS Disk Usage : SUCCESS!");
+		}
+		
 		System.out.println();
 	}
 	
@@ -172,8 +189,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	public void writeExcelOSDiskUsage(String command) throws Exception {
 		if(!"STS".equals(serverCheckRepository.getServerName())) return;
 		
-		String result = serverCheckRepository.checkOSDiskUsage(command);
-		List<Map> rows = osDiskCheckResultToMap(result);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
 		
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -196,9 +212,9 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
 
-		for(Map data : rows) {
-			String mountedOn = (String) data.get("Mounted on");
-			String usePercent = (String) data.get("Use%");
+		for(OSDiskUsage data : result) {
+			String mountedOn = data.getMountedOn();
+			String usePercent = data.getUsedPercentString();
 			if(!mountedOn.startsWith("/oradata")) continue;
 			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
 			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent);
@@ -207,30 +223,30 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 		workbook.close();
+		is.close();
 	}
 	
-	public List<Map> osDiskCheckResultToMap(String result) {
-		StringTokenizer st = new StringTokenizer(result);
-		List<String> header = Arrays.asList(new String[] {"Filesystem", "Size", "Used", "Avail", "Use%", "Mounted on"});
-		List<Map> rows = new ArrayList<>();
-		
-		boolean isHeader = true;
-		int index = 0;
+	@Override
+	public void writeCsvOSDiskUsage(String command) throws Exception {
+		String serverName = serverCheckRepository.getServerName();
 
-		Map<String, String> row = new HashMap<>();
-		while(st.hasMoreElements()) {
-			String next = st.nextToken();
-			if(!isHeader) {
-				row.put(header.get(index++), next);
-				if(index == 6) {
-					rows.add(row);
-					row = new HashMap<>();
-					index = 0;
-				}
-			}
-			if(next.equals("on")) isHeader = false;
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+
+		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\OSDiskUsage\\";
+		String fileName = serverName;
+		String extension = ".txt";
+		File file = new File(filePath + fileName + extension);
+		
+		boolean isFileExist = file.exists();
+		
+		if(isFileExist == false) {
+			file.createNewFile();
 		}
 		
-		return rows;
+		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
+		bw.append(new Date().toString()).append("\n");
+		bw.append(OSDiskUsage.toCsvString(result)).append("\n");
+		bw.flush();
+		bw.close();
 	}
 }

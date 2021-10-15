@@ -13,6 +13,7 @@ public class DBCheckBatch {
 		try {
 			this.dbCheckUsecase.printArchiveUsageCheck();
 			this.dbCheckUsecase.writeExcelArchiveUsageCheck();
+			this.dbCheckUsecase.writeCsvArchiveUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -21,6 +22,7 @@ public class DBCheckBatch {
 	public void startBatchTableSpaceUsageCheck() {
 		try {
 			this.dbCheckUsecase.printTableSpaceCheck();
+			this.dbCheckUsecase.writeCsvTableSpaceUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
@@ -29,6 +31,7 @@ public class DBCheckBatch {
 	public void startBatchASMDiskUsageCheck() {
 		try {
 			this.dbCheckUsecase.printASMDiskCheck();
+			this.dbCheckUsecase.writeCsvASMDiskUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
