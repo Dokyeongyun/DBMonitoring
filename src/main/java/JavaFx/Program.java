@@ -8,10 +8,9 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 public class Program extends Application {
-
+	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
 		System.setProperty("prism.lcdtext", "false"); // 救萍举府绢教 (Font 何靛反霸)
 		
 		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothic.ttf"), 10);
@@ -20,10 +19,10 @@ public class Program extends Application {
 		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicUltraLight.ttf"), 10);
 
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("resources/fxml/Main.fxml"));
+		loader.setLocation(getClass().getResource("resources/fxml/Home.fxml"));
+		AnchorPane rootPane = loader.load();
 		
-		AnchorPane mainLayoutAnchorPane = (AnchorPane) loader.load();
-		Scene scene = new Scene(mainLayoutAnchorPane);
+		Scene scene = new Scene(rootPane);
 		scene.getStylesheets().add(getClass().getResource("resources/css/javaFx.css").toExternalForm());
 		
 		primaryStage.setTitle("DB Monitoring Window Program");

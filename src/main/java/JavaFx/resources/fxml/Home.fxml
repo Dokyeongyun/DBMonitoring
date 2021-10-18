@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #2a2e37;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RootController">
+   <children>
+      <AnchorPane>
+         <children>
+            <AnchorPane prefHeight="600.0" prefWidth="350.0" style="-fx-background-color: #1c1f25; -fx-border-color: #fbf2a2;">
+               <children>
+                  <Text layoutX="43.0" layoutY="132.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white; -fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 50px; -fx-font-weight: bold;" text="DB" textAlignment="CENTER" wrappingWidth="84.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#fbf2a2" height="5.0" layoutX="47.0" layoutY="222.0" stroke="BLACK" strokeType="INSIDE" width="200.0" />
+                  <Text layoutX="74.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white; -fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 40px; -fx-font-weight: bold;" text="M" textAlignment="CENTER" wrappingWidth="52.70941162109375" />
+                  <Text layoutX="110.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white; -fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 20px; -fx-font-weight: bold;" text="onitoring" textAlignment="CENTER" wrappingWidth="100.0" />
+                  <Text layoutX="84.0" layoutY="206.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white; -fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 40px; -fx-font-weight: bold;" text="S" textAlignment="CENTER" wrappingWidth="52.70941162109375" />
+                  <Text layoutX="116.0" layoutY="204.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: white; -fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 20px; -fx-font-weight: bold;" text="ystem" textAlignment="CENTER" wrappingWidth="64.79998779296875" />
+                  <ImageView fitHeight="83.0" fitWidth="84.0" layoutX="127.0" layoutY="63.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/stats.png" />
+                     </image>
+                  </ImageView>
+                  <Text fill="#dcdcdc" layoutX="211.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: right;" text="Developed By DKY" wrappingWidth="114.3094482421875" />
+                  <Text fill="#dcdcdc" layoutX="24.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: left;" text="ver 0.0.1" wrappingWidth="64.79998779296875" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="334.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+                  <JFXButton fx:id="startBtn" buttonType="RAISED" graphicTextGap="2.0" layoutX="119.0" layoutY="487.0" onAction="#goSettingStage" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #fbf2a2; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-font-family: NanumGothic; -fx-text-fill: white; -fx-font-weight: bold;" text="시작하기">
+                     <font>
+                        <Font name="Yu Gothic Bold" size="10.0" />
+                     </font>
+                  </JFXButton>
+                  <Text fill="#dcdcdc" layoutX="52.0" layoutY="363.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: left;" wrappingWidth="64.79998779296875" />
+                  <ImageView fitHeight="30.0" fitWidth="65.0" layoutX="76.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+                     <image>
+                        <Image url="@../image/java_language_icon.png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="30.0" fitWidth="65.0" layoutX="196.0" layoutY="418.0" pickOnBounds="true" preserveRatio="true" smooth="false">
+                     <image>
+                        <Image url="@../image/javafx_icon.png" />
+                     </image>
+                     <viewport>
+                        <Rectangle2D />
+                     </viewport>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <AnchorPane layoutX="350.0" prefHeight="600.0" prefWidth="450.0">
+               <children>
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="164.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="Archive Usage" wrappingWidth="214.39996337890625" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="204.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="208.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="TableSpace Usage" wrappingWidth="214.39996337890625" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="244.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="248.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="ASM Disk Usage" wrappingWidth="214.39996337890625" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="284.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="OS Disk Usage" wrappingWidth="214.39996337890625" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="324.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="328.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="Alert Log" wrappingWidth="214.39996337890625" />
+                  <Text fill="#dcdcdc" layoutX="32.0" layoutY="62.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 15px; -fx-font-weight: bold;" text="Using This Application," wrappingWidth="159.909423828125" />
+                  <Text fill="#dcdcdc" layoutX="46.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 15px; -fx-font-weight: bold;" text="You" wrappingWidth="33.6249885559082" />
+                  <Text fill="#dcdcdc" layoutX="122.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 15px; -fx-font-weight: bold;" text="Monitoring Below Things." wrappingWidth="229.50939941406273" />
+                  <Text fill="#fbf2a2" layoutX="80.0" layoutY="97.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 20px; -fx-font-weight: bold;" text="Can" wrappingWidth="40.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="118.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="370.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="461.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="465.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="Writing CSV File about Monitoring Result" wrappingWidth="270.39996337890625" />
+                  <Text fill="#dcdcdc" layoutX="32.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 15px; -fx-font-weight: bold;" text="And" wrappingWidth="33.6249885559082" />
+                  <Circle fill="#fbf2a2" layoutX="35.0" layoutY="501.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="45.0" layoutY="505.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="Creating and Writing DB Management File Format" wrappingWidth="321.60003662109375" />
+                  <Circle fill="#fbf2a2" layoutX="36.0" layoutY="541.0" radius="4.0" stroke="BLACK" strokeType="INSIDE" />
+                  <Text fill="GAINSBORO" layoutX="46.0" layoutY="545.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-line-spacing: -1; -fx-font-size: 13px; -fx-font-weight: bold;" text="Drawing Graph about Monitoring Result" wrappingWidth="270.39996337890625" />
+                  <Text fill="#fbf2a2" layoutX="67.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 20px; -fx-font-weight: bold;" text="Also," wrappingWidth="48.82500076293945" />
+                  <Text fill="#dcdcdc" layoutX="113.0" layoutY="407.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 15px; -fx-font-weight: bold;" text="Can do Below Tasks." wrappingWidth="172.0250129699707" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="428.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="33.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

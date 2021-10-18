@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.image.Image?>
@@ -12,23 +13,24 @@
 
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RootController">
    <children>
-      <StackPane layoutX="250.0" prefHeight="600.0" prefWidth="550.0" style="-fx-background-color: #2a2e37;" />
+      <StackPane layoutX="250.0" prefHeight="600.0" prefWidth="550.0" style="-fx-background-color: #2a2e37;">
+         <children>
+            <JFXButton fx:id="homeBtn" onAction="#goHomeStage" prefHeight="51.0" prefWidth="118.0" style="-fx-background-color: black; -fx-text-fill: white;" text="Go Home" />
+         </children>
+      </StackPane>
       <VBox prefHeight="600.0" prefWidth="250.0" style="-fx-background-color: #1c1f25; -fx-border-color: #fbf2a2;">
          <children>
-            <HBox prefHeight="35.0" prefWidth="249.0">
+            <HBox prefHeight="35.0" prefWidth="250.0">
                <children>
-                  <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#goHomeStage" prefHeight="24.0" prefWidth="30.0" style="-fx-background-color: #ffffff00;">
-	                  <graphic> 
-		                  <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true"> 
-			                  <image> 
-			                  	<Image url="@../image/home_icon.png" /> 
-			                  </image> 
-		                  </ImageView> 
-	                  </graphic>
+                  <ImageView fx:id="homeBtn" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../image/home_icon.png" />
+                     </image>
                      <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" top="5.0" />
+                        <Insets bottom="10.0" left="10.0" top="10.0" />
                      </HBox.margin>
-                  </Button>
+                  </ImageView>
+                  <Button mnemonicParsing="false" text="Button" />
                </children>
             </HBox>
             <Rectangle arcHeight="2.0" arcWidth="2.0" fill="#fbf2a2" height="3.0" stroke="BLACK" strokeType="INSIDE" width="250.0" />
