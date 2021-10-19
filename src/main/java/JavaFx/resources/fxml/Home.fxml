@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #2a2e37;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RootController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: #2a2e37;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.HomeController">
    <children>
       <AnchorPane>
          <children>
@@ -30,7 +30,7 @@
                   <Text fill="#dcdcdc" layoutX="211.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: right;" text="Developed By DKY" wrappingWidth="114.3094482421875" />
                   <Text fill="#dcdcdc" layoutX="24.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-family: NanumGothic; -fx-font-size: 13px; -fx-font-weight: bold; -fx-text-alignment: left;" text="ver 0.0.1" wrappingWidth="64.79998779296875" />
                   <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#eae5c2" height="3.0" layoutX="24.0" layoutY="334.0" stroke="BLACK" strokeType="INSIDE" width="300.0" />
-                  <JFXButton fx:id="startBtn" buttonType="RAISED" graphicTextGap="2.0" layoutX="119.0" layoutY="487.0" onAction="#goSettingStage" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #fbf2a2; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-font-family: NanumGothic; -fx-text-fill: white; -fx-font-weight: bold;" text="시작하기">
+                  <JFXButton fx:id="startBtn" buttonType="RAISED" graphicTextGap="2.0" layoutX="119.0" layoutY="487.0" onAction="#goMainStage" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #fbf2a2; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-font-family: NanumGothic; -fx-text-fill: white; -fx-font-weight: bold;" text="시작하기">
                      <font>
                         <Font name="Yu Gothic Bold" size="10.0" />
                      </font>

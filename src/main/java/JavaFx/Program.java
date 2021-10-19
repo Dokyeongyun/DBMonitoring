@@ -18,11 +18,11 @@ public class Program extends Application {
 		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicLight.ttf"), 10);
 		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicUltraLight.ttf"), 10);
 
-		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("resources/fxml/Home.fxml"));
-		AnchorPane rootPane = loader.load();
+		FXMLLoader homeloader = new FXMLLoader();
+		homeloader.setLocation(getClass().getResource("resources/fxml/Home.fxml"));
+		AnchorPane homePane = homeloader.load();
 		
-		Scene scene = new Scene(rootPane);
+		Scene scene = new Scene(homePane);
 		scene.getStylesheets().add(getClass().getResource("resources/css/javaFx.css").toExternalForm());
 		
 		primaryStage.setTitle("DB Monitoring Window Program");

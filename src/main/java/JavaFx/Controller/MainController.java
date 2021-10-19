@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXToggleButton;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,23 +15,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class RootController implements Initializable {
+public class MainController implements Initializable {
 	
-	@FXML
-	JFXButton startBtn;
-	
-	@FXML
-	Button homeBtn;
+	@FXML Button homeBtn;
+	@FXML JFXToggleButton archiveUsageTBtn;
+	@FXML JFXToggleButton tableSpaceUsageTBtn;
+	@FXML JFXToggleButton asmDiskUsageTBtn;
+	@FXML JFXToggleButton osDiskUsageTBtn;
+	@FXML JFXToggleButton alertLogTBtn;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	}
-	
-	public void goSettingStage(ActionEvent e) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main.fxml"));
-        Scene scene = new Scene(root);
-        Stage primaryStage = (Stage) startBtn.getScene().getWindow();
-        primaryStage.setScene(scene);
+		setToggleDefaultValue();
 	}
 	
 	public void goHomeStage(ActionEvent e) throws IOException {
@@ -39,5 +34,13 @@ public class RootController implements Initializable {
         Scene scene = new Scene(root);
         Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
         primaryStage.setScene(scene);
+	}
+	
+	public void setToggleDefaultValue() {
+		archiveUsageTBtn.setSelected(true);
+		tableSpaceUsageTBtn.setSelected(true);
+		asmDiskUsageTBtn.setSelected(true);
+		osDiskUsageTBtn.setSelected(true);
+		alertLogTBtn.setSelected(true);
 	}
 }
