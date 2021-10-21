@@ -15,13 +15,13 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.MainController">
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.MainController">
    <children>
       <StackPane layoutX="250.0" prefHeight="600.0" prefWidth="550.0" style="-fx-background-color: #2a2e37;">
          <children>
             <Pane prefHeight="600.0" prefWidth="550.0">
                <children>
-                  <VBox layoutX="25.0" layoutY="119.0" prefWidth="500.0" style="-fx-border-color: white;">
+                  <VBox fx:id="settingsContentVBox" layoutX="25.0" layoutY="23.0" prefWidth="500.0" style="-fx-border-color: white;">
                      <children>
                         <Label prefHeight="42.0" prefWidth="550.0" style="-fx-font-weight: bold; -fx-font-family: NanumGothic; -fx-text-fill: white;" text=" * 모니터링 여부를 설정하세요.">
                            <VBox.margin>
@@ -29,108 +29,156 @@
                            </VBox.margin> 
                            <padding>
                               <Insets left="30.0" />
-                           </padding>
+                           </padding> 
                         </Label>
                         <Rectangle arcHeight="2.0" arcWidth="2.0" fill="WHITE" height="3.0" stroke="BLACK" strokeType="INSIDE" width="440.0">
                            <VBox.margin>
                               <Insets left="30.0" />
                            </VBox.margin>
                         </Rectangle>
-                        <HBox prefHeight="40.0" prefWidth="550.0">
-                           <children>
-                              <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="Archive Usage" textFill="#e7e5e5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXToggleButton fx:id="archiveUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
-                           </children>
-                           <padding>
-                              <Insets left="40.0" right="20.0" />
-                           </padding>
+                        <VBox fx:id="archiveUsageVBox" prefWidth="550.0">
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
-                        <HBox prefHeight="40.0" prefWidth="550.0">
                            <children>
-                              <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="TableSpace Usage" textFill="#e7e5e5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXToggleButton fx:id="tableSpaceUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                              <HBox prefHeight="40.0" prefWidth="550.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="Archive Usage" textFill="#e7e5e5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXToggleButton fx:id="archiveUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox fx:id="archiveUsageBelowHBox" prefHeight="20.0" prefWidth="550.0" style="-fx-border-color: white; -fx-border-width: 0;">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" />
+                                 </padding>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets left="40.0" right="20.0" />
-                           </padding>
+                        </VBox>
+                        <VBox>
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
-                        <HBox prefHeight="40.0" prefWidth="550.0">
                            <children>
-                              <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="ASM Disk Usage" textFill="#e7e5e5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXToggleButton fx:id="asmDiskUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                              <HBox prefHeight="40.0" prefWidth="550.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="TableSpace Usage" textFill="#e7e5e5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXToggleButton fx:id="tableSpaceUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox fx:id="tableSpaceUsageBelowHBox" prefHeight="20.0" prefWidth="550.0" style="-fx-border-color: white; -fx-border-width: 0;">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" />
+                                 </padding>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets left="40.0" right="20.0" />
-                           </padding>
+                        </VBox>
+                        <VBox>
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
-                        <HBox prefHeight="40.0" prefWidth="550.0">
                            <children>
-                              <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="OS Disk Usage" textFill="#e7e5e5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXToggleButton fx:id="osDiskUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                              <HBox prefHeight="40.0" prefWidth="550.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="ASM Disk Usage" textFill="#e7e5e5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXToggleButton fx:id="asmDiskUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox fx:id="asmDiskUsageBelowHBox" prefHeight="20.0" prefWidth="550.0" style="-fx-border-color: white; -fx-border-width: 0;">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" />
+                                 </padding>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets left="40.0" right="20.0" />
-                           </padding>
+                        </VBox>
+                        <VBox>
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
-                        <HBox prefHeight="40.0" prefWidth="550.0">
                            <children>
-                              <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="Alert Log" textFill="#e7e5e5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets bottom="5.0" right="10.0" />
-                                 </HBox.margin>
-                              </Label>
-                              <JFXToggleButton fx:id="alertLogTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                              <HBox prefHeight="40.0" prefWidth="550.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="OS Disk Usage" textFill="#e7e5e5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXToggleButton fx:id="osDiskUsageTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox fx:id="osDiskUsageBelowHBox" prefHeight="20.0" prefWidth="550.0" style="-fx-border-color: white; -fx-border-width: 0;">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" />
+                                 </padding>
+                              </HBox>
                            </children>
-                           <padding>
-                              <Insets left="40.0" right="20.0" />
-                           </padding>
+                        </VBox>
+                        <VBox>
                            <VBox.margin>
                               <Insets bottom="10.0" top="10.0" />
                            </VBox.margin>
-                        </HBox>
+                           <children>
+                              <HBox prefHeight="40.0" prefWidth="550.0">
+                                 <children>
+                                    <Label prefHeight="40.0" prefWidth="150.0" style="-fx-font-family: NanumGothic; -fx-font-weight: bold;" text="Alert Log" textFill="#e7e5e5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <HBox.margin>
+                                          <Insets bottom="5.0" right="10.0" />
+                                       </HBox.margin>
+                                    </Label>
+                                    <JFXToggleButton fx:id="alertLogTBtn" prefHeight="40.0" prefWidth="60.0" size="6.0" text="ToggleButton" />
+                                 </children>
+                                 <padding>
+                                    <Insets left="40.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                              <HBox fx:id="alertLogBelowHBox" prefHeight="20.0" prefWidth="550.0" style="-fx-border-color: white; -fx-border-width: 0;">
+                                 <padding>
+                                    <Insets left="20.0" right="20.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                   <JFXButton layoutX="410.0" layoutY="522.0" prefHeight="40.0" prefWidth="115.0" ripplerFill="WHITE" style="-fx-border-color: white; -fx-border-radius: 20px; -fx-font-family: NanumGothic; -fx-font-weight: bold; -fx-text-fill: white;" text="시작하기" textAlignment="CENTER" />
