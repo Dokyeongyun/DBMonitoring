@@ -12,32 +12,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class RootController implements Initializable {
+public class HomeController implements Initializable {
 	
-	@FXML
-	JFXButton startBtn;
-	
-	@FXML
-	Button homeBtn;
+	@FXML JFXButton startBtn;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 	}
 	
-	public void goSettingStage(ActionEvent e) throws IOException {
+	public void goMainStage(ActionEvent e) throws IOException {
 		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main.fxml"));
         Scene scene = new Scene(root);
         Stage primaryStage = (Stage) startBtn.getScene().getWindow();
-        primaryStage.setScene(scene);
-	}
-	
-	public void goHomeStage(ActionEvent e) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Home.fxml"));
-        Scene scene = new Scene(root);
-        Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
         primaryStage.setScene(scene);
 	}
 }

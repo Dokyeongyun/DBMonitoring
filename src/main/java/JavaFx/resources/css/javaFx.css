@@ -1,3 +1,8 @@
+.whiteLabelText{
+    -fx-font-family: "NanumGothic";
+    -fx-text-fill: WHITE;
+}
+
 .button-raised{
     -fx-padding: 0.7em 0.57em;
     -fx-font-size: 14px;
