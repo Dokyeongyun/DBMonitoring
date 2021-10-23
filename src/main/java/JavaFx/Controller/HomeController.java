@@ -23,7 +23,7 @@ public class HomeController implements Initializable {
 	}
 	
 	public void goMainStage(ActionEvent e) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main_new.fxml"));
         Scene scene = new Scene(root);
         Stage primaryStage = (Stage) startBtn.getScene().getWindow();
         primaryStage.setScene(scene);
