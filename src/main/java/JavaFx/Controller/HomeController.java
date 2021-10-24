@@ -12,10 +12,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class HomeController implements Initializable {
 	
+	@FXML AnchorPane rootAnchorPane;
 	@FXML JFXButton startBtn;
 	
 	@Override
@@ -23,8 +25,9 @@ public class HomeController implements Initializable {
 	}
 	
 	public void goMainStage(ActionEvent e) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main.fxml"));
-        Scene scene = new Scene(root);
+		Scene originalScene = rootAnchorPane.getScene();
+		Parent root = FXMLLoader.load(getClass().getResource("../resources/fxml/Main_new.fxml"));
+        Scene scene = new Scene(root, originalScene.getWidth(), originalScene.getHeight());
         Stage primaryStage = (Stage) startBtn.getScene().getWindow();
         primaryStage.setScene(scene);
 	}
