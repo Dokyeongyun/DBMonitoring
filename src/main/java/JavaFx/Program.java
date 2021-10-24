@@ -28,7 +28,7 @@ public class Program extends Application {
 		homeloader.setLocation(getClass().getResource("resources/fxml/Home.fxml"));
 		AnchorPane homePane = homeloader.load();
 		
-		Scene scene = new Scene(homePane);
+		Scene scene = new Scene(homePane, 800, 600);
 		scene.getStylesheets().add(getClass().getResource("resources/css/javaFx.css").toExternalForm());
 		
 		primaryStage.setTitle("DB Monitoring Window Program");

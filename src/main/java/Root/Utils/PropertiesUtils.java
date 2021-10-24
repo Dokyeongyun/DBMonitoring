@@ -1,6 +1,8 @@
 package Root.Utils;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +13,7 @@ import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
@@ -18,6 +21,7 @@ import Root.Model.JschConnectionInfo;
 public class PropertiesUtils {
 	
 	public static PropertiesConfiguration propConfig = null;
+	public static String configurationPath;
 
 	public static void loadAppConfiguration(String path) throws Exception{
 		File file = new File(path);
@@ -32,6 +36,7 @@ public class PropertiesUtils {
 		builder.configure(propertyParameters);
 		
 		propConfig = builder.getConfiguration();
+		configurationPath = path;
 	}
 	
 	/**
@@ -88,4 +93,13 @@ public class PropertiesUtils {
 		return new JdbcConnectionInfo(dbName.toUpperCase(), jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidataion, erpConnections);
 	}
 
+	public static void save() {
+		try {
+			propConfig.write(new FileWriter(configurationPath, false));
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
