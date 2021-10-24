@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 
+import Root.Application.Application;
 import Root.Utils.PropertiesUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -47,10 +48,15 @@ public class MainNewController implements Initializable {
 	
 	// Right SplitPane Region
 	@FXML StackPane rightStackPane;
+	
+	// Setting Menu Region
 	@FXML ScrollPane settingScrollPane;
 	@FXML AnchorPane settingMainContentAnchorPane;
 	@FXML VBox monitoringElementsVBox;
 	@FXML JFXButton settingSaveBtn;
+	
+	// Run Menu Region
+	@FXML Button monitoringRunBtn;
 
 	// TODO 추후, Properties 파일에서 읽어오기
 	String[] dbMonitorings = new String[] {"Archive Usage", "TableSpace Usage", "ASM Disk Usage"};
@@ -64,6 +70,10 @@ public class MainNewController implements Initializable {
 		
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+	}
+	
+	public void runMonitoring(ActionEvent e) {
+		Application.main(new String[] {});
 	}
 	
 	public void goSettingMenuPane(ActionEvent e) {

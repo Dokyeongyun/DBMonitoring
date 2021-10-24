@@ -200,7 +200,22 @@
                <children>
                   <BorderPane fx:id="menu3MenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
                   <BorderPane fx:id="menu2MenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
-                  <BorderPane fx:id="runMenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
+                  <BorderPane fx:id="runMenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
+                     <center>
+                        <Button fx:id="monitoringRunBtn" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/play_icon_green.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </center>
+                  </BorderPane>
                   <BorderPane fx:id="settingMenuBorderPane" style="-fx-background-color: white;">
                      <center>
                         <AnchorPane minWidth="550.0">
