@@ -171,11 +171,11 @@
          <children>
             <StackPane minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <AnchorPane>
+                  <AnchorPane minHeight="600.0" minWidth="550.0">
                      <children>
-                        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <VBox minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+                              <HBox alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" minWidth="550.0">
                                  <children>
                                     <Button graphicTextGap="0.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;">
                                        <graphic>
@@ -208,11 +208,11 @@
                                     <Insets top="10.0" />
                                  </padding>
                               </HBox>
-                              <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" style="-fx-border-color: white;">
+                              <ScrollPane fx:id="settingScrollPane" fitToWidth="true" minWidth="550.0" style="-fx-border-color: white;">
                                 <content>
-                                  <AnchorPane fx:id="settingMainContentAnchorPane" style="-fx-border-color: white;">
+                                  <AnchorPane fx:id="settingMainContentAnchorPane" minWidth="550.0" style="-fx-border-color: white;">
                                        <children>
-                                          <VBox fx:id="monitoringElementsVBox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <VBox fx:id="monitoringElementsVBox" maxHeight="1.7976931348623157E308" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <padding>
                                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                              </padding>
