@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 
 import Root.Utils.PropertiesUtils;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,17 +31,26 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class MainNewController implements Initializable {
 	
-	@FXML Button homeBtn;
 	@FXML SplitPane rootSplitPane;
+	
+	// Left SplitPane Region
+	@FXML Button homeBtn;
+	@FXML Button settingMenuBtn;
+	@FXML Button runMenuBtn;
+	
+	// Right SplitPane Region
+	@FXML StackPane rightStackPane;
 	@FXML ScrollPane settingScrollPane;
 	@FXML AnchorPane settingMainContentAnchorPane;
 	@FXML VBox monitoringElementsVBox;
+	@FXML JFXButton settingSaveBtn;
 
 	// TODO 추후, Properties 파일에서 읽어오기
 	String[] dbMonitorings = new String[] {"Archive Usage", "TableSpace Usage", "ASM Disk Usage"};
@@ -53,6 +64,61 @@ public class MainNewController implements Initializable {
 		
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+	}
+	
+	public void goSettingMenuPane(ActionEvent e) {
+		changeStackPaneFrontMenu("settingMenuBorderPane");
+	}
+	
+	public void goRunMenuPane(ActionEvent e) {
+		changeStackPaneFrontMenu("runMenuBorderPane");
+	}
+	
+	public void goMenu2MenuPane(ActionEvent e) {
+		changeStackPaneFrontMenu("menu2MenuBorderPane");
+	}
+	
+	public void goMenu3MenuPane(ActionEvent e) {
+		changeStackPaneFrontMenu("menu3MenuBorderPane");
+	}
+	
+	/**
+	 * 우측 StackPane의 top layer를 변경한다.
+	 * @param containerPaneName
+	 */
+	private void changeStackPaneFrontMenu(String containerPaneName) {
+		ObservableList<Node> childs = rightStackPane.getChildren();
+		for(Node n : childs) {
+			if(n.getId().equals(containerPaneName)) {
+				n.toFront();
+				break;
+			}
+		}
+	}
+
+	/**
+	 * 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
+	 * @param e
+	 */
+	public void saveSettings(ActionEvent e) {
+		
+		// TODO 설정파일을 저장할 경로 및 파일몀을 지정할 수 있도록 UI 생성하기
+		
+		try {
+			File settingFile = new File(PropertiesUtils.configurationPath);
+			if(settingFile.exists() == false) {
+				settingFile.createNewFile();
+			}
+	
+			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
+				JFXToggleButton thisToggle = (JFXToggleButton) n;
+				PropertiesUtils.propConfig.setProperty(thisToggle.getId(), thisToggle.isSelected());
+			}
+			PropertiesUtils.save();
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 	/**
@@ -78,6 +144,8 @@ public class MainNewController implements Initializable {
 
 
 		for(String mName : monitoringElements) {
+			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
+			
 			// Header
 			VBox eachWrapVBox = new VBox();
 			eachWrapVBox.setFillWidth(true);
@@ -108,10 +176,10 @@ public class MainNewController implements Initializable {
 			headerLabel.setGraphicTextGap(10);
 			
 			JFXToggleButton headerToggleBtn = new JFXToggleButton();
-			headerToggleBtn.setId(mName+" ToggleBtn");
+			headerToggleBtn.setId(headerToggleId);
 			headerToggleBtn.setSize(6);
 			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(true);
+			headerToggleBtn.setSelected(PropertiesUtils.propConfig.containsKey(headerToggleId) == false ? true : PropertiesUtils.propConfig.getBoolean(headerToggleId));
 			headerToggleBtn.setOnAction((ActionEvent e) -> {
 				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 				for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
@@ -127,6 +195,7 @@ public class MainNewController implements Initializable {
 			contentFlowPane.minWidthProperty().bind(rootVBox.minWidthProperty());
 			
 			for(String s : elementContents) {
+				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
 				HBox contentHBox = new HBox();
 				Label contentLabel = new Label();
 				contentLabel.setText(s);
@@ -138,13 +207,13 @@ public class MainNewController implements Initializable {
 				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 12px;");
 				
 				JFXToggleButton contentToggleBtn = new JFXToggleButton();
-				contentToggleBtn.setId(mName+" "+s+" ToggleBtn");
+				contentToggleBtn.setId(contentToggleId);
 				contentToggleBtn.setSize(4);
 				contentToggleBtn.setMinWidth(40);
 				contentToggleBtn.setMaxWidth(40);
 				contentToggleBtn.setPrefHeight(40);
 				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(true);
+				contentToggleBtn.setSelected(PropertiesUtils.propConfig.containsKey(contentToggleId) == false ? true : PropertiesUtils.propConfig.getBoolean(contentToggleId));
 				contentToggleBtn.setOnAction((ActionEvent e) -> {
 					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 					
@@ -163,7 +232,7 @@ public class MainNewController implements Initializable {
 					if(isSelected == true) {
 						for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if(thisToggle.getId().equals(mName+" ToggleBtn")) { // 부모 Toggle
+							if(thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
 								if(thisToggle.isSelected() == false) {
 									thisToggle.setSelected(true);
 									break;
@@ -175,7 +244,7 @@ public class MainNewController implements Initializable {
 						boolean isParentSelected = true;
 						for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if(thisToggle.getId().equals(mName+" ToggleBtn") == false) { // 자식 Toggle
+							if(thisToggle.getId().equals(headerToggleId) == false) { // 자식 Toggle
 								if(thisToggle.isSelected() == true) {
 									isNotAllSelected = true;
 									break;
@@ -191,7 +260,7 @@ public class MainNewController implements Initializable {
 						if(isNotAllSelected == false && isParentSelected == true) {
 							for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 								JFXToggleButton thisToggle = (JFXToggleButton) n;
-								if(thisToggle.getId().equals(mName+" ToggleBtn")) { // 부모 Toggle
+								if(thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
 									thisToggle.setSelected(false);
 									break;
 								} 

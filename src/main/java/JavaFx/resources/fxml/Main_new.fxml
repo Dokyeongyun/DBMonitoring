@@ -15,6 +15,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -61,7 +62,7 @@
                                        <children>
                                           <HBox alignment="CENTER_LEFT" minHeight="40.0">
                                              <children>
-                                                <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="설정">
+                                                <Button fx:id="settingMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goSettingMenuPane" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="설정">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -88,7 +89,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
                                              <children>
-                                                <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴1">
+                                                <Button fx:id="runMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goRunMenuPane" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="실행">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -115,7 +116,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
                                              <children>
-                                                <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴2">
+                                                <Button fx:id="menu2MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu2MenuPane" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴2">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -142,7 +143,7 @@
                                           </HBox>
                                           <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" minHeight="40.0">
                                              <children>
-                                                <Button graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴3">
+                                                <Button fx:id="menu3MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu3MenuPane" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴3">
                                                    <graphic>
                                                       <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                          <image>
@@ -195,72 +196,42 @@
       </AnchorPane>
     <AnchorPane minHeight="600.0" minWidth="550.0" style="-fx-background-color: white;">
          <children>
-            <StackPane minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <StackPane fx:id="rightStackPane" minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <AnchorPane minHeight="600.0" minWidth="550.0">
-                     <children>
-                        <VBox minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <BorderPane fx:id="menu3MenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
+                  <BorderPane fx:id="menu2MenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
+                  <BorderPane fx:id="runMenuBorderPane" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" />
+                  <BorderPane fx:id="settingMenuBorderPane" style="-fx-background-color: white;">
+                     <center>
+                        <AnchorPane minWidth="550.0">
                            <children>
-                              <HBox alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" minWidth="550.0">
+                              <VBox minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
-                                    <Button graphicTextGap="0.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;">
-                                       <graphic>
-                                          <ImageView fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../image/hamburger_menu_icon.png" />
-                                             </image>
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                          </ImageView>
-                                       </graphic>
-                                       <cursor>
-                                          <Cursor fx:constant="HAND" />
-                                       </cursor>
-                                    </Button>
-                                    <Label graphicTextGap="10.0" prefHeight="40.0" stylesheets="@../css/javaFx.css" text="설정">
-                                       <graphic>
-                                          <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
-                                             <image>
-                                                <Image url="@../image/setting_icon.png" />
-                                             </image>
-                                          </ImageView>
-                                       </graphic>
-                                       <styleClass>
-                                          <String fx:value="basic-font" />
-                                          <String fx:value="bold" />
-                                          <String fx:value="font-black" />
-                                       </styleClass>
-                                    </Label>
+                                    <ScrollPane fx:id="settingScrollPane" fitToWidth="true" hbarPolicy="NEVER" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;">
+                                      <content>
+                                        <AnchorPane fx:id="settingMainContentAnchorPane" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;">
+                                             <children>
+                                                <VBox fx:id="monitoringElementsVBox" maxHeight="1.7976931348623157E308" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <padding>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                   </padding>
+                                                </VBox>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
                                  </children>
-                                 <VBox.margin>
-                                    <Insets />
-                                 </VBox.margin>
-                                 <padding>
-                                    <Insets top="10.0" />
-                                 </padding>
-                              </HBox>
-                              <ScrollPane fx:id="settingScrollPane" fitToWidth="true" hbarPolicy="NEVER" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;">
-                                <content>
-                                  <AnchorPane fx:id="settingMainContentAnchorPane" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;">
-                                       <children>
-                                          <VBox fx:id="monitoringElementsVBox" maxHeight="1.7976931348623157E308" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <padding>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                             </padding>
-                                          </VBox>
-                                       </children>
-                                    </AnchorPane>
-                                </content>
-                              </ScrollPane>
+                              </VBox>
                            </children>
-                        </VBox>
-                        <VBox layoutY="600.7999877929688" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                        </AnchorPane>
+                     </center>
+                     <bottom>
+                        <VBox maxHeight="50.0" minHeight="50.0" BorderPane.alignment="CENTER">
                            <children>
                               <Separator prefWidth="200.0" />
                               <HBox alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0">
                                  <children>
-                                   <JFXButton buttonType="RAISED" graphicTextGap="2.0" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #2381E9; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-text-fill: #2381E9;" text="설정저장">
+                                   <JFXButton fx:id="settingSaveBtn" buttonType="RAISED" graphicTextGap="2.0" onAction="#saveSettings" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #2381E9; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-text-fill: #2381E9;" text="설정저장">
                                        <styleClass>
                                           <String fx:value="bold" />
                                           <String fx:value="basic-font" />
@@ -276,8 +247,46 @@
                               </HBox>
                            </children>
                         </VBox>
-                     </children>
-                  </AnchorPane>
+                     </bottom>
+                     <top>
+                        <HBox alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" minWidth="550.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Button graphicTextGap="0.0" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../image/hamburger_menu_icon.png" />
+                                       </image>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </ImageView>
+                                 </graphic>
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                              </Button>
+                              <Label graphicTextGap="10.0" prefHeight="40.0" stylesheets="@../css/javaFx.css" text="설정">
+                                 <graphic>
+                                    <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../image/setting_icon.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <styleClass>
+                                    <String fx:value="basic-font" />
+                                    <String fx:value="bold" />
+                                    <String fx:value="font-black" />
+                                 </styleClass>
+                              </Label>
+                           </children>
+                           <padding>
+                              <Insets top="10.0" />
+                           </padding>
+                        </HBox>
+                     </top>
+                  </BorderPane>
                </children>
             </StackPane>
          </children></AnchorPane>
