@@ -178,3 +178,51 @@ Wed Oct 20 14:51:24 KST 2021
 NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
 +RECO,2058,28%,83G,80G,300G,2021-10-20 14:51:23
 
+Wed Oct 20 16:53:36 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2089,28%,84G,80G,300G,2021-10-20 16:53:34
+
+Wed Oct 20 16:54:11 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2089,28%,84G,80G,300G,2021-10-20 16:54:09
+
+Wed Oct 20 17:44:19 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2101,28%,85G,80G,300G,2021-10-20 17:44:17
+
+Thu Oct 21 09:04:06 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2017,27%,81G,80G,300G,2021-10-21 09:04:08
+
+Thu Oct 21 09:23:31 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2020,27%,81G,80G,300G,2021-10-21 09:23:33
+
+Thu Oct 21 13:52:27 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2071,28%,83G,80G,300G,2021-10-21 13:52:28
+
+Thu Oct 21 18:31:23 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2135,28%,85G,80G,300G,2021-10-21 18:31:25
+
+Fri Oct 22 13:08:15 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2069,28%,83G,81G,300G,2021-10-22 13:08:16
+
+Sat Oct 23 14:23:04 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2083,28%,84G,81G,300G,2021-10-23 14:23:04
+
+Sun Oct 24 13:35:17 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2329,32%,95G,81G,300G,2021-10-24 13:35:17
+
+Mon Oct 25 09:17:31 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2023,28%,84G,83G,300G,2021-10-25 09:17:31
+
+Mon Oct 25 16:21:52 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,2105,29%,87G,83G,300G,2021-10-25 16:21:53
+
