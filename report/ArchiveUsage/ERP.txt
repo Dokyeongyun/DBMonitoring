@@ -178,3 +178,51 @@ Wed Oct 20 14:51:23 KST 2021
 NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
 +RECO,101,43%,426G,315G,1000G,2021-10-20 14:51:23
 
+Wed Oct 20 16:53:34 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,101,43%,426G,315G,1000G,2021-10-20 16:53:35
+
+Wed Oct 20 16:54:10 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,101,43%,426G,315G,1000G,2021-10-20 16:54:10
+
+Wed Oct 20 17:44:18 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,102,44%,440G,315G,1000G,2021-10-20 17:44:18
+
+Thu Oct 21 09:04:05 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,111,57%,569G,315G,1000G,2021-10-21 09:04:06
+
+Thu Oct 21 09:23:30 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,111,57%,569G,315G,1000G,2021-10-21 09:23:30
+
+Thu Oct 21 13:52:25 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,115,62%,620G,315G,1000G,2021-10-21 13:52:27
+
+Thu Oct 21 18:31:22 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,117,65%,649G,315G,1000G,2021-10-21 18:31:23
+
+Fri Oct 22 13:08:14 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,99,42%,423G,285G,1000G,2021-10-22 13:08:14
+
+Sat Oct 23 14:23:03 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,115,62%,624G,285G,1000G,2021-10-23 14:23:03
+
+Sun Oct 24 13:35:15 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,130,76%,756G,648G,1000G,2021-10-24 13:35:16
+
+Mon Oct 25 09:17:30 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,133,79%,791G,556G,1000G,2021-10-25 09:17:30
+
+Mon Oct 25 16:21:51 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,136,79%,789G,513G,1000G,2021-10-25 16:21:52
+

@@ -394,3 +394,93 @@ tmpfs,32G,241M,32G,1%,/dev/shm
 /dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
 /dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
 
+Wed Oct 20 16:53:58 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Wed Oct 20 17:44:25 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Thu Oct 21 09:06:34 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Thu Oct 21 09:24:10 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Thu Oct 21 13:52:56 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Fri Oct 22 13:08:37 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Sat Oct 23 14:23:13 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Sun Oct 24 13:35:23 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Mon Oct 25 09:17:35 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
+Mon Oct 25 16:21:56 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_0-lv_0,197G,26G,162G,14%,/
+tmpfs,32G,241M,32G,1%,/dev/shm
+/dev/sda2,283M,77M,191M,29%,/boot
+/dev/sda1,200M,264K,200M,1%,/boot/efi
+/dev/mapper/vg_0-lv_2,125G,6.0G,112G,6%,/media
+/dev/mapper/vg_0-lv_1,197G,49G,139G,26%,/u01
+
