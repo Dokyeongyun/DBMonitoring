@@ -41,8 +41,7 @@ public class Program extends Application {
 	}
 	
 	public void loadConfiguration () {
-		//String propertyFilePathName = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\config\\application.properties";
-		String propertiesFilePath = "C:\\Users\\aserv\\Documents\\Workspace\\DBMonitoring\\DBMonitoring\\config\\application.properties";
+		String propertiesFilePath = ".\\config\\application.properties";
 		try {
 			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
 		}catch(Exception e) {

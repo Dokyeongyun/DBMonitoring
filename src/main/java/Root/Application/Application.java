@@ -26,10 +26,10 @@ public class Application {
 
 	public static void main(String[] args) {
     	try {    		
-    		String propertyFilePathName = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\config\\application.properties";
+    		String propertiesFilePath = ".\\config\\application.properties";
     		
     		try {
-    			PropertiesUtils.loadAppConfiguration(propertyFilePathName);
+    			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
     		}catch(Exception e) {
     			System.out.println("configuration loading error\n"+e+"\n");
     			return;
