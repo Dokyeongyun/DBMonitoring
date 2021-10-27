@@ -35,6 +35,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class MainNewController implements Initializable {
@@ -54,6 +55,8 @@ public class MainNewController implements Initializable {
 	@FXML AnchorPane settingMainContentAnchorPane;
 	@FXML VBox monitoringElementsVBox;
 	@FXML JFXButton settingSaveBtn;
+	@FXML HBox fileChooserHBox;
+	@FXML Button fileChooserBtn;
 	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
@@ -68,8 +71,15 @@ public class MainNewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
+		// [모니터링 여부 설정] TAB 동적 요소 생성
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+	}
+	
+	public void openFileChooser(ActionEvent e) {
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
+		
 	}
 	
 	public void runMonitoring(ActionEvent e) {
