@@ -258,3 +258,7 @@ Fri Oct 29 11:44:12 KST 2021
 NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
 +RECO,62,52%,313G,312G,600G,2021-10-29 11:44:14
 
+Wed Nov 03 09:15:36 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,51%,305G,304G,600G,2021-11-03 09:15:36
+
