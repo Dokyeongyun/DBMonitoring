@@ -77,7 +77,14 @@
     -fx-background-color: -fx-text-box-border, white ;
     -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
     -fx-background-radius: 0 ;
+    -fx-font-family: NanumGothic;
 }
 .text-field:focused {
     -fx-background-color: -fx-focus-color, -fx-background ;
+}
+
+/* Label */
+.gridTitleLabel {
+	    -fx-font-family: NanumGothic;
+	    -fx-font-weight: bold;
 }

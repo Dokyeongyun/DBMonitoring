@@ -1,11 +1,11 @@
 package JavaFx.Controller;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -35,6 +36,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -318,8 +320,18 @@ public class MainNewController implements Initializable {
 	private void createConnInfoElements(StackPane rootStackPane) {
 		
 		AnchorPane dbConnInfoDetailAP = new AnchorPane();
+		dbConnInfoDetailAP.setStyle("-fx-background-color: white");
+
+		// GridPane Margin Setting
 		GridPane dbConnInfoDetailGP = new GridPane();
+		AnchorPane.setTopAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setRightAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setBottomAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setLeftAnchor(dbConnInfoDetailGP, 5.0);
+		dbConnInfoDetailGP.setPadding(new Insets(5, 10, 5, 10));
+		dbConnInfoDetailGP.setStyle("-fx-background-color: white;");
 		
+		// GridPane Col/Row Constraints Setting
 		ColumnConstraints col1 = new ColumnConstraints();
 		ColumnConstraints col2 = new ColumnConstraints();
 		ColumnConstraints col3 = new ColumnConstraints();
@@ -328,7 +340,63 @@ public class MainNewController implements Initializable {
 		col2.setPercentWidth(50);
 		col3.setPercentWidth(15);
 		col4.setPercentWidth(20);
-		
+		col2.setFillWidth(false);
+		RowConstraints row1 = new RowConstraints();
+		RowConstraints row2 = new RowConstraints();
+		RowConstraints row3 = new RowConstraints();
+		RowConstraints row4 = new RowConstraints();
+		RowConstraints row5 = new RowConstraints();
+		RowConstraints row6 = new RowConstraints();
+		row1.setPercentHeight(24);
+		row2.setPercentHeight(24);
+		row3.setPercentHeight(4);
+		row4.setPercentHeight(24);
+		row5.setPercentHeight(24);
+		row6.setPercentHeight(24);
 		dbConnInfoDetailGP.getColumnConstraints().addAll(col1, col2, col3, col4);
+		dbConnInfoDetailGP.getRowConstraints().addAll(row1, row2, row3, row4, row5, row6);
+
+		// Create Label
+		Label dbHostLabel = new Label("Host :");
+		Label dbSIDLabel = new Label("SID :");
+		Label dbUserLabel = new Label("User :");
+		Label dbPasswordLabel = new Label("Password :");
+		Label dbUrlLabel = new Label("URL :");
+		Label dbPortLabel = new Label("Port :");
+		Label dbDriverLabel = new Label("Driver :");
+		setLabelsStyleClass("gridTitleLabel", dbHostLabel, dbSIDLabel, dbUserLabel, dbPasswordLabel, dbUrlLabel, dbPortLabel, dbDriverLabel);
+
+		// Create TextField
+		TextField dbHostTextField = new TextField();
+		TextField dbSIDTextField = new TextField();
+		TextField dbUserTextField = new TextField();
+		TextField dbPasswordTextField = new TextField();
+		TextField dbUrlTextField = new TextField();
+		TextField dbPortTextField = new TextField();
+		TextField dbDriverTextField = new TextField();
+		dbUserTextField.setPrefWidth(240.0);
+		dbPasswordTextField.setPrefWidth(240.0);
+		dbUrlTextField.setPrefWidth(424.0);
+		
+		// GridPane Value Setting
+		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
+		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverTextField);
+		dbConnInfoDetailGP.addRow(3, dbUserLabel, dbUserTextField);
+		dbConnInfoDetailGP.addRow(4, dbPasswordLabel, dbPasswordTextField);
+		dbConnInfoDetailGP.addRow(5, dbUrlLabel, dbUrlTextField);
+
+		GridPane.setColumnSpan(dbUserTextField, 2);
+		GridPane.setColumnSpan(dbPasswordTextField, 2);
+		GridPane.setColumnSpan(dbUrlTextField, 3);
+		
+		dbConnInfoDetailAP.getChildren().add(dbConnInfoDetailGP);
+		rootStackPane.getChildren().add(dbConnInfoDetailAP);
+		dbConnInfoDetailAP.toFront();
+	}
+	
+	private void setLabelsStyleClass(String styleClass, Label...labels) {
+		for(Label l : labels) {
+			l.getStyleClass().add(styleClass);
+		}
 	}
 }

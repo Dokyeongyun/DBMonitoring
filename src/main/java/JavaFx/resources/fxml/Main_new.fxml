@@ -479,12 +479,18 @@
                                                                                                             <String fx:value="basic-font" />
                                                                                                             <String fx:value="bold" />
                                                                                                          </styleClass>
+                                                                                                         <padding>
+                                                                                                            <Insets left="10.0" />
+                                                                                                         </padding>
                                                                                                       </Label>
                                                                                                       <Label style="-fx-font-size: 11px;" text="Driver:" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                                                                          <styleClass>
                                                                                                             <String fx:value="basic-font" />
                                                                                                             <String fx:value="bold" />
                                                                                                          </styleClass>
+                                                                                                         <padding>
+                                                                                                            <Insets left="10.0" />
+                                                                                                         </padding>
                                                                                                       </Label>
                                                                                                       <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                                                                       <TextField GridPane.columnIndex="1" />
