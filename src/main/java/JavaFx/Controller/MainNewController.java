@@ -1,11 +1,11 @@
 package JavaFx.Controller;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
@@ -18,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -27,11 +28,15 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -55,8 +60,11 @@ public class MainNewController implements Initializable {
 	@FXML AnchorPane settingMainContentAnchorPane;
 	@FXML VBox monitoringElementsVBox;
 	@FXML JFXButton settingSaveBtn;
-	@FXML HBox fileChooserHBox;
-	@FXML Button fileChooserBtn;
+	@FXML Button fileChooserBtn;				// .properties 파일을 선택하기 위한 FileChooser
+	@FXML TextField fileChooserText;			// .properties 파일 경로를 입력/출력하는 TextField
+	@FXML AnchorPane connectInfoAnchorPane;		
+	@FXML FlowPane connectInfoFlowPane;			// DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
+	@FXML StackPane dbConnInfoStackPane;		// DB접속정보 설정 그리드를 담는 컨테이너
 	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
@@ -71,53 +79,61 @@ public class MainNewController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
-		// [모니터링 여부 설정] TAB 동적 요소 생성
+		// [설정] - [모니터링 여부 설정] TAB 동적 요소 생성
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+		
+		// [설정] - [접속정보 설정] TAB 동적 요소 생성
+		createConnInfoElements(dbConnInfoStackPane);
 	}
 	
+	/**
+	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다.
+	 * @param e
+	 */
 	public void openFileChooser(ActionEvent e) {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
-		
+		if(selectedFile != null) {
+			fileChooserText.setText(selectedFile.getAbsolutePath());	
+		}
 	}
 	
+	/**
+	 * [실행] - 모니터링을 시작한다.
+	 * @param e
+	 */
 	public void runMonitoring(ActionEvent e) {
 		Application.main(new String[] {});
-	}
-	
-	public void goSettingMenuPane(ActionEvent e) {
-		changeStackPaneFrontMenu("settingMenuBorderPane");
-	}
-	
-	public void goRunMenuPane(ActionEvent e) {
-		changeStackPaneFrontMenu("runMenuBorderPane");
-	}
-	
-	public void goMenu2MenuPane(ActionEvent e) {
-		changeStackPaneFrontMenu("menu2MenuBorderPane");
-	}
-	
-	public void goMenu3MenuPane(ActionEvent e) {
-		changeStackPaneFrontMenu("menu3MenuBorderPane");
 	}
 	
 	/**
 	 * 우측 StackPane의 top layer를 변경한다.
 	 * @param containerPaneName
 	 */
-	private void changeStackPaneFrontMenu(String containerPaneName) {
+	public void changeStackPaneFrontMenu(ActionEvent e) {
+		String thisMenuBtnId = ((Button)e.getSource()).getId();
+		String thisBorderPaneId = thisMenuBtnId.substring(0, thisMenuBtnId.indexOf("Btn")) + "BorderPane";
+		
 		ObservableList<Node> childs = rightStackPane.getChildren();
 		for(Node n : childs) {
-			if(n.getId().equals(containerPaneName)) {
+			if(n.getId().equals(thisBorderPaneId)) {
 				n.toFront();
 				break;
 			}
 		}
 	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 변경사항을 .properties파일에 저장한다.
+	 * @param e
+	 */
+	public void saveConnInfoSettings(ActionEvent e) {
+		
+	}
 
 	/**
-	 * 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
+	 * [설정] - [모니터링 여부 설정] - 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
 	 * @param e
 	 */
 	public void saveSettings(ActionEvent e) {
@@ -161,7 +177,6 @@ public class MainNewController implements Initializable {
 	 * @param elementContents
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
-
 
 		for(String mName : monitoringElements) {
 			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
@@ -299,5 +314,89 @@ public class MainNewController implements Initializable {
 		}
 		
 		rootVBox.getChildren().add(new Separator());
+	}
+
+	
+	private void createConnInfoElements(StackPane rootStackPane) {
+		
+		AnchorPane dbConnInfoDetailAP = new AnchorPane();
+		dbConnInfoDetailAP.setStyle("-fx-background-color: white");
+
+		// GridPane Margin Setting
+		GridPane dbConnInfoDetailGP = new GridPane();
+		AnchorPane.setTopAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setRightAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setBottomAnchor(dbConnInfoDetailGP, 5.0);
+		AnchorPane.setLeftAnchor(dbConnInfoDetailGP, 5.0);
+		dbConnInfoDetailGP.setPadding(new Insets(5, 10, 5, 10));
+		dbConnInfoDetailGP.setStyle("-fx-background-color: white;");
+		
+		// GridPane Col/Row Constraints Setting
+		ColumnConstraints col1 = new ColumnConstraints();
+		ColumnConstraints col2 = new ColumnConstraints();
+		ColumnConstraints col3 = new ColumnConstraints();
+		ColumnConstraints col4 = new ColumnConstraints();
+		col1.setPercentWidth(15);
+		col2.setPercentWidth(50);
+		col3.setPercentWidth(15);
+		col4.setPercentWidth(20);
+		col2.setFillWidth(false);
+		RowConstraints row1 = new RowConstraints();
+		RowConstraints row2 = new RowConstraints();
+		RowConstraints row3 = new RowConstraints();
+		RowConstraints row4 = new RowConstraints();
+		RowConstraints row5 = new RowConstraints();
+		RowConstraints row6 = new RowConstraints();
+		row1.setPercentHeight(24);
+		row2.setPercentHeight(24);
+		row3.setPercentHeight(4);
+		row4.setPercentHeight(24);
+		row5.setPercentHeight(24);
+		row6.setPercentHeight(24);
+		dbConnInfoDetailGP.getColumnConstraints().addAll(col1, col2, col3, col4);
+		dbConnInfoDetailGP.getRowConstraints().addAll(row1, row2, row3, row4, row5, row6);
+
+		// Create Label
+		Label dbHostLabel = new Label("Host :");
+		Label dbSIDLabel = new Label("SID :");
+		Label dbUserLabel = new Label("User :");
+		Label dbPasswordLabel = new Label("Password :");
+		Label dbUrlLabel = new Label("URL :");
+		Label dbPortLabel = new Label("Port :");
+		Label dbDriverLabel = new Label("Driver :");
+		setLabelsStyleClass("gridTitleLabel", dbHostLabel, dbSIDLabel, dbUserLabel, dbPasswordLabel, dbUrlLabel, dbPortLabel, dbDriverLabel);
+
+		// Create TextField
+		TextField dbHostTextField = new TextField();
+		TextField dbSIDTextField = new TextField();
+		TextField dbUserTextField = new TextField();
+		TextField dbPasswordTextField = new TextField();
+		TextField dbUrlTextField = new TextField();
+		TextField dbPortTextField = new TextField();
+		TextField dbDriverTextField = new TextField();
+		dbUserTextField.setPrefWidth(240.0);
+		dbPasswordTextField.setPrefWidth(240.0);
+		dbUrlTextField.setPrefWidth(424.0);
+		
+		// GridPane Value Setting
+		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
+		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverTextField);
+		dbConnInfoDetailGP.addRow(3, dbUserLabel, dbUserTextField);
+		dbConnInfoDetailGP.addRow(4, dbPasswordLabel, dbPasswordTextField);
+		dbConnInfoDetailGP.addRow(5, dbUrlLabel, dbUrlTextField);
+
+		GridPane.setColumnSpan(dbUserTextField, 2);
+		GridPane.setColumnSpan(dbPasswordTextField, 2);
+		GridPane.setColumnSpan(dbUrlTextField, 3);
+		
+		dbConnInfoDetailAP.getChildren().add(dbConnInfoDetailGP);
+		rootStackPane.getChildren().add(dbConnInfoDetailAP);
+		dbConnInfoDetailAP.toFront();
+	}
+	
+	private void setLabelsStyleClass(String styleClass, Label...labels) {
+		for(Label l : labels) {
+			l.getStyleClass().add(styleClass);
+		}
 	}
 }

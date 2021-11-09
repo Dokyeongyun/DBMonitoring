@@ -5,14 +5,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.configuration2.CombinedConfiguration;
+import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
-import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
-import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
-import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
 
 import Root.Model.JdbcConnectionInfo;
@@ -20,23 +20,30 @@ import Root.Model.JschConnectionInfo;
 
 public class PropertiesUtils {
 	
-	public static PropertiesConfiguration propConfig = null;
+	public static PropertiesConfiguration propConfig = new PropertiesConfiguration();
+	public static CombinedConfiguration combinedConfig = null;
 	public static String configurationPath;
 
 	public static void loadAppConfiguration(String path) throws Exception{
-		File file = new File(path);
-		ListDelimiterHandler delimiter = new DefaultListDelimiterHandler(',');
+		Parameters params = new Parameters();
+		CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder()
+				.configure(params.fileBased().setFile((new File("config\\config_definition.xml"))));
+		combinedConfig = builder.getConfiguration();
 		
-		PropertiesBuilderParameters propertyParameters = new Parameters().properties();
-		propertyParameters.setFile(file);
-		propertyParameters.setThrowExceptionOnMissing(true);
-		propertyParameters.setListDelimiterHandler(delimiter);
+		List<Configuration> configList = combinedConfig.getConfigurations();
 		
-		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
-		builder.configure(propertyParameters);
-		
-		propConfig = builder.getConfiguration();
-		configurationPath = path;
+		for(Configuration c : configList) {
+			Iterator<String> iter = c.getKeys();
+			while(iter.hasNext()){ 
+				String key = iter.next();
+				Object value = c.getProperty(key);
+				propConfig.setProperty(key, value);
+			}
+		}
+	}
+	
+	public static PropertiesConfiguration getConfig(String name) {
+		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
 	}
 	
 	/**
