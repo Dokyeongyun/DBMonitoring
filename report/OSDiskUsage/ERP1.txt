@@ -735,3 +735,113 @@ tmpfs,189G,1.3G,187G,1%,/dev/shm
 /dev/mapper/VolGroupSys-LogVolU02,197G,41G,146G,22%,/u02
 /dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
 
+Thu Nov 04 09:24:18 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,72G,22G,77%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,44G,144G,24%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Fri Nov 05 09:07:39 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,72G,22G,77%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,46G,141G,25%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Sat Nov 06 12:25:30 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,72G,22G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,49G,139G,26%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Sun Nov 07 15:45:04 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,22G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,50G,138G,27%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Mon Nov 08 09:07:48 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,22G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,51G,136G,28%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Tue Nov 09 09:08:56 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,21G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,54G,134G,29%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Wed Nov 10 09:01:10 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,21G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,56G,132G,30%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Wed Nov 10 12:20:36 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,21G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,56G,132G,30%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Thu Nov 11 09:16:24 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,21G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,58G,130G,31%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+Fri Nov 12 09:05:26 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,16G,13G,55%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,23G,34G,41%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,73G,21G,78%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,23G,165G,12%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
