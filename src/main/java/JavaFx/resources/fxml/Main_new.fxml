@@ -8,6 +8,7 @@
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
@@ -26,6 +27,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <SplitPane fx:id="rootSplitPane" dividerPositions="0.3" minHeight="600.0" minWidth="800.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.MainNewController">
   <items>
@@ -359,7 +361,7 @@
                                                                                                 </ImageView>
                                                                                              </graphic>
                                                                                           </JFXButton>
-                                                                                          <JFXButton ellipsisString="" graphicTextGap="0.0" layoutX="286.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="10.0">
+                                                                                          <JFXButton fx:id="prevDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" layoutX="286.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#prevDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="10.0">
                                                                                              <styleClass>
                                                                                                 <String fx:value="bold" />
                                                                                                 <String fx:value="basic-font" />
@@ -378,7 +380,7 @@
                                                                                                 <Font size="1.0" />
                                                                                              </font>
                                                                                           </JFXButton>
-                                                                                          <JFXButton ellipsisString="" graphicTextGap="0.0" layoutX="367.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
+                                                                                          <JFXButton fx:id="nextDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" layoutX="367.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#nextDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
                                                                                              <styleClass>
                                                                                                 <String fx:value="bold" />
                                                                                                 <String fx:value="basic-font" />
@@ -397,6 +399,12 @@
                                                                                                 <Font size="1.0" />
                                                                                              </font>
                                                                                           </JFXButton>
+                                                                                          <Text fx:id="dbInfoCntText" layoutX="127.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 10px;" text="※접속정보를 추가해주세요." AnchorPane.leftAnchor="127.0" AnchorPane.topAnchor="18.800000190734863">
+                                                                                             <styleClass>
+                                                                                                <String fx:value="basic-font" />
+                                                                                                <String fx:value="bold" />
+                                                                                             </styleClass>
+                                                                                          </Text>
                                                                                        </children>
                                                                                     </AnchorPane>
                                                                                     <Separator minHeight="5.0">
@@ -406,27 +414,7 @@
                                                                                     </Separator>
                                                                                     <StackPane fx:id="dbConnInfoStackPane">
                                                                                        <children>
-                                                                                          <AnchorPane fx:id="dbConnInfoNoDataAP" style="-fx-background-color: white;">
-                                                                                             <children>
-                                                                                                <Label alignment="CENTER" text="There is No Data.  Please open .properties file" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                                   <graphic>
-                                                                                                      <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                         <image>
-                                                                                                            <Image url="@../image/no_data_icon.png" />
-                                                                                                         </image>
-                                                                                                      </ImageView>
-                                                                                                   </graphic>
-                                                                                                   <styleClass>
-                                                                                                      <String fx:value="basic-font" />
-                                                                                                      <String fx:value="bold" />
-                                                                                                   </styleClass>
-                                                                                                </Label>
-                                                                                             </children>
-                                                                                             <padding>
-                                                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                                                             </padding>
-                                                                                          </AnchorPane>
-                                                                                          <AnchorPane style="-fx-background-color: white;">
+                                                                                          <AnchorPane fx:id="dbConnInfoSampleAP" style="-fx-background-color: white;">
                                                                                              <children>
                                                                                                 <GridPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                                                                   <columnConstraints>
@@ -444,50 +432,17 @@
                                                                                                     <RowConstraints minHeight="10.0" percentHeight="24.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                                                                   </rowConstraints>
                                                                                                    <children>
-                                                                                                      <Label style="-fx-font-size: 11px;" text="Host:">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
-                                                                                                      </Label>
-                                                                                                      <Label style="-fx-font-size: 11px;" text="SID:" GridPane.rowIndex="1">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
-                                                                                                      </Label>
-                                                                                                      <Label style="-fx-font-size: 11px;" text="User:" GridPane.rowIndex="3">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
-                                                                                                      </Label>
-                                                                                                      <Label layoutX="10.0" layoutY="102.0" style="-fx-font-size: 11px;" text="Password:" GridPane.rowIndex="4">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
-                                                                                                      </Label>
-                                                                                                      <Label layoutX="10.0" layoutY="142.0" style="-fx-font-size: 11px;" text="URL:" GridPane.rowIndex="5">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
-                                                                                                      </Label>
-                                                                                                      <Label style="-fx-font-size: 11px;" text="Port:" GridPane.columnIndex="2">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
+                                                                                                      <Label style="-fx-font-size: 11px;" styleClass="basic-font" text="Host :" />
+                                                                                                      <Label style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="SID :" GridPane.rowIndex="1" />
+                                                                                                      <Label style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="User :" GridPane.rowIndex="3" />
+                                                                                                      <Label layoutX="10.0" layoutY="102.0" style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="Password :" GridPane.rowIndex="4" />
+                                                                                                      <Label layoutX="10.0" layoutY="142.0" style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="URL :" GridPane.rowIndex="5" />
+                                                                                                      <Label style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="Port :" GridPane.columnIndex="2">
                                                                                                          <padding>
                                                                                                             <Insets left="10.0" />
                                                                                                          </padding>
                                                                                                       </Label>
-                                                                                                      <Label style="-fx-font-size: 11px;" text="Driver:" GridPane.columnIndex="2" GridPane.rowIndex="1">
-                                                                                                         <styleClass>
-                                                                                                            <String fx:value="basic-font" />
-                                                                                                            <String fx:value="bold" />
-                                                                                                         </styleClass>
+                                                                                                      <Label style="-fx-font-size: 11px;" styleClass="basic-font" stylesheets="@../css/javaFx.css" text="Driver :" GridPane.columnIndex="2" GridPane.rowIndex="1">
                                                                                                          <padding>
                                                                                                             <Insets left="10.0" />
                                                                                                          </padding>
@@ -495,11 +450,11 @@
                                                                                                       <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                                                                       <TextField GridPane.columnIndex="1" />
                                                                                                       <TextField prefWidth="240.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="3" />
-                                                                                                      <TextField prefWidth="240.0" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
                                                                                                       <TextField prefWidth="350.0" GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="5" />
                                                                                                       <TextField GridPane.columnIndex="3" />
                                                                                                       <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                                                                                       <TextField GridPane.columnIndex="1" />
+                                                                                                      <PasswordField prefWidth="240.0" promptText="hidden" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="4" />
                                                                                                    </children>
                                                                                                    <padding>
                                                                                                       <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
@@ -509,6 +464,19 @@
                                                                                              <StackPane.margin>
                                                                                                 <Insets />
                                                                                              </StackPane.margin>
+                                                                                          </AnchorPane>
+                                                                                          <AnchorPane fx:id="dbConnInfoNoDataAP" style="-fx-background-color: white;">
+                                                                                             <children>
+                                                                                                <Label alignment="CENTER" text="There is No Data.  Please open .properties file" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                                                   <styleClass>
+                                                                                                      <String fx:value="basic-font" />
+                                                                                                      <String fx:value="bold" />
+                                                                                                   </styleClass>
+                                                                                                </Label>
+                                                                                             </children>
+                                                                                             <padding>
+                                                                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                                             </padding>
                                                                                           </AnchorPane>
                                                                                        </children>
                                                                                     </StackPane>
@@ -554,7 +522,7 @@
                                                                                           <Insets left="10.0" right="10.0" />
                                                                                        </VBox.margin>
                                                                                     </Separator>
-                                                                                    <StackPane fx:id="dbConnInfoStackPane1">
+                                                                                    <StackPane>
                                                                                        <children>
                                                                                           <AnchorPane>
                                                                                              <children>

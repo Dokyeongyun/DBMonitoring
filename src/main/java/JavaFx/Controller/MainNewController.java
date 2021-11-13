@@ -5,13 +5,16 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
 
 import Root.Application.Application;
+import Root.Model.JdbcConnectionInfo;
 import Root.Utils.PropertiesUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,6 +28,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
@@ -39,6 +43,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -65,6 +70,9 @@ public class MainNewController implements Initializable {
 	@FXML AnchorPane connectInfoAnchorPane;		
 	@FXML FlowPane connectInfoFlowPane;			// DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
 	@FXML StackPane dbConnInfoStackPane;		// DB접속정보 설정 그리드를 담는 컨테이너
+	@FXML AnchorPane dbConnInfoNoDataAP;		// DB접속정보 No Data AchorPane
+	@FXML AnchorPane dbConnInfoSampleAP;		// DB접속정보 Blank AnchorPane
+	@FXML Text dbInfoCntText;					// DB접속정보 인덱스 텍스트
 	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
@@ -75,7 +83,14 @@ public class MainNewController implements Initializable {
 	
 	String[] dbNames = PropertiesUtils.propConfig.getString("dbnames").split("/");
 	String[] serverNames = PropertiesUtils.propConfig.getString("servernames").split("/");
+	
+	// dbConnInfo
+	List<JdbcConnectionInfo> jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 
+	// dbConnInfo Index 배열
+	Map<Integer, AnchorPane> dbConnInfoIdxMap = new HashMap<>();
+	int dbConnInfoIdx = 0;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		
@@ -84,7 +99,31 @@ public class MainNewController implements Initializable {
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 		
 		// [설정] - [접속정보 설정] TAB 동적 요소 생성
-		createConnInfoElements(dbConnInfoStackPane);
+		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoNoDataAP);
+		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoSampleAP);
+		for(JdbcConnectionInfo info : jdbcConnInfoList) {
+			createConnInfoElements(dbConnInfoStackPane, info);	
+		}
+	}
+
+	/**
+	 * [설정] - [접속정보 설정] - 이전 DB 접속정보 페이지로 이동한다.
+	 * @param e
+	 */
+	public void prevDbConnInfo(ActionEvent e) {
+		dbConnInfoIdx = dbConnInfoIdx == 0 ? dbConnInfoIdxMap.size() - 1 : dbConnInfoIdx - 1;
+		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
+		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 다음 DB 접속정보 페이지로 이동한다.
+	 * @param e
+	 */
+	public void nextDbConnInfo(ActionEvent e) {
+		dbConnInfoIdx = dbConnInfoIdx == dbConnInfoIdxMap.size() - 1 ? 0 : dbConnInfoIdx + 1;
+		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
+		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
 	}
 	
 	/**
@@ -316,11 +355,18 @@ public class MainNewController implements Initializable {
 		rootVBox.getChildren().add(new Separator());
 	}
 
-	
-	private void createConnInfoElements(StackPane rootStackPane) {
-		
+	/**
+	 * DB 접속정보 동적 생성
+	 * 
+	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
+	 */
+	private void createConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo) {
+
+		String dbConnInfoDetailAPId = "dbConnInfo" + connInfo.getJdbcDBName() + "AP";
 		AnchorPane dbConnInfoDetailAP = new AnchorPane();
+		dbConnInfoDetailAP.setId(dbConnInfoDetailAPId);
 		dbConnInfoDetailAP.setStyle("-fx-background-color: white");
+		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoDetailAP);
 
 		// GridPane Margin Setting
 		GridPane dbConnInfoDetailGP = new GridPane();
@@ -364,20 +410,46 @@ public class MainNewController implements Initializable {
 		Label dbUrlLabel = new Label("URL :");
 		Label dbPortLabel = new Label("Port :");
 		Label dbDriverLabel = new Label("Driver :");
+		dbPortLabel.setPadding(new Insets(0, 0, 0, 10));
+		dbDriverLabel.setPadding(new Insets(0, 0, 0, 10));
 		setLabelsStyleClass("gridTitleLabel", dbHostLabel, dbSIDLabel, dbUserLabel, dbPasswordLabel, dbUrlLabel, dbPortLabel, dbDriverLabel);
 
 		// Create TextField
 		TextField dbHostTextField = new TextField();
 		TextField dbSIDTextField = new TextField();
 		TextField dbUserTextField = new TextField();
-		TextField dbPasswordTextField = new TextField();
+		PasswordField dbPasswordTextField = new PasswordField();
 		TextField dbUrlTextField = new TextField();
 		TextField dbPortTextField = new TextField();
 		TextField dbDriverTextField = new TextField();
 		dbUserTextField.setPrefWidth(240.0);
 		dbPasswordTextField.setPrefWidth(240.0);
 		dbUrlTextField.setPrefWidth(424.0);
+		dbPasswordTextField.setPromptText("<hidden>");
 		
+		// TextField Value Setting
+		dbHostTextField.setText(connInfo.getJdbcHost());
+		dbSIDTextField.setText(connInfo.getJdbcSID());
+		dbUserTextField.setText(connInfo.getJdbcId());
+		dbPasswordTextField.setText(connInfo.getJdbcPw());
+		dbUrlTextField.setText(connInfo.getJdbcUrl());	// TODO DBMS 종류 및 접속정보에 따라 Url 값 설정
+		dbPortTextField.setText(connInfo.getJdbcPort());
+		dbDriverTextField.setText(connInfo.getJdbcOracleDriver());
+		
+		// TextField onKeyPressedListener
+		dbDriverTextField.setOnKeyReleased(s -> {
+			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+		});
+		dbHostTextField.setOnKeyReleased(s -> {
+			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+		});
+		dbPortTextField.setOnKeyReleased(s -> {
+			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+		});
+		dbSIDTextField.setOnKeyReleased(s -> {
+			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+		});
+				
 		// GridPane Value Setting
 		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
 		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverTextField);
@@ -391,12 +463,34 @@ public class MainNewController implements Initializable {
 		
 		dbConnInfoDetailAP.getChildren().add(dbConnInfoDetailGP);
 		rootStackPane.getChildren().add(dbConnInfoDetailAP);
-		dbConnInfoDetailAP.toFront();
 	}
-	
+
+	/**
+	 * Label의 클래스를 설정한다.
+	 * 
+	 * @param styleClass
+	 * @param labels
+	 */
 	private void setLabelsStyleClass(String styleClass, Label...labels) {
 		for(Label l : labels) {
 			l.getStyleClass().add(styleClass);
 		}
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - URL TextField의 Value를 결정한다.
+	 * 
+	 * @param dbms
+	 * @param driver
+	 * @param host
+	 * @param port
+	 * @param sid
+	 * @return
+	 */
+	private String generateJdbcURLString(String dbms, String driver, String host, String port, String sid) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("jdbc:").append(dbms).append(":").append(driver).append(":@")
+		.append(host).append(":").append(port).append("/").append(sid);
+		return sb.toString();
 	}
 }
