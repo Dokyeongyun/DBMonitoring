@@ -345,7 +345,7 @@
                                                                                                 <FontAwesomeIconView fill="#0132ac" glyphName="DATABASE" selectionFill="BLACK" size="20" />
                                                                                              </graphic>
                                                                                           </Label>
-                                                                                          <JFXButton ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="10.0">
+                                                                                          <JFXButton fx:id="dbConnInfoAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" onAction="#addDbConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="10.0">
                                                                                              <styleClass>
                                                                                                 <String fx:value="bold" />
                                                                                                 <String fx:value="basic-font" />
@@ -414,7 +414,7 @@
                                                                                     </Separator>
                                                                                     <StackPane fx:id="dbConnInfoStackPane">
                                                                                        <children>
-                                                                                          <AnchorPane fx:id="dbConnInfoSampleAP" style="-fx-background-color: white;">
+                                                                                          <AnchorPane fx:id="dbConnInfoSampleAP" style="-fx-background-color: white;" visible="false">
                                                                                              <children>
                                                                                                 <GridPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                                                                   <columnConstraints>
@@ -465,7 +465,7 @@
                                                                                                 <Insets />
                                                                                              </StackPane.margin>
                                                                                           </AnchorPane>
-                                                                                          <AnchorPane fx:id="dbConnInfoNoDataAP" style="-fx-background-color: white;">
+                                                                                          <AnchorPane fx:id="dbConnInfoNoDataAP" style="-fx-background-color: white;" visible="false">
                                                                                              <children>
                                                                                                 <Label alignment="CENTER" text="There is No Data.  Please open .properties file" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                                                    <styleClass>

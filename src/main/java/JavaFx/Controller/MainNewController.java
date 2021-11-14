@@ -5,10 +5,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXToggleButton;
@@ -99,11 +103,29 @@ public class MainNewController implements Initializable {
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 		
 		// [설정] - [접속정보 설정] TAB 동적 요소 생성
-		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoNoDataAP);
-		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoSampleAP);
-		for(JdbcConnectionInfo info : jdbcConnInfoList) {
-			createConnInfoElements(dbConnInfoStackPane, info);	
+		if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
+			dbConnInfoNoDataAP.setVisible(true);	
+			dbInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
+		} else {
+			dbConnInfoNoDataAP.setVisible(true);
+			jdbcConnInfoList.forEach(info -> {
+				String dbConnInfoDetailAPId = "dbConnInfo" + info.getJdbcDBName() + "AP";
+				createConnInfoElements(dbConnInfoStackPane, info, dbConnInfoDetailAPId);
+			});
+			dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
 		}
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 새로운 DB 접속정보 작성 폼을 생성한다.
+	 * 이 때, 새로 생성되는 AnchorPane의 ID는 현재시간을 이용하여 설정한다.
+	 * @param e
+	 */
+	public void addDbConnInfo(ActionEvent e) {
+		String newConnInfoAPId = "dbConnInfo" + new Date().getTime() + "AP";
+		createConnInfoElements(dbConnInfoStackPane, new JdbcConnectionInfo(), newConnInfoAPId);
+		dbConnInfoIdx = dbConnInfoIdxMap.size() - 1;
+		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
 	}
 
 	/**
@@ -111,6 +133,7 @@ public class MainNewController implements Initializable {
 	 * @param e
 	 */
 	public void prevDbConnInfo(ActionEvent e) {
+		if(dbConnInfoIdxMap.size() == 0) return;
 		dbConnInfoIdx = dbConnInfoIdx == 0 ? dbConnInfoIdxMap.size() - 1 : dbConnInfoIdx - 1;
 		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
 		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
@@ -121,6 +144,7 @@ public class MainNewController implements Initializable {
 	 * @param e
 	 */
 	public void nextDbConnInfo(ActionEvent e) {
+		if(dbConnInfoIdxMap.size() == 0) return;
 		dbConnInfoIdx = dbConnInfoIdx == dbConnInfoIdxMap.size() - 1 ? 0 : dbConnInfoIdx + 1;
 		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
 		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
@@ -216,6 +240,7 @@ public class MainNewController implements Initializable {
 	 * @param elementContents
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
+
 
 		for(String mName : monitoringElements) {
 			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
@@ -357,14 +382,11 @@ public class MainNewController implements Initializable {
 
 	/**
 	 * DB 접속정보 동적 생성
-	 * 
 	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
 	 */
-	private void createConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo) {
-
-		String dbConnInfoDetailAPId = "dbConnInfo" + connInfo.getJdbcDBName() + "AP";
+	private void createConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo, String elementId) {
 		AnchorPane dbConnInfoDetailAP = new AnchorPane();
-		dbConnInfoDetailAP.setId(dbConnInfoDetailAPId);
+		dbConnInfoDetailAP.setId(elementId);
 		dbConnInfoDetailAP.setStyle("-fx-background-color: white");
 		dbConnInfoIdxMap.put(dbConnInfoIdxMap.size(), dbConnInfoDetailAP);
 
@@ -432,24 +454,30 @@ public class MainNewController implements Initializable {
 		dbSIDTextField.setText(connInfo.getJdbcSID());
 		dbUserTextField.setText(connInfo.getJdbcId());
 		dbPasswordTextField.setText(connInfo.getJdbcPw());
-		dbUrlTextField.setText(connInfo.getJdbcUrl());	// TODO DBMS 종류 및 접속정보에 따라 Url 값 설정
+		dbUrlTextField.setText(connInfo.getJdbcUrl());
 		dbPortTextField.setText(connInfo.getJdbcPort());
 		dbDriverTextField.setText(connInfo.getJdbcOracleDriver());
 		
 		// TextField onKeyPressedListener
-		dbDriverTextField.setOnKeyReleased(s -> {
-			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
-		});
-		dbHostTextField.setOnKeyReleased(s -> {
-			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
-		});
-		dbPortTextField.setOnKeyReleased(s -> {
-			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
-		});
-		dbSIDTextField.setOnKeyReleased(s -> {
-			dbUrlTextField.setText(generateJdbcURLString("oracle", dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
-		});
-				
+		String dbms = "oracle";
+		dbDriverTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbHostTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbPortTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbSIDTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbUrlTextField.setOnKeyReleased(s -> {
+			String text = ((TextField)s.getSource()).getText();
+			Pattern p = Pattern.compile("(.*):(.*):(.*):@(.*):(.*)/(.*)");
+			Matcher m = p.matcher(text);
+			if(m.matches()) {
+				dbDriverTextField.setText(m.group(3));
+				dbHostTextField.setText(m.group(4));
+				dbPortTextField.setText(m.group(5));
+				dbSIDTextField.setText(m.group(6));
+			} else {
+				dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+			}
+		});	
+		
 		// GridPane Value Setting
 		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
 		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverTextField);
@@ -467,7 +495,6 @@ public class MainNewController implements Initializable {
 
 	/**
 	 * Label의 클래스를 설정한다.
-	 * 
 	 * @param styleClass
 	 * @param labels
 	 */
@@ -479,7 +506,6 @@ public class MainNewController implements Initializable {
 	
 	/**
 	 * [설정] - [접속정보 설정] - URL TextField의 Value를 결정한다.
-	 * 
 	 * @param dbms
 	 * @param driver
 	 * @param host
