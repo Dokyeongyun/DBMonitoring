@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
 import Root.Application.Application;
+import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
+import Root.Model.JschConnectionInfo;
 import Root.Utils.PropertiesUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -77,6 +79,10 @@ public class MainNewController implements Initializable {
 	@FXML AnchorPane dbConnInfoNoDataAP;		// DB접속정보 No Data AchorPane
 	@FXML AnchorPane dbConnInfoSampleAP;		// DB접속정보 Blank AnchorPane
 	@FXML Text dbInfoCntText;					// DB접속정보 인덱스 텍스트
+	@FXML StackPane serverConnInfoStackPane;	// 서버접속정보 설정 그리드를 담는 컨테이너
+	@FXML AnchorPane serverConnInfoNoDataAP;	// 서버접속정보 No Data AchorPane
+	@FXML AnchorPane serverConnInfoSampleAP;	// 서버접속정보 Blank AnchorPane
+	@FXML Text serverInfoCntText;				// 서버접속정보 인덱스 텍스트
 	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
@@ -90,10 +96,16 @@ public class MainNewController implements Initializable {
 	
 	// dbConnInfo
 	List<JdbcConnectionInfo> jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
+	List<JschConnectionInfo> jschConnInfoList = PropertiesUtils.getJschConnectionMap();
+	Map<String, AlertLogCommand> alcMap = PropertiesUtils.getAlertLogCommandMap();
 
 	// dbConnInfo Index 배열
 	Map<Integer, AnchorPane> dbConnInfoIdxMap = new HashMap<>();
 	int dbConnInfoIdx = 0;
+	
+	// serverConnInfo Index 배열
+	Map<Integer, AnchorPane> serverConnInfoIdxMap = new HashMap<>();
+	int serverConnInfoIdx = 0;
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -110,10 +122,44 @@ public class MainNewController implements Initializable {
 			dbConnInfoNoDataAP.setVisible(true);
 			jdbcConnInfoList.forEach(info -> {
 				String dbConnInfoDetailAPId = "dbConnInfo" + info.getJdbcDBName() + "AP";
-				createConnInfoElements(dbConnInfoStackPane, info, dbConnInfoDetailAPId);
+				createJdbcConnInfoElements(dbConnInfoStackPane, info, dbConnInfoDetailAPId);
 			});
 			dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
 		}
+		
+		if(jschConnInfoList.size() == 0) { // 서버 접속정보 없음
+			serverConnInfoNoDataAP.setVisible(true);	
+			serverInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
+		} else {
+			serverConnInfoNoDataAP.setVisible(true);
+			jschConnInfoList.forEach(info -> {
+				info.setAlc(alcMap.get(info.getServerName()));
+				String serverConnInfoDetailAPId = "serverConnInfo" + info.getServerName() + "AP";
+				createJschConnInfoElements(serverConnInfoStackPane, info, serverConnInfoDetailAPId);
+			});
+			serverInfoCntText.setText("(" + (serverConnInfoIdx + 1) + "/" + serverConnInfoIdxMap.size() + ")");
+		}
+		
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 새로운 DB/Server 접속정보 작성 폼을 생성한다.
+	 * @param <T>
+	 * @param newConnInfoAPId
+	 * @param parentSP
+	 * @param connInfo
+	 * @param connInfoIdx
+	 * @param connInfoMap
+	 * @param cntText
+	 */
+	private void addConnInfo(String newConnInfoAPId, StackPane parentSP, Object connInfo, int connInfoIdx, Map<Integer, AnchorPane> connInfoMap, Text cntText) {
+		if(connInfo instanceof JdbcConnectionInfo) {
+			createJdbcConnInfoElements(parentSP, (JdbcConnectionInfo) connInfo, newConnInfoAPId);	
+		} else if(connInfo instanceof JschConnectionInfo) {
+			createJschConnInfoElements(parentSP, (JschConnectionInfo) connInfo, newConnInfoAPId);
+		}
+		cntText.setText("(" + (connInfoIdx + 1) + "/" + connInfoMap.size() + ")");
+		bringFrontConnInfoAnchorPane(connInfoMap, connInfoIdx, cntText);
 	}
 	
 	/**
@@ -123,9 +169,30 @@ public class MainNewController implements Initializable {
 	 */
 	public void addDbConnInfo(ActionEvent e) {
 		String newConnInfoAPId = "dbConnInfo" + new Date().getTime() + "AP";
-		createConnInfoElements(dbConnInfoStackPane, new JdbcConnectionInfo(), newConnInfoAPId);
-		dbConnInfoIdx = dbConnInfoIdxMap.size() - 1;
-		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+		dbConnInfoIdx = dbConnInfoIdxMap.size();
+		addConnInfo(newConnInfoAPId, dbConnInfoStackPane, new JdbcConnectionInfo(), dbConnInfoIdx, dbConnInfoIdxMap, dbInfoCntText);
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 새로운 DB 접속정보 작성 폼을 생성한다.
+	 * 이 때, 새로 생성되는 AnchorPane의 ID는 현재시간을 이용하여 설정한다.
+	 * @param e
+	 */
+	public void addServerConnInfo(ActionEvent e) {
+		String newConnInfoAPId = "serverConnInfo" + new Date().getTime() + "AP";
+		serverConnInfoIdx = serverConnInfoIdxMap.size();
+		addConnInfo(newConnInfoAPId, serverConnInfoStackPane, new JschConnectionInfo(), serverConnInfoIdx, serverConnInfoIdxMap, serverInfoCntText);
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 해당되는 DB/서버 접속정보 AnchorPane을 가장 앞으로 가져온다.
+	 * @param connInfoMap
+	 * @param connInfoIdx
+	 * @param cntText
+	 */
+	private void bringFrontConnInfoAnchorPane(Map<Integer, AnchorPane> connInfoMap, int connInfoIdx, Text cntText) {
+		connInfoMap.get(connInfoIdx).toFront();
+		cntText.setText("(" + (connInfoIdx + 1) + "/" + connInfoMap.size() + ")");
 	}
 
 	/**
@@ -135,8 +202,17 @@ public class MainNewController implements Initializable {
 	public void prevDbConnInfo(ActionEvent e) {
 		if(dbConnInfoIdxMap.size() == 0) return;
 		dbConnInfoIdx = dbConnInfoIdx == 0 ? dbConnInfoIdxMap.size() - 1 : dbConnInfoIdx - 1;
-		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
-		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+		bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, dbConnInfoIdx, dbInfoCntText);
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 이전 서버 접속정보 페이지로 이동한다.
+	 * @param e
+	 */
+	public void prevServerConnInfo(ActionEvent e) {
+		if(serverConnInfoIdxMap.size() == 0) return;
+		serverConnInfoIdx = serverConnInfoIdx == 0 ? serverConnInfoIdxMap.size() - 1 : serverConnInfoIdx - 1;
+		bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, serverConnInfoIdx, serverInfoCntText);
 	}
 	
 	/**
@@ -146,8 +222,17 @@ public class MainNewController implements Initializable {
 	public void nextDbConnInfo(ActionEvent e) {
 		if(dbConnInfoIdxMap.size() == 0) return;
 		dbConnInfoIdx = dbConnInfoIdx == dbConnInfoIdxMap.size() - 1 ? 0 : dbConnInfoIdx + 1;
-		dbConnInfoIdxMap.get(dbConnInfoIdx).toFront();
-		dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+		bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, dbConnInfoIdx, dbInfoCntText);
+	}
+	
+	/**
+	 * [설정] - [접속정보 설정] - 다음 서버 접속정보 페이지로 이동한다.
+	 * @param e
+	 */
+	public void nextServerConnInfo(ActionEvent e) {
+		if(serverConnInfoIdxMap.size() == 0) return;
+		serverConnInfoIdx = serverConnInfoIdx == serverConnInfoIdxMap.size() - 1 ? 0 : serverConnInfoIdx + 1;
+		bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, serverConnInfoIdx, serverInfoCntText);
 	}
 	
 	/**
@@ -240,8 +325,6 @@ public class MainNewController implements Initializable {
 	 * @param elementContents
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
-
-
 		for(String mName : monitoringElements) {
 			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
 			
@@ -384,7 +467,8 @@ public class MainNewController implements Initializable {
 	 * DB 접속정보 동적 생성
 	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
 	 */
-	private void createConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo, String elementId) {
+	private void createJdbcConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo, String elementId) {
+
 		AnchorPane dbConnInfoDetailAP = new AnchorPane();
 		dbConnInfoDetailAP.setId(elementId);
 		dbConnInfoDetailAP.setStyle("-fx-background-color: white");
@@ -404,8 +488,8 @@ public class MainNewController implements Initializable {
 		ColumnConstraints col2 = new ColumnConstraints();
 		ColumnConstraints col3 = new ColumnConstraints();
 		ColumnConstraints col4 = new ColumnConstraints();
-		col1.setPercentWidth(15);
-		col2.setPercentWidth(50);
+		col1.setPercentWidth(25);
+		col2.setPercentWidth(40);
 		col3.setPercentWidth(15);
 		col4.setPercentWidth(20);
 		col2.setFillWidth(false);
@@ -443,11 +527,12 @@ public class MainNewController implements Initializable {
 		PasswordField dbPasswordTextField = new PasswordField();
 		TextField dbUrlTextField = new TextField();
 		TextField dbPortTextField = new TextField();
-		TextField dbDriverTextField = new TextField();
-		dbUserTextField.setPrefWidth(240.0);
-		dbPasswordTextField.setPrefWidth(240.0);
+		JFXComboBox<String> dbDriverComboBox = new JFXComboBox<String>();
+		dbUserTextField.setPrefWidth(200.0);
+		dbPasswordTextField.setPrefWidth(200.0);
 		dbUrlTextField.setPrefWidth(424.0);
 		dbPasswordTextField.setPromptText("<hidden>");
+		dbDriverComboBox.getItems().addAll(PropertiesUtils.propConfig.getStringArray("db.setting.oracle.driver.combo"));
 		
 		// TextField Value Setting
 		dbHostTextField.setText(connInfo.getJdbcHost());
@@ -456,31 +541,30 @@ public class MainNewController implements Initializable {
 		dbPasswordTextField.setText(connInfo.getJdbcPw());
 		dbUrlTextField.setText(connInfo.getJdbcUrl());
 		dbPortTextField.setText(connInfo.getJdbcPort());
-		dbDriverTextField.setText(connInfo.getJdbcOracleDriver());
+		dbDriverComboBox.getSelectionModel().select(connInfo.getJdbcOracleDriver());
 		
 		// TextField onKeyPressedListener
 		String dbms = "oracle";
-		dbDriverTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbHostTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbPortTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbSIDTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbDriverComboBox.setOnInputMethodTextChanged(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbHostTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbPortTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbSIDTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
 		dbUrlTextField.setOnKeyReleased(s -> {
 			String text = ((TextField)s.getSource()).getText();
-			Pattern p = Pattern.compile("(.*):(.*):(.*):@(.*):(.*)/(.*)");
+			Pattern p = Pattern.compile("(.*):(.*):" + dbDriverComboBox.getSelectionModel().getSelectedItem() + ":@(.*):(.*)/(.*)");
 			Matcher m = p.matcher(text);
 			if(m.matches()) {
-				dbDriverTextField.setText(m.group(3));
-				dbHostTextField.setText(m.group(4));
-				dbPortTextField.setText(m.group(5));
-				dbSIDTextField.setText(m.group(6));
+				dbHostTextField.setText(m.group(3));
+				dbPortTextField.setText(m.group(4));
+				dbSIDTextField.setText(m.group(5));
 			} else {
-				dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverTextField.getText(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+				dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
 			}
 		});	
 		
 		// GridPane Value Setting
 		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
-		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverTextField);
+		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverComboBox);
 		dbConnInfoDetailGP.addRow(3, dbUserLabel, dbUserTextField);
 		dbConnInfoDetailGP.addRow(4, dbPasswordLabel, dbPasswordTextField);
 		dbConnInfoDetailGP.addRow(5, dbUrlLabel, dbUrlTextField);
@@ -491,6 +575,105 @@ public class MainNewController implements Initializable {
 		
 		dbConnInfoDetailAP.getChildren().add(dbConnInfoDetailGP);
 		rootStackPane.getChildren().add(dbConnInfoDetailAP);
+	}
+	
+	/**
+	 * 서버 접속정보 동적 생성
+	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
+	 */
+	private void createJschConnInfoElements(StackPane rootStackPane, JschConnectionInfo connInfo, String elementId) {
+		AnchorPane connInfoDetailAP = new AnchorPane();
+		connInfoDetailAP.setId(elementId);
+		connInfoDetailAP.setStyle("-fx-background-color: white");
+		serverConnInfoIdxMap.put(serverConnInfoIdxMap.size(), connInfoDetailAP);
+
+		// GridPane Margin Setting
+		GridPane connInfoDetailGP = new GridPane();
+		AnchorPane.setTopAnchor(connInfoDetailGP, 5.0);
+		AnchorPane.setRightAnchor(connInfoDetailGP, 5.0);
+		AnchorPane.setBottomAnchor(connInfoDetailGP, 5.0);
+		AnchorPane.setLeftAnchor(connInfoDetailGP, 5.0);
+		connInfoDetailGP.setPadding(new Insets(5, 10, 5, 10));
+		connInfoDetailGP.setStyle("-fx-background-color: white;");
+		
+		// GridPane Col/Row Constraints Setting
+		ColumnConstraints col1 = new ColumnConstraints();
+		ColumnConstraints col2 = new ColumnConstraints();
+		ColumnConstraints col3 = new ColumnConstraints();
+		ColumnConstraints col4 = new ColumnConstraints();
+		col1.setPercentWidth(25);
+		col2.setPercentWidth(40);
+		col3.setPercentWidth(15);
+		col4.setPercentWidth(20);
+		col2.setFillWidth(false);
+		RowConstraints row1 = new RowConstraints();
+		RowConstraints row2 = new RowConstraints();
+		RowConstraints row3 = new RowConstraints();
+		RowConstraints row4 = new RowConstraints();
+		RowConstraints row5 = new RowConstraints();
+		RowConstraints row6 = new RowConstraints();
+		RowConstraints row7 = new RowConstraints();
+		row1.setPercentHeight(24);
+		row2.setPercentHeight(24);
+		row3.setPercentHeight(4);
+		row4.setPercentHeight(24);
+		row5.setPercentHeight(24);
+		row6.setPercentHeight(24);
+		row7.setPercentHeight(24);
+		connInfoDetailGP.getColumnConstraints().addAll(col1, col2, col3, col4);
+		connInfoDetailGP.getRowConstraints().addAll(row1, row2, row3, row4, row5, row6, row7);
+
+		// Create Label
+		Label serverHostLabel = new Label("Host :");
+		Label serverNameLabel = new Label("ServerName :");
+		Label serverUserNameLabel = new Label("User :");
+		Label serverPasswordLabel = new Label("Password :");
+		Label serverAlertLogFilePathLabel = new Label("AlertLog FilePath :");
+		Label serverPortLabel = new Label("Port :");
+		Label serverAlertLogDateFormatLabel = new Label("AlertLog DateFormat :");
+		serverPortLabel.setPadding(new Insets(0, 0, 0, 10));
+		setLabelsStyleClass("gridTitleLabel", serverHostLabel, serverNameLabel, serverUserNameLabel, serverPasswordLabel, serverAlertLogFilePathLabel, serverPortLabel, serverAlertLogDateFormatLabel);
+
+		// Create TextField
+		TextField serverHostTextField = new TextField();
+		TextField serverNameTextField = new TextField();
+		TextField serverUserNameTextField = new TextField();
+		PasswordField serverPasswordTextField = new PasswordField();
+		TextField serverAlertLogFilePathTextField = new TextField();
+		TextField serverPortTextField = new TextField();
+		JFXComboBox<String> serverAlertLogDateFormatComboBox = new JFXComboBox<>();
+		serverUserNameTextField.setPrefWidth(200.0);
+		serverPasswordTextField.setPrefWidth(200.0);
+		serverAlertLogFilePathTextField.setPrefWidth(424.0);
+		serverAlertLogDateFormatComboBox.setPrefWidth(424.0);
+		serverAlertLogDateFormatComboBox.getItems().addAll(PropertiesUtils.propConfig.getStringArray("server.setting.dateformat.combo"));
+		serverPasswordTextField.setPromptText("<hidden>");
+		
+		
+		// TextField Value Setting
+		serverHostTextField.setText(connInfo.getHost());
+		serverNameTextField.setText(connInfo.getServerName());
+		serverUserNameTextField.setText(connInfo.getUserName());
+		serverPasswordTextField.setText(connInfo.getPassword());
+		serverAlertLogFilePathTextField.setText(connInfo.getAlc() == null ? "" : connInfo.getAlc().getReadFilePath());
+		serverPortTextField.setText(String.valueOf(connInfo.getPort()).equals("0") ? "" : String.valueOf(connInfo.getPort()));
+		serverAlertLogDateFormatComboBox.getSelectionModel().select(connInfo.getAlc() == null ? "" : connInfo.getAlc().getDateFormat());
+		
+		// GridPane Value Setting
+		connInfoDetailGP.addRow(0, serverHostLabel, serverHostTextField, serverPortLabel, serverPortTextField);
+		connInfoDetailGP.addRow(1, serverNameLabel, serverNameTextField);
+		connInfoDetailGP.addRow(3, serverUserNameLabel, serverUserNameTextField);
+		connInfoDetailGP.addRow(4, serverPasswordLabel, serverPasswordTextField);
+		connInfoDetailGP.addRow(5, serverAlertLogFilePathLabel, serverAlertLogFilePathTextField);
+		connInfoDetailGP.addRow(6, serverAlertLogDateFormatLabel, serverAlertLogDateFormatComboBox);
+
+		GridPane.setColumnSpan(serverUserNameTextField, 2);
+		GridPane.setColumnSpan(serverPasswordTextField, 2);
+		GridPane.setColumnSpan(serverAlertLogFilePathTextField, 3);
+		GridPane.setColumnSpan(serverAlertLogDateFormatComboBox, 3);
+		
+		connInfoDetailAP.getChildren().add(connInfoDetailGP);
+		rootStackPane.getChildren().add(connInfoDetailAP);
 	}
 
 	/**
