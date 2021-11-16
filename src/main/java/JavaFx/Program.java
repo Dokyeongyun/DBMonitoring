@@ -34,6 +34,7 @@ public class Program extends Application {
 		primaryStage.setTitle("DB Monitoring Window Program");
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
 	}
 	
 	public static void main(String[] args) {

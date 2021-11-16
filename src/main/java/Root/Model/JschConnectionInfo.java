@@ -6,6 +6,7 @@ public class JschConnectionInfo {
 	private int port;
 	private String userName;
 	private String password;
+	private AlertLogCommand alc;
 	
 	public JschConnectionInfo() { }
 	public JschConnectionInfo(String serverName, String host, int port, String userName, String password) {
@@ -14,6 +15,7 @@ public class JschConnectionInfo {
 		this.port = port;
 		this.userName = userName;
 		this.password = password;
+		this.alc = new AlertLogCommand();
 	}
 
 	public String getServerName() {
@@ -56,9 +58,17 @@ public class JschConnectionInfo {
 		this.password = password;
 	}
 
+	public AlertLogCommand getAlc() {
+		return alc;
+	}
+
+	public void setAlc(AlertLogCommand alc) {
+		this.alc = alc;
+	}
+	
 	@Override
 	public String toString() {
 		return "JschConnectionInfo [serverName=" + serverName + ", host=" + host + ", port=" + port + ", userName="
-				+ userName + ", password=" + password + "]";
+				+ userName + ", password=" + password + ", alc=" + alc + "]";
 	}
 }
