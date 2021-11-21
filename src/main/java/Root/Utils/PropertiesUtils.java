@@ -2,25 +2,25 @@ package Root.Utils;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.CombinedConfiguration;
-import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 import org.apache.commons.configuration2.builder.CopyObjectDefaultHandler;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.XMLBuilderProperties;
 import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.CombinedBuilderParameters;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
 import org.apache.commons.configuration2.builder.fluent.XMLBuilderParameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
-import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 
 import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
@@ -28,11 +28,17 @@ import Root.Model.JschConnectionInfo;
 
 public class PropertiesUtils {
 	
-	public static PropertiesConfiguration propConfig = new PropertiesConfiguration();
-	public static CombinedConfiguration combinedConfig = null;
-	public static String configurationPath;
+	public static PropertiesConfiguration propConfig = null;		// DB, Server 접속정보 Configuration
+	public static PropertiesConfiguration connInfoConfig = null; 	// DB, Server 접속정보 Configuration
+	public static PropertiesConfiguration monitoringConfig = null; 	// 모니터링여부 Configuration
+	public static CombinedConfiguration combinedConfig = null;		// 공통 Configuration
 
-	public static void loadAppConfiguration(String path) throws Exception{
+	/**
+	 * [/config/config_definition.xml] 파일을 읽어 CombinedConfiguration 객체를 초기화한다.
+	 * @param path
+	 * @throws Exception
+	 */
+	public static void loadCombinedConfiguration() throws Exception{
 		Parameters params = new Parameters();
 		
 		CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
@@ -40,23 +46,62 @@ public class PropertiesUtils {
 		XMLBuilderParameters definitionParams = params.xml().setFile(new File("./config/config_definition.xml"));
 		CombinedBuilderParameters combinedParameters = params.combined()
 			    .setDefinitionBuilderParameters(definitionParams)
+			    .setListDelimiterHandler(new DefaultListDelimiterHandler(','))
 			    .registerChildDefaultsHandler(XMLBuilderProperties.class, new CopyObjectDefaultHandler(xmlParams));
 		builder.configure(combinedParameters);
 		combinedConfig = builder.getConfiguration();
+	}
+	
+	/**
+	 * 매개변수로 주어진 경로에 저장된 설정파일을 읽어 [propConfig] PropertiesConfiguration 객체를 초기화한다.
+	 * @param path
+	 * @throws Exception
+	 */
+	public static void loadAppConfiguration(String path) throws Exception{
+		File file = new File(path);
+		ListDelimiterHandler delimiter = new DefaultListDelimiterHandler(',');
 		
-		List<Configuration> configList = combinedConfig.getConfigurations();
+		PropertiesBuilderParameters propertyParameters = new Parameters().properties();
+		propertyParameters.setFile(file);
+		propertyParameters.setThrowExceptionOnMissing(true);
+		propertyParameters.setListDelimiterHandler(delimiter);
 		
-		for(Configuration c : configList) {
-			Iterator<String> iter = c.getKeys();
-			while(iter.hasNext()){ 
-				String key = iter.next();
-				String value = c.getString(key);
-				String[] values = value.split(",");
-				propConfig.setProperty(key, values);	
-			}
+		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
+		builder.configure(propertyParameters);
+
+		propConfig = builder.getConfiguration();
+	}
+	
+	/**
+	 * 매개변수로 주어진 경로에 저장된 설정파일을 읽어 configName과 동일한 이름의 PropertiesConfiguration 객체를 초기화한다.
+	 * @param path
+	 * @param configName
+	 * @throws Exception
+	 */
+	public static void loadAppConfiguration(String path, String configName) throws Exception{
+		File file = new File(path);
+		ListDelimiterHandler delimiter = new DefaultListDelimiterHandler(',');
+		
+		PropertiesBuilderParameters propertyParameters = new Parameters().properties();
+		propertyParameters.setFile(file);
+		propertyParameters.setThrowExceptionOnMissing(true);
+		propertyParameters.setListDelimiterHandler(delimiter);
+		
+		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
+		builder.configure(propertyParameters);
+
+		if(configName.equals("connInfoConfig")) {
+			connInfoConfig = builder.getConfiguration();	
+		} else if (configName.equals("monitoringConfig")) {
+			monitoringConfig = builder.getConfiguration();	
 		}
 	}
 	
+	/**
+	 * CombinedConfiguration 객체에서 특정 Configuration 객체를 가져온다.
+	 * @param name
+	 * @return
+	 */
 	public static PropertiesConfiguration getConfig(String name) {
 		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
 	}
@@ -66,7 +111,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
 	 */
 	public static List<JschConnectionInfo> getJschConnectionMap() {
-		String[] serverNames = propConfig.getString("servernames").split("/");
+		String[] serverNames = connInfoConfig.getString("servernames").split("/");
 		List<JschConnectionInfo> jschList = new ArrayList<>();
 		for(String serverName : serverNames) jschList.add(getJschConnectionInfo(serverName));
 		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ?  -1 : 1);
@@ -80,10 +125,10 @@ public class PropertiesUtils {
 	 */
 	public static JschConnectionInfo getJschConnectionInfo(String serverName) {
 		serverName = serverName.toLowerCase();
-		String serverHost = propConfig.getString(serverName + ".server.host");
-		int serverPort = propConfig.getInt(serverName + ".server.port");
-		String serverUserName = propConfig.getString(serverName + ".server.username");
-		String serverPassword = propConfig.getString(serverName + ".server.password");
+		String serverHost = connInfoConfig.getString(serverName + ".server.host");
+		int serverPort = connInfoConfig.getInt(serverName + ".server.port");
+		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
+		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
 		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword);
 	}
 	
@@ -92,7 +137,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
 	public static List<JdbcConnectionInfo> getJdbcConnectionMap() {
-		String[] dbNames = propConfig.getString("dbnames").split("/");
+		String[] dbNames = connInfoConfig.getString("dbnames").split("/");
 		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
 		for(String dbName : dbNames) jdbcList.add(getJdbcConnectionInfo(dbName));
 		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ?  -1 : 1);
@@ -106,12 +151,12 @@ public class PropertiesUtils {
 	 */
 	public static JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
 		dbName = dbName.toLowerCase();
-		String jdbcDriver = propConfig.getString(dbName + ".jdbc.driver");
-		String jdbcUrl = propConfig.getString(dbName + ".jdbc.url");
-		String jdbcId = propConfig.getString(dbName + ".jdbc.id");
-		String jdbcPw = propConfig.getString(dbName + ".jdbc.pw");
-		String jdbcValidataion = propConfig.getString(dbName + ".jdbc.validation");
-		int erpConnections = propConfig.getInt(dbName + ".jdbc.connections");
+		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
+		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");
+		String jdbcId = connInfoConfig.getString(dbName + ".jdbc.id");
+		String jdbcPw = connInfoConfig.getString(dbName + ".jdbc.pw");
+		String jdbcValidataion = connInfoConfig.getString(dbName + ".jdbc.validation");
+		int erpConnections = connInfoConfig.getInt(dbName + ".jdbc.connections");
 		return new JdbcConnectionInfo(dbName.toUpperCase(), jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidataion, erpConnections);
 	}
 	
@@ -120,7 +165,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
 	public static Map<String, AlertLogCommand> getAlertLogCommandMap() {
-		String[] serverNames = propConfig.getString("servernames").split("/");
+		String[] serverNames = connInfoConfig.getString("servernames").split("/");
 		Map<String, AlertLogCommand> alcMap = new HashMap<>();
 		for(String serverName : serverNames) alcMap.put(serverName, getAlertLogCommand(serverName));
 		return alcMap;
@@ -132,21 +177,59 @@ public class PropertiesUtils {
 	 * @return
 	 */
 	public static AlertLogCommand getAlertLogCommand(String serverName) {
-		String alertLogFilePath = PropertiesUtils.propConfig.getString(serverName.toLowerCase() + ".server.alertlog.filepath");
-		String alertLogReadLine = PropertiesUtils.propConfig.getString(serverName.toLowerCase() + ".server.alertlog.readline");
-		String alertLogDateFormat = PropertiesUtils.propConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformat");
-		String alertLogDateFormatRegex = PropertiesUtils.propConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformatregex");
+		String alertLogFilePath = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.filepath");
+		String alertLogReadLine = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.readline");
+		String alertLogDateFormat = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformat");
+		String alertLogDateFormatRegex = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformatregex");
 		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 		return alc;
 	}
 
 	public static void save() {
-		try {
-			propConfig.write(new FileWriter(configurationPath, false));
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			propConfig.write(new FileWriter(configurationPath, false));
+//		} catch (ConfigurationException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+	}
+	
+	/**
+	 * 주석을 포함하여 현재 Configuration 상태에 따라 프로퍼티파일을 재작성한다.
+	 * @param filePath
+	 * @param config
+	 */
+	public static void save(String filePath, PropertiesConfiguration config) {
+    	PropertiesConfigurationLayout layout = config.getLayout();
+        try {
+        	final PropertiesConfiguration.PropertiesWriter writer = 
+        			config.getIOFactory().createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
+        	
+        	// Write Header Comment;
+	        writer.writeln(layout.getHeaderComment());
+	        
+	        for (final String key : layout.getKeys()) {
+	            // Output blank lines before property
+	        	for(int i=0; i < layout.getBlancLinesBefore(key); i++) {
+	        		writer.writeln(null);
+	        	}
+
+	            // Output the comment
+	        	if(layout.getComment(key) != null) {
+		        	writer.writeln(layout.getComment(key));	        		
+	        	}
+	
+	            // Output the property and its value
+	            final boolean singleLine = layout.isForceSingleLine() || layout.isSingleLine(key);
+	            writer.setCurrentSeparator(layout.getSeparator(key));
+	            writer.writeProperty(key, config.getProperty(key), singleLine);
+	        }
+	
+	        writer.writeln(layout.getCanonicalFooterCooment(true));
+	        writer.flush();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
 	}
 }

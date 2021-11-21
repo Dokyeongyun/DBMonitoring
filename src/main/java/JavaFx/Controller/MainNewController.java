@@ -1,8 +1,6 @@
 package JavaFx.Controller;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
@@ -12,6 +10,10 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -32,6 +34,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -39,8 +43,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
@@ -49,13 +51,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 public class MainNewController implements Initializable {
-	
+	private static Logger logger = Logger.getLogger(MainNewController.class);
+
 	@FXML SplitPane rootSplitPane;
 	
 	// Left SplitPane Region
@@ -69,10 +74,12 @@ public class MainNewController implements Initializable {
 	// Setting Menu Region
 	@FXML ScrollPane settingScrollPane;
 	@FXML AnchorPane settingMainContentAnchorPane;
+	@FXML AnchorPane noPropertiesFileAP1;		// [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+	@FXML AnchorPane noPropertiesFileAP2;		// [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
 	@FXML VBox monitoringElementsVBox;
 	@FXML JFXButton settingSaveBtn;
-	@FXML Button fileChooserBtn;				// .properties 파일을 선택하기 위한 FileChooser
-	@FXML TextField fileChooserText;			// .properties 파일 경로를 입력/출력하는 TextField
+	@FXML Button fileChooserBtn;				// 설정파일을 선택하기 위한 FileChooser
+	@FXML TextField fileChooserText;			// 설정파일 경로를 입력/출력하는 TextField
 	@FXML AnchorPane connectInfoAnchorPane;		
 	@FXML FlowPane connectInfoFlowPane;			// DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
 	@FXML StackPane dbConnInfoStackPane;		// DB접속정보 설정 그리드를 담는 컨테이너
@@ -87,17 +94,16 @@ public class MainNewController implements Initializable {
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
 
-	// TODO 추후, Properties 파일에서 읽어오기
-	String[] dbMonitorings = new String[] {"Archive Usage", "TableSpace Usage", "ASM Disk Usage"};
-	String[] serverMonitorings = new String[] {"OS Disk Usage", "Alert Log"};
+	String[] dbMonitorings;
+	String[] serverMonitorings;
 	
-	String[] dbNames = PropertiesUtils.propConfig.getString("dbnames").split("/");
-	String[] serverNames = PropertiesUtils.propConfig.getString("servernames").split("/");
+	String[] dbNames;
+	String[] serverNames;
 	
 	// dbConnInfo
-	List<JdbcConnectionInfo> jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
-	List<JschConnectionInfo> jschConnInfoList = PropertiesUtils.getJschConnectionMap();
-	Map<String, AlertLogCommand> alcMap = PropertiesUtils.getAlertLogCommandMap();
+	List<JdbcConnectionInfo> jdbcConnInfoList;
+	List<JschConnectionInfo> jschConnInfoList;
+	Map<String, AlertLogCommand> alcMap;
 
 	// dbConnInfo Index 배열
 	Map<Integer, AnchorPane> dbConnInfoIdxMap = new HashMap<>();
@@ -109,42 +115,19 @@ public class MainNewController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		BasicConfigurator.configure();
+
+		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+		String lastUsePropertiesFile = PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
+		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
 		
-		// [설정] - [모니터링 여부 설정] TAB 동적 요소 생성
-		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
-		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
-		
-		// [설정] - [접속정보 설정] TAB 동적 요소 생성
-		if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
-			dbConnInfoNoDataAP.setVisible(true);	
-			dbInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
-		} else {
-			dbConnInfoNoDataAP.setVisible(true);
-			jdbcConnInfoList.forEach(info -> {
-				String dbConnInfoDetailAPId = "dbConnInfo" + info.getJdbcDBName() + "AP";
-				createJdbcConnInfoElements(dbConnInfoStackPane, info, dbConnInfoDetailAPId);
-			});
-			dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+		if(lastUsePropertiesFile != null) {
+			loadSelectedConfigFile(lastUsePropertiesFile);
 		}
-		
-		if(jschConnInfoList.size() == 0) { // 서버 접속정보 없음
-			serverConnInfoNoDataAP.setVisible(true);	
-			serverInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
-		} else {
-			serverConnInfoNoDataAP.setVisible(true);
-			jschConnInfoList.forEach(info -> {
-				info.setAlc(alcMap.get(info.getServerName()));
-				String serverConnInfoDetailAPId = "serverConnInfo" + info.getServerName() + "AP";
-				createJschConnInfoElements(serverConnInfoStackPane, info, serverConnInfoDetailAPId);
-			});
-			serverInfoCntText.setText("(" + (serverConnInfoIdx + 1) + "/" + serverConnInfoIdxMap.size() + ")");
-		}
-		
 	}
 	
 	/**
 	 * [설정] - [접속정보 설정] - 새로운 DB/Server 접속정보 작성 폼을 생성한다.
-	 * @param <T>
 	 * @param newConnInfoAPId
 	 * @param parentSP
 	 * @param connInfo
@@ -237,13 +220,95 @@ public class MainNewController implements Initializable {
 	
 	/**
 	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다.
+	 * 사용자가 선택한 파일의 경로에서 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다.
+	 * 그렇지 않다면, '잘못된 파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
 	 * @param e
 	 */
 	public void openFileChooser(ActionEvent e) {
 		FileChooser fileChooser = new FileChooser();
+		
+		// 선택가능한 Extension 제한
+		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("Properties", ".properties"));
+		
+		// 초기 파일경로 지정
+		fileChooser.setInitialDirectory(new File("./config"));
+		
+		// 파일 선택창 열고, 선택된 파일 반환받음
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
-		if(selectedFile != null) {
-			fileChooserText.setText(selectedFile.getAbsolutePath());	
+
+		if(selectedFile == null) {
+			// NOTHING 
+		} else {
+			if(selectedFile.isFile() && selectedFile.exists()) {
+				// 올바른 파일
+				String filePath = selectedFile.getAbsolutePath();
+				loadSelectedConfigFile(filePath);
+			} else {
+				// 잘못된 파일
+				fileChooserText.setText("");
+			}
+		}
+	}
+	
+	/**
+	 * [설정] - 프로퍼티파일을 읽는다.
+	 * @param filePath
+	 */
+	private void loadSelectedConfigFile(String absoluteFilePath) {
+		boolean loadResult = false;
+		
+		try {
+			// TODO 추후 Utils 클래스로 추출 필요
+			// 1. 절대경로를 상대경로로 변환한다.
+			int startIdx = absoluteFilePath.lastIndexOf("\\config");
+			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);	
+			
+			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
+			PropertiesUtils.loadAppConfiguration(filePath, "connInfoConfig");
+			
+			// 3. 접속정보 프로퍼티 파일에서 모니터링 세팅 설정을 읽는다.
+			// 최근 사용된 모니터링 설정 읽기
+			String monitoringSettingFile = PropertiesUtils.connInfoConfig.getString("monitoring.setting.lastuse.filepath");
+			if(monitoringSettingFile == null) {
+				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
+				monitoringSettingFile = PropertiesUtils.connInfoConfig.getString("monitoring.setting.1.filepath");
+			}
+			// 첫번째 설정도 없다면 읽지 않음
+			if(monitoringSettingFile != null) {
+				PropertiesUtils.loadAppConfiguration(monitoringSettingFile, "monitoringConfig");	
+			}
+
+			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
+			createSettingDynamicElements();
+			
+			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
+			PropertiesConfiguration rememberConfig = PropertiesUtils.getConfig("rememberConfig");
+		    rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
+		    PropertiesUtils.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
+
+		    // 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+			fileChooserText.setText(filePath);	
+
+			loadResult = true;
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			loadResult = false;
+		} finally {
+			
+			// 7. 파일 load가 완료되었다는 메시지를 띄운다.
+			if(loadResult) {
+				Alert successAlert = new Alert(AlertType.INFORMATION);
+				successAlert.setHeaderText("설정파일 불러오기");
+				successAlert.setContentText("설정파일을 정상적으로 불러왔습니다.");
+				successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
+				successAlert.show();
+			} else {
+				Alert failAlert = new Alert(AlertType.ERROR);
+				failAlert.setHeaderText("설정파일 불러오기");
+				failAlert.setContentText("설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.");
+				failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
+				failAlert.show();
+			}
 		}
 	}
 	
@@ -286,23 +351,23 @@ public class MainNewController implements Initializable {
 	 */
 	public void saveSettings(ActionEvent e) {
 		
-		// TODO 설정파일을 저장할 경로 및 파일몀을 지정할 수 있도록 UI 생성하기
+		// TODO 설정파일을 저장할 경로 및 파일명을 지정할 수 있도록 UI 생성하기
 		
-		try {
-			File settingFile = new File(PropertiesUtils.configurationPath);
-			if(settingFile.exists() == false) {
-				settingFile.createNewFile();
-			}
-	
-			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
-				JFXToggleButton thisToggle = (JFXToggleButton) n;
-				PropertiesUtils.propConfig.setProperty(thisToggle.getId(), thisToggle.isSelected());
-			}
-			PropertiesUtils.save();
-			
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+//		try {
+//			File settingFile = new File(PropertiesUtils.configurationPath);
+//			if(settingFile.exists() == false) {
+//				settingFile.createNewFile();
+//			}
+//	
+//			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
+//				JFXToggleButton thisToggle = (JFXToggleButton) n;
+//				PropertiesUtils.propConfig.setProperty(thisToggle.getId(), thisToggle.isSelected());
+//			}
+//			PropertiesUtils.save();
+//			
+//		} catch (IOException e1) {
+//			e1.printStackTrace();
+//		}
 	}
 
 	/**
@@ -336,32 +401,21 @@ public class MainNewController implements Initializable {
 			headerHBox.setFillHeight(true);
 			headerHBox.setPrefHeight(40);
 			
-			ImageView headerImage = new ImageView();
-			try {
-				File imageFile = new File("../DBMonitoring/src/main/java/JavaFx/resources/image/orange_point_icon.png");
-				headerImage.setImage(new Image(new FileInputStream(imageFile)));
-				headerImage.setPreserveRatio(true);
-				headerImage.setFitHeight(10);
-				headerImage.prefHeight(40);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			
 			Label headerLabel = new Label();
 			headerLabel.setText(mName);
 			headerLabel.setTextAlignment(TextAlignment.LEFT);
 			headerLabel.setAlignment(Pos.CENTER_LEFT);
 			headerLabel.setPrefWidth(200);
 			headerLabel.setPrefHeight(40);
-			headerLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 16px;");
-			headerLabel.setGraphic(headerImage);
-			headerLabel.setGraphicTextGap(10);
+			headerLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 14px;");
 			
 			JFXToggleButton headerToggleBtn = new JFXToggleButton();
 			headerToggleBtn.setId(headerToggleId);
 			headerToggleBtn.setSize(6);
+			headerToggleBtn.setToggleColor(Paint.valueOf("#0132ac"));
+			headerToggleBtn.setToggleLineColor(Paint.valueOf("#6e93ea"));
 			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(PropertiesUtils.propConfig.containsKey(headerToggleId) == false ? true : PropertiesUtils.propConfig.getBoolean(headerToggleId));
+			headerToggleBtn.setSelected(PropertiesUtils.monitoringConfig.containsKey(headerToggleId) == false ? true : PropertiesUtils.monitoringConfig.getBoolean(headerToggleId));
 			headerToggleBtn.setOnAction((ActionEvent e) -> {
 				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 				for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
@@ -369,7 +423,7 @@ public class MainNewController implements Initializable {
 				}
 			});
 			
-			headerHBox.getChildren().addAll(headerLabel, headerToggleBtn);
+			headerHBox.getChildren().addAll(headerToggleBtn, headerLabel);
 			
 			// Content
 			FlowPane contentFlowPane = new FlowPane();
@@ -386,7 +440,7 @@ public class MainNewController implements Initializable {
 				contentLabel.setMinWidth(80);
 				contentLabel.setMaxWidth(80);
 				contentLabel.setPrefHeight(40);
-				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 12px;");
+				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-size: 12px;");
 				
 				JFXToggleButton contentToggleBtn = new JFXToggleButton();
 				contentToggleBtn.setId(contentToggleId);
@@ -395,7 +449,7 @@ public class MainNewController implements Initializable {
 				contentToggleBtn.setMaxWidth(40);
 				contentToggleBtn.setPrefHeight(40);
 				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(PropertiesUtils.propConfig.containsKey(contentToggleId) == false ? true : PropertiesUtils.propConfig.getBoolean(contentToggleId));
+				contentToggleBtn.setSelected(PropertiesUtils.monitoringConfig.containsKey(contentToggleId) == false ? true : PropertiesUtils.monitoringConfig.getBoolean(contentToggleId));
 				contentToggleBtn.setOnAction((ActionEvent e) -> {
 					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 					
@@ -451,7 +505,7 @@ public class MainNewController implements Initializable {
 					}
 				});
 				
-				contentHBox.getChildren().addAll(contentLabel, contentToggleBtn);
+				contentHBox.getChildren().addAll(contentToggleBtn, contentLabel);
 				contentFlowPane.getChildren().addAll(contentHBox);
 			}
 			
@@ -532,7 +586,7 @@ public class MainNewController implements Initializable {
 		dbPasswordTextField.setPrefWidth(200.0);
 		dbUrlTextField.setPrefWidth(424.0);
 		dbPasswordTextField.setPromptText("<hidden>");
-		dbDriverComboBox.getItems().addAll(PropertiesUtils.propConfig.getStringArray("db.setting.oracle.driver.combo"));
+		dbDriverComboBox.getItems().addAll(PropertiesUtils.combinedConfig.getStringArray("db.setting.oracle.driver.combo"));
 		
 		// TextField Value Setting
 		dbHostTextField.setText(connInfo.getJdbcHost());
@@ -646,7 +700,7 @@ public class MainNewController implements Initializable {
 		serverPasswordTextField.setPrefWidth(200.0);
 		serverAlertLogFilePathTextField.setPrefWidth(424.0);
 		serverAlertLogDateFormatComboBox.setPrefWidth(424.0);
-		serverAlertLogDateFormatComboBox.getItems().addAll(PropertiesUtils.propConfig.getStringArray("server.setting.dateformat.combo"));
+		serverAlertLogDateFormatComboBox.getItems().addAll(PropertiesUtils.combinedConfig.getStringArray("server.setting.dateformat.combo"));
 		serverPasswordTextField.setPromptText("<hidden>");
 		
 		
@@ -701,5 +755,54 @@ public class MainNewController implements Initializable {
 		sb.append("jdbc:").append(dbms).append(":").append(driver).append(":@")
 		.append(host).append(":").append(port).append("/").append(sid);
 		return sb.toString();
+	}
+	
+	/**
+	 * [설정] - 설정파일을 불러온 후, 동적 UI를 생성한다.
+	 */
+	private void createSettingDynamicElements() {
+
+		dbNames = PropertiesUtils.connInfoConfig.getString("dbnames").split("/");
+		serverNames = PropertiesUtils.connInfoConfig.getString("servernames").split("/");
+		
+		jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
+		jschConnInfoList = PropertiesUtils.getJschConnectionMap();
+		alcMap = PropertiesUtils.getAlertLogCommandMap();
+		dbMonitorings = PropertiesUtils.combinedConfig.getStringArray("db.monitoring.contents");
+		serverMonitorings = PropertiesUtils.combinedConfig.getStringArray("server.monitoring.contents");
+		
+		// [설정] - [모니터링 여부 설정] TAB 동적 요소 생성
+		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
+		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+		
+		// [설정] - [접속정보 설정] TAB 동적 요소 생성
+		if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
+			dbConnInfoNoDataAP.setVisible(true);	
+			dbInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
+		} else {
+			dbConnInfoNoDataAP.setVisible(true);
+			jdbcConnInfoList.forEach(info -> {
+				String dbConnInfoDetailAPId = "dbConnInfo" + info.getJdbcDBName() + "AP";
+				createJdbcConnInfoElements(dbConnInfoStackPane, info, dbConnInfoDetailAPId);
+			});
+			dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
+		}
+		
+		if(jschConnInfoList.size() == 0) { // 서버 접속정보 없음
+			serverConnInfoNoDataAP.setVisible(true);	
+			serverInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
+		} else {
+			serverConnInfoNoDataAP.setVisible(true);
+			jschConnInfoList.forEach(info -> {
+				info.setAlc(alcMap.get(info.getServerName()));
+				String serverConnInfoDetailAPId = "serverConnInfo" + info.getServerName() + "AP";
+				createJschConnInfoElements(serverConnInfoStackPane, info, serverConnInfoDetailAPId);
+			});
+			serverInfoCntText.setText("(" + (serverConnInfoIdx + 1) + "/" + serverConnInfoIdxMap.size() + ")");
+		}
+		
+		// Hide No Properties File AnchorPane 
+		noPropertiesFileAP1.setVisible(false);
+		noPropertiesFileAP2.setVisible(false);
 	}
 }
