@@ -79,13 +79,11 @@ public class PropertiesUtils {
 	 * @throws Exception
 	 */
 	public static void loadAppConfiguration(String path, String configName) throws Exception{
-		File file = new File(path);
-		ListDelimiterHandler delimiter = new DefaultListDelimiterHandler(',');
-		
-		PropertiesBuilderParameters propertyParameters = new Parameters().properties();
-		propertyParameters.setFile(file);
-		propertyParameters.setThrowExceptionOnMissing(true);
-		propertyParameters.setListDelimiterHandler(delimiter);
+		Parameters param = new Parameters();
+		PropertiesBuilderParameters propertyParameters = param.properties()
+				.setListDelimiterHandler(new DefaultListDelimiterHandler(','))
+				.setThrowExceptionOnMissing(true)
+				.setFile(new File(path));
 		
 		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
 		builder.configure(propertyParameters);
@@ -111,7 +109,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
 	 */
 	public static List<JschConnectionInfo> getJschConnectionMap() {
-		String[] serverNames = connInfoConfig.getString("servernames").split("/");
+		String[] serverNames = connInfoConfig.getStringArray("servernames");
 		List<JschConnectionInfo> jschList = new ArrayList<>();
 		for(String serverName : serverNames) jschList.add(getJschConnectionInfo(serverName));
 		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ?  -1 : 1);
@@ -137,7 +135,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
 	public static List<JdbcConnectionInfo> getJdbcConnectionMap() {
-		String[] dbNames = connInfoConfig.getString("dbnames").split("/");
+		String[] dbNames = connInfoConfig.getStringArray("dbnames");
 		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
 		for(String dbName : dbNames) jdbcList.add(getJdbcConnectionInfo(dbName));
 		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ?  -1 : 1);
@@ -165,7 +163,7 @@ public class PropertiesUtils {
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
 	public static Map<String, AlertLogCommand> getAlertLogCommandMap() {
-		String[] serverNames = connInfoConfig.getString("servernames").split("/");
+		String[] serverNames = connInfoConfig.getStringArray("servernames");
 		Map<String, AlertLogCommand> alcMap = new HashMap<>();
 		for(String serverName : serverNames) alcMap.put(serverName, getAlertLogCommand(serverName));
 		return alcMap;

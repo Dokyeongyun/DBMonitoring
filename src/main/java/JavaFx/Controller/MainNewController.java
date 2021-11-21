@@ -762,8 +762,8 @@ public class MainNewController implements Initializable {
 	 */
 	private void createSettingDynamicElements() {
 
-		dbNames = PropertiesUtils.connInfoConfig.getString("dbnames").split("/");
-		serverNames = PropertiesUtils.connInfoConfig.getString("servernames").split("/");
+		dbNames = PropertiesUtils.connInfoConfig.getStringArray("dbnames");
+		serverNames = PropertiesUtils.connInfoConfig.getStringArray("servernames");
 		
 		jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 		jschConnInfoList = PropertiesUtils.getJschConnectionMap();
