@@ -68,8 +68,8 @@ public class Application {
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
 			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
 			dbBatch.startBatchArchiveUsageCheck();
-			//dbBatch.startBatchTableSpaceUsageCheck();
-			//dbBatch.startBatchASMDiskUsageCheck();
+			dbBatch.startBatchTableSpaceUsageCheck();
+			dbBatch.startBatchASMDiskUsageCheck();
 			//System.out.println("бр [ " + dbName + " Monitoring End ]\n\n");
 		} 
 	}
@@ -96,7 +96,7 @@ public class Application {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
 			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
-			//serverBatch.startBatchOSDiskUsageCheck("df -Ph");
+			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
 			//System.out.println("бр [ " + serverName + " Monitoring End ]\n\n");
 		} 
 	}

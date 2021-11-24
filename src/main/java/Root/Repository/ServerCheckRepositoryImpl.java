@@ -57,6 +57,24 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
+	public int getAlertLogFileLineCount(AlertLogCommand alc) {
+		int fileLineCnt = 0;
+		try {
+			Session session = this.getSession();
+			session = this.connectSession(session);
+			Channel channel = jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l");
+			InputStream in = jsch.connectChannel(channel);
+			String result = IOUtils.toString(in, "UTF-8");
+			fileLineCnt = Integer.parseInt(result.trim());
+			jsch.disConnectChannel(channel);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		return fileLineCnt;
+	}
+	
+	@Override
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
@@ -76,6 +94,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	@Override
 	public AlertLog checkAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
 		AlertLog alertLog = new AlertLog();
+		int alertLogFileLineCnt = this.getAlertLogFileLineCount(alcp);
 		String fullAlertLogString = this.checkAlertLog(alcp);
 		String dateFormat = alcp.getDateFormat();
 		String dateFormatRegex = alcp.getDateFormatRegex();
@@ -89,6 +108,11 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			while(true) {
 				String[] lines = fullAlertLogString.split("\n");
 
+				// 현재 Read Line 수가 파일 최대 Line 수를 초과했을 시, 파일 전체를 읽고 반환한다.
+				if(lines.length >= alertLogFileLineCnt) {
+					break;
+				}
+				
 				// 조회한 로그 내에서 가장 처음으로 나타나는 로그의 기록일자를 얻어낸다.
 				String logDate = "";
 				for(String line : lines) {
@@ -98,7 +122,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 						break;
 					}
 				}
-
+				
 				// 조회시작일자와 로그의 처음 기록일자를 비교한다.
 				long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
 		        if(diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
