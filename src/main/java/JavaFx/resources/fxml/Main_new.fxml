@@ -607,6 +607,19 @@
                                                    <center>
                                                       <AnchorPane>
                                                          <children>
+                                                            <AnchorPane fx:id="noPropertiesFileAP1" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <children>
+                                                                  <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="설정파일을 열어주세요." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView fill="#1f6cc4" glyphName="ARCHIVE" size="40" />
+                                                                     </graphic>
+                                                                     <styleClass>
+                                                                        <String fx:value="basic-font" />
+                                                                        <String fx:value="bold" />
+                                                                     </styleClass>
+                                                                  </Label>
+                                                               </children>
+                                                            </AnchorPane>
                                                             <VBox minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
                                                                   <ScrollPane fx:id="settingScrollPane" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;">
@@ -628,7 +641,8 @@
                                                                                           <FontAwesomeIconView fill="#0132ac" glyphName="DESKTOP" selectionFill="BLACK" size="20" />
                                                                                        </graphic>
                                                                                     </Label>
-                                                                                    <JFXButton fx:id="dbMonitoringAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="10.0">
+                                                                                    <JFXComboBox fx:id="monitoringPresetComboBox" layoutX="173.0" layoutY="8.0" maxHeight="30.0" minHeight="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="99.0" AnchorPane.topAnchor="10.0" />
+                                                                                    <JFXButton fx:id="monitoringPresetAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
                                                                                        <styleClass>
                                                                                           <String fx:value="bold" />
                                                                                           <String fx:value="basic-font" />
@@ -644,50 +658,6 @@
                                                                                           </ImageView>
                                                                                        </graphic>
                                                                                     </JFXButton>
-                                                                                    <JFXButton fx:id="prevDbMonitoringBtn" ellipsisString="" graphicTextGap="0.0" layoutX="286.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="10.0">
-                                                                                       <styleClass>
-                                                                                          <String fx:value="bold" />
-                                                                                          <String fx:value="basic-font" />
-                                                                                       </styleClass>
-                                                                                       <cursor>
-                                                                                          <Cursor fx:constant="HAND" />
-                                                                                       </cursor>
-                                                                                       <graphic>
-                                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" rotate="180.0">
-                                                                                             <image>
-                                                                                                <Image url="@../image/next_icon.png" />
-                                                                                             </image>
-                                                                                          </ImageView>
-                                                                                       </graphic>
-                                                                                       <font>
-                                                                                          <Font size="1.0" />
-                                                                                       </font>
-                                                                                    </JFXButton>
-                                                                                    <JFXButton fx:id="nextDbMonitoringBtn" ellipsisString="" graphicTextGap="0.0" layoutX="367.0" layoutY="10.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
-                                                                                       <styleClass>
-                                                                                          <String fx:value="bold" />
-                                                                                          <String fx:value="basic-font" />
-                                                                                       </styleClass>
-                                                                                       <cursor>
-                                                                                          <Cursor fx:constant="HAND" />
-                                                                                       </cursor>
-                                                                                       <graphic>
-                                                                                          <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                             <image>
-                                                                                                <Image url="@../image/next_icon.png" />
-                                                                                             </image>
-                                                                                          </ImageView>
-                                                                                       </graphic>
-                                                                                       <font>
-                                                                                          <Font size="1.0" />
-                                                                                       </font>
-                                                                                    </JFXButton>
-                                                                                    <Text fx:id="dbMonitoringCntTxt" layoutX="127.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 10px;" text="※ 모니터링 세팅을 추가해주세요." AnchorPane.leftAnchor="165.0" AnchorPane.topAnchor="20.0">
-                                                                                       <styleClass>
-                                                                                          <String fx:value="basic-font" />
-                                                                                          <String fx:value="bold" />
-                                                                                       </styleClass>
-                                                                                    </Text>
                                                                                     <Separator minHeight="5.0" prefHeight="5.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                                                                        <padding>
                                                                                           <Insets left="10.0" right="10.0" top="10.0" />
@@ -712,19 +682,6 @@
                                                                   </ScrollPane>
                                                                </children>
                                                             </VBox>
-                                                            <AnchorPane fx:id="noPropertiesFileAP1" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                               <children>
-                                                                  <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="설정파일을 열어주세요." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                     <graphic>
-                                                                        <FontAwesomeIconView fill="#1f6cc4" glyphName="ARCHIVE" size="40" />
-                                                                     </graphic>
-                                                                     <styleClass>
-                                                                        <String fx:value="basic-font" />
-                                                                        <String fx:value="bold" />
-                                                                     </styleClass>
-                                                                  </Label>
-                                                               </children>
-                                                            </AnchorPane>
                                                          </children>
                                                       </AnchorPane>
                                                    </center>
@@ -734,7 +691,7 @@
                                                             <Separator prefWidth="200.0" />
                                                             <HBox alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0">
                                                                <children>
-                                                                 <JFXButton fx:id="settingSaveBtn" buttonType="RAISED" graphicTextGap="2.0" onAction="#saveSettings" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #2381E9; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-text-fill: #2381E9;" text="설정저장">
+                                                                 <JFXButton fx:id="settingSaveBtn" buttonType="RAISED" graphicTextGap="2.0" onAction="#saveMonitoringSettings" prefHeight="30.0" prefWidth="100.0" ripplerFill="BLACK" style="-fx-border-color: #2381E9; -fx-font-size: 12px; -fx-border-radius: 100px; -fx-text-fill: #2381E9;" text="설정저장">
                                                                      <styleClass>
                                                                         <String fx:value="bold" />
                                                                         <String fx:value="basic-font" />

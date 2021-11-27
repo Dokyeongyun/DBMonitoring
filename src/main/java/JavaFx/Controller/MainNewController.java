@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -93,6 +95,7 @@ public class MainNewController implements Initializable {
 	@FXML AnchorPane serverConnInfoNoDataAP;	// 서버접속정보 No Data AchorPane
 	@FXML AnchorPane serverConnInfoSampleAP;	// 서버접속정보 Blank AnchorPane
 	@FXML Text serverInfoCntText;				// 서버접속정보 인덱스 텍스트
+	@FXML JFXComboBox<String> monitoringPresetComboBox;	// 모니터링여부 설정 Preset ComboBox
 	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
@@ -115,6 +118,8 @@ public class MainNewController implements Initializable {
 	// serverConnInfo Index 배열
 	Map<Integer, AnchorPane> serverConnInfoIdxMap = new HashMap<>();
 	int serverConnInfoIdx = 0;
+	
+	Map<String, String> monitoringPresetMap = new HashMap<>();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -265,33 +270,19 @@ public class MainNewController implements Initializable {
 			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
 			PropertiesUtils.loadAppConfiguration(filePath, "connInfoConfig");
 			
-			// 3. 접속정보 프로퍼티 파일에서 모니터링 세팅 설정을 읽는다.
-			// 최근 사용된 모니터링 설정 읽기
-			String monitoringSettingFile = PropertiesUtils.connInfoConfig.getString("monitoring.setting.lastuse.filepath");
-			logger.debug("최근 사용된 모니터링 설정파일: " + monitoringSettingFile);
-			if(monitoringSettingFile == null) {
-				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
-				monitoringSettingFile = PropertiesUtils.connInfoConfig.getString("monitoring.setting.1.filepath");
-				logger.debug("첫번째 설정파일: " + monitoringSettingFile);
-			}
-			// 첫번째 설정도 없다면 읽지 않음
-			if(monitoringSettingFile != null) {
-				PropertiesUtils.loadAppConfiguration(monitoringSettingFile, "monitoringConfig");	
-			}
-
-			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
+			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// 5. 첫번째 접속정보를 맨 앞으로 가져온다.
+			// 4. 첫번째 접속정보를 맨 앞으로 가져온다.
 			bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, 0, dbInfoCntText);
 			bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
 			
-			// 6. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
+			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = PropertiesUtils.getConfig("rememberConfig");
 		    rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 		    PropertiesUtils.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
-		    // 7. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+		    // 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);	
 
 			loadResult = true;
@@ -300,7 +291,7 @@ public class MainNewController implements Initializable {
 			loadResult = false;
 		} finally {
 			
-			// 8. 파일 load가 완료되었다는 메시지를 띄운다.
+			// 7. 파일 load가 완료되었다는 메시지를 띄운다.
 			if(loadResult) {
 				Alert successAlert = new Alert(AlertType.INFORMATION);
 				successAlert.setHeaderText("설정파일 불러오기");
@@ -315,6 +306,21 @@ public class MainNewController implements Initializable {
 				failAlert.show();
 			}
 		}
+	}
+	
+	private void loadMonitoringConfigFile(String filePath) {
+		try {
+			monitoringElementsVBox.getChildren().clear();
+			dbMonitorings = PropertiesUtils.combinedConfig.getStringArray("db.monitoring.contents");
+			serverMonitorings = PropertiesUtils.combinedConfig.getStringArray("server.monitoring.contents");
+
+			PropertiesUtils.loadAppConfiguration(filePath, "monitoringConfig");
+
+			createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
+			createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}	
 	}
 	
 	/**
@@ -554,25 +560,24 @@ public class MainNewController implements Initializable {
 	 * [설정] - [모니터링 여부 설정] - 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
 	 * @param e
 	 */
-	public void saveSettings(ActionEvent e) {
+	public void saveMonitoringSettings(ActionEvent e) {
+		PropertiesConfiguration config = PropertiesUtils.monitoringConfig;
+		String monitoringFilePath = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		
-		// TODO 설정파일을 저장할 경로 및 파일명을 지정할 수 있도록 UI 생성하기
-		
-//		try {
-//			File settingFile = new File(PropertiesUtils.configurationPath);
-//			if(settingFile.exists() == false) {
-//				settingFile.createNewFile();
-//			}
-//	
-//			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
-//				JFXToggleButton thisToggle = (JFXToggleButton) n;
-//				PropertiesUtils.propConfig.setProperty(thisToggle.getId(), thisToggle.isSelected());
-//			}
-//			PropertiesUtils.save();
-//			
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
+		if(!monitoringFilePath.isEmpty()) {
+			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
+				JFXToggleButton thisToggle = (JFXToggleButton) n;
+				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
+			}
+			PropertiesUtils.save(monitoringFilePath, config);	
+			loadMonitoringConfigFile(monitoringFilePath);
+			
+			Alert failAlert = new Alert(AlertType.INFORMATION);
+			failAlert.setHeaderText("설정 저장");
+			failAlert.setContentText("모니터링여부 설정이 저장되었습니다.");
+			failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
+			failAlert.show();
+		}
 	}
 
 	/**
@@ -1009,7 +1014,6 @@ public class MainNewController implements Initializable {
 			// 기존 요소 초기화
 			dbConnInfoIdx = 0;
 			serverConnInfoIdx = 0;
-			monitoringElementsVBox.getChildren().clear();
 			dbConnInfoStackPane.getChildren().removeIf(c -> !c.getId().contains("noPropertiesFileAP2"));
 			serverConnInfoStackPane.getChildren().removeIf(c -> !c.getId().contains("noPropertiesFileAP1"));
 			dbConnInfoIdxMap.clear();
@@ -1021,13 +1025,35 @@ public class MainNewController implements Initializable {
 			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 			jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 			alcMap = PropertiesUtils.getAlertLogCommandMap();
-			dbMonitorings = PropertiesUtils.combinedConfig.getStringArray("db.monitoring.contents");
-			serverMonitorings = PropertiesUtils.combinedConfig.getStringArray("server.monitoring.contents");
 			
-			// [설정] - [모니터링 여부 설정] TAB 동적 요소 생성
-			createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
-			createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+			// 모니터링여부 설정 Preset 
+			Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
+			Iterator<String> presetIt = monitoringConfig.getKeys();
+			String lastUseFilePath = "";
+			while(presetIt.hasNext()) {
+				String key = presetIt.next();
+				if(key.startsWith("lastuse")) {
+					lastUseFilePath = monitoringConfig.getString(key);
+				} else {
+					monitoringPresetMap.put(key.substring(0, key.indexOf(".")), monitoringConfig.getString(key));	
+					monitoringPresetComboBox.getItems().add(monitoringConfig.getString(key));
+				}
+			}
 			
+			// 최근 사용된 모니터링 설정 읽기
+			logger.debug("최근 사용된 모니터링 설정파일: " + lastUseFilePath);
+			if(lastUseFilePath.isEmpty() && monitoringPresetMap.size() != 0) {
+				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
+				lastUseFilePath = monitoringPresetComboBox.getItems().get(0);
+				logger.debug("첫번째 설정파일: " + lastUseFilePath);
+			}
+			
+			// 첫번째 설정도 없다면 읽지 않음
+			if(!lastUseFilePath.isEmpty()) {
+				monitoringPresetComboBox.getSelectionModel().select(lastUseFilePath);
+				loadMonitoringConfigFile(lastUseFilePath);
+			}
+
 			// [설정] - [접속정보 설정] TAB 동적 요소 생성
 			if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
 				dbConnInfoNoDataAP.setVisible(true);	
