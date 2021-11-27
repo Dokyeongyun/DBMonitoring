@@ -1,6 +1,7 @@
 package Root.Utils;
 
 import java.io.File;
+
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,13 +22,16 @@ import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParamet
 import org.apache.commons.configuration2.builder.fluent.XMLBuilderParameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
+import org.apache.log4j.Logger;
 
+import JavaFx.Controller.MainNewController;
 import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 
 public class PropertiesUtils {
-	
+	private static Logger logger = Logger.getLogger(MainNewController.class);
+
 	public static PropertiesConfiguration propConfig = null;		// DB, Server 접속정보 Configuration
 	public static PropertiesConfiguration connInfoConfig = null; 	// DB, Server 접속정보 Configuration
 	public static PropertiesConfiguration monitoringConfig = null; 	// 모니터링여부 Configuration
@@ -82,7 +86,7 @@ public class PropertiesUtils {
 		Parameters param = new Parameters();
 		PropertiesBuilderParameters propertyParameters = param.properties()
 				.setListDelimiterHandler(new DefaultListDelimiterHandler(','))
-				.setThrowExceptionOnMissing(true)
+				.setThrowExceptionOnMissing(false)
 				.setFile(new File(path));
 		
 		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<PropertiesConfiguration>(PropertiesConfiguration.class);
@@ -149,13 +153,14 @@ public class PropertiesUtils {
 	 */
 	public static JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
 		dbName = dbName.toLowerCase();
+		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
 		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
 		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");
 		String jdbcId = connInfoConfig.getString(dbName + ".jdbc.id");
 		String jdbcPw = connInfoConfig.getString(dbName + ".jdbc.pw");
-		String jdbcValidataion = connInfoConfig.getString(dbName + ".jdbc.validation");
-		int erpConnections = connInfoConfig.getInt(dbName + ".jdbc.connections");
-		return new JdbcConnectionInfo(dbName.toUpperCase(), jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidataion, erpConnections);
+		String jdbcValidation = connInfoConfig.getString(dbName + ".jdbc.validation");
+		int jdbcConnections = connInfoConfig.getInt(dbName + ".jdbc.connections");
+		return new JdbcConnectionInfo(jdbcAlias, jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidation, jdbcConnections);
 	}
 	
 	/**
@@ -226,8 +231,11 @@ public class PropertiesUtils {
 	
 	        writer.writeln(layout.getCanonicalFooterCooment(true));
 	        writer.flush();
+	        
+	        logger.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
         } catch (Exception e) {
         	e.printStackTrace();
-        }
+	        logger.info("[" + filePath + "] 파일 저장에 실패했습니다.");
+        } 
 	}
 }
