@@ -14,7 +14,7 @@ public class Program extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		
 		// configuration load
-		loadConfiguration();
+		PropertiesUtils.loadCombinedConfiguration();
 		
 		// fxml load
 		System.setProperty("prism.lcdtext", "false"); // 救萍举府绢教 (Font 何靛反霸)
@@ -39,15 +39,5 @@ public class Program extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
-	}
-	
-	public void loadConfiguration () {
-		String propertiesFilePath = ".\\config\\application.properties";
-		try {
-			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
-		}catch(Exception e) {
-			System.out.println("configuration loading error\n"+e+"\n");
-			return;
-		}
 	}
 }
