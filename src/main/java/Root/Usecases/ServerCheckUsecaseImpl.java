@@ -172,14 +172,14 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		if(isError == true) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "▶ OS Disk Usage : 80% 초과!! 확인 필요" + ConsoleUtils.RESET);
-			try {
-				TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
-				tt.printTable(System.out, 8);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		} else {
 			System.out.println("\t▶ OS Disk Usage : SUCCESS!");
+		}
+		try {
+			TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+			tt.printTable(System.out, 8);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		System.out.println();

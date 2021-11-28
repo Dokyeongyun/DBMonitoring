@@ -394,3 +394,273 @@ tmpfs,127G,2.4G,124G,2%,/dev/shm
 /dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
 /dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
 
+Wed Oct 20 16:53:58 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Oct 20 17:44:25 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Oct 21 09:06:07 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Oct 21 09:23:37 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Oct 21 13:52:51 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Fri Oct 22 13:08:27 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Sat Oct 23 14:23:12 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Sun Oct 24 13:35:23 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Mon Oct 25 09:17:34 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Mon Oct 25 16:21:55 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Tue Oct 26 09:31:50 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Tue Oct 26 13:14:56 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Tue Oct 26 13:17:29 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Oct 27 09:14:45 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Oct 28 09:10:48 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Oct 28 13:00:35 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Fri Oct 29 09:12:01 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Fri Oct 29 11:44:20 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Nov 03 09:11:54 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Nov 03 09:15:45 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,53G,318G,15%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Nov 04 09:24:49 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Fri Nov 05 09:07:41 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Sat Nov 06 12:25:30 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Sun Nov 07 15:45:04 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Mon Nov 08 09:07:48 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Tue Nov 09 09:08:57 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Nov 10 09:01:15 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Wed Nov 10 12:20:42 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Thu Nov 11 09:16:27 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
+Fri Nov 12 09:05:27 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos1-LogVol02,391G,57G,314G,16%,/
+tmpfs,127G,2.4G,124G,2%,/dev/shm
+/dev/sda2,194M,35M,150M,19%,/boot
+/dev/sda1,200M,260K,200M,1%,/boot/efi
+/dev/mapper/vg_npos1-LogVol00,49G,17G,30G,37%,/grid
+/dev/mapper/vg_npos1-LogVol01,49G,7.2G,39G,16%,/oracle
+
