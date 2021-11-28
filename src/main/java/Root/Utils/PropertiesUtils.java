@@ -1,8 +1,8 @@
 package Root.Utils;
 
 import java.io.File;
-
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import org.apache.commons.configuration2.builder.fluent.XMLBuilderParameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.convert.ListDelimiterHandler;
 import org.apache.log4j.Logger;
+
+import com.mchange.v2.io.FileUtils;
 
 import JavaFx.Controller.MainNewController;
 import Root.Model.AlertLogCommand;
@@ -187,16 +189,6 @@ public class PropertiesUtils {
 		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 		return alc;
 	}
-
-	public static void save() {
-//		try {
-//			propConfig.write(new FileWriter(configurationPath, false));
-//		} catch (ConfigurationException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-	}
 	
 	/**
 	 * 주석을 포함하여 현재 Configuration 상태에 따라 프로퍼티파일을 재작성한다.
@@ -237,5 +229,17 @@ public class PropertiesUtils {
         	e.printStackTrace();
 	        logger.info("[" + filePath + "] 파일 저장에 실패했습니다.");
         } 
+	}
+
+	/**
+	 * 지정된 경로에 새로운 파일을 생성한다.
+	 * @param filePath
+	 */
+	public static void createNewPropertiesFile(String filePath) {
+		try {
+			FileUtils.touch(new File(filePath));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

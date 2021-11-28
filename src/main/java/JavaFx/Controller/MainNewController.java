@@ -1,6 +1,7 @@
 package JavaFx.Controller;
 
 import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -17,7 +19,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXButton;
@@ -29,6 +30,8 @@ import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.Utils.PropertiesUtils;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -42,12 +45,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.FlowPane;
@@ -61,6 +68,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 public class MainNewController implements Initializable {
@@ -121,10 +129,12 @@ public class MainNewController implements Initializable {
 	
 	Map<String, String> monitoringPresetMap = new HashMap<>();
 	
+	// 모니터링 여부 설정 Preset Popup
+	Popup presetInputPopup = new Popup();
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		BasicConfigurator.configure();
-
+		
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 		String lastUsePropertiesFile = PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
@@ -132,6 +142,63 @@ public class MainNewController implements Initializable {
 		if(lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 		}
+		
+		// [설정] - [모니터링 여부 설정] - Preset 변경 Event
+		monitoringPresetComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+		});
+	}
+	
+	/**
+	 * [설정] - [모니터링 여부 설정] - Preset명 입력 팝업 띄우기
+	 * @param e
+	 */
+	public void showMonitoringPresetPopup(ActionEvent e) { 
+		
+		// TextInputDialog 생성
+		TextInputDialog presetInputDialog = new TextInputDialog();
+		// ICON
+		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
+		// CSS
+		presetInputDialog.getDialogPane().getStylesheets().add(getClass().getResource("../resources/css/dialog.css").toExternalForm());
+		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
+		// Dialog ICON
+		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(this.getClass().getResource("../resources/image/add_icon.png").toString()));
+		// Button Custom
+		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
+		presetInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
+		presetInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+		// Content
+		presetInputDialog.setTitle("Preset 생성");
+		presetInputDialog.setHeaderText("새로운 Monitoring Preset 이름을 입력해주세요.");
+		presetInputDialog.setContentText("Preset 이름: ");
+		// Result
+		Optional<String> result = presetInputDialog.showAndWait();
+		result.ifPresent(input -> {
+			logger.debug("Monitoring Preset 생성 Input: " + input);
+			
+			// 1. Preset명 이용하여 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{preset명}.properties
+			File connInfoFile = new File(fileChooserText.getText());
+			String connInfoFileName = connInfoFile.getName().substring(0, connInfoFile.getName().indexOf(".properties"));
+			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
+			PropertiesUtils.createNewPropertiesFile(filePath);
+			
+			// 2. 접속정보설정파일에 Preset 추가
+			PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+			config.addProperty("monitoring.setting.preset." + input + ".filepath", filePath);
+			PropertiesUtils.save(fileChooserText.getText(), config);
+			
+			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
+			reloadingMonitoringSetting(input);
+			
+			// 4. 성공 Alert 띄우기
+			Alert successAlert = new Alert(AlertType.INFORMATION);
+			successAlert.setHeaderText("Preset 생성");
+			successAlert.setContentText("모니터링여부 설정 Preset이 생성되었습니다.");
+			successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
+			successAlert.show();
+		});
 	}
 	
 	/**
@@ -562,7 +629,8 @@ public class MainNewController implements Initializable {
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
 		PropertiesConfiguration config = PropertiesUtils.monitoringConfig;
-		String monitoringFilePath = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
+		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
+		String monitoringFilePath = monitoringPresetMap.get(presetName);
 		
 		if(!monitoringFilePath.isEmpty()) {
 			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
@@ -1026,33 +1094,8 @@ public class MainNewController implements Initializable {
 			jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 			alcMap = PropertiesUtils.getAlertLogCommandMap();
 			
-			// 모니터링여부 설정 Preset 
-			Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
-			Iterator<String> presetIt = monitoringConfig.getKeys();
-			String lastUseFilePath = "";
-			while(presetIt.hasNext()) {
-				String key = presetIt.next();
-				if(key.startsWith("lastuse")) {
-					lastUseFilePath = monitoringConfig.getString(key);
-				} else {
-					monitoringPresetMap.put(key.substring(0, key.indexOf(".")), monitoringConfig.getString(key));	
-					monitoringPresetComboBox.getItems().add(monitoringConfig.getString(key));
-				}
-			}
-			
-			// 최근 사용된 모니터링 설정 읽기
-			logger.debug("최근 사용된 모니터링 설정파일: " + lastUseFilePath);
-			if(lastUseFilePath.isEmpty() && monitoringPresetMap.size() != 0) {
-				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
-				lastUseFilePath = monitoringPresetComboBox.getItems().get(0);
-				logger.debug("첫번째 설정파일: " + lastUseFilePath);
-			}
-			
-			// 첫번째 설정도 없다면 읽지 않음
-			if(!lastUseFilePath.isEmpty()) {
-				monitoringPresetComboBox.getSelectionModel().select(lastUseFilePath);
-				loadMonitoringConfigFile(lastUseFilePath);
-			}
+			// [설정] - [모니터링 여부 설정]
+			reloadingMonitoringSetting("");
 
 			// [설정] - [접속정보 설정] TAB 동적 요소 생성
 			if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
@@ -1091,6 +1134,63 @@ public class MainNewController implements Initializable {
 				noPropertiesFileAP1.setVisible(true);
 				noPropertiesFileAP2.setVisible(true);	
 			}
+		}
+	}
+
+	/**
+	 * [설정] - [모니터링여부설정] - Preset을 다시 불러온다.
+	 * @param curPresetName
+	 */
+	private void reloadingMonitoringSetting(String presetName) {
+
+		// 최종 읽을 파일 경로
+		String readPresetName = "";
+		String readPresetFilePath = "";
+
+		// Preset Map & Preset Combo Clear
+		monitoringPresetMap.clear();
+		monitoringPresetComboBox.getItems().clear();
+		
+		// 모니터링여부 설정 Preset Map 값 초기화 
+		Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
+		Iterator<String> presetIt = monitoringConfig.getKeys();
+		
+		String lastUsePresetName = "";
+		while(presetIt.hasNext()) {
+			String key = presetIt.next();
+			if(key.startsWith("lastuse")) {
+				lastUsePresetName = monitoringConfig.getString(key);
+			} else {
+				monitoringPresetMap.put(key.substring(0, key.indexOf(".")), monitoringConfig.getString(key));	
+				monitoringPresetComboBox.getItems().add(key.substring(0, key.indexOf(".")));
+			}
+		}
+		
+		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
+		
+		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
+		if(presetName.isEmpty()) {
+			// 최근 사용된 모니터링 설정 읽기
+			if(lastUsePresetName.isEmpty() && monitoringPresetComboBox.getItems().size() != 0) {
+				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
+				readPresetName = monitoringPresetComboBox.getItems().get(0);
+				logger.debug("첫번째 Preset: " + readPresetName);
+			} else {
+				readPresetName = lastUsePresetName;
+				logger.debug("최근 사용된 모니터링 Preset: " + readPresetName);
+			}
+		} else {
+			readPresetName = presetName;
+			logger.debug("선택된 Preset: " + readPresetName);
+		}
+
+		logger.debug("readPresetName : " + readPresetName);
+		logger.debug("readPresetFilePath : " + readPresetFilePath);
+
+		// ComboBox 선택 및 Preset 파일 읽기 
+		if(!readPresetName.isEmpty()) {
+			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
+			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
 		}
 	}
 }
