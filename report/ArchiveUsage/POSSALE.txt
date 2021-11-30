@@ -302,3 +302,99 @@ Fri Nov 12 09:05:25 KST 2021
 NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
 +RECO,64,50%,300G,299G,600G,2021-11-12 09:05:26
 
+Fri Nov 12 19:08:57 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,64,50%,300G,299G,600G,2021-11-12 19:08:59
+
+Sat Nov 13 10:12:27 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,71,58%,347G,314G,600G,2021-11-13 10:12:27
+
+Sun Nov 14 11:23:35 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,64,50%,301G,300G,600G,2021-11-14 11:23:36
+
+Mon Nov 15 09:18:43 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,64,50%,301G,300G,600G,2021-11-15 09:18:43
+
+Tue Nov 16 09:10:51 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,50%,300G,299G,600G,2021-11-16 09:10:52
+
+Wed Nov 17 08:57:09 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,62,50%,300G,299G,600G,2021-11-17 08:57:10
+
+Thu Nov 18 09:16:39 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,50%,300G,299G,600G,2021-11-18 09:16:39
+
+Fri Nov 19 09:14:32 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,50%,298G,297G,600G,2021-11-19 09:14:34
+
+Sun Nov 21 10:46:05 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,62,50%,297G,296G,600G,2021-11-21 10:46:05
+
+Mon Nov 22 09:12:01 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,62,49%,295G,294G,600G,2021-11-22 09:12:01
+
+Tue Nov 23 09:26:07 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,50%,299G,298G,600G,2021-11-23 09:26:08
+
+Wed Nov 24 09:13:16 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,63,50%,300G,299G,600G,2021-11-24 09:13:17
+
+Thu Nov 25 09:16:46 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,62,50%,299G,298G,600G,2021-11-25 09:16:48
+
+Fri Nov 26 09:15:56 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,62,50%,300G,299G,600G,2021-11-26 09:15:57
+
+Sat Nov 27 14:14:28 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,69,58%,348G,347G,600G,2021-11-27 14:14:28
+
+Sun Nov 28 08:18:29 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,68,50%,303G,287G,600G,2021-11-28 08:18:30
+
+Sun Nov 28 16:10:23 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,68,50%,303G,287G,600G,2021-11-28 16:10:24
+
+Sun Nov 28 20:45:06 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,69,53%,317G,287G,600G,2021-11-28 20:45:08
+
+Sun Nov 28 20:49:41 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,69,53%,317G,287G,600G,2021-11-28 20:49:43
+
+Sun Nov 28 20:50:34 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,69,53%,317G,287G,600G,2021-11-28 20:50:36
+
+Mon Nov 29 09:14:36 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,68,51%,306G,305G,600G,2021-11-29 09:14:36
+
+Mon Nov 29 09:32:54 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,68,51%,306G,305G,600G,2021-11-29 09:32:54
+
+Tue Nov 30 09:04:40 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,67,51%,303G,302G,600G,2021-11-30 09:04:41
+
+Tue Nov 30 10:31:47 KST 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,67,51%,303G,302G,600G,2021-11-30 10:31:48
+

@@ -894,3 +894,325 @@ tmpfs,127G,84K,127G,1%,/dev/shm
 /dev/sdh1,2.0T,1.8T,135G,93%,/oradata05
 /dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
 
+Fri Nov 12 19:09:01 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,230G,89%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Sat Nov 13 10:12:31 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,248G,88%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Sun Nov 14 11:23:41 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,248G,88%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Mon Nov 15 09:18:47 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.1G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,135G,93%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Tue Nov 16 09:11:34 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.1G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,140G,93%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Wed Nov 17 08:57:25 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,130G,94%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Thu Nov 18 09:16:49 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,133G,94%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Fri Nov 19 09:14:36 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,137G,93%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Sun Nov 21 10:46:09 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,249G,88%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Mon Nov 22 09:12:05 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,139G,93%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Tue Nov 23 09:26:10 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,248G,88%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Wed Nov 24 09:13:24 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,134G,94%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Thu Nov 25 09:16:52 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,136G,93%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Fri Nov 26 09:16:07 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,134G,94%,/oradata05
+/dev/sdc1,1.7T,331G,1.3T,22%,/oradata06
+
+Sat Nov 27 14:14:50 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,241G,88%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Sun Nov 28 08:24:58 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,77G,96%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Sun Nov 28 16:11:14 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.1G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,224G,89%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Sun Nov 28 20:45:19 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,212G,89%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Sun Nov 28 20:50:48 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,212G,89%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Mon Nov 29 09:28:39 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,249G,88%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Mon Nov 29 09:39:43 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,248G,88%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Tue Nov 30 09:05:05 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.8T,135G,93%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
+Tue Nov 30 10:36:17 KST 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_stsdb-lv_root,50G,7.2G,40G,16%,/
+tmpfs,127G,84K,127G,1%,/dev/shm
+/dev/sda1,485M,74M,386M,16%,/boot
+/dev/mapper/vg_stsdb-lv_home,50G,3.0G,44G,7%,/home
+/dev/mapper/vg_stsdb-lv_oracle,99G,23G,72G,25%,/oracle
+/dev/sdd1,1008G,872G,85G,92%,/oradata01
+/dev/sde1,1008G,850G,107G,89%,/oradata02
+/dev/sdf1,1.2T,1.1T,75G,94%,/oradata03
+/dev/sdg1,2.0T,1.9T,52G,98%,/oradata04
+/dev/sdh1,2.0T,1.7T,247G,88%,/oradata05
+/dev/sdc1,1.7T,601G,966G,39%,/oradata06
+
