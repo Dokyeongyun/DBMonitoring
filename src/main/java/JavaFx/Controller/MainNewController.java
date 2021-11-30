@@ -508,7 +508,10 @@ public class MainNewController implements Initializable {
 					String cbSelectedItem = cb.getSelectionModel().getSelectedItem();
 					
 					if(cbId.equals(elementId + "DriverComboBox")) {
-						config.setProperty(elementIdLower + ".jdbc.driver", cbSelectedItem);
+						if(cbSelectedItem.equals("thin")) {
+							// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
+							config.setProperty(elementIdLower + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
+						}
 					} 
 				}
 			}
