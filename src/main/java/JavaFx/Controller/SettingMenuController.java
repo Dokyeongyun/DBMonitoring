@@ -71,18 +71,14 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-public class MainNewController implements Initializable {
-	private static Logger logger = Logger.getLogger(MainNewController.class);
+public class SettingMenuController implements Initializable {
+	private static Logger logger = Logger.getLogger(SettingMenuController.class);
 
 	@FXML SplitPane rootSplitPane;
 	
-	// Left SplitPane Region
-	@FXML Button homeBtn;
-	@FXML Button settingMenuBtn;
-	@FXML Button runMenuBtn;
-	
 	// Right SplitPane Region
-	@FXML StackPane rightStackPane;
+	@FXML
+	static StackPane rightStackPane;
 	
 	// Setting Menu Region
 	@FXML ScrollPane settingScrollPane;
@@ -391,31 +387,6 @@ public class MainNewController implements Initializable {
 	}
 	
 	/**
-	 * [실행] - 모니터링을 시작한다.
-	 * @param e
-	 */
-	public void runMonitoring(ActionEvent e) {
-		Application.main(new String[] {});
-	}
-	
-	/**
-	 * 우측 StackPane의 top layer를 변경한다.
-	 * @param containerPaneName
-	 */
-	public void changeStackPaneFrontMenu(ActionEvent e) {
-		String thisMenuBtnId = ((Button)e.getSource()).getId();
-		String thisBorderPaneId = thisMenuBtnId.substring(0, thisMenuBtnId.indexOf("Btn")) + "BorderPane";
-		
-		ObservableList<Node> childs = rightStackPane.getChildren();
-		for(Node n : childs) {
-			if(n.getId().equals(thisBorderPaneId)) {
-				n.toFront();
-				break;
-			}
-		}
-	}
-	
-	/**
 	 * [설정] - [접속정보 설정] - 변경사항을 .properties파일에 저장한다.
 	 * @param e
 	 */
@@ -604,9 +575,9 @@ public class MainNewController implements Initializable {
 						if(isNewConnInfo) {
 							String dateFormatRegex = "";
 							if(cbSelectedItem.equals("EEE MMM dd HH:mm:ss yyyy")) {
-								dateFormatRegex = "...\\\\s...\\\\s([0-2][0-9]|1[012])\\\\s\\\\d\\\\d:\\\\d\\\\d:\\\\d\\\\d\\\\s\\\\d{4}";
+								dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
 							} else if (cbSelectedItem.equals("yyyy-MM-dd")) {
-								dateFormatRegex = "\\\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
+								dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
 							}
 							config.setProperty(elementIdLower + ".server.alertlog.dateformatregex", dateFormatRegex);
 						}
@@ -648,19 +619,6 @@ public class MainNewController implements Initializable {
 		}
 	}
 
-	/**
-	 * 좌측 상단 Home Icon(fxId: homeBtn) onAction Event
-	 * @param e
-	 * @throws IOException
-	 */
-	public void goHomeStage(ActionEvent e) throws IOException {
-		Scene originalScene = homeBtn.getScene();
-		Parent home = FXMLLoader.load(getClass().getResource("../resources/fxml/Home.fxml"));
-        Scene homeScene = new Scene(home, originalScene.getWidth(), originalScene.getHeight());
-        Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
-        primaryStage.setScene(homeScene);
-	}
-	
 	/**
 	 * 모니터링 여부 설정할 요소들 동적 생성
 	 * @param rootVBox
