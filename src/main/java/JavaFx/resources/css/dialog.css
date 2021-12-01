@@ -1,0 +1,21 @@
+.textInputDialog {
+	-fx-font-family: NanumGothic;
+	-fx-background-color: #ffffff;
+}
+
+.textInputDialog .button {
+	-fx-background-color: #ffffff;
+	-fx-font-weight: bold;
+	-fx-text-fill:  #2381E9;
+	-fx-border-color:  #2381E9;
+}
+
+.textInputDialog .text-field {
+    -fx-background-color: -fx-text-box-border, white ;
+    -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
+    -fx-background-radius: 0 ;
+    -fx-font-family: NanumGothic;
+}
+.textInputDialog .text-field:focused {
+    -fx-background-color: -fx-focus-color, white;
+}
