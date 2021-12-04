@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<SplitPane fx:id="rootSplitPane" dividerPositions="0.2545090180360721" minHeight="600.0" minWidth="800.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RunMenuController">
+   <items>
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="250.0" minHeight="-Infinity" minWidth="200.0" style="-fx-background-color: #f7f7f7;">
+         <fx:include source="LeftMenu.fxml" />
+      </AnchorPane>
+      <AnchorPane minHeight="600.0" minWidth="550.0" style="-fx-background-color: white;">
+         <children>
+            <StackPane fx:id="rightStackPane" minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <BorderPane fx:id="runMenuBorderPane" style="-fx-background-color: white;">
+                     <center>
+                        <Button fx:id="monitoringRunBtn" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" BorderPane.alignment="CENTER">
+                           <graphic>
+                              <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                                 <image>
+                                    <Image url="@../image/play_icon_green.png" />
+                                 </image>
+                              </ImageView>
+                           </graphic>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </Button>
+                     </center>
+                  </BorderPane>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+   </items>
+</SplitPane>
