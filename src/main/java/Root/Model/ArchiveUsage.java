@@ -2,6 +2,10 @@ package Root.Model;
 
 import java.util.List;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
+
+@Data
 public class ArchiveUsage {
 	private String archiveName;
 	private int numberOfFiles;
@@ -15,103 +19,14 @@ public class ArchiveUsage {
 	private String totalSpaceString;
 	private String dnt;
 	
-	public ArchiveUsage() {	}
-	
-	public ArchiveUsage(String archiveName, int numberOfFiles, String reclaimableSpaceString, String usedSpaceString, String usedPercentString, String totalSpaceString, String dnt) {
+	public ArchiveUsage(String archiveName, int numberOfFiles, String reclaimableSpaceString, String usedSpaceString,
+			String usedPercentString, String totalSpaceString, String dnt) {
 		this.archiveName = archiveName;
 		this.numberOfFiles = numberOfFiles;
 		this.reclaimableSpaceString = reclaimableSpaceString;
 		this.usedSpaceString = usedSpaceString;
 		this.usedPercentString = usedPercentString;
 		this.totalSpaceString = totalSpaceString;
-		this.dnt = dnt;
-	}
-
-	public String getArchiveName() {
-		return archiveName;
-	}
-
-	public void setArchiveName(String archiveName) {
-		this.archiveName = archiveName;
-	}
-
-	public int getNumberOfFiles() {
-		return numberOfFiles;
-	}
-
-	public void setNumberOfFiles(int numberOfFiles) {
-		this.numberOfFiles = numberOfFiles;
-	}
-
-	public double getReclaimableSpace() {
-		return reclaimableSpace;
-	}
-
-	public void setReclaimableSpace(double reclaimableSpace) {
-		this.reclaimableSpace = reclaimableSpace;
-	}
-
-	public String getReclaimableSpaceString() {
-		return reclaimableSpaceString;
-	}
-
-	public void setReclaimableSpaceString(String reclaimableSpaceString) {
-		this.reclaimableSpaceString = reclaimableSpaceString;
-	}
-
-	public double getUsedSpace() {
-		return usedSpace;
-	}
-
-	public void setUsedSpace(double usedSpace) {
-		this.usedSpace = usedSpace;
-	}
-
-	public String getUsedSpaceString() {
-		return usedSpaceString;
-	}
-
-	public void setUsedSpaceString(String usedSpaceString) {
-		this.usedSpaceString = usedSpaceString;
-	}
-
-	public double getUsedPercent() {
-		return usedPercent;
-	}
-
-	public void setUsedPercent(double usedPercent) {
-		this.usedPercent = usedPercent;
-	}
-
-	public String getUsedPercentString() {
-		return usedPercentString;
-	}
-
-	public void setUsedPercentString(String usedPercentString) {
-		this.usedPercentString = usedPercentString;
-	}
-
-	public double getTotalSpace() {
-		return totalSpace;
-	}
-
-	public void setTotalSpace(double totalSpace) {
-		this.totalSpace = totalSpace;
-	}
-
-	public String getTotalSpaceString() {
-		return totalSpaceString;
-	}
-
-	public void setTotalSpaceString(String totalSpaceString) {
-		this.totalSpaceString = totalSpaceString;
-	}
-
-	public String getDnt() {
-		return dnt;
-	}
-
-	public void setDnt(String dnt) {
 		this.dnt = dnt;
 	}
 	
