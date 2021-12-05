@@ -14,6 +14,17 @@ public class OSDiskUsage {
 	private String fileSystem;
 	private String mountedOn;
 	
+	public OSDiskUsage(String fileSystem, String mountedOn, String totalSpaceString, 
+			String availableSpaceString, String usedSpaceString, String usedPercentString) {
+		super();
+		this.availableSpaceString = availableSpaceString;
+		this.usedSpaceString = usedSpaceString;
+		this.totalSpaceString = totalSpaceString;
+		this.usedPercentString = usedPercentString;
+		this.fileSystem = fileSystem;
+		this.mountedOn = mountedOn;
+	}
+
 	public double getAvailableSpace() {
 		return availableSpace;
 	}

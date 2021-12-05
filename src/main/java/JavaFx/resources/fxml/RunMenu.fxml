@@ -13,11 +13,9 @@
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 
 <SplitPane dividerPositions="0.2545090180360721" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RunMenuController">
    <items>
@@ -26,132 +24,270 @@
       </AnchorPane>
       <AnchorPane minHeight="600.0" minWidth="550.0" style="-fx-background-color: white;">
          <children>
-            <StackPane minHeight="600.0" minWidth="550.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <children>
-                  <BorderPane style="-fx-background-color: white;">
-                     <top>
-                        <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+            <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button graphicTextGap="0.0" layoutX="4.099999904632568" layoutY="10.399999618530273" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <graphic>
+                              <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
+                           </graphic>
+                        </Button>
+                        <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" stylesheets="@../css/javaFx.css" text="실행" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
+                           <styleClass>
+                              <String fx:value="basic-font" />
+                              <String fx:value="bold" />
+                              <String fx:value="font-black" />
+                           </styleClass>
+                           <graphic>
+                              <FontAwesomeIconView fill="#ea3f6f" glyphName="DESKTOP" selectionEnd="0" selectionFill="BLACK" size="28" />
+                           </graphic>
+                        </Label>
+                        <Button fx:id="monitoringRunBtn" layoutX="894.0" layoutY="2.0" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <graphic>
+                              <FontAwesomeIconView fill="#4a892f" glyphName="PLAY_CIRCLE" size="22" />
+                           </graphic>
+                        </Button>
+                        <JFXComboBox layoutX="10.0" layoutY="10.0" minWidth="400.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="200.0" AnchorPane.topAnchor="5.0" />
+                        <JFXComboBox layoutX="20.0" layoutY="20.0" minWidth="200.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
+                     </children>
+                  </AnchorPane>
+               </top>
+               <center>
+                  <SplitPane dividerPositions="0.8" BorderPane.alignment="CENTER">
+                     <items>
+                        <AnchorPane minWidth="550.0">
                            <children>
-                              <Button graphicTextGap="0.0" layoutX="4.099999904632568" layoutY="10.399999618530273" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
-                                 </graphic>
-                              </Button>
-                              <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" stylesheets="@../css/javaFx.css" text="실행" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
-                                 <styleClass>
-                                    <String fx:value="basic-font" />
-                                    <String fx:value="bold" />
-                                    <String fx:value="font-black" />
-                                 </styleClass>
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#ea3f6f" glyphName="DESKTOP" selectionEnd="0" selectionFill="BLACK" size="28" />
-                                 </graphic>
-                              </Label>
-                              <TextField editable="false" layoutX="128.29998779296875" layoutY="12.199999809265137" maxHeight="300.0" minWidth="300.0" stylesheets="@../css/javaFx.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0">
-                                 <styleClass>
-                                    <String fx:value="basic-font" />
-                                    <String fx:value="font-black" />
-                                 </styleClass>
-                              </TextField>
-                              <Button fx:id="monitoringRunBtn" layoutX="894.0" layoutY="2.0" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
-                                 <cursor>
-                                    <Cursor fx:constant="HAND" />
-                                 </cursor>
-                                 <graphic>
-                                    <FontAwesomeIconView fill="#4a892f" glyphName="PLAY_CIRCLE" size="22" />
-                                 </graphic>
-                              </Button>
+                              <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
+                                 <tabs>
+                                    <Tab text="Archive Usage">
+                                       <content>
+                                          <AnchorPane>
+                                             <children>
+                                              <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                              <items>
+                                                                  <Label text="DB선택">
+                                                                     <styleClass>
+                                                                        <String fx:value="basic-font" />
+                                                                        <String fx:value="bold" />
+                                                                     </styleClass>
+                                                                     <padding>
+                                                                        <Insets right="10.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <JFXComboBox maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                                                                <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
+                                                              </items>
+                                                            </ToolBar>
+                                                            <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                      <TableView fx:id="archiveUsageTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                                        <columns>
+                                                          <TableColumn fx:id="auNameTC" minWidth="50.0" prefWidth="100.0" style="-fx-alignment: CENTER_LEFT;" text="Name" />
+                                                          <TableColumn fx:id="auNOFTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Number Of Files" />
+                                                            <TableColumn fx:id="auLimitSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Limit Space(G)" />
+                                                            <TableColumn fx:id="auReclaimableSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Reclaimable Space(G)" />
+                                                            <TableColumn fx:id="auUsedSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Space(G)" />
+                                                            <TableColumn fx:id="auUsedPercentTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used(%)" />
+                                                            <TableColumn fx:id="auDntTC" minWidth="120.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="DNT" />
+                                                        </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="TableSpace Usage">
+                                       <content>
+                                          <AnchorPane>
+                                             <children>
+                                                <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <items>
+                                                                  <Label text="DB선택">
+                                                                     <styleClass>
+                                                                        <String fx:value="basic-font" />
+                                                                        <String fx:value="bold" />
+                                                                     </styleClass>
+                                                                     <padding>
+                                                                        <Insets right="10.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <JFXComboBox maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
+                                                               </items>
+                                                            </ToolBar>
+                                                            <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                      <TableView fx:id="tableSpaceUsageTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="tsuNameTC" minWidth="50.0" prefWidth="100.0" style="-fx-alignment: CENTER_LEFT;" text="Table Space" />
+                                                            <TableColumn fx:id="tsuTotalSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Total Space(G)" />
+                                                            <TableColumn fx:id="tsuFreeSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Free Space(G)" />
+                                                            <TableColumn fx:id="tsuUsedSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Space(G)" />
+                                                            <TableColumn fx:id="tsuUsedPercentTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Percent(%)" />
+                                                         </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="ASM Disk Usage">
+                                       <content>
+                                          <AnchorPane>
+                                             <children>
+                                                <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <items>
+                                                                  <Label text="DB선택">
+                                                                     <styleClass>
+                                                                        <String fx:value="basic-font" />
+                                                                        <String fx:value="bold" />
+                                                                     </styleClass>
+                                                                     <padding>
+                                                                        <Insets right="10.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <JFXComboBox maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
+                                                               </items>
+                                                            </ToolBar>
+                                                            <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                      <TableView fx:id="asmDiskUsageTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="asmNameTC" minWidth="50.0" prefWidth="100.0" style="-fx-alignment: CENTER_LEFT;" text="ASM Disk Group" />
+                                                            <TableColumn fx:id="asmTypeTC" minWidth="70.0" prefWidth="82.66668701171875" style="-fx-alignment: CENTER_LEFT;" text="Type" />
+                                                            <TableColumn fx:id="asmTotalSpaceTC" minWidth="70.0" prefWidth="125.33334350585938" style="-fx-alignment: CENTER_RIGHT;" text="Total Space(MB)" />
+                                                            <TableColumn fx:id="asmTotalUsableSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Total Usable(MB)" />
+                                                            <TableColumn fx:id="asmFreeSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Free Space(MB)" />
+                                                            <TableColumn fx:id="asmUsedSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Space(MB)" />
+                                                            <TableColumn fx:id="asmUsedPercentTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Percent(%)" />
+                                                         </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="OS Disk Usage">
+                                       <content>
+                                          <AnchorPane>
+                                             <children>
+                                                <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <items>
+                                                                  <Label text="DB선택">
+                                                                     <styleClass>
+                                                                        <String fx:value="basic-font" />
+                                                                        <String fx:value="bold" />
+                                                                     </styleClass>
+                                                                     <padding>
+                                                                        <Insets right="10.0" />
+                                                                     </padding>
+                                                                  </Label>
+                                                                  <JFXComboBox maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
+                                                                  <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
+                                                               </items>
+                                                            </ToolBar>
+                                                            <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                                         </children>
+                                                      </AnchorPane>
+                                                      <TableView fx:id="osDiskUsageTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+                                                         <columns>
+                                                            <TableColumn fx:id="osFileSystemTC" minWidth="50.0" prefWidth="100.0" style="-fx-alignment: CENTER_LEFT;" text="File System" />
+                                                            <TableColumn fx:id="osMountedOnTC" minWidth="70.0" prefWidth="82.66668701171875" style="-fx-alignment: CENTER_LEFT;" text="Mounted On" />
+                                                            <TableColumn fx:id="osTotalSpaceTC" minWidth="70.0" prefWidth="125.33334350585938" style="-fx-alignment: CENTER_RIGHT;" text="Size" />
+                                                            <TableColumn fx:id="osFreeSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Available" />
+                                                            <TableColumn fx:id="osUsedSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used" />
+                                                            <TableColumn fx:id="osUsedPercentTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used(%)" />
+                                                         </columns>
+                                                         <columnResizePolicy>
+                                                            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                                         </columnResizePolicy>
+                                                      </TableView>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Alert Log">
+                                       <content>
+                                          <AnchorPane />
+                                       </content>
+                                    </Tab>
+                                 </tabs>
+                              </TabPane>
                            </children>
                         </AnchorPane>
-                     </top>
-                     <center>
-                        <SplitPane dividerPositions="0.8" BorderPane.alignment="CENTER">
-                           <items>
-                              <AnchorPane minWidth="550.0">
-                                 <children>
-                                    <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
-                                       <tabs>
-                                          <Tab text="Archive Usage">
-                                             <content>
-                                                <AnchorPane>
-                                                   <children>
-                                                      <SplitPane dividerPositions="0.9" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                        <items>
-                                                          <AnchorPane style="-fx-background-color: #ffffff00;">
-                                                               <children>
-                                                                  <TableView fx:id="archiveUsageTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                    <columns>
-                                                                      <TableColumn fx:id="auNameTC" minWidth="50.0" prefWidth="100.0" style="-fx-alignment: CENTER_LEFT;" text="Name" />
-                                                                      <TableColumn fx:id="auNOFTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Number Of Files" />
-                                                                        <TableColumn fx:id="auLimitSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Limit Space(G)" />
-                                                                        <TableColumn fx:id="auReclaimableSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Reclaimable Space(G)" />
-                                                                        <TableColumn fx:id="auUsedSpaceTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used Space(G)" />
-                                                                        <TableColumn fx:id="auUsedPercentTC" minWidth="70.0" prefWidth="100.0" style="-fx-alignment: CENTER_RIGHT;" text="Used(%)" />
-                                                                        <TableColumn fx:id="auDntTC" minWidth="120.0" prefWidth="100.0" style="-fx-alignment: CENTER;" text="DNT" />
-                                                                    </columns>
-                                                                     <columnResizePolicy>
-                                                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                                                     </columnResizePolicy>
-                                                                  </TableView>
-                                                               </children>
-                                                               <padding>
-                                                                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                                               </padding>
-                                                            </AnchorPane>
-                                                            <AnchorPane>
-                                                               <children>
-                                                                  <ToolBar style="-fx-background-color: #ffffff00;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="10.0">
-                                                                    <items>
-                                                                        <JFXComboBox maxHeight="30.0" minHeight="30.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
-                                                                      <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
-                                                                        <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
-                                                                        <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
-                                                                        <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
-                                                                    </items>
-                                                                  </ToolBar>
-                                                                  <Separator AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                               </children>
-                                                            </AnchorPane>
-                                                        </items>
-                                                      </SplitPane>
-                                                   </children>
-                                                </AnchorPane>
-                                             </content>
-                                          </Tab>
-                                          <Tab text="TableSpace Usage">
-                                             <content>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" />
-                                             </content>
-                                          </Tab>
-                                          <Tab text="ASM Disk Usage">
-                                             <content>
-                                                <AnchorPane />
-                                             </content>
-                                          </Tab>
-                                          <Tab text="OS Disk Usage">
-                                             <content>
-                                                <AnchorPane />
-                                             </content>
-                                          </Tab>
-                                          <Tab text="Alert Log">
-                                             <content>
-                                                <AnchorPane />
-                                             </content>
-                                          </Tab>
-                                       </tabs>
-                                    </TabPane>
-                                 </children>
-                              </AnchorPane>
-                              <AnchorPane prefHeight="200.0" prefWidth="29.0" style="-fx-background-color: #eee;" />
-                           </items>
-                        </SplitPane>
-                     </center>
-                  </BorderPane>
-               </children>
-            </StackPane>
+                        <AnchorPane prefHeight="200.0" prefWidth="29.0" style="-fx-background-color: #eee;" />
+                     </items>
+                  </SplitPane>
+               </center>
+               <bottom>
+                  <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
+               </bottom>
+            </BorderPane>
          </children>
       </AnchorPane>
    </items>
