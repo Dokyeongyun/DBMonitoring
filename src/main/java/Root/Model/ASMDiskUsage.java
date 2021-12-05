@@ -21,7 +21,7 @@ public class ASMDiskUsage {
 	private double usedPercent;
 	private String usedPercentString;
 	private String resultMsg;
-	
+
 	public ASMDiskUsage(String asmDiskGroupName, String asmDiskGroupType, String totalRawSpaceString,
 			String totalAvailableSpaceString, String availableSpaceString, String usedSpaceString,
 			String usedPercentString, String resultMsg) {
