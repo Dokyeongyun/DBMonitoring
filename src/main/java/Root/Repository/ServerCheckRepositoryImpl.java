@@ -21,6 +21,7 @@ import Root.Model.Log;
 import Root.Model.OSDiskUsage;
 import Root.RemoteServer.JschUtil;
 import Root.Utils.DateUtils;
+import Root.Utils.UnitUtils;
 
 public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	private JschUtil jsch;
@@ -243,33 +244,16 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 					row.setFileSystem(next);
 					break;
 				case "Size":
-					double totalSpace = Double.parseDouble(next.substring(0, next.length()-1));
-					if(next.substring(next.length()-1).equals("G")) {
-						totalSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
-					} 
-					row.setTotalSpace(totalSpace);
-					row.setTotalSpaceString(next);
+					row.setTotalSpace(UnitUtils.parseFileSizeString(next));
 					break;
 				case "Used":
-					double usedSpace = Double.parseDouble(next.substring(0, next.length()-1));
-					if(next.substring(next.length()-1).equals("G")) {
-						usedSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
-					}
-					row.setUsedSpace(usedSpace);
-					row.setUsedSpaceString(next);
+					row.setUsedSpace(UnitUtils.parseFileSizeString(next));
 					break;
 				case "Avail":
-					double availableSpace = Double.parseDouble(next.substring(0, next.length()-1));
-					if(next.substring(next.length()-1).equals("G")) {
-						availableSpace = Double.parseDouble(next.substring(0, next.length()-1)) * 1000;
-					}
-					row.setAvailableSpace(availableSpace);
-					row.setAvailableSpaceString(next);
+					row.setFreeSpace(UnitUtils.parseFileSizeString(next));
 					break;
 				case "Use%":
-					double usedPercent = Double.parseDouble(next.substring(0, next.length()-1));
-					row.setUsedPercent(usedPercent);
-					row.setUsedPercentString(next.trim());
+					row.setUsedPercent(UnitUtils.parseFileSizeString(next));
 					break;
 				case "Mounted on":
 					row.setMountedOn(next);
