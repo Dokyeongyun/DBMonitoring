@@ -2,33 +2,20 @@ package Root.Model;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class OSDiskUsage {
-	private double availableSpace;
-	private String availableSpaceString;
-	private double usedSpace;
-	private String usedSpaceString;
-	private double totalSpace;
-	private String totalSpaceString;
-	private double usedPercent;
-	private String usedPercentString;
 	private String fileSystem;
 	private String mountedOn;
-	
-	public OSDiskUsage(String fileSystem, String mountedOn, String totalSpaceString, 
-			String availableSpaceString, String usedSpaceString, String usedPercentString) {
-		super();
-		this.availableSpaceString = availableSpaceString;
-		this.usedSpaceString = usedSpaceString;
-		this.totalSpaceString = totalSpaceString;
-		this.usedPercentString = usedPercentString;
-		this.fileSystem = fileSystem;
-		this.mountedOn = mountedOn;
-	}
+	private UnitString totalSpace;
+	private UnitString freeSpace;
+	private UnitString usedSpace;
+	private UnitString usedPercent;
 
 	public static String toCsvString(List<OSDiskUsage> list) {
 		StringBuffer toCsv = new StringBuffer();
@@ -36,10 +23,10 @@ public class OSDiskUsage {
 		
 		for(OSDiskUsage data : list) {
 			toCsv.append(data.getFileSystem()).append(",");
-			toCsv.append(data.getTotalSpaceString()).append(",");
-			toCsv.append(data.getUsedSpaceString()).append(",");
-			toCsv.append(data.getAvailableSpaceString()).append(",");
-			toCsv.append(data.getUsedPercentString()).append(",");
+			toCsv.append(data.getTotalSpace().getValue()).append(data.getTotalSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
+			toCsv.append(data.getFreeSpace().getValue()).append(data.getFreeSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
 			toCsv.append(data.getMountedOn()).append("\n");
 		}
 		

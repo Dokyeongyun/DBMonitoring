@@ -2,38 +2,22 @@ package Root.Model;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class ASMDiskUsage {
 	private String asmDiskGroupName;
 	private String asmDiskGroupType;
-	private double totalRawSpace;
-	private String totalRawSpaceString;
-	private double totalAvailableSpace;
-	private String totalAvailableSpaceString;
-	private double availableSpace;
-	private String availableSpaceString;
-	private double usedSpace;
-	private String usedSpaceString;
-	private double usedPercent;
-	private String usedPercentString;
+	private UnitString totalRawSpace;
+	private UnitString totalFreeSpace;
+	private UnitString freeSpace;
+	private UnitString usedSpace;
+	private UnitString usedPercent;
 	private String resultMsg;
-
-	public ASMDiskUsage(String asmDiskGroupName, String asmDiskGroupType, String totalRawSpaceString,
-			String totalAvailableSpaceString, String availableSpaceString, String usedSpaceString,
-			String usedPercentString, String resultMsg) {
-		this.asmDiskGroupName = asmDiskGroupName;
-		this.asmDiskGroupType = asmDiskGroupType;
-		this.totalRawSpaceString = totalRawSpaceString;
-		this.totalAvailableSpaceString = totalAvailableSpaceString;
-		this.availableSpaceString = availableSpaceString;
-		this.usedSpaceString = usedSpaceString;
-		this.usedPercentString = usedPercentString;
-		this.resultMsg = resultMsg;
-	}
 
 	public static String toCsvString(List<ASMDiskUsage> list) {
 		StringBuffer toCsv = new StringBuffer();
@@ -42,11 +26,11 @@ public class ASMDiskUsage {
 		for(ASMDiskUsage data : list) {
 			toCsv.append(data.getAsmDiskGroupName()).append(",");
 			toCsv.append(data.getAsmDiskGroupType()).append(",");
-			toCsv.append(data.getTotalRawSpaceString()).append(",");
-			toCsv.append(data.getTotalAvailableSpaceString()).append(",");
-			toCsv.append(data.getUsedSpaceString()).append(",");
-			toCsv.append(data.getUsedPercentString()).append(",");
-			toCsv.append(data.getAvailableSpaceString()).append(",");
+			toCsv.append(data.getTotalRawSpace().getValue()).append(data.getTotalRawSpace().getUnit()).append(",");
+			toCsv.append(data.getTotalFreeSpace().getValue()).append(data.getTotalFreeSpace().getUnit()).append(",");
+			toCsv.append(data.getFreeSpace().getValue()).append(data.getFreeSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
 			toCsv.append(data.getResultMsg()).append("\n");
 		}
 		

@@ -2,29 +2,19 @@ package Root.Model;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class TableSpaceUsage {
-	private double availableSpace;
-	private String availableSpaceString;
-	private double usedSpace;
-	private String usedSpaceString;
-	private double usedPercent;
-	private String usedPercentString;
-	private double totalSpace;
-	private String totalSpaceString;
 	private String tableSpaceName;
-	
-	public TableSpaceUsage(String tableSpaceName, String availableSpaceString, String usedSpaceString, String usedPercentString, String totalSpaceString) {
-		this.tableSpaceName = tableSpaceName;
-		this.availableSpaceString = availableSpaceString;
-		this.usedSpaceString = usedSpaceString;
-		this.usedPercentString = usedPercentString;
-		this.totalSpaceString = totalSpaceString;
-	}
+	private UnitString totalSpace;
+	private UnitString freeSpace;
+	private UnitString usedSpace;
+	private UnitString usedPercent;
 
 	public static String toCsvString(List<TableSpaceUsage> list) {
 		StringBuffer toCsv = new StringBuffer();
@@ -32,10 +22,10 @@ public class TableSpaceUsage {
 		
 		for(TableSpaceUsage data : list) {
 			toCsv.append(data.getTableSpaceName()).append(",");
-			toCsv.append(data.getTotalSpaceString()).append(",");
-			toCsv.append(data.getUsedSpaceString()).append(",");
-			toCsv.append(data.getUsedPercentString()).append(",");
-			toCsv.append(data.getAvailableSpaceString()).append("\n");
+			toCsv.append(data.getTotalSpace().getValue()).append(data.getTotalSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
+			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
+			toCsv.append(data.getFreeSpace().getValue()).append(data.getFreeSpace().getUnit()).append(",");
 		}
 		
 		return toCsv.toString();

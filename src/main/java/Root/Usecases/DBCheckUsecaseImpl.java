@@ -19,6 +19,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
+import Root.Model.UnitString;
 import Root.Repository.DBCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
@@ -79,9 +80,9 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void writeExcelArchiveUsageCheck() throws Exception {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		String archiveUsage = result.get(0).getUsedPercentString();
+		UnitString archiveUsage = result.get(0).getUsedPercent();
 		
-		if(result.get(0).getUsedPercent() >= 90) {
+		if(result.get(0).getUsedPercent().getValue() >= 90) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "¢º Archive Usage Check : Usage 90% ÃÊ°ú!"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t¢º Archive Usage Check : SUCCESS\n");
@@ -116,7 +117,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		
 		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
-		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage);
+		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage.getValue() + archiveUsage.getUnit());
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 	}
