@@ -26,13 +26,13 @@ import org.apache.log4j.Logger;
 
 import com.mchange.v2.io.FileUtils;
 
-import JavaFx.Controller.MainNewController;
+import JavaFx.Controller.SettingMenuController;
 import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 
 public class PropertiesUtils {
-	private static Logger logger = Logger.getLogger(MainNewController.class);
+	private static Logger logger = Logger.getLogger(SettingMenuController.class);
 
 	public static PropertiesConfiguration propConfig = null;		// DB, Server 立加沥焊 Configuration
 	public static PropertiesConfiguration connInfoConfig = null; 	// DB, Server 立加沥焊 Configuration

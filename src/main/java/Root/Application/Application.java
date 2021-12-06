@@ -29,6 +29,9 @@ public class Application {
     		String propertiesFilePath = ".\\config\\application.properties";
     		
     		try {
+    			PropertiesUtils.loadCombinedConfiguration();
+    			String lastUsePropertiesFile = PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
+    			PropertiesUtils.loadAppConfiguration(lastUsePropertiesFile, "connInfoConfig");
     			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
     		}catch(Exception e) {
     			System.out.println("configuration loading error\n"+e+"\n");
