@@ -1,13 +1,18 @@
 package JavaFx.Controller;
 
 import java.net.URL;
-import java.text.NumberFormat;
+import java.util.Iterator;
 import java.util.ResourceBundle;
+
+import org.apache.commons.configuration2.Configuration;
+
+import com.jfoenix.controls.JFXComboBox;
 
 import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.OSDiskUsage;
 import Root.Model.TableSpaceUsage;
+import Root.Utils.PropertiesUtils;
 import Root.Utils.UnitUtils;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -58,7 +63,16 @@ public class RunMenuController implements Initializable {
 	@FXML TableColumn<OSDiskUsage, Double> osFreeSpaceTC;
 	@FXML TableColumn<OSDiskUsage, Double> osUsedSpaceTC;
 	@FXML TableColumn<OSDiskUsage, Double> osUsedPercentTC;
+	
+	@FXML JFXComboBox<String> runConnInfoFileComboBox;
+	@FXML JFXComboBox<String> runMonitoringPresetComboBox;
 
+	@FXML JFXComboBox<String> auDbComboBox;
+	@FXML JFXComboBox<String> tsuDbComboBox;
+	@FXML JFXComboBox<String> asmDbComboBox;
+	@FXML JFXComboBox<String> osServerComboBox;
+	@FXML JFXComboBox<String> alertLogServerComboBox;
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
@@ -90,6 +104,54 @@ public class RunMenuController implements Initializable {
 		osFreeSpaceTC.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getFreeSpace().getValue()).asObject());
 		osUsedSpaceTC.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getUsedSpace().getValue()).asObject());
 		osUsedPercentTC.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getUsedPercent().getValue()).asObject());
+		
+		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+		String lastUsePropertiesFile = PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
+
+		try {
+			if(lastUsePropertiesFile != null) {
+				
+				// 접속정보 프로퍼티 파일 ComboBox
+				PropertiesUtils.loadAppConfiguration(lastUsePropertiesFile, "connInfoConfig");
+				runConnInfoFileComboBox.getItems().add(lastUsePropertiesFile);
+				runConnInfoFileComboBox.getSelectionModel().select(0);
+				
+				// 모니터링여부 설정 Preset ComboBox
+				Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
+				Iterator<String> presetIt = monitoringConfig.getKeys();
+				
+				String lastUsePresetName = "";
+				while(presetIt.hasNext()) {
+					String key = presetIt.next();
+					if(key.startsWith("lastuse")) {
+						lastUsePresetName = monitoringConfig.getString(key);
+					} else {
+						runMonitoringPresetComboBox.getItems().add(key.substring(0, key.indexOf(".")));
+					}
+				}
+				runMonitoringPresetComboBox.getSelectionModel().select(lastUsePresetName);
+				
+				// DB Names ComboBox
+				auDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
+				auDbComboBox.getSelectionModel().select(0);
+				
+				tsuDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
+				tsuDbComboBox.getSelectionModel().select(0);
+				
+				asmDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
+				asmDbComboBox.getSelectionModel().select(0);
+				
+				// Server Names ComboBox
+				osServerComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("servernames"));
+				osServerComboBox.getSelectionModel().select(0);
+
+				alertLogServerComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("servernames"));
+				alertLogServerComboBox.getSelectionModel().select(0);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 	/**

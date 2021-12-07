@@ -1,8 +1,6 @@
 package JavaFx.Controller;
 
 import java.io.File;
-
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,23 +23,18 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
-import Root.Application.Application;
 import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.Utils.PropertiesUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -73,6 +66,15 @@ import javafx.stage.Stage;
 
 public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
+	
+	/**
+	 * Pattern 객체를 정적필드로 선언한 이유
+	 *  - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state machine)을 생성하기 때문에 인스턴스 생성비용이 높다.
+	 *  - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다.
+	 *  - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
+	 */
+	private static Pattern DB_CONNINFO_AP_NAME_PATTERN = Pattern.compile("dbConnInfo(.*)AP");
+	private static Pattern SERVER_CONNINFO_AP_NAME_PATTERN = Pattern.compile("serverConnInfo(.*)AP");
 
 	@FXML SplitPane rootSplitPane;
 	
@@ -412,8 +414,7 @@ public class SettingMenuController implements Initializable {
 		for(AnchorPane ap : dbConnInfoIdxMap.values()) {
 			String apId = ap.getId();
 			
-			Pattern p = Pattern.compile("dbConnInfo(.*)AP");
-			Matcher m = p.matcher(apId);
+			Matcher m = DB_CONNINFO_AP_NAME_PATTERN.matcher(apId);
 			if(m.matches()) {
 				String elementId = m.group(1);
 				String newElementId = elementId;
@@ -503,8 +504,7 @@ public class SettingMenuController implements Initializable {
 		for(AnchorPane ap : serverConnInfoIdxMap.values()) {
 			String apId = ap.getId();
 			
-			Pattern p = Pattern.compile("serverConnInfo(.*)AP");
-			Matcher m = p.matcher(apId);
+			Matcher m = SERVER_CONNINFO_AP_NAME_PATTERN.matcher(apId);
 			if(m.matches()) {
 				String elementId = m.group(1);
 				String newElementId = elementId;

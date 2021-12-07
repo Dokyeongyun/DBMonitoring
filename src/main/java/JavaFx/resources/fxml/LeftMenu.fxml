@@ -15,8 +15,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17" fx:controller="JavaFx.Controller.LeftMenuController">
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.LeftMenuController">
    <children>
       <VBox layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -56,7 +55,7 @@
                                  <children>
                                     <HBox alignment="CENTER_LEFT" minHeight="40.0">
                                        <children>
-                                          <Button fx:id="settingMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goSettingMenu" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="설정">
+                                          <Button fx:id="settingMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goSettingMenu" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="설정">
                                              <styleClass>
                                                 <String fx:value="basic-font" />
                                                 <String fx:value="bold" />
@@ -79,7 +78,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
                                        <children>
-                                          <Button fx:id="runMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goRunMenu" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="실행">
+                                          <Button fx:id="runMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goRunMenu" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="실행">
                                              <styleClass>
                                                 <String fx:value="basic-font" />
                                                 <String fx:value="bold" />
@@ -102,7 +101,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
                                        <children>
-                                          <Button fx:id="menu2MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu2" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴2">
+                                          <Button fx:id="menu2MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu2" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴2">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                    <image>
@@ -129,7 +128,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" minHeight="40.0">
                                        <children>
-                                          <Button fx:id="menu3MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu3" prefWidth="300.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴3">
+                                          <Button fx:id="menu3MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu3" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴3">
                                              <graphic>
                                                 <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
                                                    <image>
