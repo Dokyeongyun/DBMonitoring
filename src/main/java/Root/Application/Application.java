@@ -30,6 +30,8 @@ public class Application {
     		
     		try {
     			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
+    			PropertiesUtils.loadCombinedConfiguration();
+    			PropertiesUtils.loadAppConfiguration(".\\config\\connectioninfo\\connection.properties", "connInfoConfig");
     		}catch(Exception e) {
     			System.out.println("configuration loading error\n"+e+"\n");
     			return;
