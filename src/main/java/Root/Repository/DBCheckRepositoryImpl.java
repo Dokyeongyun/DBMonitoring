@@ -11,6 +11,7 @@ import Root.Database.DatabaseUtil;
 import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
+import Root.Utils.UnitUtils;
 
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private DatabaseUtil db;
@@ -65,12 +66,12 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	            int numberOfFiles = rs.getInt("NUMBER_OF_FILES");
 	            String dnt = rs.getString("DNT");
 	            
-	            ArchiveUsage data = new ArchiveUsage(name, numberOfFiles, spaceReclaimableGb + "G", spaceUsedGb + "G", usedRate + "%", spaceLimitGb + "G", dnt);
-	            data.setReclaimableSpace(Double.parseDouble(spaceReclaimableGb));
-	            data.setUsedSpace(Double.parseDouble(spaceUsedGb));
-	            data.setUsedPercent(Double.parseDouble(usedRate));
-	            data.setTotalSpace(Double.parseDouble(spaceLimitGb));
-
+	            ArchiveUsage data = new ArchiveUsage(name, numberOfFiles, 
+	            		UnitUtils.parseFileSizeString(spaceLimitGb),
+	            		UnitUtils.parseFileSizeString(spaceReclaimableGb),
+	            		UnitUtils.parseFileSizeString(spaceUsedGb),
+	            		UnitUtils.parseFileSizeString(usedRate),
+	            		dnt);
 				result.add(data);
 			}
 			
@@ -123,11 +124,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	            String usedPercent = rs.getString("Used(%)");
 	            String freeSpaceGb = rs.getString("FreeSpace(G)");
 	           
-				TableSpaceUsage data = new TableSpaceUsage(tableSpace, freeSpaceGb + "G", usedSpaceGb + "G", usedPercent + "%", totalGb + "G");
-				data.setAvailableSpace(Double.parseDouble(freeSpaceGb));
-				data.setUsedSpace(Double.parseDouble(usedSpaceGb));
-				data.setUsedPercent(Double.parseDouble(usedPercent));
-				data.setTotalSpace(Double.parseDouble(totalGb));
+				TableSpaceUsage data = new TableSpaceUsage(tableSpace, 
+						UnitUtils.parseFileSizeString(totalGb),
+						UnitUtils.parseFileSizeString(freeSpaceGb),
+						UnitUtils.parseFileSizeString(usedSpaceGb),
+						UnitUtils.parseFileSizeString(usedPercent));
 				
 				result.add(data);
 			}
@@ -186,13 +187,14 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	            String usedSpace = rs.getString("Used(MB)");
 	            String usedPercent = rs.getString("Used(%)");
 	            String resultMsg = rs.getString("Result");
-	            
-	            ASMDiskUsage data = new ASMDiskUsage(asmDiskGroupName, asmDiskGroupType, totalRawSpace + "MB", totalAvailableSpace + "MB", availableSpace + "MB", usedSpace + "MB", usedPercent + "%", resultMsg);
-	            data.setTotalRawSpace(Double.parseDouble(totalRawSpace));
-	            data.setTotalAvailableSpace(Double.parseDouble(totalAvailableSpace));
-	            data.setAvailableSpace(Double.parseDouble(availableSpace));
-	            data.setUsedSpace(Double.parseDouble(usedSpace));
-	            data.setUsedPercent(Double.parseDouble(usedPercent));
+
+	            ASMDiskUsage data = new ASMDiskUsage(asmDiskGroupName, asmDiskGroupType,
+						UnitUtils.parseFileSizeString(totalRawSpace),
+						UnitUtils.parseFileSizeString(totalAvailableSpace),
+						UnitUtils.parseFileSizeString(availableSpace),
+						UnitUtils.parseFileSizeString(usedSpace),
+						UnitUtils.parseFileSizeString(usedPercent),
+						resultMsg);
 				result.add(data);
 			}
 			

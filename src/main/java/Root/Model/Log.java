@@ -3,34 +3,17 @@ package Root.Model;
 import java.util.List;
 
 import Root.Utils.ConsoleUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Log {
 	private String logTimeStamp;
 	private List<String> logContents;
-	
-	public Log() { }
-	
-	public Log(String logTimeStamp, List<String> logContents) {
-		this.logTimeStamp = logTimeStamp;
-		this.logContents = logContents;
-	}
 
-	public String getLogTimeStamp() {
-		return logTimeStamp;
-	}
-
-	public void setLogTimeStamp(String logTimeStamp) {
-		this.logTimeStamp = logTimeStamp;
-	}
-
-	public List<String> getLogContents() {
-		return logContents;
-	}
-
-	public void setLogContents(List<String> logContents) {
-		this.logContents = logContents;
-	}
-	
 	public int getTotalLineCount() {
 		return logContents.size();
 	}
@@ -56,10 +39,5 @@ public class Log {
 		}
 		result.append("===========================================================================\n");
 		return result.toString();
-	}
-
-	@Override
-	public String toString() {
-		return "Log [logTimeStamp=" + logTimeStamp + ", logContents=" + logContents + "]";
 	}
 }

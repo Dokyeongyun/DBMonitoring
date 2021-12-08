@@ -23,6 +23,7 @@ import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
 import Root.Model.Log;
 import Root.Model.OSDiskUsage;
+import Root.Model.UnitString;
 import Root.Repository.ServerCheckRepository;
 import Root.Utils.ConsoleUtils;
 import Root.Utils.DBManageExcel;
@@ -164,7 +165,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		boolean isError = false;
 		for(OSDiskUsage data : result) {
-			if(data.getUsedPercent() >= 80) {
+			if(data.getUsedPercent().getValue() >= 80) {
 				isError = true;
 			//	data.setUsedPercentString(ConsoleUtils.FONT_RED + data.getUsedPercentString() + ConsoleUtils.RESET);
 			} 
@@ -214,10 +215,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 
 		for(OSDiskUsage data : result) {
 			String mountedOn = data.getMountedOn();
-			String usePercent = data.getUsedPercentString();
+			UnitString usePercent = data.getUsedPercent();
 			if(!mountedOn.startsWith("/oradata")) continue;
 			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
-			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent);
+			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent.getValue() + usePercent.getUnit());
 		}
 
 		OutputStream os = new FileOutputStream(file);

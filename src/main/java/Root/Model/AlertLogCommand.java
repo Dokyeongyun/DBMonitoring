@@ -1,7 +1,10 @@
 package Root.Model;
 
-import java.util.Arrays;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Data
 public class AlertLogCommand {
 	private String readCommand;
 	private String readLine;
@@ -9,9 +12,6 @@ public class AlertLogCommand {
 	private String dateFormat;
 	private String dateFormatRegex;
 	private String[] catchErrorMsg;
-
-	public AlertLogCommand() {
-	}
 
 	public AlertLogCommand(String readCommand, String readLine, String readFilePath) {
 		this.readCommand = readCommand;
@@ -32,61 +32,6 @@ public class AlertLogCommand {
 		this.readLine = readLine;
 		this.readFilePath = readFilePath;
 		this.catchErrorMsg = catchErrorMsg;
-	}
-
-	public String getReadCommand() {
-		return readCommand;
-	}
-
-	public void setReadCommand(String readCommand) {
-		this.readCommand = readCommand;
-	}
-
-	public String getReadLine() {
-		return readLine;
-	}
-
-	public void setReadLine(String readLine) {
-		this.readLine = readLine;
-	}
-
-	public String getReadFilePath() {
-		return readFilePath;
-	}
-
-	public void setReadFilePath(String readFilePath) {
-		this.readFilePath = readFilePath;
-	}
-
-	public String getDateFormat() {
-		return dateFormat;
-	}
-
-	public void setDateFormat(String dateFormat) {
-		this.dateFormat = dateFormat;
-	}
-
-	public String getDateFormatRegex() {
-		return dateFormatRegex;
-	}
-
-	public void setDateFormatRegex(String dateFormatRegex) {
-		this.dateFormatRegex = dateFormatRegex;
-	}
-
-	public String[] getCatchErrorMsg() {
-		return catchErrorMsg;
-	}
-
-	public void setCatchErrorMsg(String... catchErrorMsg) {
-		this.catchErrorMsg = catchErrorMsg;
-	}
-
-	@Override
-	public String toString() {
-		return "AlertLogCommand [readCommand=" + readCommand + ", readLine=" + readLine + ", readFilePath="
-				+ readFilePath + ", dateFormat=" + dateFormat + ", dateFormatRegex=" + dateFormatRegex
-				+ ", catchErrorMsg=" + Arrays.toString(catchErrorMsg) + "]";
 	}
 
 	public String getCommand() {
