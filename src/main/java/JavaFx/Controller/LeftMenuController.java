@@ -25,7 +25,7 @@ public class LeftMenuController {
 	 */
 	public void goHomeStage(ActionEvent e) throws IOException {
 		Scene originalScene = homeBtn.getScene();
-		Parent home = FXMLLoader.load(getClass().getResource("../resources/fxml/Home.fxml"));
+		Parent home = FXMLLoader.load(getClass().getResource("/JavaFx/resources/fxml/Home.fxml"));
         Scene homeScene = new Scene(home, originalScene.getWidth(), originalScene.getHeight());
         Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
         primaryStage.setScene(homeScene);
@@ -38,7 +38,7 @@ public class LeftMenuController {
 	 */
 	public void goSettingMenu(ActionEvent e) throws IOException {
 		Scene originalScene = homeBtn.getScene();
-		Parent parent = FXMLLoader.load(getClass().getResource("../resources/fxml/SettingMenu.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/JavaFx/resources/fxml/SettingMenu.fxml"));
         Scene newScene = new Scene(parent, originalScene.getWidth(), originalScene.getHeight());
         Stage primaryStage = (Stage)((Node) e.getSource()).getScene().getWindow();
         primaryStage.setScene(newScene);
@@ -51,7 +51,7 @@ public class LeftMenuController {
 	 */
 	public void goRunMenu(ActionEvent e) throws IOException {
 		Scene originalScene = homeBtn.getScene();
-		Parent parent = FXMLLoader.load(getClass().getResource("../resources/fxml/RunMenu.fxml"));
+		Parent parent = FXMLLoader.load(getClass().getResource("/JavaFx/resources/fxml/RunMenu.fxml"));
         Scene newScene = new Scene(parent, originalScene.getWidth(), originalScene.getHeight());
         Stage primaryStage = (Stage)((Node) e.getSource()).getScene().getWindow();
         primaryStage.setScene(newScene);
