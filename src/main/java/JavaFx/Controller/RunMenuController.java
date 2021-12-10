@@ -1,24 +1,37 @@
 package JavaFx.Controller;
 
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.commons.configuration2.Configuration;
 
 import com.jfoenix.controls.JFXComboBox;
 
+import Root.Database.DatabaseUtil;
 import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
+import Root.Model.JdbcConnectionInfo;
+import Root.Model.JschConnectionInfo;
 import Root.Model.OSDiskUsage;
 import Root.Model.TableSpaceUsage;
+import Root.RemoteServer.JschUtil;
+import Root.Repository.DBCheckRepository;
+import Root.Repository.DBCheckRepositoryImpl;
+import Root.Repository.ServerCheckRepository;
+import Root.Repository.ServerCheckRepositoryImpl;
+import Root.Usecases.DBCheckUsecase;
+import Root.Usecases.DBCheckUsecaseImpl;
+import Root.Usecases.ServerCheckUsecase;
+import Root.Usecases.ServerCheckUsecaseImpl;
 import Root.Utils.PropertiesUtils;
-import Root.Utils.UnitUtils;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -72,6 +85,11 @@ public class RunMenuController implements Initializable {
 	@FXML JFXComboBox<String> asmDbComboBox;
 	@FXML JFXComboBox<String> osServerComboBox;
 	@FXML JFXComboBox<String> alertLogServerComboBox;
+	
+	private Map<String, List<ArchiveUsage>> archiveUsageMonitoringResultMap = new HashMap<>();
+	private Map<String, List<TableSpaceUsage>> tableSpaceUsageMonitoringResultMap = new HashMap<>();
+	private Map<String, List<ASMDiskUsage>> asmDiskUsageMonitoringResultMap = new HashMap<>();
+	private Map<String, List<OSDiskUsage>> osDiskUsageMonitoringResultMap = new HashMap<>();
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -134,17 +152,29 @@ public class RunMenuController implements Initializable {
 				// DB Names ComboBox
 				auDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
 				auDbComboBox.getSelectionModel().select(0);
+				auDbComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+					changeArchiveUsageMonitoringResult(newValue);
+				});
 				
 				tsuDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
 				tsuDbComboBox.getSelectionModel().select(0);
+				tsuDbComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+					changeTableSpaceUsageMonitoringResult(newValue);
+				});
 				
 				asmDbComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("dbnames"));
 				asmDbComboBox.getSelectionModel().select(0);
+				asmDbComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+					changeASMDiskUsageMonitoringResult(newValue);
+				});
 				
 				// Server Names ComboBox
 				osServerComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("servernames"));
 				osServerComboBox.getSelectionModel().select(0);
-
+				osServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+					changeOSDiskUsageMonitoringResult(newValue);
+				});
+				
 				alertLogServerComboBox.getItems().addAll(PropertiesUtils.connInfoConfig.getStringArray("servernames"));
 				alertLogServerComboBox.getSelectionModel().select(0);
 			}
@@ -159,99 +189,62 @@ public class RunMenuController implements Initializable {
 	 * @param e
 	 */
 	public void runMonitoring(ActionEvent e) {
-		// Application.main(new String[] {});
-		monitoringArchiveUsage();
+		archiveUsageMonitoringResultMap.clear();
+		tableSpaceUsageMonitoringResultMap.clear();
+		asmDiskUsageMonitoringResultMap.clear();
+		osDiskUsageMonitoringResultMap.clear();
+		
+		// DB Usage Check   		
+		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
+		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			System.out.println("бс [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			DatabaseUtil db = new DatabaseUtil(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
+			archiveUsageMonitoringResultMap.put(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
+			tableSpaceUsageMonitoringResultMap.put(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
+			asmDiskUsageMonitoringResultMap.put(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
+			db.uninit();
+		} 
+		
+		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
+		for(JschConnectionInfo jsch : jschConnectionList) {
+			System.out.println("бс [ " + jsch.getServerName() + " Monitoring Start ]\n");
+			JschUtil server = new JschUtil(jsch);
+			server.init();
+			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			
+			osDiskUsageMonitoringResultMap.put(server.getServerName(), usecase.getCurrentOSDiskUsage("df -Ph"));
+
+//			String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+//			String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+//			String alertLogDateFormat = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
+//			String alertLogDateFormatRegex = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
+//			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
+//			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+		} 
+		
+		changeArchiveUsageMonitoringResult(auDbComboBox.getSelectionModel().getSelectedItem());
+		changeTableSpaceUsageMonitoringResult(tsuDbComboBox.getSelectionModel().getSelectedItem());
+		changeASMDiskUsageMonitoringResult(asmDbComboBox.getSelectionModel().getSelectedItem());
+		changeOSDiskUsageMonitoringResult(osServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	
-	public void monitoringArchiveUsage() {
-		ObservableList<ArchiveUsage> archiveUsageList = FXCollections.observableArrayList(
-				new ArchiveUsage("+RECO", 103, 
-						UnitUtils.parseFileSizeString("1000G"),
-						UnitUtils.parseFileSizeString("284G"),
-						UnitUtils.parseFileSizeString("434"),
-						UnitUtils.parseFileSizeString("43%"),
-						"2021-10-13 00:06:34"),
-				new ArchiveUsage("+RECO", 103, 
-						UnitUtils.parseFileSizeString("1000G"),
-						UnitUtils.parseFileSizeString("284G"),
-						UnitUtils.parseFileSizeString("434G"),
-						UnitUtils.parseFileSizeString("45%"),
-						"2021-10-13 00:06:34"),
-				new ArchiveUsage("+RECO", 103, 
-						UnitUtils.parseFileSizeString("1000G"),
-						UnitUtils.parseFileSizeString("284G"),
-						UnitUtils.parseFileSizeString("434G"),
-						UnitUtils.parseFileSizeString("48%"),
-						"2021-10-13 00:06:34")
-				);
-		archiveUsageTV.setItems(archiveUsageList);
-		
-		ObservableList<TableSpaceUsage> tableSpaceUsageList = FXCollections.observableArrayList(
-				new TableSpaceUsage("GGS_DATA",
-						UnitUtils.parseFileSizeString("17.67G"),
-						UnitUtils.parseFileSizeString(".84G"),
-						UnitUtils.parseFileSizeString("16.83G"),
-						UnitUtils.parseFileSizeString("95%")),
-				new TableSpaceUsage("SYSTEM",
-						UnitUtils.parseFileSizeString("3.2G"),
-						UnitUtils.parseFileSizeString(".3G"),
-						UnitUtils.parseFileSizeString("2.9G"),
-						UnitUtils.parseFileSizeString("91%")),
-				new TableSpaceUsage("DAISO_INDX",
-						UnitUtils.parseFileSizeString("1080G"),
-						UnitUtils.parseFileSizeString("119.91G"),
-						UnitUtils.parseFileSizeString("960.09G"),
-						UnitUtils.parseFileSizeString("89%")),
-				new TableSpaceUsage("DAISO_TBS",
-						UnitUtils.parseFileSizeString("2130G"),
-						UnitUtils.parseFileSizeString("410.45G"),
-						UnitUtils.parseFileSizeString("1719.55G"),
-						UnitUtils.parseFileSizeString("81%"))
-				);
-		tableSpaceUsageTV.setItems(tableSpaceUsageList);
-		
-		ObservableList<ASMDiskUsage> asmDiskUsageList = FXCollections.observableArrayList(
-				new ASMDiskUsage("DATA", "NORMAL", 
-						UnitUtils.parseFileSizeString("12209920MB"),
-						UnitUtils.parseFileSizeString("4883968MB"),
-						UnitUtils.parseFileSizeString("339168MB"),
-						UnitUtils.parseFileSizeString("4544800MB"),
-						UnitUtils.parseFileSizeString("93.06%"),
-						"WARNING"),
-				new ASMDiskUsage("RECO", "NORMAL", 
-						UnitUtils.parseFileSizeString("3051520MB"),
-						UnitUtils.parseFileSizeString("1220608MB"),
-						UnitUtils.parseFileSizeString("754898MB"),
-						UnitUtils.parseFileSizeString("465710MB"),
-						UnitUtils.parseFileSizeString("38.15%"),
-						"GOOD"),
-				new ASMDiskUsage("REDO", "HIGH", 
-						UnitUtils.parseFileSizeString("3051520MB"),
-						UnitUtils.parseFileSizeString("762880MB"),
-						UnitUtils.parseFileSizeString("631480MB"),
-						UnitUtils.parseFileSizeString("131400MB"),
-						UnitUtils.parseFileSizeString("17.22%"),
-						"GOOD")
-				);
-		asmDiskUsageTV.setItems(asmDiskUsageList);
-
-		ObservableList<OSDiskUsage> osDiskUsageList = FXCollections.observableArrayList(
-				new OSDiskUsage("/dev/mapper/VolGroupSys-LogVolRoot", "/",
-						UnitUtils.parseFileSizeString("30G"),
-						UnitUtils.parseFileSizeString("21G"),
-						UnitUtils.parseFileSizeString("7.8G"),
-						UnitUtils.parseFileSizeString("28%")),
-				new OSDiskUsage("tmpfs", "/dev/shm",
-						UnitUtils.parseFileSizeString("189G"),
-						UnitUtils.parseFileSizeString("187G"),
-						UnitUtils.parseFileSizeString("1.3G"),
-						UnitUtils.parseFileSizeString("1%")),
-				new OSDiskUsage("/dev/md0", "/boot",
-						UnitUtils.parseFileSizeString("477M"),
-						UnitUtils.parseFileSizeString("407M"),
-						UnitUtils.parseFileSizeString("45M"),
-						UnitUtils.parseFileSizeString("10%"))
-				);
-		osDiskUsageTV.setItems(osDiskUsageList);
+	private void changeArchiveUsageMonitoringResult(String dbName) {
+		archiveUsageTV.setItems(FXCollections.observableArrayList(archiveUsageMonitoringResultMap.get(dbName)));
+	}
+	
+	private void changeTableSpaceUsageMonitoringResult(String dbName) {
+		tableSpaceUsageTV.setItems(FXCollections.observableArrayList(tableSpaceUsageMonitoringResultMap.get(dbName)));
+	}
+	
+	private void changeASMDiskUsageMonitoringResult(String dbName) {
+		asmDiskUsageTV.setItems(FXCollections.observableArrayList(asmDiskUsageMonitoringResultMap.get(dbName)));
+	}
+	
+	private void changeOSDiskUsageMonitoringResult(String serverName) {
+		osDiskUsageTV.setItems(FXCollections.observableArrayList(osDiskUsageMonitoringResultMap.get(serverName)));
 	}
 }

@@ -250,4 +250,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		bw.flush();
 		bw.close();
 	}
+	
+	@Override
+	public List<OSDiskUsage> getCurrentOSDiskUsage(String command) {
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		return result;
+	}
 }
