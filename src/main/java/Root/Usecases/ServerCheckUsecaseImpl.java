@@ -256,4 +256,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
 		return result;
 	}
+	
+	@Override
+	public AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
+		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alcp);
+		return result;
+	}
 }
