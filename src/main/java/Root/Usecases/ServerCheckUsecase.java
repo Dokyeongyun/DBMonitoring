@@ -1,7 +1,11 @@
 package Root.Usecases;
 
+import java.util.List;
+
+import Root.Model.AlertLog;
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
+import Root.Model.OSDiskUsage;
 
 public interface ServerCheckUsecase {
 	void printAlertLog(AlertLogCommand alc);
@@ -10,4 +14,7 @@ public interface ServerCheckUsecase {
 	
 	void writeExcelOSDiskUsage(String command) throws Exception;
 	void writeCsvOSDiskUsage(String command) throws Exception;
+	
+	List<OSDiskUsage> getCurrentOSDiskUsage(String command);
+	AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
 }

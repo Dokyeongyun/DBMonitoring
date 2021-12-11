@@ -194,6 +194,24 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		bw.close();
 	}
 
+	@Override
+	public List<ArchiveUsage> getCurrentArchiveUsage() {
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		return result;
+	}
+	
+	@Override
+	public List<TableSpaceUsage> getCurrentTableSpaceUsage() {
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+		return result;
+	}
+	
+	@Override
+	public List<ASMDiskUsage> getCurrentASMDiskUsage() {
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+		return result;
+	}
+	
 	/**
 	 * List<Map> 형태의 데이터를 테이블 포맷으로 출력한다.
 	 * 
