@@ -10,4 +10,9 @@ import lombok.NoArgsConstructor;
 public class UnitString {
 	private double value;
 	private String unit;
+	
+	@Override
+	public String toString() {
+		return String.valueOf(value);
+	}
 }

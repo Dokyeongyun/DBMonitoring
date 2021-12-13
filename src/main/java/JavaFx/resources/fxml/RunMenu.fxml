@@ -81,7 +81,7 @@
                                  <tabs>
                                     <Tab text="Archive Usage">
                                        <content>
-                                          <AnchorPane>
+                                          <AnchorPane fx:id="archiveUsageTabAP">
                                              <children>
                                               <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -133,7 +133,7 @@
                                     </Tab>
                                     <Tab text="TableSpace Usage">
                                        <content>
-                                          <AnchorPane>
+                                          <AnchorPane fx:id="tableSpaceUsageTabAP">
                                              <children>
                                                 <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -183,7 +183,7 @@
                                     </Tab>
                                     <Tab text="ASM Disk Usage">
                                        <content>
-                                          <AnchorPane>
+                                          <AnchorPane fx:id="asmDiskUsageTabAP">
                                              <children>
                                                 <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -235,7 +235,7 @@
                                     </Tab>
                                     <Tab text="OS Disk Usage">
                                        <content>
-                                          <AnchorPane>
+                                          <AnchorPane fx:id="osDiskUsageTabAP">
                                              <children>
                                                 <AnchorPane style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
@@ -286,7 +286,7 @@
                                     </Tab>
                                     <Tab text="Alert Log">
                                        <content>
-                                          <AnchorPane style="-fx-background-color: #ffffff00;">
+                                          <AnchorPane fx:id="alertLogTabAP" style="-fx-background-color: #ffffff00;">
                                              <children>
                                                 <AnchorPane layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
