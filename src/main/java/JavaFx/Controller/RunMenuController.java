@@ -3,13 +3,10 @@ package JavaFx.Controller;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import org.apache.commons.configuration2.Configuration;
 
 import com.jfoenix.controls.JFXComboBox;
 
@@ -55,7 +52,7 @@ public class RunMenuController implements Initializable {
 	/* Dependency Injection */
 	PropertyService propertyService = PropertyServiceImpl.getInstance();
 
-	/* View */
+	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
 	@FXML JFXComboBox<String> runMonitoringPresetComboBox;
 	@FXML JFXComboBox<String> alertLogServerComboBox;
@@ -69,12 +66,15 @@ public class RunMenuController implements Initializable {
 	@FXML AnchorPane osDiskUsageTabAP;
 	@FXML AnchorPane alertLogUsageTabAP;
 	
-	private MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>();
-	private MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>();
-	private MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>();
-	private MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>();
+	/* Custom View */
+	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>();
+	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>();
+	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>();
+	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>();
 
 	Map<String, AlertLog> alertLogMonitoringResultMap = new HashMap<>();
+	
+	/* Common Data */
 	String[] dbNames = new String[]{};
 	String[] serverNames = new String[]{}; 
 	
@@ -215,7 +215,7 @@ public class RunMenuController implements Initializable {
 		// TODO 파일시스템 내에 존재하는 모든 접속정보 프로퍼티 파일을 ComboBox에 추가해야 한다.
 		
 		// 모니터링여부 설정 Preset ComboBox
-		List<String> presetList = propertyService.getMonitoringPresetList();
+		List<String> presetList = propertyService.getMonitoringPresetNameList();
 		runMonitoringPresetComboBox.getItems().addAll(presetList);
 		
 		// DB/Server Names ComboBox
