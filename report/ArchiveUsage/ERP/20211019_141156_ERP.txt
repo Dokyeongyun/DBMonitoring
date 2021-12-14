@@ -1,0 +1,5 @@
+Tue Oct 19 14:11:56 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,102,42%,415G,304G,1000G,2021-10-19 14:11:56
+
+

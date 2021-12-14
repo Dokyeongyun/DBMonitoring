@@ -1,0 +1,9 @@
+Wed Nov 10 12:20:42 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/vg_npos2-LogVol02,391G,52G,320G,14%,/
+tmpfs,127G,715M,126G,1%,/dev/shm
+/dev/sdau1,194M,35M,150M,19%,/boot
+/dev/mapper/vg_npos2-LogVol00,49G,13G,34G,28%,/grid
+/dev/mapper/vg_npos2-LogVol01,49G,5.6G,41G,13%,/oracle
+
+

@@ -1,6 +1,6 @@
 package Root.Batch;
 
-import Root.Usecases.DBCheckUsecase;
+import Root.Usecase.DBCheckUsecase;
 
 public class DBCheckBatch {
 	private DBCheckUsecase dbCheckUsecase;

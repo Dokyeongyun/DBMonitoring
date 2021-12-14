@@ -9,12 +9,11 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXListView;
 
 import JavaFx.CustomView.DisableAfterTodayDateCell;
 import JavaFx.CustomView.MonitoringAnchorPane;
 import JavaFx.Model.TypeAndFieldName;
-import JavaFx.Service.PropertyService;
-import JavaFx.Service.PropertyServiceImpl;
 import Root.Database.DatabaseUtil;
 import Root.Model.ASMDiskUsage;
 import Root.Model.AlertLog;
@@ -23,17 +22,21 @@ import Root.Model.AlertLogCommandPeriod;
 import Root.Model.ArchiveUsage;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
+import Root.Model.Log;
 import Root.Model.OSDiskUsage;
 import Root.Model.TableSpaceUsage;
 import Root.RemoteServer.JschUtil;
 import Root.Repository.DBCheckRepository;
-import Root.Repository.DBCheckRepositoryImpl;
+import Root.Repository.PropertyRepository;
 import Root.Repository.ServerCheckRepository;
-import Root.Repository.ServerCheckRepositoryImpl;
-import Root.Usecases.DBCheckUsecase;
-import Root.Usecases.DBCheckUsecaseImpl;
-import Root.Usecases.ServerCheckUsecase;
-import Root.Usecases.ServerCheckUsecaseImpl;
+import Root.RepositoryImpl.DBCheckRepositoryImpl;
+import Root.RepositoryImpl.PropertyRepositoryImpl;
+import Root.RepositoryImpl.ReportRepositoryImpl;
+import Root.RepositoryImpl.ServerCheckRepositoryImpl;
+import Root.Usecase.DBCheckUsecase;
+import Root.Usecase.ServerCheckUsecase;
+import Root.UsecaseImpl.DBCheckUsecaseImpl;
+import Root.UsecaseImpl.ServerCheckUsecaseImpl;
 import Root.Utils.AlertUtils;
 import Root.Utils.PropertiesUtils;
 import javafx.event.ActionEvent;
@@ -46,7 +49,7 @@ import javafx.scene.layout.AnchorPane;
 public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
-	PropertyService propertyService = PropertyServiceImpl.getInstance();
+	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
 
 	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
@@ -61,6 +64,8 @@ public class RunMenuController implements Initializable {
 	@FXML AnchorPane asmDiskUsageTabAP;
 	@FXML AnchorPane osDiskUsageTabAP;
 	@FXML AnchorPane alertLogUsageTabAP;
+	
+	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
 	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>();
@@ -94,13 +99,13 @@ public class RunMenuController implements Initializable {
 		 * 	3-2. 없으면 첫 번째 파일을 Load한다. 
 		 */
 		// 접속정보 설정 프로퍼티 파일 
-		connInfoFiles = propertyService.getConnectionInfoFileNames();
+		connInfoFiles = propertyRepository.getConnectionInfoFileNames();
 		if(connInfoFiles != null && connInfoFiles.length != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
 			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			lastUseConnInfoFilePath = propertyService.getLastUseConnInfoFilePath();
+			lastUseConnInfoFilePath = propertyRepository.getLastUseConnInfoFilePath();
 			if(lastUseConnInfoFilePath != null) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
 				loadConnectionInfoProperties(lastUseConnInfoFilePath);
@@ -199,7 +204,10 @@ public class RunMenuController implements Initializable {
 	private void initAlertLogMonitoringElements() {
 		// ComboBox 변경 이벤트
 		alertLogServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
-			// alertLogTA.setText(alertLogMonitoringResultMap.get(newValue).getFullLogString());
+			AlertLog al = alertLogMonitoringResultMap.get(newValue);
+			if(al != null) {
+				alertLogLV.getItems().addAll(al.getAlertLogs());				
+			}
 		});
 		alertLogServerComboBox.getItems().addAll(serverNames);
 		alertLogServerComboBox.getSelectionModel().selectFirst();
@@ -231,13 +239,13 @@ public class RunMenuController implements Initializable {
 	 */
 	private void loadConnectionInfoProperties(String connInfoConfigFilePath) {
 		// 접속정보 프로퍼티 파일 Load
-		propertyService.loadConnectionInfoConfig(connInfoConfigFilePath);
+		propertyRepository.loadConnectionInfoConfig(connInfoConfigFilePath);
 		// 모니터링여부 설정 Preset
-		presetList = propertyService.getMonitoringPresetNameList();
-		lastUseMonitoringPresetName = propertyService.getLastUseMonitoringPresetName();
+		presetList = propertyRepository.getMonitoringPresetNameList();
+		lastUseMonitoringPresetName = propertyRepository.getLastUseMonitoringPresetName();
 		// DB/Server Names
-		dbNames = propertyService.getMonitoringDBNames();
-		serverNames = propertyService.getMonitoringServerNames();
+		dbNames = propertyRepository.getMonitoringDBNames();
+		serverNames = propertyRepository.getMonitoringServerNames();
 		// Monitoring Preset ComboBox 
 		runMonitoringPresetComboBox.getItems().clear();
 		runMonitoringPresetComboBox.getItems().addAll(presetList);
@@ -261,7 +269,7 @@ public class RunMenuController implements Initializable {
 			DatabaseUtil db = new DatabaseUtil(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, new ReportRepositoryImpl());
 			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
 			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
 			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());

@@ -2,7 +2,7 @@ package Root.Batch;
 
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
-import Root.Usecases.ServerCheckUsecase;
+import Root.Usecase.ServerCheckUsecase;
 
 public class ServerCheckBatch {
 	private ServerCheckUsecase serverCheckUsecase;

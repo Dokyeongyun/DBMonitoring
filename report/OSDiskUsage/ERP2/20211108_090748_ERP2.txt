@@ -1,0 +1,12 @@
+Mon Nov 08 09:07:48 2021
+Filesystem,Size,Used,Avail,Use%,Mounted on
+/dev/mapper/VolGroupSys-LogVolRoot,30G,12G,17G,40%,/
+tmpfs,189G,1.3G,187G,1%,/dev/shm
+/dev/md0,477M,45M,407M,10%,/boot
+/dev/sda1,500M,312K,500M,1%,/boot/efi
+/dev/mapper/VolGroupSys-LogVolOpt,59G,22G,35G,39%,/opt
+/dev/mapper/VolGroupSys-LogVolU01,99G,82G,12G,88%,/u01
+/dev/mapper/VolGroupSys-LogVolU02,197G,3.2G,184G,2%,/u02
+/dev/asm/commonstore-268,5.0G,495M,4.6G,10%,/opt/oracle/dcs/commonstore
+
+
