@@ -14,6 +14,8 @@ public interface PropertyService {
 	boolean loadConnectionInfoConfig(String filePath);
 
 	boolean loadMonitoringInfoConfig(String filePath);
+	
+	String[] getConnectionInfoFileNames();
 
 	String[] getCommonResources(String key);
 	
@@ -23,7 +25,7 @@ public interface PropertyService {
 	
 	String[] getOracleDrivers();
 	
-	String getLastUseConnInfoFileName();
+	String getLastUseConnInfoFilePath();
 
 	List<String> getMonitoringPresetNameList();
 	

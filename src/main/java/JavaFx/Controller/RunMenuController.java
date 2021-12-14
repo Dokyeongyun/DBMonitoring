@@ -25,7 +25,6 @@ import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.Model.OSDiskUsage;
 import Root.Model.TableSpaceUsage;
-import Root.Model.UnitString;
 import Root.RemoteServer.JschUtil;
 import Root.Repository.DBCheckRepository;
 import Root.Repository.DBCheckRepositoryImpl;
@@ -37,14 +36,11 @@ import Root.Usecases.ServerCheckUsecase;
 import Root.Usecases.ServerCheckUsecaseImpl;
 import Root.Utils.AlertUtils;
 import Root.Utils.PropertiesUtils;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 
 public class RunMenuController implements Initializable {
@@ -71,33 +67,15 @@ public class RunMenuController implements Initializable {
 	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>();
 	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>();
 	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>();
-
 	Map<String, AlertLog> alertLogMonitoringResultMap = new HashMap<>();
 	
 	/* Common Data */
-	String[] dbNames = new String[]{};
-	String[] serverNames = new String[]{}; 
-	
-	/**
-	 * 모니터링 AnchorPane 추가하고 요소를 초기화한다.
-	 * @param <T>
-	 * @param monitoringAP
-	 * @param parentAP
-	 * @param labelText
-	 * @param comboBoxItems
-	 * @param tableColumns
-	 */
-	private <T> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP, 
-			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
-			Map<String, TypeAndFieldName> tableColumns) {
-		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
-		monitoringAP.getLabel().setText(labelText); // ComboBox 좌측 Lebel Text 설정
-		monitoringAP.getComboBox().getItems().addAll(comboBoxItems); // ComboBox Items 설정
-		for(String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
-			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key), key);
-		}
-		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
-	}
+	String lastUseConnInfoFilePath = null;
+	String lastUseMonitoringPresetName = null;
+	String[] dbNames = null;
+	String[] serverNames = null; 
+	String[] connInfoFiles = null;
+	List<String> presetList = null;
 	
 	/**
 	 * 실행메뉴 화면 진입시 초기화를 수행한다.
@@ -105,13 +83,38 @@ public class RunMenuController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-
-		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-		String lastUsePropertiesFile = propertyService.getLastUseConnInfoFileName();
-		if(lastUsePropertiesFile != null) {
-			loadConnectionInfoProperties(lastUsePropertiesFile);
+		
+		/*
+		 * 1. 접속정보 프로퍼티 파일 ComboBox를 설정한다.
+		 * 2. 접속정보 프로퍼티 파일 유무를 확인한다.
+		 * 	2-1. 있으면 [3]으로 이동
+		 * 	2-2. 한개도 없으면 설정 메뉴로 이동하여 접속정보를 설정하도록 한다. [END]
+		 * 3. 최근 사용한 접속정보 프로퍼티 파일이 있는지 확인한다.
+		 * 	3-1. 있으면 해당 파일을 Load한다. 
+		 * 	3-2. 없으면 첫 번째 파일을 Load한다. 
+		 */
+		// 접속정보 설정 프로퍼티 파일 
+		connInfoFiles = propertyService.getConnectionInfoFileNames();
+		if(connInfoFiles != null && connInfoFiles.length != 0) {
+			// Connection Info ComboBox
+			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
+			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
+			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+			lastUseConnInfoFilePath = propertyService.getLastUseConnInfoFilePath();
+			if(lastUseConnInfoFilePath != null) {
+				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
+				loadConnectionInfoProperties(lastUseConnInfoFilePath);
+			}
+		} else {
+			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+			return;
 		}
 		
+		// ComboBox 변경 이벤트
+		runConnInfoFileComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			loadConnectionInfoProperties(newValue);
+		});
+
 		String dbComboBoxLabel = "DB 선택";
 		String[] dbComboBoxItems = dbNames;
 		String serverComboBoxLabel = "Server 선택";
@@ -161,18 +164,33 @@ public class RunMenuController implements Initializable {
 		osDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
 		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
-		archiveUsageMAP.addTableData("1", new ArchiveUsage("1", 10, new UnitString(2, "")
-				,new UnitString(2, ""), new UnitString(2, ""),new UnitString(2, ""), "1"));
-		archiveUsageMAP.syncTableData("1");
-		archiveUsageMAP.addTableData("2", new ArchiveUsage("1", 10, new UnitString(2, "")
-				, new UnitString(2, ""), new UnitString(2125, ""),new UnitString(2, ""), "1"));
-		archiveUsageMAP.syncTableData("2");
-		
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
 		// ex) TableColumnHeaderText, Width, Align
 		
 		// AlertLog 화면의 UI 요소를 초기화한다.
 		initAlertLogMonitoringElements();
+	}
+	
+	/**
+	 * 모니터링 AnchorPane 추가하고 요소를 초기화한다.
+	 * @param <T>
+	 * @param monitoringAP
+	 * @param parentAP
+	 * @param labelText
+	 * @param comboBoxItems
+	 * @param tableColumns
+	 */
+	private <T> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP, 
+			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
+			Map<String, TypeAndFieldName> tableColumns) {
+		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
+		monitoringAP.getLabel().setText(labelText); // ComboBox 좌측 Lebel Text 설정
+		monitoringAP.getComboBox().getItems().addAll(comboBoxItems); // ComboBox Items 설정
+		monitoringAP.getComboBox().getSelectionModel().selectFirst();
+		for(String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
+			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key), key);
+		}
+		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
 	}
 	
 	/**
@@ -183,6 +201,8 @@ public class RunMenuController implements Initializable {
 		alertLogServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
 			// alertLogTA.setText(alertLogMonitoringResultMap.get(newValue).getFullLogString());
 		});
+		alertLogServerComboBox.getItems().addAll(serverNames);
+		alertLogServerComboBox.getSelectionModel().selectFirst();
 
 		// AlertLog 조회기간 기본값 설정
 		alertLogStartDayDP.setValue(LocalDate.now().minusDays(1));
@@ -212,15 +232,19 @@ public class RunMenuController implements Initializable {
 	private void loadConnectionInfoProperties(String connInfoConfigFilePath) {
 		// 접속정보 프로퍼티 파일 Load
 		propertyService.loadConnectionInfoConfig(connInfoConfigFilePath);
-		// TODO 파일시스템 내에 존재하는 모든 접속정보 프로퍼티 파일을 ComboBox에 추가해야 한다.
-		
-		// 모니터링여부 설정 Preset ComboBox
-		List<String> presetList = propertyService.getMonitoringPresetNameList();
-		runMonitoringPresetComboBox.getItems().addAll(presetList);
-		
-		// DB/Server Names ComboBox
+		// 모니터링여부 설정 Preset
+		presetList = propertyService.getMonitoringPresetNameList();
+		lastUseMonitoringPresetName = propertyService.getLastUseMonitoringPresetName();
+		// DB/Server Names
 		dbNames = propertyService.getMonitoringDBNames();
 		serverNames = propertyService.getMonitoringServerNames();
+		// Monitoring Preset ComboBox 
+		runMonitoringPresetComboBox.getItems().clear();
+		runMonitoringPresetComboBox.getItems().addAll(presetList);
+		runMonitoringPresetComboBox.getSelectionModel().selectFirst();
+		if(lastUseMonitoringPresetName != null) {
+			runMonitoringPresetComboBox.getSelectionModel().select(lastUseMonitoringPresetName);
+		}
 	}
 	
 	/**
@@ -300,16 +324,5 @@ public class RunMenuController implements Initializable {
 		
 		return true;
 	}
-	
-	/**
-	 * [실행] - 모니터링 DB/Server TableView를 변경한다.
-	 * @param <T>
-	 * @param dbOrServerName
-	 * @param resultMap
-	 * @param resultTV
-	 */
-	private <T> void changeMonitoringResultTV(String dbOrServerName, Map<String, List<T>> resultMap, TableView<T> resultTV) {
-		if(dbOrServerName.isEmpty() || resultMap.get(dbOrServerName) == null) return;
-		resultTV.setItems((ObservableList<T>) FXCollections.observableArrayList(resultMap.get(dbOrServerName)));
-	}
+
 }

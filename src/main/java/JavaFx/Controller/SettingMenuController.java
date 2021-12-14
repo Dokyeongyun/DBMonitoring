@@ -135,7 +135,7 @@ public class SettingMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-		String lastUsePropertiesFile = propertyService.getLastUseConnInfoFileName();
+		String lastUsePropertiesFile = propertyService.getLastUseConnInfoFilePath();
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
 		if(lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);

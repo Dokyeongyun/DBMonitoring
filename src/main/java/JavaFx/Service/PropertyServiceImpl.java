@@ -1,5 +1,6 @@
 package JavaFx.Service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -73,6 +74,17 @@ public class PropertyServiceImpl implements PropertyService {
 		return isSuccess;
 	}
 	
+	
+	@Override
+	public String[] getConnectionInfoFileNames() {
+		String connInfoDirPath = "./config/connectioninfo";
+		String[] connInfoFileList = new File(connInfoDirPath).list();
+		for(int i=0; i<connInfoFileList.length; i++) {
+			connInfoFileList[i] = connInfoDirPath + "/"+connInfoFileList[i];
+		}
+		return connInfoFileList;
+	}
+	
 	/**
 	 * DB에 연결하여 모니터링할 내용을 반환한다.
 	 */
@@ -109,7 +121,7 @@ public class PropertyServiceImpl implements PropertyService {
 	 * 최근 사용한 접속정보 파일명을 반환한다.
 	 */
 	@Override
-	public String getLastUseConnInfoFileName() {
+	public String getLastUseConnInfoFilePath() {
 		return PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
 	}
 
