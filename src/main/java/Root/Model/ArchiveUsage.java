@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ArchiveUsage {
+
 	private String archiveName;
 	private int numberOfFiles;
 	private UnitString totalSpace;

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +14,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.log4j.Logger;
 
@@ -23,6 +21,8 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
+import JavaFx.Service.PropertyService;
+import JavaFx.Service.PropertyServiceImpl;
 import Root.Model.AlertLogCommand;
 import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
@@ -66,7 +66,7 @@ import javafx.stage.Stage;
 
 public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
-	
+
 	/**
 	 * Pattern 객체를 정적필드로 선언한 이유
 	 *  - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state machine)을 생성하기 때문에 인스턴스 생성비용이 높다.
@@ -75,13 +75,14 @@ public class SettingMenuController implements Initializable {
 	 */
 	private static Pattern DB_CONNINFO_AP_NAME_PATTERN = Pattern.compile("dbConnInfo(.*)AP");
 	private static Pattern SERVER_CONNINFO_AP_NAME_PATTERN = Pattern.compile("serverConnInfo(.*)AP");
-
+	
+	/* Dependency Injection */
+	PropertyService propertyService = PropertyServiceImpl.getInstance();
+	
+	/* View Binding */
 	@FXML SplitPane rootSplitPane;
-	
 	// Right SplitPane Region
-	@FXML
-	static StackPane rightStackPane;
-	
+	@FXML StackPane rightStackPane;
 	// Setting Menu Region
 	@FXML ScrollPane settingScrollPane;
 	@FXML AnchorPane settingMainContentAnchorPane;
@@ -102,10 +103,10 @@ public class SettingMenuController implements Initializable {
 	@FXML AnchorPane serverConnInfoSampleAP;	// 서버접속정보 Blank AnchorPane
 	@FXML Text serverInfoCntText;				// 서버접속정보 인덱스 텍스트
 	@FXML JFXComboBox<String> monitoringPresetComboBox;	// 모니터링여부 설정 Preset ComboBox
-	
 	// Run Menu Region
 	@FXML Button monitoringRunBtn;
 
+	/* Common Data */
 	String[] dbMonitorings;
 	String[] serverMonitorings;
 	
@@ -134,9 +135,8 @@ public class SettingMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-		String lastUsePropertiesFile = PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
+		String lastUsePropertiesFile = propertyService.getLastUseConnInfoFilePath();
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
-		
 		if(lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 		}
@@ -327,13 +327,12 @@ public class SettingMenuController implements Initializable {
 		boolean loadResult = false;
 		
 		try {
-			// TODO 추후 Utils 클래스로 추출 필요
 			// 1. 절대경로를 상대경로로 변환한다.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);	
 			
 			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
-			PropertiesUtils.loadAppConfiguration(filePath, "connInfoConfig");
+			propertyService.loadConnectionInfoConfig(filePath);
 			
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
@@ -343,9 +342,9 @@ public class SettingMenuController implements Initializable {
 			bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
 			
 			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
-			PropertiesConfiguration rememberConfig = PropertiesUtils.getConfig("rememberConfig");
+			PropertiesConfiguration rememberConfig = propertyService.getConfiguration("rememberConfig");
 		    rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
-		    PropertiesUtils.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
+		    propertyService.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
 		    // 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);	
@@ -353,7 +352,6 @@ public class SettingMenuController implements Initializable {
 			loadResult = true;
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			loadResult = false;
 		} finally {
 			
 			// 7. 파일 load가 완료되었다는 메시지를 띄운다.
@@ -374,18 +372,14 @@ public class SettingMenuController implements Initializable {
 	}
 	
 	private void loadMonitoringConfigFile(String filePath) {
-		try {
-			monitoringElementsVBox.getChildren().clear();
-			dbMonitorings = PropertiesUtils.combinedConfig.getStringArray("db.monitoring.contents");
-			serverMonitorings = PropertiesUtils.combinedConfig.getStringArray("server.monitoring.contents");
+		monitoringElementsVBox.getChildren().clear();
+		dbMonitorings = propertyService.getDBMonitoringContents();
+		serverMonitorings = propertyService.getServerMonitoringContents();
 
-			PropertiesUtils.loadAppConfiguration(filePath, "monitoringConfig");
+		propertyService.loadMonitoringInfoConfig(filePath);
 
-			createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
-			createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}	
+		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
+		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 	}
 	
 	/**
@@ -410,7 +404,8 @@ public class SettingMenuController implements Initializable {
 		 * (PasswordField) 	{dbName}PasswordTextField			{dbName}.jdbc.pw
 		 * (JFXComboBox) 	{dbName}DriverComboBox				{dbName}.jdbc.driver
 		 */
-		List<String> dbNames = new ArrayList<String>(Arrays.asList(config.getStringArray("dbnames")));
+		
+		List<String> dbNames = new ArrayList<String>(Arrays.asList(propertyService.getMonitoringDBNames()));
 		for(AnchorPane ap : dbConnInfoIdxMap.values()) {
 			String apId = ap.getId();
 			
@@ -592,7 +587,7 @@ public class SettingMenuController implements Initializable {
 		config.setProperty("servernames", serverNames);
 		
 		// 변경사항 저장
-		PropertiesUtils.save(configFilePath, config);
+		propertyService.save(configFilePath, config);
 		// 설정파일 ReLoading
 		loadSelectedConfigFile(configFilePath);
 	}
@@ -611,7 +606,7 @@ public class SettingMenuController implements Initializable {
 				JFXToggleButton thisToggle = (JFXToggleButton) n;
 				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
 			}
-			PropertiesUtils.save(monitoringFilePath, config);	
+			propertyService.save(monitoringFilePath, config);
 			loadMonitoringConfigFile(monitoringFilePath);
 			
 			Alert failAlert = new Alert(AlertType.INFORMATION);
@@ -654,7 +649,7 @@ public class SettingMenuController implements Initializable {
 			headerToggleBtn.setToggleColor(Paint.valueOf("#0132ac"));
 			headerToggleBtn.setToggleLineColor(Paint.valueOf("#6e93ea"));
 			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(PropertiesUtils.monitoringConfig.containsKey(headerToggleId) == false ? true : PropertiesUtils.monitoringConfig.getBoolean(headerToggleId));
+			headerToggleBtn.setSelected(propertyService.isMonitoringContent(headerToggleId));
 			headerToggleBtn.setOnAction((ActionEvent e) -> {
 				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 				for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
@@ -688,7 +683,7 @@ public class SettingMenuController implements Initializable {
 				contentToggleBtn.setMaxWidth(40);
 				contentToggleBtn.setPrefHeight(40);
 				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(PropertiesUtils.monitoringConfig.containsKey(contentToggleId) == false ? true : PropertiesUtils.monitoringConfig.getBoolean(contentToggleId));
+				contentToggleBtn.setSelected(propertyService.isMonitoringContent(contentToggleId));
 				contentToggleBtn.setOnAction((ActionEvent e) -> {
 					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 					
@@ -833,7 +828,7 @@ public class SettingMenuController implements Initializable {
 		dbPasswordTextField.setPrefWidth(200.0);
 		dbUrlTextField.setPrefWidth(424.0);
 		dbPasswordTextField.setPromptText("<hidden>");
-		dbDriverComboBox.getItems().addAll(PropertiesUtils.combinedConfig.getStringArray("db.setting.oracle.driver.combo"));
+		dbDriverComboBox.getItems().addAll(propertyService.getOracleDrivers());
 		
 		// Setting TextField ID
 		dbHostTextField.setId(elementId + "HostTextField");
@@ -967,7 +962,7 @@ public class SettingMenuController implements Initializable {
 		serverPasswordTextField.setPrefWidth(200.0);
 		serverAlertLogFilePathTextField.setPrefWidth(424.0);
 		serverAlertLogDateFormatComboBox.setPrefWidth(424.0);
-		serverAlertLogDateFormatComboBox.getItems().addAll(PropertiesUtils.combinedConfig.getStringArray("server.setting.dateformat.combo"));
+		serverAlertLogDateFormatComboBox.getItems().addAll(propertyService.getCommonResources("server.setting.dateformat.combo"));
 		serverPasswordTextField.setPromptText("<hidden>");
 		
 		// Setting TextField ID
@@ -1048,8 +1043,8 @@ public class SettingMenuController implements Initializable {
 			dbConnInfoIdxMap.clear();
 			serverConnInfoIdxMap.clear();
 			
-			dbNames = PropertiesUtils.connInfoConfig.getStringArray("dbnames");
-			serverNames = PropertiesUtils.connInfoConfig.getStringArray("servernames");
+			dbNames = propertyService.getMonitoringDBNames();
+			serverNames = propertyService.getMonitoringServerNames();
 			
 			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 			jschConnInfoList = PropertiesUtils.getJschConnectionMap();
@@ -1113,20 +1108,10 @@ public class SettingMenuController implements Initializable {
 		monitoringPresetComboBox.getItems().clear();
 		
 		// 모니터링여부 설정 Preset Map 값 초기화 
-		Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
-		Iterator<String> presetIt = monitoringConfig.getKeys();
+		monitoringPresetMap = propertyService.getMonitoringPresetMap();
+		String lastUsePresetName = propertyService.getLastUseMonitoringPresetName();
 		
-		String lastUsePresetName = "";
-		while(presetIt.hasNext()) {
-			String key = presetIt.next();
-			if(key.startsWith("lastuse")) {
-				lastUsePresetName = monitoringConfig.getString(key);
-			} else {
-				monitoringPresetMap.put(key.substring(0, key.indexOf(".")), monitoringConfig.getString(key));	
-				monitoringPresetComboBox.getItems().add(key.substring(0, key.indexOf(".")));
-			}
-		}
-		
+		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
 		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
 		
 		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
