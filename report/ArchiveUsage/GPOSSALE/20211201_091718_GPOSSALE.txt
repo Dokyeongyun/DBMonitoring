@@ -1,0 +1,5 @@
+Wed Dec 01 09:17:18 2021
+NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT
++RECO,1911,26%,79G,78G,300G,2021-12-01 09:17:18
+
+

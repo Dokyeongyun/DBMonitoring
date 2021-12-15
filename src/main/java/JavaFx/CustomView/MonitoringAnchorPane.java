@@ -43,6 +43,13 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
+			
+			this.comboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
+				monitoringResultTV.getItems().clear();
+				if(tableDataMap != null && tableDataMap.get(newValue) != null) {
+					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
+				}
+			});
 		} catch (IOException e) {
 		}
 	}
