@@ -11,6 +11,7 @@ import Root.Model.JdbcConnectionInfo;
 import Root.Model.JschConnectionInfo;
 import Root.RemoteServer.JschUtil;
 import Root.Repository.DBCheckRepository;
+import Root.Repository.ReportRepository;
 import Root.Repository.ServerCheckRepository;
 import Root.RepositoryImpl.DBCheckRepositoryImpl;
 import Root.RepositoryImpl.ReportRepositoryImpl;
@@ -71,7 +72,7 @@ public class Application {
 			DatabaseUtil db = new DatabaseUtil(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, new ReportRepositoryImpl());
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportRepositoryImpl.getInstance());
 			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
 			dbBatch.startBatchArchiveUsageCheck();
 			dbBatch.startBatchTableSpaceUsageCheck();

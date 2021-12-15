@@ -28,6 +28,7 @@ import Root.Model.TableSpaceUsage;
 import Root.RemoteServer.JschUtil;
 import Root.Repository.DBCheckRepository;
 import Root.Repository.PropertyRepository;
+import Root.Repository.ReportRepository;
 import Root.Repository.ServerCheckRepository;
 import Root.RepositoryImpl.DBCheckRepositoryImpl;
 import Root.RepositoryImpl.PropertyRepositoryImpl;
@@ -50,6 +51,7 @@ public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
 	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
+	ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
 
 	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
@@ -269,7 +271,7 @@ public class RunMenuController implements Initializable {
 			DatabaseUtil db = new DatabaseUtil(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, new ReportRepositoryImpl());
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, reportRepository);
 			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
 			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
 			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
@@ -295,7 +297,12 @@ public class RunMenuController implements Initializable {
 
 			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage("df -Ph"));
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
-		} 
+		}
+		
+		archiveUsageMAP.syncTableData(archiveUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
 	}
 	
 	
