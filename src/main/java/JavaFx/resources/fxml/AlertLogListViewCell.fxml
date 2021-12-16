@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+
+<AnchorPane fx:id="rootAP" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
+   <children>
+      <HBox maxHeight="15.0" minHeight="15.0" prefHeight="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Label fx:id="logTimeLabel" graphicTextGap="8.0" maxHeight="15.0" minHeight="15.0" prefHeight="15.0" stylesheets="@../css/javaFx.css">
+               <graphic>
+                  <FontAwesomeIconView fill="#183279" glyphName="CLOCK_ALT" size="10" />
+               </graphic>
+               <styleClass>
+                  <String fx:value="basic-font" />
+                  <String fx:value="bold" />
+               </styleClass>
+            </Label>
+         </children>
+      </HBox>
+      <Separator AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0" />
+      <JFXTextArea fx:id="logContentTA" prefRowCount="1" styleClass="basic-font" stylesheets="@../css/javaFx.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.0" />
+   </children>
+</AnchorPane>
