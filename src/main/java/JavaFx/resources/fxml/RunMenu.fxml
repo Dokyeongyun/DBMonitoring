@@ -124,19 +124,15 @@
                                                       <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                                                    </children>
                                                 </AnchorPane>
-                                                <AnchorPane style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0); -fx-border-color: #e1e1e1; -fx-border-width: 0.5px; -fx-background-color: white;" AnchorPane.bottomAnchor="175.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                <AnchorPane style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0); -fx-border-color: #e1e1e1; -fx-border-width: 0.5px; -fx-background-color: white;" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                    <children>
-                                                      <JFXListView fx:id="alertLogLV" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                         <padding>
-                                                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                                         </padding>
-                                                      </JFXListView>
+                                                      <JFXListView fx:id="alertLogLV" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                                    </children></AnchorPane>
                                                 <AnchorPane layoutX="204.0" layoutY="317.0" maxHeight="150.0" minHeight="150.0" prefHeight="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
                                                    <children>
                                                       <AnchorPane maxWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <children>
-                                                            <HBox layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
+                                                            <HBox layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
                                                                <children>
                                                                   <Label maxHeight="25.0" minHeight="25.0" minWidth="70.0" prefHeight="25.0" text="조회기간">
                                                                      <graphic>
@@ -159,16 +155,16 @@
                                                                   <DatePicker fx:id="alertLogEndDayDP" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" styleClass="basic-font" />
                                                                </children>
                                                             </HBox>
-                                                            <TextArea AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
+                                                            <TextArea AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" />
                                                          </children>
                                                          <padding>
                                                             <Insets bottom="10.0" right="10.0" top="10.0" />
                                                          </padding>
                                                       </AnchorPane>
-                                                      <Separator orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="400.0" AnchorPane.topAnchor="15.0" />
+                                                      <Separator orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="400.0" AnchorPane.topAnchor="65.0" />
                                                       <AnchorPane layoutX="487.20001220703125" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="405.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <children>
-                                                            <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Alert Log Selector" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Alert Log Selector" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#354371" glyphName="GAMEPAD" size="30" />
                                                                </graphic>
@@ -177,7 +173,7 @@
                                                                   <String fx:value="bold" />
                                                                </styleClass>
                                                             </Label>
-                                                            <HBox layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+                                                            <HBox layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="95.0">
                                                                <children>
                                                                   <ButtonBar buttonMinWidth="21.0" buttonOrder="" maxHeight="25.0" minHeight="25.0" prefHeight="25.0">
                                                                      <buttons>
@@ -229,7 +225,7 @@
                                                       </AnchorPane>
                                                    </children>
                                                 </AnchorPane>
-                                                <Separator prefWidth="200.0" AnchorPane.bottomAnchor="158.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                                <Separator prefWidth="200.0" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="10.0" left="10.0" right="10.0" />

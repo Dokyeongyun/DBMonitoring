@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 
+import JavaFx.CustomView.AlertLogListViewCell;
 import JavaFx.CustomView.DisableAfterTodayDateCell;
 import JavaFx.CustomView.MonitoringAnchorPane;
 import JavaFx.Model.TypeAndFieldName;
@@ -200,16 +201,21 @@ public class RunMenuController implements Initializable {
 		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
 	}
 	
+	private void changeAlertLogListViewData(String serverID) {
+		alertLogLV.getItems().clear();
+		AlertLog al = alertLogMonitoringResultMap.get(serverID);
+		if(al != null) {
+			alertLogLV.getItems().addAll(al.getAlertLogs());				
+		}
+	}
+	
 	/**
 	 * AlertLog AnchorPane의 UI 요소들의 값을 초기화한다.
 	 */
 	private void initAlertLogMonitoringElements() {
 		// ComboBox 변경 이벤트
-		alertLogServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
-			AlertLog al = alertLogMonitoringResultMap.get(newValue);
-			if(al != null) {
-				alertLogLV.getItems().addAll(al.getAlertLogs());				
-			}
+		alertLogServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			changeAlertLogListViewData(newValue);
 		});
 		alertLogServerComboBox.getItems().addAll(serverNames);
 		alertLogServerComboBox.getSelectionModel().selectFirst();
@@ -233,6 +239,9 @@ public class RunMenuController implements Initializable {
 				alertLogStartDayDP.setValue(newValue);
 			}
 		});
+		
+		// AlertLog ListView
+		alertLogLV.setCellFactory(categoryList -> new AlertLogListViewCell());
 	}
 
 	/**
@@ -288,10 +297,10 @@ public class RunMenuController implements Initializable {
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
 			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
 			
-			String alertLogFilePath = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-			String alertLogReadLine = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-			String alertLogDateFormat = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
-			String alertLogDateFormatRegex = PropertiesUtils.propConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
+			String alertLogFilePath = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+			String alertLogReadLine = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+			String alertLogDateFormat = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
+			String alertLogDateFormatRegex = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 
@@ -303,6 +312,7 @@ public class RunMenuController implements Initializable {
 		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
 		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
 		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	
 	
