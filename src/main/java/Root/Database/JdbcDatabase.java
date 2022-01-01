@@ -1,6 +1,5 @@
 package Root.Database;
 
-
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -19,18 +18,9 @@ import lombok.Data;
 public class JdbcDatabase implements AbstractDatabase {
 	private JdbcConnectionInfo jdbc;
 	private JdbcDatabaseConnectionPool connPool = null;
-	private boolean driverLoaded = false;
-	
-	public JdbcDatabase(JdbcConnectionInfo jdbcConnectionInfo){
+
+	public JdbcDatabase(JdbcConnectionInfo jdbcConnectionInfo) {
 		this.jdbc = jdbcConnectionInfo;
-	}
-	
-	public JdbcDatabase(String dbName, String driver, String jdbcUrl, String id, String pw, String validationQuery) {
-		this.jdbc = new JdbcConnectionInfo(dbName, driver, jdbcUrl, id, pw, validationQuery,1);
-	}
-	
-	public JdbcDatabase(String dbName, String driver, String jdbcUrl, String id, String pw, String validationQuery, int connCount) {
-		this.jdbc = new JdbcConnectionInfo(dbName, driver, jdbcUrl, id, pw, validationQuery, connCount);
 	}
 
 	@Override
@@ -65,7 +55,6 @@ public class JdbcDatabase implements AbstractDatabase {
 			conn.setAutoCommit(val);
 			return true;
 		} catch (SQLException se) {
-
 			return false;
 		}
 	}
@@ -107,28 +96,25 @@ public class JdbcDatabase implements AbstractDatabase {
 
 	/**
 	 * Check if {@code conn} is valid with {@code validationQuery}
-	 * @param conn	the connection instance to check
-	 * @param validationQuery	the query to be executed with the connection
+	 * 
+	 * @param conn            the connection instance to check
+	 * @param validationQuery the query to be executed with the connection
 	 * @return 1 if valid, else return -1
 	 */
-	public static int validateConn(Connection conn, String validationQuery){
-		int ret = -1;
-		if(conn==null) return ret;
-		Statement stmt = null;
-		try{
-			stmt = conn.createStatement();
-			stmt.execute(validationQuery);
-			ret = 1;
-		}catch(Exception e){
-			ret = -1;
-		}finally{
-			if(stmt!=null){
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-				}
-			}
+	public boolean validateConn(Connection conn, String validationQuery) {
+		if (conn == null) {
+			return false;
 		}
-		return ret;
+
+		try (Statement statement = conn.createStatement()) {
+			if (conn.isClosed() || !conn.isValid(3)) {
+				return false;
+			}
+			statement.execute(validationQuery);
+		} catch (SQLException e) {
+			return false;
+		}
+
+		return true;
 	}
 }
