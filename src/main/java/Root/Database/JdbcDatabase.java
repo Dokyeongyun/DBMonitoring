@@ -18,7 +18,7 @@ import lombok.Data;
 @Data
 public class JdbcDatabase implements AbstractDatabase {
 	private JdbcConnectionInfo jdbc;
-	private DatabaseConnectionPool connPool = null;
+	private JdbcDatabaseConnectionPool connPool = null;
 	private boolean driverLoaded = false;
 	
 	public JdbcDatabase(JdbcConnectionInfo jdbcConnectionInfo){
@@ -38,7 +38,7 @@ public class JdbcDatabase implements AbstractDatabase {
 		if (jdbc.getJdbcDriver() == null || jdbc.getJdbcDriver().isBlank()) {
 			return;
 		}
-		this.connPool = new DatabaseConnectionPool(jdbc);
+		this.connPool = new JdbcDatabaseConnectionPool(jdbc);
 		this.connPool.createPool();
 	}
 

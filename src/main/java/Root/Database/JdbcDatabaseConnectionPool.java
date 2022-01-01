@@ -5,8 +5,10 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Root.Model.JdbcConnectionInfo;
+import lombok.extern.slf4j.Slf4j;
 
-public class DatabaseConnectionPool {
+@Slf4j
+public class JdbcDatabaseConnectionPool implements AbstractDatabaseConnectionPool {
 
 	public static final short CONN_STATUS_NULL = -1;
 	public static final short CONN_STATUS_FREE = 0;
@@ -15,45 +17,28 @@ public class DatabaseConnectionPool {
 	// synchronized connection pool
 	private ConcurrentHashMap<ConnMap, Short> pool = null;
 	private ConcurrentHashMap<Connection, ConnMap> busyConn = null;
-	private synchronized void addBusyConn(Connection conn, ConnMap cm) {
-		if (busyConn != null)
-			busyConn.put(conn, cm);
-	}
+	private JdbcConnectionInfo jdbc;
+	private boolean driverLoaded = false;
 
-	private JdbcConnectionInfo jdbcConnectionInfo;
-	/*
-	 * private int connCount = 1; private String driver = ""; private String
-	 * jdbc_url = ""; private String id = ""; private String pw = ""; private String
-	 * validation_query = "";
-	 */
-	public boolean driverLoaded = false;
-
-	public DatabaseConnectionPool(JdbcConnectionInfo jdbcConnectionInfo) {
-		this.jdbcConnectionInfo = jdbcConnectionInfo;
-		this.driverLoaded = false;
-	}
-	
-	public DatabaseConnectionPool(String driver, String jdbc_url, String id, String pw, String validationQuery, int connCount) {
-		jdbcConnectionInfo.setJdbcDriver(driver);
-		jdbcConnectionInfo.setJdbcUrl(jdbc_url);
-		jdbcConnectionInfo.setJdbcId(id);
-		jdbcConnectionInfo.setJdbcPw(pw);
-		jdbcConnectionInfo.setJdbcValidation(validationQuery);
-		jdbcConnectionInfo.setJdbcConnections(1);
+	public JdbcDatabaseConnectionPool(JdbcConnectionInfo jdbc) {
+		this.jdbc = jdbc;
 		this.driverLoaded = false;
 	}
 
-	private void loadDriver() {
+	@Override
+	public void loadDriver() {
 		try {
-			if (driverLoaded)
+			if (driverLoaded) {
 				return;
-			Class.forName(this.jdbcConnectionInfo.getJdbcDriver());
+			}
+			Class.forName(this.jdbc.getJdbcDriver());
 			driverLoaded = true;
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			log.error("Database connection error caused by Jdbc Driver NOT FOUND");
 		}
 	}
 
+	@Override
 	public void createPool() {
 		loadDriver();
 
@@ -70,30 +55,29 @@ public class DatabaseConnectionPool {
 
 		ConnMap cm = null;
 		Connection conn = null;
-		for (int i = 0; i < this.jdbcConnectionInfo.getJdbcConnections() ; i++) {
+		for (int i = 0; i < this.jdbc.getJdbcConnections(); i++) {
 			try {
-				conn = DriverManager.getConnection(this.jdbcConnectionInfo.getJdbcUrl(), this.jdbcConnectionInfo.getJdbcId(), this.jdbcConnectionInfo.getJdbcPw());
+				conn = DriverManager.getConnection(this.jdbc.getJdbcUrl(), this.jdbc.getJdbcId(),
+						this.jdbc.getJdbcPw());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			cm = new ConnMap(conn);
 			if (conn != null)
-				pool.put(cm, DatabaseConnectionPool.CONN_STATUS_FREE);
+				pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_FREE);
 			else
-				pool.put(cm, DatabaseConnectionPool.CONN_STATUS_NULL);
+				pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_NULL);
 		}
 	}
 
-	/**
-	 * CLoses the connections within the pool
-	 */
+	@Override
 	public void destroyPool() {
 		Iterator<ConnMap> it = pool.keySet().iterator();
 		ConnMap cm = null;
 		while (it.hasNext()) {
 			try {
 				cm = it.next();
-				pool.put(cm, DatabaseConnectionPool.CONN_STATUS_NULL);
+				pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_NULL);
 				if (cm.conn != null) {
 					boolean ac = cm.conn.getAutoCommit();
 					if (ac == false) {
@@ -109,6 +93,7 @@ public class DatabaseConnectionPool {
 		this.pool.clear();
 	}
 
+	@Override
 	public synchronized Connection getConn() {
 		Iterator<ConnMap> it = pool.keySet().iterator();
 		Connection conn = null;
@@ -116,21 +101,22 @@ public class DatabaseConnectionPool {
 		while (it.hasNext()) {
 			try {
 				cm = it.next();
-				if (pool.get(cm) == DatabaseConnectionPool.CONN_STATUS_FREE) {
-					if (DatabaseConnectionPool.ValidateConn(cm.conn, jdbcConnectionInfo.getJdbcValidation() ) != 1) {
+				if (pool.get(cm) == JdbcDatabaseConnectionPool.CONN_STATUS_FREE) {
+					if (JdbcDatabaseConnectionPool.validateConn(cm.conn, jdbc.getJdbcValidation()) != 1) {
 						try {
-							cm.conn = DriverManager.getConnection(this.jdbcConnectionInfo.getJdbcUrl(), this.jdbcConnectionInfo.getJdbcId(), this.jdbcConnectionInfo.getJdbcPw());
+							cm.conn = DriverManager.getConnection(this.jdbc.getJdbcUrl(), this.jdbc.getJdbcId(),
+									this.jdbc.getJdbcPw());
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					}
 					if (cm.conn != null) {
-						pool.put(cm, DatabaseConnectionPool.CONN_STATUS_BUSY);
+						pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_BUSY);
 						conn = cm.conn;
 						addBusyConn(conn, cm);
 						break;
 					} else {
-						pool.put(cm, DatabaseConnectionPool.CONN_STATUS_NULL);
+						pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_NULL);
 					}
 
 				}
@@ -141,27 +127,27 @@ public class DatabaseConnectionPool {
 		return conn;
 	}
 
+	@Override
 	public synchronized void freeConn(Connection conn) {
-
 		try {
 			ConnMap cm = this.busyConn.remove(conn);
 			if (cm == null) {
 			} else {
-				this.pool.put(cm, DatabaseConnectionPool.CONN_STATUS_FREE);
+				this.pool.put(cm, JdbcDatabaseConnectionPool.CONN_STATUS_FREE);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public int getNoOfFreeConn() {
+	public int getFreeConnectionCount() {
 		int ret = 0;
 		Iterator<ConnMap> it = pool.keySet().iterator();
 		ConnMap cm = null;
 		while (it.hasNext()) {
 			try {
 				cm = it.next();
-				if (this.pool.get(cm) == DatabaseConnectionPool.CONN_STATUS_FREE) {
+				if (this.pool.get(cm) == JdbcDatabaseConnectionPool.CONN_STATUS_FREE) {
 					ret++;
 				}
 			} catch (Exception e) {
@@ -171,6 +157,12 @@ public class DatabaseConnectionPool {
 		return ret;
 	}
 
+	private synchronized void addBusyConn(Connection conn, ConnMap cm) {
+		if (busyConn != null) {
+			busyConn.put(conn, cm);
+		}
+	}
+
 	/**
 	 * Check if {@code conn} is valid with {@code validationQuery}
 	 * 
@@ -178,7 +170,7 @@ public class DatabaseConnectionPool {
 	 * @param validationQuery the query to be executed with the connection
 	 * @return 1 if valid, else return -1
 	 */
-	public static int ValidateConn(Connection conn, String validationQuery) {
+	public static int validateConn(Connection conn, String validationQuery) {
 		int ret = -1;
 		if (conn == null)
 			return ret;
@@ -207,7 +199,6 @@ public class DatabaseConnectionPool {
 		return ret;
 	}
 
-	
 	/**
 	 * A container to hold a connection and its status
 	 * 
