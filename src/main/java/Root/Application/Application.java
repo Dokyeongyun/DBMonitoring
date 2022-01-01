@@ -4,6 +4,7 @@ import java.util.List;
 
 import Root.Batch.DBCheckBatch;
 import Root.Batch.ServerCheckBatch;
+import Root.Database.AbstractDatabase;
 import Root.Database.JdbcDatabase;
 import Root.Model.AlertLogCommand;
 import Root.Model.AlertLogCommandPeriod;
@@ -68,7 +69,7 @@ public class Application {
 		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
 		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("бс [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
-			JdbcDatabase db = new JdbcDatabase(jdbc);
+			AbstractDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportRepositoryImpl.getInstance());

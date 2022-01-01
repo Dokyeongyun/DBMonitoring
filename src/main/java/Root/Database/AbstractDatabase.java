@@ -10,6 +10,8 @@ import java.sql.Connection;
  *
  */
 public interface AbstractDatabase {
+	
+	String getName();
 
 	public void init();
 	

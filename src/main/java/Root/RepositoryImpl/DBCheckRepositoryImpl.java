@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import Root.Database.JdbcDatabase;
+import Root.Database.AbstractDatabase;
 import Root.Model.ASMDiskUsage;
 import Root.Model.ArchiveUsage;
 import Root.Model.TableSpaceUsage;
@@ -15,15 +15,15 @@ import Root.Repository.DBCheckRepository;
 import Root.Utils.UnitUtils;
 
 public class DBCheckRepositoryImpl implements DBCheckRepository {
-	private JdbcDatabase db;
+	private AbstractDatabase db;
 
-	public DBCheckRepositoryImpl(JdbcDatabase db) {
+	public DBCheckRepositoryImpl(AbstractDatabase db) {
 		this.db = db;
 	}
 	
 	@Override
 	public String getDBName() {
-		return db.getJdbc().getJdbcDBName();
+		return db.getName();
 	}
 
 	@Override
