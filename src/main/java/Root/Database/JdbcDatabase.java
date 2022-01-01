@@ -22,6 +22,14 @@ public class JdbcDatabase implements AbstractDatabase {
 	public JdbcDatabase(JdbcConnectionInfo jdbcConnectionInfo) {
 		this.jdbc = jdbcConnectionInfo;
 	}
+	
+	@Override
+	public String getName() {
+		if(jdbc == null) {
+			return "";
+		}
+		return this.jdbc.getJdbcDBName();
+	}
 
 	@Override
 	public void init() {
