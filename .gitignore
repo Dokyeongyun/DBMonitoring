@@ -4,8 +4,8 @@
 
 .settings/
 
-.project
+.project/
 
-.classpath
+.classpath/
 
 /report/
