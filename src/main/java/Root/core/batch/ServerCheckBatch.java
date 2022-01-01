@@ -1,8 +1,8 @@
-package Root.Batch;
+package root.core.batch;
 
-import Root.Model.AlertLogCommand;
-import Root.Model.AlertLogCommandPeriod;
-import Root.Usecase.ServerCheckUsecase;
+import root.core.domain.AlertLogCommand;
+import root.core.domain.AlertLogCommandPeriod;
+import root.core.usecase.constracts.ServerCheckUsecase;
 
 public class ServerCheckBatch {
 	private ServerCheckUsecase serverCheckUsecase;

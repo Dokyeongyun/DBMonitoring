@@ -1,4 +1,4 @@
-package JavaFx.Controller;
+package root.javafx.Controller;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -11,42 +11,42 @@ import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 
-import JavaFx.CustomView.AlertLogListViewCell;
-import JavaFx.CustomView.DisableAfterTodayDateCell;
-import JavaFx.CustomView.MonitoringAnchorPane;
-import JavaFx.Model.TypeAndFieldName;
-import Root.Database.JdbcDatabase;
-import Root.Model.ASMDiskUsage;
-import Root.Model.AlertLog;
-import Root.Model.AlertLogCommand;
-import Root.Model.AlertLogCommandPeriod;
-import Root.Model.ArchiveUsage;
-import Root.Model.JdbcConnectionInfo;
-import Root.Model.JschConnectionInfo;
-import Root.Model.Log;
-import Root.Model.OSDiskUsage;
-import Root.Model.TableSpaceUsage;
-import Root.RemoteServer.JschUtil;
-import Root.Repository.DBCheckRepository;
-import Root.Repository.PropertyRepository;
-import Root.Repository.ReportRepository;
-import Root.Repository.ServerCheckRepository;
-import Root.RepositoryImpl.DBCheckRepositoryImpl;
-import Root.RepositoryImpl.PropertyRepositoryImpl;
-import Root.RepositoryImpl.ReportRepositoryImpl;
-import Root.RepositoryImpl.ServerCheckRepositoryImpl;
-import Root.Usecase.DBCheckUsecase;
-import Root.Usecase.ServerCheckUsecase;
-import Root.UsecaseImpl.DBCheckUsecaseImpl;
-import Root.UsecaseImpl.ServerCheckUsecaseImpl;
-import Root.Utils.AlertUtils;
-import Root.Utils.PropertiesUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.layout.AnchorPane;
+import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschServer;
+import root.core.domain.ASMDiskUsage;
+import root.core.domain.AlertLog;
+import root.core.domain.AlertLogCommand;
+import root.core.domain.AlertLogCommandPeriod;
+import root.core.domain.ArchiveUsage;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
+import root.core.domain.Log;
+import root.core.domain.OSDiskUsage;
+import root.core.domain.TableSpaceUsage;
+import root.core.repository.constracts.DBCheckRepository;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.constracts.ReportRepository;
+import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.implement.DBCheckRepositoryImpl;
+import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ServerCheckRepositoryImpl;
+import root.core.usecase.constracts.DBCheckUsecase;
+import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.implement.DBCheckUsecaseImpl;
+import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.javafx.CustomView.AlertLogListViewCell;
+import root.javafx.CustomView.DisableAfterTodayDateCell;
+import root.javafx.CustomView.MonitoringAnchorPane;
+import root.javafx.Model.TypeAndFieldName;
+import root.utils.AlertUtils;
+import root.utils.PropertiesUtils;
 
 public class RunMenuController implements Initializable {
 	
@@ -292,7 +292,7 @@ public class RunMenuController implements Initializable {
 		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
 		for(JschConnectionInfo jsch : jschConnectionList) {
 			System.out.println("бс [ " + jsch.getServerName() + " Monitoring Start ]\n");
-			JschUtil server = new JschUtil(jsch);
+			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
 			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);

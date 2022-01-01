@@ -1,15 +1,15 @@
-package JavaFx.CustomView;
+package root.javafx.CustomView;
 
 import java.io.IOException;
 
 import com.jfoenix.controls.JFXTextArea;
 
-import Root.Model.Log;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
+import root.core.domain.Log;
 
 public class AlertLogListViewCell extends ListCell<Log> {
 	private FXMLLoader loader;

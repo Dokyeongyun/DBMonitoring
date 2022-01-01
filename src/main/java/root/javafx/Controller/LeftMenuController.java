@@ -1,4 +1,4 @@
-package JavaFx.Controller;
+package root.javafx.Controller;
 
 import java.io.IOException;
 

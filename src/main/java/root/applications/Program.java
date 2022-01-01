@@ -1,12 +1,12 @@
-package JavaFx;
+package root.applications;
 
-import Root.Utils.PropertiesUtils;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import root.utils.PropertiesUtils;
 
 public class Program extends Application {
 	

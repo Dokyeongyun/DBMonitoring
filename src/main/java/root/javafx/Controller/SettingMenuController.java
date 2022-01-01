@@ -1,4 +1,4 @@
-package JavaFx.Controller;
+package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
@@ -21,12 +21,6 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
-import Root.Model.AlertLogCommand;
-import Root.Model.JdbcConnectionInfo;
-import Root.Model.JschConnectionInfo;
-import Root.Repository.PropertyRepository;
-import Root.RepositoryImpl.PropertyRepositoryImpl;
-import Root.Utils.PropertiesUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.event.ActionEvent;
@@ -63,6 +57,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import root.core.domain.AlertLogCommand;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
+import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);

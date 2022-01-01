@@ -1,4 +1,4 @@
-package Root.Utils;
+package root.utils;
 
 public class ConsoleUtils {
 	public static final String RESET = "\u001B[0m";    

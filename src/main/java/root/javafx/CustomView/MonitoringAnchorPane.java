@@ -1,4 +1,4 @@
-package JavaFx.CustomView;
+package root.javafx.CustomView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,8 +10,6 @@ import java.util.Map;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
-import JavaFx.Model.TypeAndFieldName;
-import Root.Model.ArchiveUsage;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -21,6 +19,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import root.core.domain.ArchiveUsage;
+import root.javafx.Model.TypeAndFieldName;
 
 @EqualsAndHashCode(callSuper=false)
 @Data

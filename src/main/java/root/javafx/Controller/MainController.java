@@ -1,4 +1,4 @@
-package JavaFx.Controller;
+package root.javafx.Controller;
 
 import java.io.IOException;
 import java.net.URL;
@@ -6,7 +6,6 @@ import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXToggleButton;
 
-import Root.Utils.PropertiesUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +22,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import root.utils.PropertiesUtils;
 
 public class MainController implements Initializable {
 	

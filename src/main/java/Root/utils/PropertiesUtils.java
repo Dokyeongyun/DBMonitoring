@@ -1,4 +1,4 @@
-package Root.Utils;
+package root.utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,9 +27,9 @@ import org.apache.log4j.Logger;
 import com.mchange.v2.io.FileUtils;
 
 import JavaFx.Controller.SettingMenuController;
-import Root.Model.AlertLogCommand;
-import Root.Model.JdbcConnectionInfo;
-import Root.Model.JschConnectionInfo;
+import root.core.domain.AlertLogCommand;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
 
 public class PropertiesUtils {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);

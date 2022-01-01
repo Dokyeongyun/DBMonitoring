@@ -1,4 +1,4 @@
-package Root.Utils;
+package root.utils;
 
 import java.awt.font.FontRenderContext;
 import java.awt.font.LineBreakMeasurer;
