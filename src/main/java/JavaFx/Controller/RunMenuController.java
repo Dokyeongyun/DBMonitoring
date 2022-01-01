@@ -15,7 +15,7 @@ import JavaFx.CustomView.AlertLogListViewCell;
 import JavaFx.CustomView.DisableAfterTodayDateCell;
 import JavaFx.CustomView.MonitoringAnchorPane;
 import JavaFx.Model.TypeAndFieldName;
-import Root.Database.DatabaseUtil;
+import Root.Database.JdbcDatabase;
 import Root.Model.ASMDiskUsage;
 import Root.Model.AlertLog;
 import Root.Model.AlertLogCommand;
@@ -277,7 +277,7 @@ public class RunMenuController implements Initializable {
 		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
 		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("бс [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
-			DatabaseUtil db = new DatabaseUtil(jdbc);
+			JdbcDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, reportRepository);
