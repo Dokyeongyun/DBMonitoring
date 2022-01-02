@@ -27,7 +27,7 @@ public class AlertLogListViewCell extends ListCell<Log> {
             setGraphic(null);
         } else {
             if (loader == null) {
-    			loader = new FXMLLoader(getClass().getResource("/JavaFx/resources/fxml/AlertLogListViewCell.fxml"));
+    			loader = new FXMLLoader(getClass().getResource("/fxml/AlertLogListViewCell.fxml"));
             	loader.setController(this);
 
                 try {

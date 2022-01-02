@@ -39,7 +39,7 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	
 	public MonitoringAnchorPane() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/JavaFx/resources/fxml/MonitoringAnchorPane.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAnchorPane.fxml"));
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

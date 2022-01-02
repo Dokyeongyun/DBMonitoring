@@ -158,11 +158,11 @@ public class SettingMenuController implements Initializable {
 		// ICON
 		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
 		// CSS
-		presetInputDialog.getDialogPane().getStylesheets().add(getClass().getResource("/JavaFx/resources/css/dialog.css").toExternalForm());
+		presetInputDialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/dialog.css").toExternalForm());
 		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
 		// Dialog ICON
 		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("/JavaFx/resources/image/add_icon.png").toString()));
+		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
 		// Button Custom
 		ButtonType okButton = new ButtonType("ют╥б", ButtonData.OK_DONE);
 		presetInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);

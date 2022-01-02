@@ -24,7 +24,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.paint.Color?>
 
-<SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="JavaFx.Controller.RunMenuController">
+<SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.RunMenuController">
    <items>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="250.0" minHeight="-Infinity" minWidth="150.0" style="-fx-background-color: #f7f7f7;">
          <fx:include source="LeftMenu.fxml" />

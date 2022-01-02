@@ -19,17 +19,17 @@ public class Program extends Application {
 		// fxml load
 		System.setProperty("prism.lcdtext", "false"); // 救萍举府绢教 (Font 何靛反霸)
 		
-		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothic.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicBold.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicLight.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("resources/font/NanumBarunGothicUltraLight.ttf"), 10);
+		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothic.ttf"), 10);
+		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicBold.ttf"), 10);
+		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicLight.ttf"), 10);
+		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicUltraLight.ttf"), 10);
 
 		FXMLLoader homeloader = new FXMLLoader();
-		homeloader.setLocation(getClass().getResource("resources/fxml/Home.fxml"));
+		homeloader.setLocation(getClass().getResource("/fxml/Home.fxml"));
 		AnchorPane homePane = homeloader.load();
 		
 		Scene scene = new Scene(homePane, 1200, 650);
-		scene.getStylesheets().add(getClass().getResource("resources/css/javaFx.css").toExternalForm());
+		scene.getStylesheets().add(getClass().getResource("/css/javaFx.css").toExternalForm());
 		
 		primaryStage.setTitle("DB Monitoring Window Program");
 		primaryStage.setScene(scene);

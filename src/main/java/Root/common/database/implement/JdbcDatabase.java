@@ -23,10 +23,10 @@ public class JdbcDatabase implements AbstractDatabase {
 	public JdbcDatabase(JdbcConnectionInfo jdbcConnectionInfo) {
 		this.jdbc = jdbcConnectionInfo;
 	}
-	
+
 	@Override
 	public String getName() {
-		if(jdbc == null) {
+		if (jdbc == null) {
 			return "";
 		}
 		return this.jdbc.getJdbcDBName();
@@ -34,7 +34,7 @@ public class JdbcDatabase implements AbstractDatabase {
 
 	@Override
 	public void init() {
-		if (jdbc.getJdbcDriver() == null || jdbc.getJdbcDriver().isBlank()) {
+		if (jdbc.getJdbcDriver() == null || jdbc.getJdbcDriver().length() == 0) {
 			return;
 		}
 		this.connPool = new JdbcDatabaseConnectionPool(jdbc);

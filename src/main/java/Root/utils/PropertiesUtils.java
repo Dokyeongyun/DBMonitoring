@@ -26,10 +26,10 @@ import org.apache.log4j.Logger;
 
 import com.mchange.v2.io.FileUtils;
 
-import JavaFx.Controller.SettingMenuController;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.javafx.Controller.SettingMenuController;
 
 public class PropertiesUtils {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
