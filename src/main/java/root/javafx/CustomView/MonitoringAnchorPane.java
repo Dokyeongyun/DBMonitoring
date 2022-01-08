@@ -10,6 +10,7 @@ import java.util.Map;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -161,5 +162,8 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 		AnchorPane.setTopAnchor(this, top);
 		AnchorPane.setRightAnchor(this, right);
 		AnchorPane.setBottomAnchor(this, bottom);
+	}
+	
+	public void run(ActionEvent e) {
 	}
 }
