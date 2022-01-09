@@ -215,12 +215,11 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 			String filePath = fileRootDir + fileName;
 			File reportFile = new File(filePath);
 
-			T data = parseCsvReportFile(reportFile);
+			List<T> data = parseCsvReportFile(reportFile);
 			if (data != null) {
-				tableDataList.add(data);
+				tableDataList.addAll(data);
 			}
 		}
-		
 		
 		addTableDataSet(selected, tableDataList);
 		syncTableData(selected);
@@ -231,25 +230,21 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	 * @param file
 	 * @return
 	 */
-	private T parseCsvReportFile(File file) {
-		T result = null;
+	private List<T> parseCsvReportFile(File file) {
+		List<T> result = null;
 		try {
 
-			List<T> beans = new CsvToBeanBuilder<T>(new FileReader(file))
+			result = new CsvToBeanBuilder<T>(new FileReader(file))
 					.withSkipLines(1)
 					.withSeparator(',')
 					.withIgnoreEmptyLine(true)
 					.withType(getClazz())
 					.build()
 					.parse();
-
-			if (beans.size() > 0) {
-				result = beans.get(0);
-			}
 			
 		} catch (Exception e) {
 			log.error("Parsing error!" + file);
-			e.printStackTrace();
+//			e.printStackTrace();
 		}
 		return result;
 	}
