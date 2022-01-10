@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.LeftMenuController">
+   <children>
+      <VBox layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT" prefHeight="40.0">
+               <children>
+                  <Button fx:id="homeBtn" graphicTextGap="0.0" mnemonicParsing="false" onAction="#goHomeStage" style="-fx-background-color: transparent;">
+                     <graphic>
+                        <ImageView fitHeight="30.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../image/home_icon_black.png" />
+                           </image>
+                           <viewport>
+                              <Rectangle2D />
+                           </viewport>
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                        </ImageView>
+                     </graphic>
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" />
+            <TabPane stylesheets="@../css/javaFx.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="30.0" tabMaxWidth="100.0">
+               <tabs>
+                  <Tab closable="false" text="Menus">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <HBox alignment="CENTER_LEFT" minHeight="40.0">
+                                       <children>
+                                          <Button fx:id="settingMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goSettingMenu" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="설정">
+                                             <styleClass>
+                                                <String fx:value="basic-font" />
+                                                <String fx:value="bold" />
+                                                <String fx:value="font-black" />
+                                             </styleClass>
+                                             <graphic>
+                                                <FontAwesomeIconView fill="#2b0081" glyphName="COG" size="38" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="10.0" top="2.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
+                                       <children>
+                                          <Button fx:id="runMenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goRunMenu" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="실행">
+                                             <styleClass>
+                                                <String fx:value="basic-font" />
+                                                <String fx:value="bold" />
+                                                <String fx:value="font-black" />
+                                             </styleClass>
+                                             <graphic>
+                                                <FontAwesomeIconView fill="#ea3f6f" glyphName="DESKTOP" selectionEnd="0" selectionFill="BLACK" size="28" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="10.0" top="2.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="20.0" minHeight="40.0">
+                                       <children>
+                                          <Button fx:id="menu2MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu2" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴2">
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../image/home_icon_black.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <styleClass>
+                                                <String fx:value="basic-font" />
+                                                <String fx:value="bold" />
+                                                <String fx:value="font-black" />
+                                             </styleClass>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="10.0" top="2.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </HBox>
+                                    <HBox alignment="CENTER_LEFT" layoutX="10.0" layoutY="60.0" minHeight="40.0">
+                                       <children>
+                                          <Button fx:id="menu3MenuBtn" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goMenu3" prefWidth="200.0" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" stylesheets="@../css/javaFx.css" text="메뉴3">
+                                             <graphic>
+                                                <ImageView fitHeight="30.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                                                   <image>
+                                                      <Image url="@../image/home_icon_orange.png" />
+                                                   </image>
+                                                </ImageView>
+                                             </graphic>
+                                             <styleClass>
+                                                <String fx:value="basic-font" />
+                                                <String fx:value="bold" />
+                                                <String fx:value="font-black" />
+                                             </styleClass>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="10.0" top="2.0" />
+                                       </padding>
+                                       <VBox.margin>
+                                          <Insets />
+                                       </VBox.margin>
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                    </HBox>
+                                 </children>
+                                 <padding>
+                                    <Insets top="10.0" />
+                                 </padding>
+                              </VBox>
+                           </children>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+                  <Tab closable="false" text="Quick">
+                     <content>
+                        <AnchorPane>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </AnchorPane>
+                     </content>
+                  </Tab>
+               </tabs>
+            </TabPane>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
