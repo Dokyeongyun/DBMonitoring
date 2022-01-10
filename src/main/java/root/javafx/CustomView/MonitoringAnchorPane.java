@@ -3,6 +3,8 @@ package root.javafx.CustomView;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,18 +37,25 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 
 	@FXML
 	Label label;
+
 	@FXML
 	JFXComboBox<String> comboBox;
 
 	// TODO Button을 List<Button>으로 만들어 놓고, 각자 주입받을 수 있도록 구현하기
 	@FXML
 	JFXButton refreshBtn;
+
 	@FXML
 	JFXButton excelDownBtn;
+
 	@FXML
 	JFXButton showGraphBtn;
+
 	@FXML
 	TableView<T> monitoringResultTV;
+	
+	@FXML
+	DatePicker inquiryDatePicker;
 
 	private Class<T> clazz;
 	private String reportFilePath;
@@ -59,12 +69,17 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 			loader.setRoot(this);
 			loader.load();
 
+			// Add comoboBox click listner
 			this.comboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
 				monitoringResultTV.getItems().clear();
 				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
 					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
 				}
 			});
+			
+			// Setting inquiry datepicker initial value
+			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
+			
 		} catch (IOException e) {
 		}
 	}
@@ -150,9 +165,7 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	 * TableView에 TableColumn을 추가하고 Property를 설정한다.
 	 * 
 	 * @param <E>
-	 * 
 	 * @param t
-	 * 
 	 * @param tcHeaderText
 	 */
 	public <E> void addAndSetPropertyTableColumn(TypeAndFieldName t, String tcHeaderText) {
@@ -202,6 +215,9 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
+		
+		// Get selected inquiry condition
+		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = getComboBox().getSelectionModel().getSelectedItem();
 		String fileRootDir = getReportFilePath() + selected + "/";
 		File reportList = new File(fileRootDir);
@@ -212,6 +228,11 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 		// Read csv report file and add table data
 		List<T> tableDataList = new ArrayList<>();
 		for (String fileName : reportList.list()) {
+			
+			if(!fileName.startsWith(inquiryDate)) {
+				continue;
+			}
+			
 			String filePath = fileRootDir + fileName;
 			File reportFile = new File(filePath);
 
@@ -227,6 +248,7 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 
 	/**
 	 * csv 파일을 읽어 Model 객체로 변환한다.
+	 * 
 	 * @param file
 	 * @return
 	 */
@@ -244,7 +266,6 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 			
 		} catch (Exception e) {
 			log.error("Parsing error!" + file);
-//			e.printStackTrace();
 		}
 		return result;
 	}
