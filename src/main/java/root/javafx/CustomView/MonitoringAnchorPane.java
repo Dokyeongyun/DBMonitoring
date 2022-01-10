@@ -18,6 +18,7 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -29,6 +30,7 @@ import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.ArchiveUsage;
 import root.javafx.Model.TypeAndFieldName;
+import root.utils.AlertUtils;
 
 @EqualsAndHashCode(callSuper= false)
 @Data
@@ -242,6 +244,10 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 			}
 		}
 		
+		if (tableDataList.size() == 0) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+		}
+
 		addTableDataSet(selected, tableDataList);
 		syncTableData(selected);
 	}
