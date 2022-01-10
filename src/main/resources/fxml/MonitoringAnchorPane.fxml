@@ -34,7 +34,7 @@
                         <FontAwesomeIconView fill="#3342cf" glyphName="PLAY_CIRCLE" size="18" />
                      </graphic>
                   </JFXButton>
-                  <JFXButton fx:id="refreshBtn" minHeight="20.0" styleClass="basic-font" text="새로고침">
+                  <JFXButton fx:id="refreshBtn" minHeight="20.0" onAction="#refresh" styleClass="basic-font" text="새로고침">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="REFRESH" size="18" />
                      </graphic></JFXButton>
