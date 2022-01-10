@@ -5,6 +5,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableView?>
@@ -15,9 +16,9 @@
    <children>
       <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                <items>
-                  <Label fx:id="label" text="DB선택">
+                  <Label fx:id="label" minHeight="20.0" text="DB선택">
                      <styleClass>
                         <String fx:value="basic-font" />
                         <String fx:value="bold" />
@@ -26,25 +27,29 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <JFXComboBox fx:id="comboBox" maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
-                  <JFXButton fx:id="runBtn" ellipsisString="" onAction="#run" styleClass="basic-font" text="실행">
+                  <JFXComboBox fx:id="comboBox" maxHeight="25.0" minHeight="20.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                  <DatePicker fx:id="inquiryDatePicker" maxHeight="25.0" maxWidth="120.0" minHeight="20.0" prefHeight="25.0" styleClass="basic-font" />
+                  <JFXButton fx:id="runBtn" ellipsisString="" minHeight="20.0" onAction="#run" styleClass="basic-font" text="실행">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="PLAY_CIRCLE" size="18" />
                      </graphic>
                   </JFXButton>
-                  <JFXButton fx:id="refreshBtn" styleClass="basic-font" text="새로고침">
+                  <JFXButton fx:id="refreshBtn" minHeight="20.0" styleClass="basic-font" text="새로고침">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="REFRESH" size="18" />
                      </graphic></JFXButton>
-                  <JFXButton fx:id="excelDownBtn" styleClass="basic-font" text="엑셀다운로드">
+                  <JFXButton fx:id="excelDownBtn" minHeight="20.0" styleClass="basic-font" text="엑셀다운로드">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="FILE_TEXT_ALT" size="18" />
                      </graphic></JFXButton>
-                  <JFXButton fx:id="showGraphBtn" styleClass="basic-font" text="그래프보기">
+                  <JFXButton fx:id="showGraphBtn" minHeight="20.0" styleClass="basic-font" text="그래프보기">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="BAR_CHART_ALT" size="18" />
                      </graphic></JFXButton>
                </items>
+               <padding>
+                  <Insets right="20.0" />
+               </padding>
             </ToolBar>
             <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
