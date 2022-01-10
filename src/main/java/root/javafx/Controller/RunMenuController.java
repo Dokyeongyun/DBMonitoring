@@ -71,10 +71,10 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>();
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>();
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>();
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>();
+	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
+	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
+	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
+	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
 	Map<String, AlertLog> alertLogMonitoringResultMap = new HashMap<>();
 	
 	/* Common Data */
@@ -137,7 +137,7 @@ public class RunMenuController implements Initializable {
 		archiveUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
 		archiveUsageTCM.put("Used Percent(%)", new TypeAndFieldName(Double.class, "usedPercent"));
 		archiveUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, "dnt"));
-		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
+		initAndAddMonitoringAnchorPane("ArchiveUsage", archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
 		Map<String, TypeAndFieldName> tableSpaceUsageTCM = new LinkedHashMap<>();
@@ -147,7 +147,7 @@ public class RunMenuController implements Initializable {
 		tableSpaceUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
 		tableSpaceUsageTCM.put("Used Percent(G)", new TypeAndFieldName(Double.class, "usedPercent"));
 		tableSpaceUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
+		initAndAddMonitoringAnchorPane("TableSpaceUsage", tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
 		Map<String, TypeAndFieldName> asmDiskUsageTCM = new LinkedHashMap<>();
@@ -159,7 +159,7 @@ public class RunMenuController implements Initializable {
 		asmDiskUsageTCM.put("Used Space(MB)", new TypeAndFieldName(Double.class, "usedSpace"));
 		asmDiskUsageTCM.put("Used Percent(MB)", new TypeAndFieldName(Double.class, "usedPercent"));
 		asmDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
+		initAndAddMonitoringAnchorPane("ASMDiskUsage", asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
 		Map<String, TypeAndFieldName> osDiskUsageTCM = new LinkedHashMap<>();
@@ -170,7 +170,7 @@ public class RunMenuController implements Initializable {
 		osDiskUsageTCM.put("Used Space", new TypeAndFieldName(Double.class, "usedSpace"));
 		osDiskUsageTCM.put("Used Percent", new TypeAndFieldName(Double.class, "usedPercent"));
 		osDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
+		initAndAddMonitoringAnchorPane("OSDiskUsage", osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
 		// ex) TableColumnHeaderText, Width, Align
@@ -188,9 +188,15 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP, 
+	private <T> void initAndAddMonitoringAnchorPane(String name,
+			MonitoringAnchorPane<T> monitoringAP, 
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
 			Map<String, TypeAndFieldName> tableColumns) {
+		
+		// Report file path setting
+		// TODO [설정]메뉴에서 report file path를 설정할 수 있도록 하기
+		monitoringAP.setReportFilePath("./report/" + name + "/");
+		
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
 		monitoringAP.getLabel().setText(labelText); // ComboBox 좌측 Lebel Text 설정
 		monitoringAP.getComboBox().getItems().addAll(comboBoxItems); // ComboBox Items 설정

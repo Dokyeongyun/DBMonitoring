@@ -2,21 +2,38 @@ package root.core.domain;
 
 import java.util.List;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvCustomBindByName;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import root.javafx.CustomView.UnitStringConverter;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 public class ArchiveUsage {
 
+	@CsvBindByName(column = "NAME")
 	private String archiveName;
+
+	@CsvBindByName(column = "NumberOfFiles")
 	private int numberOfFiles;
+
+	@CsvCustomBindByName(column = "LimitSpace(G)", converter = UnitStringConverter.class)
 	private UnitString totalSpace;
+
+	@CsvCustomBindByName(column = "ReclaimableSpace(G)", converter = UnitStringConverter.class)
 	private UnitString reclaimableSpace;
+
+	@CsvCustomBindByName(column = "UsedSpace(G)", converter = UnitStringConverter.class)
 	private UnitString usedSpace;
+
+	@CsvCustomBindByName(column = "Used(%)", converter = UnitStringConverter.class)
 	private UnitString usedPercent;
+	
+	@CsvBindByName(column = "DNT")
 	private String dnt;
 	
 	public static String toCsvString(List<ArchiveUsage> list) {

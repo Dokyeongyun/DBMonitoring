@@ -68,11 +68,11 @@
 		    <version>21.0</version>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/au.com.bytecode/opencsv -->
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
 		<dependency>
-		    <groupId>au.com.bytecode</groupId>
+		    <groupId>com.opencsv</groupId>
 		    <artifactId>opencsv</artifactId>
-		    <version>2.4</version>
+		    <version>5.4</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi -->
