@@ -92,7 +92,18 @@
                                                                                       <items>
                                                                                           <HBox alignment="CENTER_RIGHT">
                                                                                              <children>
-                                                                                                <JFXButton fx:id="dbConnInfoAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" onAction="#addDbConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="추가">
+                                                                                                <JFXButton fx:id="dbConnTestBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="100.0" minWidth="100.0" onAction="#testDbConnection" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="연동 테스트">
+                                                                                                   <cursor>
+                                                                                                      <Cursor fx:constant="HAND" />
+                                                                                                   </cursor>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="PLUG" />
+                                                                                                   </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
+                                                                                                </JFXButton>
+                                                                                                <JFXButton fx:id="dbConnInfoAddBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="70.0" minWidth="70.0" onAction="#addDbConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="추가">
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
@@ -103,8 +114,11 @@
                                                                                                          </image>
                                                                                                       </ImageView>
                                                                                                    </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
                                                                                                 </JFXButton>
-                                                                                                <JFXButton fx:id="prevDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#prevDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                                                                                                <JFXButton fx:id="prevDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#prevDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                                                                                                    <styleClass>
                                                                                                       <String fx:value="bold" />
                                                                                                       <String fx:value="basic-font" />
@@ -112,18 +126,17 @@
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
-                                                                                                   <graphic>
-                                                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" rotate="180.0">
-                                                                                                         <image>
-                                                                                                            <Image url="@../image/next_icon.png" />
-                                                                                                         </image>
-                                                                                                      </ImageView>
-                                                                                                   </graphic>
                                                                                                    <font>
                                                                                                       <Font size="1.0" />
                                                                                                    </font>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="ANGLE_LEFT" size="20" />
+                                                                                                   </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
                                                                                                 </JFXButton>
-                                                                                                <JFXButton fx:id="nextDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#nextDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                                                                                                <JFXButton fx:id="nextDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#nextDbConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                                                                                                    <styleClass>
                                                                                                       <String fx:value="bold" />
                                                                                                       <String fx:value="basic-font" />
@@ -131,20 +144,22 @@
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
-                                                                                                   <graphic>
-                                                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                         <image>
-                                                                                                            <Image url="@../image/next_icon.png" />
-                                                                                                         </image>
-                                                                                                      </ImageView>
-                                                                                                   </graphic>
                                                                                                    <font>
                                                                                                       <Font size="1.0" />
                                                                                                    </font>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="ANGLE_RIGHT" size="20" />
+                                                                                                   </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
                                                                                                 </JFXButton>
                                                                                              </children>
                                                                                           </HBox>
                                                                                       </items>
+                                                                                       <opaqueInsets>
+                                                                                          <Insets />
+                                                                                       </opaqueInsets>
                                                                                     </ToolBar>
                                                                                     <Text fx:id="dbInfoCntText" layoutX="127.0" layoutY="28.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-font-size: 10px;" text="※접속정보를 추가해주세요." AnchorPane.leftAnchor="133.0" AnchorPane.topAnchor="20.0">
                                                                                        <styleClass>
@@ -243,7 +258,18 @@
                                                                                        <items>
                                                                                           <HBox alignment="CENTER_RIGHT">
                                                                                              <children>
-                                                                                                <JFXButton fx:id="serverConnInfoAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" onAction="#addServerConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="추가">
+                                                                                                <JFXButton fx:id="serverConnTestBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="100.0" minWidth="100.0" onAction="#testServerConnection" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="연동 테스트">
+                                                                                                   <cursor>
+                                                                                                      <Cursor fx:constant="HAND" />
+                                                                                                   </cursor>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="PLUG" />
+                                                                                                   </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
+                                                                                                </JFXButton>
+                                                                                                <JFXButton fx:id="serverConnInfoAddBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="70.0" minWidth="70.0" onAction="#addServerConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="추가">
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
@@ -254,8 +280,11 @@
                                                                                                          </image>
                                                                                                       </ImageView>
                                                                                                    </graphic>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
                                                                                                 </JFXButton>
-                                                                                                <JFXButton fx:id="prevServerConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#prevServerConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                                                                                                <JFXButton fx:id="prevServerConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#prevServerConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                                                                                                    <styleClass>
                                                                                                       <String fx:value="bold" />
                                                                                                       <String fx:value="basic-font" />
@@ -263,18 +292,17 @@
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
-                                                                                                   <graphic>
-                                                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" rotate="180.0">
-                                                                                                         <image>
-                                                                                                            <Image url="@../image/next_icon.png" />
-                                                                                                         </image>
-                                                                                                      </ImageView>
-                                                                                                   </graphic>
                                                                                                    <font>
                                                                                                       <Font size="1.0" />
                                                                                                    </font>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="ANGLE_LEFT" size="20" />
+                                                                                                   </graphic>
                                                                                                 </JFXButton>
-                                                                                                <JFXButton fx:id="nextDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxHeight="30.0" maxWidth="30.0" minHeight="30.0" minWidth="30.0" onAction="#nextServerConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                                                                                                <JFXButton fx:id="nextDbConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#nextServerConnInfo" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                                                                                                    <styleClass>
                                                                                                       <String fx:value="bold" />
                                                                                                       <String fx:value="basic-font" />
@@ -282,16 +310,15 @@
                                                                                                    <cursor>
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
-                                                                                                   <graphic>
-                                                                                                      <ImageView fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true">
-                                                                                                         <image>
-                                                                                                            <Image url="@../image/next_icon.png" />
-                                                                                                         </image>
-                                                                                                      </ImageView>
-                                                                                                   </graphic>
                                                                                                    <font>
                                                                                                       <Font size="1.0" />
                                                                                                    </font>
+                                                                                                   <HBox.margin>
+                                                                                                      <Insets right="10.0" />
+                                                                                                   </HBox.margin>
+                                                                                                   <graphic>
+                                                                                                      <FontAwesomeIconView glyphName="ANGLE_RIGHT" size="20" />
+                                                                                                   </graphic>
                                                                                                 </JFXButton>
                                                                                              </children>
                                                                                           </HBox>
