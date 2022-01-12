@@ -775,9 +775,9 @@ public class SettingMenuController implements Initializable {
 		ColumnConstraints col2 = new ColumnConstraints();
 		ColumnConstraints col3 = new ColumnConstraints();
 		ColumnConstraints col4 = new ColumnConstraints();
-		col1.setPercentWidth(25);
+		col1.setPrefWidth(140);
 		col2.setPercentWidth(40);
-		col3.setPercentWidth(15);
+		col3.setPrefWidth(100);
 		col4.setPercentWidth(20);
 		col2.setFillWidth(false);
 		RowConstraints row1 = new RowConstraints();
@@ -910,9 +910,9 @@ public class SettingMenuController implements Initializable {
 		ColumnConstraints col2 = new ColumnConstraints();
 		ColumnConstraints col3 = new ColumnConstraints();
 		ColumnConstraints col4 = new ColumnConstraints();
-		col1.setPercentWidth(25);
+		col1.setPrefWidth(140);
 		col2.setPercentWidth(40);
-		col3.setPercentWidth(15);
+		col3.setPrefWidth(100);
 		col4.setPercentWidth(20);
 		col2.setFillWidth(false);
 		RowConstraints row1 = new RowConstraints();

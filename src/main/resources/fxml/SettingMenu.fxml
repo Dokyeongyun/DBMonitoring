@@ -71,7 +71,7 @@
                                                                <content>
                                                                   <VBox style="-fx-background-color: white;">
                                                                      <children>
-                                                                        <VBox maxWidth="530.0" minWidth="530.0">
+                                                                        <VBox minWidth="530.0">
                                                                            <children>
                                                                               <AnchorPane>
                                                                                  <children>
@@ -235,7 +235,7 @@
                                                                               </StackPane>
                                                                            </children>
                                                                         </VBox>
-                                                                        <VBox maxWidth="530.0" minWidth="530.0">
+                                                                        <VBox minWidth="530.0">
                                                                            <children>
                                                                               <AnchorPane>
                                                                                  <children>
@@ -342,7 +342,7 @@
                                                                                        <children>
                                                                                           <GridPane AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
                                                                                              <columnConstraints>
-                                                                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="25.0" />
+                                                                                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="15.0" />
                                                                                                 <ColumnConstraints fillWidth="false" hgrow="SOMETIMES" percentWidth="40.0" />
                                                                                                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="15.0" />
                                                                                                 <ColumnConstraints hgrow="SOMETIMES" percentWidth="20.0" />
