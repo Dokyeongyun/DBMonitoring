@@ -21,7 +21,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -51,9 +50,9 @@
                                     <content>
                                           <AnchorPane>
                                              <children>
-                                                <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <center>
-                                                      <AnchorPane fx:id="connectInfoAnchorPane">
+                                                      <AnchorPane fx:id="connectInfoAnchorPane" style="-fx-background-color: white;">
                                                          <children>
                                                             <AnchorPane fx:id="noPropertiesFileAP2" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
@@ -70,7 +69,7 @@
                                                             </AnchorPane>
                                                             <ScrollPane fitToHeight="true" fitToWidth="true" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <content>
-                                                                  <FlowPane fx:id="connectInfoFlowPane" style="-fx-background-color: white;">
+                                                                  <VBox style="-fx-background-color: white;">
                                                                      <children>
                                                                         <VBox maxWidth="530.0" minWidth="530.0">
                                                                            <children>
@@ -235,11 +234,8 @@
                                                                                  </children>
                                                                               </StackPane>
                                                                            </children>
-                                                                           <FlowPane.margin>
-                                                                              <Insets />
-                                                                           </FlowPane.margin>
                                                                         </VBox>
-                                                                        <VBox layoutX="10.0" layoutY="10.0" maxWidth="530.0" minWidth="530.0">
+                                                                        <VBox maxWidth="530.0" minWidth="530.0">
                                                                            <children>
                                                                               <AnchorPane>
                                                                                  <children>
@@ -396,7 +392,7 @@
                                                                            </children>
                                                                         </VBox>
                                                                      </children>
-                                                                  </FlowPane>
+                                                                  </VBox>
                                                                </content>
                                                             </ScrollPane>
                                                          </children>
