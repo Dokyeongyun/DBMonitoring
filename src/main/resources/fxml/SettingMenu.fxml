@@ -97,7 +97,7 @@
                                                                                                       <Cursor fx:constant="HAND" />
                                                                                                    </cursor>
                                                                                                    <graphic>
-                                                                                                      <FontAwesomeIconView glyphName="PLUG" />
+                                                                                                      <FontAwesomeIconView fx:id="icon" glyphName="PLUG" />
                                                                                                    </graphic>
                                                                                                    <HBox.margin>
                                                                                                       <Insets right="10.0" />

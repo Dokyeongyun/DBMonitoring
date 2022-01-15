@@ -64,6 +64,7 @@ import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
+import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
@@ -83,51 +84,71 @@ public class SettingMenuController implements Initializable {
 	/* View Binding */
 	@FXML
 	SplitPane rootSplitPane;
+
 	// Right SplitPane Region
 	@FXML
 	StackPane rightStackPane;
+
 	// Setting Menu Region
 	@FXML
 	ScrollPane settingScrollPane;
+
 	@FXML
 	AnchorPane settingMainContentAnchorPane;
+
 	@FXML
 	AnchorPane noPropertiesFileAP1; // [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+
 	@FXML
 	AnchorPane noPropertiesFileAP2; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+
 	@FXML
 	VBox monitoringElementsVBox;
+
 	@FXML
 	JFXButton settingSaveBtn;
+
 	@FXML
 	Button fileChooserBtn; // 설정파일을 선택하기 위한 FileChooser
+
 	@FXML
 	TextField fileChooserText; // 설정파일 경로를 입력/출력하는 TextField
+
 	@FXML
 	AnchorPane connectInfoAnchorPane;
+
 	@FXML
 	FlowPane connectInfoFlowPane; // DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
+
 	@FXML
 	StackPane dbConnInfoStackPane; // DB접속정보 설정 그리드를 담는 컨테이너
+
 	@FXML
 	AnchorPane dbConnInfoNoDataAP; // DB접속정보 No Data AchorPane
+
 	@FXML
 	AnchorPane dbConnInfoSampleAP; // DB접속정보 Blank AnchorPane
+
 	@FXML
 	Text dbInfoCntText; // DB접속정보 인덱스 텍스트
+
 	@FXML
 	StackPane serverConnInfoStackPane; // 서버접속정보 설정 그리드를 담는 컨테이너
+
 	@FXML
 	AnchorPane serverConnInfoNoDataAP; // 서버접속정보 No Data AchorPane
+
 	@FXML
 	AnchorPane serverConnInfoSampleAP; // 서버접속정보 Blank AnchorPane
+
 	@FXML
 	Text serverInfoCntText; // 서버접속정보 인덱스 텍스트
+
 	@FXML
 	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
-	// Run Menu Region
+
 	@FXML
-	Button monitoringRunBtn;
+	JFXButton dbConnTestBtn;
 
 	/* Common Data */
 	String[] dbMonitorings;
@@ -289,6 +310,8 @@ public class SettingMenuController implements Initializable {
 		if (dbConnInfoIdxMap.size() == 0)
 			return;
 		dbConnInfoIdx = dbConnInfoIdx == 0 ? dbConnInfoIdxMap.size() - 1 : dbConnInfoIdx - 1;
+		((FontAwesomeIconView) dbConnTestBtn.lookup("#icon")).setIcon(FontAwesomeIcon.PLUG);
+		((FontAwesomeIconView) dbConnTestBtn.lookup("#icon")).setFill(Paint.valueOf("#000000"));
 		bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, dbConnInfoIdx, dbInfoCntText);
 	}
 
@@ -1207,13 +1230,14 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void testDbConnection(ActionEvent e) {
-		// 1. 현재 dbConnInfoStackPane 의 최상단에 있는 접속정보를 가져온다.
-		// 2. JdbcConnectionInfo 객체를 생성한다.
-		// 3. Usecase를 이용하거나 static 메서드를 이용하여 커넥션 시도
-		// 4. 커넥션 성공 시 성공 Alert, 실패 시 실패 Alert
-		
 		// TODO dbConnInfoAP에 접속정보가 입력되어있는지 확인 (입력값 검사)
-		// TODO 입력되어있지 않으면 버튼 비활성화 
+		// TODO 입력되어있지 않으면 버튼 비활성화
+
+		// 아이콘 변경
+		FontAwesomeIconView icon = (FontAwesomeIconView) dbConnTestBtn.lookup("#icon");
+		icon.setIcon(FontAwesomeIcon.SPINNER);
+		icon.setFill(Paint.valueOf("#484989"));
+		icon.getStyleClass().add("fa-spin");
 
 		AnchorPane curAP = dbConnInfoIdxMap.get(dbConnInfoIdx);
 
@@ -1239,8 +1263,22 @@ public class SettingMenuController implements Initializable {
 		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
 				"SELECT 1 FROM DUAL", 1);
-		
+
 		DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
+		dbConnService.setOnSucceeded(s -> {
+			AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
+					String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+			icon.setIcon(FontAwesomeIcon.CHECK);
+			icon.setFill(Paint.valueOf("#49a157"));
+		});
+
+		dbConnService.setOnFailed(f -> {
+			AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트",
+					String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+			icon.setIcon(FontAwesomeIcon.TIMES);
+			icon.setFill(Paint.valueOf("#c40a0a"));
+		});
+
 		dbConnService.start();
 	}
 
