@@ -2,7 +2,6 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -59,13 +58,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import root.common.database.implement.JdbcDatabase;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
-import root.utils.AlertUtils;
+import root.javafx.Service.DatabaseConnectService;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
@@ -1213,6 +1211,9 @@ public class SettingMenuController implements Initializable {
 		// 2. JdbcConnectionInfo 객체를 생성한다.
 		// 3. Usecase를 이용하거나 static 메서드를 이용하여 커넥션 시도
 		// 4. 커넥션 성공 시 성공 Alert, 실패 시 실패 Alert
+		
+		// TODO dbConnInfoAP에 접속정보가 입력되어있는지 확인 (입력값 검사)
+		// TODO 입력되어있지 않으면 버튼 비활성화 
 
 		AnchorPane curAP = dbConnInfoIdxMap.get(dbConnInfoIdx);
 
@@ -1235,20 +1236,12 @@ public class SettingMenuController implements Initializable {
 
 		String jdbcPw = passwordFieldMap.get(elementId + "PasswordTextField");
 
-		// TODO JdbcDriver 하드코딩 변경
+		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
 				"SELECT 1 FROM DUAL", 1);
-		JdbcDatabase db = new JdbcDatabase(jdbc);
-		db.init();
-		boolean isConn = JdbcDatabase.validateConn(db.getConn(), jdbc.getJdbcValidation());
-
-		if (isConn) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
-					"데이터베이스가 성공적으로 연동되었습니다.\nURL: " + jdbc.getJdbcUrl() + "\nDriver: " + jdbc.getJdbcDriver());
-		} else {
-			AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트", "데이터베이스 연동에 실패했습니다. 접속정보를 확인해주세요.\nURL: "
-					+ jdbc.getJdbcUrl() + "\nDriver: " + jdbc.getJdbcDriver());
-		}
+		
+		DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
+		dbConnService.start();
 	}
 
 	/**
