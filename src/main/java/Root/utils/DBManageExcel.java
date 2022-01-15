@@ -33,14 +33,14 @@ public class DBManageExcel extends ExcelUtils {
 			
 			// CellStyle 생성
 			// 1. 회색 배경, 검은색 실선 테두리, 중앙정렬
-			XSSFCellStyle grayCS = excel.createCellStyle("d0cece", (short) 0);
+			XSSFCellStyle grayCS = excel.createCellStyle("d0cece", false);
 			// 2. 회색 배경, 검은색 실선 테두리, 왼쪽정렬
-			XSSFCellStyle grayCSLeft = excel.createCellStyle("d0cece", (short) 0);
+			XSSFCellStyle grayCSLeft = excel.createCellStyle("d0cece", false);
 			grayCSLeft.setAlignment(HorizontalAlignment.LEFT);
 			// 3. 흰색 배경, 검은색 실선 테두리, 중앙정렬
-			XSSFCellStyle whiteCS = excel.createCellStyle("ffffff", (short) 0);
+			XSSFCellStyle whiteCS = excel.createCellStyle("ffffff", false);
 			// 4. 흰색 배경, 검은색 실선 테두리, 왼쪽정렬
-			XSSFCellStyle whiteCSLeft = excel.createCellStyle("ffffff", (short) 0);
+			XSSFCellStyle whiteCSLeft = excel.createCellStyle("ffffff", false);
 			whiteCSLeft.setAlignment(HorizontalAlignment.LEFT);
 			
 			// Write Header Region
