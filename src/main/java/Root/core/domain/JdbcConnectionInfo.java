@@ -21,8 +21,19 @@ public class JdbcConnectionInfo {
 	private String jdbcHost;
 	private String jdbcPort;
 	private String jdbcOracleDriver;
-	
-	public JdbcConnectionInfo(String jdbcDBName, String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw, String jdbcValidation, int jdbcConnections) {
+
+	public JdbcConnectionInfo(String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw, String jdbcValidation,
+			int jdbcConnections) {
+		this.jdbcDriver = jdbcDriver;
+		this.jdbcUrl = jdbcUrl;
+		this.jdbcId = jdbcId;
+		this.jdbcPw = jdbcPw;
+		this.jdbcValidation = jdbcValidation;
+		this.jdbcConnections = jdbcConnections;
+	}
+
+	public JdbcConnectionInfo(String jdbcDBName, String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw,
+			String jdbcValidation, int jdbcConnections) {
 		this.jdbcDBName = jdbcDBName;
 		this.jdbcDriver = jdbcDriver;
 		this.jdbcUrl = jdbcUrl;

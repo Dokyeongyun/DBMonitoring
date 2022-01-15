@@ -15,8 +15,9 @@ import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -26,10 +27,10 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -46,20 +47,21 @@ public class ExcelUtils {
 
 	// 1. DB 관리대장 포맷을 월별로 작성해주는 메서드 작성 (관리대장 신규 생성)
 	// 2. 기존 관리대장을 읽어 특정 날짜의 DB 모니터링 결과를 추가하는 메서드 작성 (모니터링 결과 작성)
-	
+
 	public ExcelUtils(String sheetName) {
 		workbook = new XSSFWorkbook();
 		sheet = workbook.createSheet(sheetName);
 	}
-	
+
 	public int getRowIndex() {
 		return rowIndex;
 	}
 
 	/**
 	 * 엑셀 파일의 커서 위치를 변경한다.
-	 * @param col	변경할 셀 Column Index
-	 * @param row	변경할 셀 Row Index
+	 * 
+	 * @param col 변경할 셀 Column Index
+	 * @param row 변경할 셀 Row Index
 	 */
 	public void setOffset(int col, int row) {
 		colIndex = col;
@@ -68,6 +70,7 @@ public class ExcelUtils {
 
 	/**
 	 * 열의 너비를 변경한다.
+	 * 
 	 * @param colIndex
 	 * @param width
 	 */
@@ -76,22 +79,22 @@ public class ExcelUtils {
 	}
 
 	/**
-	 * 셀 스타일 및 셀 값을 설정한다. 
-	 * 이 때, 설정할 위치에 Row 또는 Cell이 없다면 해당 위치에 Row, Cell을 새로 생성한다.
-	 * @param colIndex		CellStyle, CellValue를 설정할 셀의 Column Index
-	 * @param rowIndex		CellStyle, CellValue를 설정할 셀의 Row Index
-	 * @param cellStyle		CellStyle
-	 * @param cellValue		CellValue
+	 * 셀 스타일 및 셀 값을 설정한다. 이 때, 설정할 위치에 Row 또는 Cell이 없다면 해당 위치에 Row, Cell을 새로 생성한다.
+	 * 
+	 * @param colIndex  CellStyle, CellValue를 설정할 셀의 Column Index
+	 * @param rowIndex  CellStyle, CellValue를 설정할 셀의 Row Index
+	 * @param cellStyle CellStyle
+	 * @param cellValue CellValue
 	 */
 	public void setCell(int colIndex, int rowIndex, XSSFCellStyle cellStyle, String cellValue) {
-		XSSFRow row = sheet.getRow(rowIndex);
+		Row row = sheet.getRow(rowIndex);
 		if (row == null) {
 			row = sheet.createRow(rowIndex);
 		}
 
-		XSSFCell cell = row.getCell(colIndex);
+		Cell cell = row.getCell(colIndex);
 		if (cell == null) {
-			cell = row.createCell(colIndex, XSSFCell.CELL_TYPE_STRING);
+			cell = CellUtil.createCell(row, colIndex, "");
 		}
 		cell.setCellStyle(cellStyle);
 		cell.setCellValue(cellValue);
@@ -108,21 +111,22 @@ public class ExcelUtils {
 	public void addRow(String backgroundColor, List<String> rows) {
 		addRow(backgroundColor, (short) 0, rows);
 	}
-	
+
 	/**
-	 * 해당 Sheet의 마지막에 새로운 Row를 추가한다.
-	 * 매개변수로 주어진 backgroundColor, boldWeight를 이용하여 새로운 CellStyle을 설정한다.
+	 * 해당 Sheet의 마지막에 새로운 Row를 추가한다. 매개변수로 주어진 backgroundColor, boldWeight를 이용하여 새로운
+	 * CellStyle을 설정한다.
+	 * 
 	 * @param backgroundColor
 	 * @param boldweight
 	 * @param cellStrings
 	 */
 	public void addRow(String backgroundColor, short boldweight, List<String> cellStrings) {
-		XSSFRow header = sheet.createRow(rowIndex++);
+		Row header = sheet.createRow(rowIndex++);
 		int cellIndex = colIndex;
 		for (String value : cellStrings) {
-			XSSFCell cell = header.createCell(cellIndex++, XSSFCell.CELL_TYPE_STRING);
+			Cell cell = CellUtil.createCell(header, cellIndex++, "");
 			cell.setCellValue(value);
-			cell.setCellStyle(createCellStyle(backgroundColor, boldweight));
+			cell.setCellStyle(createCellStyle(backgroundColor, boldweight == 0 ? false : true));
 		}
 		if (maxCols < cellIndex) {
 			maxCols = cellIndex;
@@ -130,8 +134,9 @@ public class ExcelUtils {
 	}
 
 	/**
-	 * 해당 Sheet의 마지막에 새로운 Row를 추가한다.
-	 * 매개변수로 주어진 style, cellStrings에 따라 각 Cell의 Style, Value를 설정한다.
+	 * 해당 Sheet의 마지막에 새로운 Row를 추가한다. 매개변수로 주어진 style, cellStrings에 따라 각 Cell의 Style,
+	 * Value를 설정한다.
+	 * 
 	 * @param style
 	 * @param cellStrings
 	 */
@@ -140,7 +145,7 @@ public class ExcelUtils {
 		int cellIndex = colIndex;
 		for (String value : cellStrings) {
 			int index = cellIndex - colIndex;
-			XSSFCell cell = header.createCell(cellIndex++, XSSFCell.CELL_TYPE_STRING);
+			Cell cell = CellUtil.createCell(header, cellIndex++, "");
 			cell.setCellValue(value);
 			String backgroundColor = null;
 			short boldweight = 0;
@@ -151,7 +156,7 @@ public class ExcelUtils {
 					boldweight = Short.parseShort(styleMap.get("boldweight"));
 				}
 			}
-			cell.setCellStyle(createCellStyle(backgroundColor, boldweight));
+			cell.setCellStyle(createCellStyle(backgroundColor, boldweight == 0 ? false : true));
 		}
 		if (maxCols < cellIndex) {
 			maxCols = cellIndex;
@@ -160,23 +165,24 @@ public class ExcelUtils {
 
 	/**
 	 * 새로운 CellStyle을 생성한다.
+	 * 
 	 * @param backgroundColor
 	 * @param boldweight
 	 * @return
 	 */
-	public XSSFCellStyle createCellStyle(String backgroundColor, short boldweight) {
+	public XSSFCellStyle createCellStyle(String backgroundColor, boolean isBold) {
 		XSSFCellStyle cellStyle = sheet.getWorkbook().createCellStyle();
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		if (backgroundColor != null) {
-			cellStyle.setFillForegroundColor(new XSSFColor(hexToByteArray(backgroundColor)));
-			cellStyle.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+			cellStyle.setFillForegroundColor(IndexedColors.valueOf(backgroundColor).getIndex());
+			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		}
 		setSolidBorder(cellStyle);
 
-		if (boldweight != 0) {
+		if (isBold) {
 			Font headerFont = this.sheet.getWorkbook().createFont();
-			headerFont.setBoldweight(boldweight);
+			headerFont.setBold(isBold);
 			cellStyle.setFont(headerFont);
 		}
 		return cellStyle;
@@ -184,6 +190,7 @@ public class ExcelUtils {
 
 	/**
 	 * FontHeight를 설정한다.
+	 * 
 	 * @param cellnum
 	 * @param rownum
 	 * @param height
@@ -194,6 +201,7 @@ public class ExcelUtils {
 
 	/**
 	 * Cell의 정렬방법을 설정한다.
+	 * 
 	 * @param cellnum
 	 * @param rownum
 	 * @param align
@@ -204,6 +212,7 @@ public class ExcelUtils {
 
 	/**
 	 * 셀 내의 텍스트 개행을 설정한다.
+	 * 
 	 * @param cellnum
 	 * @param rownum
 	 * @param b
@@ -236,6 +245,7 @@ public class ExcelUtils {
 
 	/**
 	 * CellStyle의 테두리를 검은색 실선으로 설정한다.
+	 * 
 	 * @param cellStyle
 	 */
 	public void setSolidBorder(XSSFCellStyle cellStyle) {
@@ -243,14 +253,15 @@ public class ExcelUtils {
 		cellStyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 		cellStyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
 		cellStyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
-		cellStyle.setBorderTop(CellStyle.BORDER_THIN);
-		cellStyle.setBorderBottom(CellStyle.BORDER_THIN);
-		cellStyle.setBorderLeft(CellStyle.BORDER_THIN);
-		cellStyle.setBorderRight(CellStyle.BORDER_THIN);
+		cellStyle.setBorderTop(BorderStyle.THIN);
+		cellStyle.setBorderBottom(BorderStyle.THIN);
+		cellStyle.setBorderLeft(BorderStyle.THIN);
+		cellStyle.setBorderRight(BorderStyle.THIN);
 	}
 
 	/**
 	 * 엑셀파일을 작성한다.
+	 * 
 	 * @param outputStream
 	 * @throws IOException
 	 */
@@ -269,45 +280,48 @@ public class ExcelUtils {
 
 	/**
 	 * 셀을 병합한다.
-	 * @param sCol	병합할 범위의 시작 Column Index
-	 * @param sRow  병합할 범위의 시작 Row Index
-	 * @param eCol	병합할 범위의 끝 Column Index
-	 * @param eRow	병합할 범위의 끝 Row Index
+	 * 
+	 * @param sCol 병합할 범위의 시작 Column Index
+	 * @param sRow 병합할 범위의 시작 Row Index
+	 * @param eCol 병합할 범위의 끝 Column Index
+	 * @param eRow 병합할 범위의 끝 Row Index
 	 */
 	public void merge(int sCol, int sRow, int eCol, int eRow) {
-		sheet.addMergedRegion(new CellRangeAddress(sRow, eRow, sCol, eCol)); 
+		sheet.addMergedRegion(new CellRangeAddress(sRow, eRow, sCol, eCol));
 	}
 
 	/**
 	 * 셀을 병합하고, 해당 셀의 CellStyle을 설정한다.
-	 * @param sCol	병합할 범위의 시작 Column Index
-	 * @param sRow  병합할 범위의 시작 Row Index
-	 * @param eCol	병합할 범위의 끝 Column Index
-	 * @param eRow	병합할 범위의 끝 Row Index
+	 * 
+	 * @param sCol      병합할 범위의 시작 Column Index
+	 * @param sRow      병합할 범위의 시작 Row Index
+	 * @param eCol      병합할 범위의 끝 Column Index
+	 * @param eRow      병합할 범위의 끝 Row Index
 	 * @param cellStyle
 	 * @param cellValue
 	 */
 	public void merge(int sCol, int sRow, int eCol, int eRow, XSSFCellStyle cellStyle, String cellValue) {
 		sheet.addMergedRegion(new CellRangeAddress(sRow, eRow, sCol, eCol));
-		for(int i=sCol; i<=eCol; i++) {
-			for(int j=sRow; j<=eRow; j++) {
-				XSSFRow row = sheet.getRow(j);
+		for (int i = sCol; i <= eCol; i++) {
+			for (int j = sRow; j <= eRow; j++) {
+				Row row = sheet.getRow(j);
 				if (row == null) {
 					row = sheet.createRow(j);
 				}
 
-				XSSFCell cell = row.getCell(i);
+				Cell cell = row.getCell(i);
 				if (cell == null) {
-					cell = row.createCell(i, XSSFCell.CELL_TYPE_STRING);
+					cell = CellUtil.createCell(row, i, "");
 				}
 				cell.setCellStyle(cellStyle);
 				cell.setCellValue(cellValue);
 			}
 		}
 	}
-	
+
 	/**
 	 * 사각형을 그린다.
+	 * 
 	 * @param rownum
 	 * @param scolnum
 	 * @param ecolnum
@@ -454,21 +468,28 @@ public class ExcelUtils {
 					}
 					if (cell != null) {
 						// 타입별로 내용 읽기
-						switch (cell.getCellType()) {
-						case Cell.CELL_TYPE_FORMULA:
+						switch (cell.getCellTypeEnum()) {
+						case FORMULA:
 							value = cell.getCellFormula();
 							break;
-						case Cell.CELL_TYPE_NUMERIC:
+						case NUMERIC:
 							value = String.format("%1$,.0f", cell.getNumericCellValue());
 							break;
-						case Cell.CELL_TYPE_STRING:
+						case STRING:
 							value = cell.getStringCellValue() + "";
 							break;
-						case Cell.CELL_TYPE_BLANK:
+						case BLANK:
 							value = cell.getBooleanCellValue() + "";
 							break;
-						case Cell.CELL_TYPE_ERROR:
+						case ERROR:
 							value = cell.getErrorCellValue() + "";
+							break;
+						case BOOLEAN:
+							value = cell.getBooleanCellValue() + "";
+							break;
+						case _NONE:
+							break;
+						default:
 							break;
 						}
 					}
