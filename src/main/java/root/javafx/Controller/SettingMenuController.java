@@ -2,6 +2,7 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.log4j.Logger;
@@ -57,62 +59,85 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import root.common.database.implement.JdbcDatabase;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
 
 	/**
-	 * Pattern 객체를 정적필드로 선언한 이유
-	 *  - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state machine)을 생성하기 때문에 인스턴스 생성비용이 높다.
-	 *  - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다.
-	 *  - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
+	 * Pattern 객체를 정적필드로 선언한 이유 - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state
+	 * machine)을 생성하기 때문에 인스턴스 생성비용이 높다. - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. - 뿐만
+	 * 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
 	 */
 	private static Pattern DB_CONNINFO_AP_NAME_PATTERN = Pattern.compile("dbConnInfo(.*)AP");
 	private static Pattern SERVER_CONNINFO_AP_NAME_PATTERN = Pattern.compile("serverConnInfo(.*)AP");
-	
+
 	/* Dependency Injection */
 	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
-	
+
 	/* View Binding */
-	@FXML SplitPane rootSplitPane;
+	@FXML
+	SplitPane rootSplitPane;
 	// Right SplitPane Region
-	@FXML StackPane rightStackPane;
+	@FXML
+	StackPane rightStackPane;
 	// Setting Menu Region
-	@FXML ScrollPane settingScrollPane;
-	@FXML AnchorPane settingMainContentAnchorPane;
-	@FXML AnchorPane noPropertiesFileAP1;		// [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
-	@FXML AnchorPane noPropertiesFileAP2;		// [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
-	@FXML VBox monitoringElementsVBox;
-	@FXML JFXButton settingSaveBtn;
-	@FXML Button fileChooserBtn;				// 설정파일을 선택하기 위한 FileChooser
-	@FXML TextField fileChooserText;			// 설정파일 경로를 입력/출력하는 TextField
-	@FXML AnchorPane connectInfoAnchorPane;		
-	@FXML FlowPane connectInfoFlowPane;			// DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
-	@FXML StackPane dbConnInfoStackPane;		// DB접속정보 설정 그리드를 담는 컨테이너
-	@FXML AnchorPane dbConnInfoNoDataAP;		// DB접속정보 No Data AchorPane
-	@FXML AnchorPane dbConnInfoSampleAP;		// DB접속정보 Blank AnchorPane
-	@FXML Text dbInfoCntText;					// DB접속정보 인덱스 텍스트
-	@FXML StackPane serverConnInfoStackPane;	// 서버접속정보 설정 그리드를 담는 컨테이너
-	@FXML AnchorPane serverConnInfoNoDataAP;	// 서버접속정보 No Data AchorPane
-	@FXML AnchorPane serverConnInfoSampleAP;	// 서버접속정보 Blank AnchorPane
-	@FXML Text serverInfoCntText;				// 서버접속정보 인덱스 텍스트
-	@FXML JFXComboBox<String> monitoringPresetComboBox;	// 모니터링여부 설정 Preset ComboBox
+	@FXML
+	ScrollPane settingScrollPane;
+	@FXML
+	AnchorPane settingMainContentAnchorPane;
+	@FXML
+	AnchorPane noPropertiesFileAP1; // [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+	@FXML
+	AnchorPane noPropertiesFileAP2; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+	@FXML
+	VBox monitoringElementsVBox;
+	@FXML
+	JFXButton settingSaveBtn;
+	@FXML
+	Button fileChooserBtn; // 설정파일을 선택하기 위한 FileChooser
+	@FXML
+	TextField fileChooserText; // 설정파일 경로를 입력/출력하는 TextField
+	@FXML
+	AnchorPane connectInfoAnchorPane;
+	@FXML
+	FlowPane connectInfoFlowPane; // DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
+	@FXML
+	StackPane dbConnInfoStackPane; // DB접속정보 설정 그리드를 담는 컨테이너
+	@FXML
+	AnchorPane dbConnInfoNoDataAP; // DB접속정보 No Data AchorPane
+	@FXML
+	AnchorPane dbConnInfoSampleAP; // DB접속정보 Blank AnchorPane
+	@FXML
+	Text dbInfoCntText; // DB접속정보 인덱스 텍스트
+	@FXML
+	StackPane serverConnInfoStackPane; // 서버접속정보 설정 그리드를 담는 컨테이너
+	@FXML
+	AnchorPane serverConnInfoNoDataAP; // 서버접속정보 No Data AchorPane
+	@FXML
+	AnchorPane serverConnInfoSampleAP; // 서버접속정보 Blank AnchorPane
+	@FXML
+	Text serverInfoCntText; // 서버접속정보 인덱스 텍스트
+	@FXML
+	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
 	// Run Menu Region
-	@FXML Button monitoringRunBtn;
+	@FXML
+	Button monitoringRunBtn;
 
 	/* Common Data */
 	String[] dbMonitorings;
 	String[] serverMonitorings;
-	
+
 	String[] dbNames;
 	String[] serverNames;
-	
+
 	// dbConnInfo
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
@@ -121,44 +146,47 @@ public class SettingMenuController implements Initializable {
 	// dbConnInfo Index 배열
 	Map<Integer, AnchorPane> dbConnInfoIdxMap = new HashMap<>();
 	int dbConnInfoIdx = 0;
-	
+
 	// serverConnInfo Index 배열
 	Map<Integer, AnchorPane> serverConnInfoIdxMap = new HashMap<>();
 	int serverConnInfoIdx = 0;
-	
+
 	Map<String, String> monitoringPresetMap = new HashMap<>();
-	
+
 	// 모니터링 여부 설정 Preset Popup
 	Popup presetInputPopup = new Popup();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
+
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 		String lastUsePropertiesFile = propertyRepository.getLastUseConnInfoFilePath();
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
-		if(lastUsePropertiesFile != null) {
+		if (lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 		}
-		
+
 		// [설정] - [모니터링 여부 설정] - Preset 변경 Event
-		monitoringPresetComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-			loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
-		});
+		monitoringPresetComboBox.getSelectionModel().selectedItemProperty()
+				.addListener((options, oldValue, newValue) -> {
+					loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+				});
 	}
-	
+
 	/**
 	 * [설정] - [모니터링 여부 설정] - Preset명 입력 팝업 띄우기
+	 * 
 	 * @param e
 	 */
-	public void showMonitoringPresetPopup(ActionEvent e) { 
-		
+	public void showMonitoringPresetPopup(ActionEvent e) {
+
 		// TextInputDialog 생성
 		TextInputDialog presetInputDialog = new TextInputDialog();
 		// ICON
 		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
 		// CSS
-		presetInputDialog.getDialogPane().getStylesheets().add(getClass().getResource("/css/dialog.css").toExternalForm());
+		presetInputDialog.getDialogPane().getStylesheets()
+				.add(getClass().getResource("/css/dialog.css").toExternalForm());
 		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
 		// Dialog ICON
 		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
@@ -175,21 +203,22 @@ public class SettingMenuController implements Initializable {
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			logger.debug("Monitoring Preset 생성 Input: " + input);
-			
+
 			// 1. Preset명 이용하여 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{preset명}.properties
 			File connInfoFile = new File(fileChooserText.getText());
-			String connInfoFileName = connInfoFile.getName().substring(0, connInfoFile.getName().indexOf(".properties"));
+			String connInfoFileName = connInfoFile.getName().substring(0,
+					connInfoFile.getName().indexOf(".properties"));
 			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
 			PropertiesUtils.createNewPropertiesFile(filePath);
-			
+
 			// 2. 접속정보설정파일에 Preset 추가
 			PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
 			config.addProperty("monitoring.setting.preset." + input + ".filepath", filePath);
 			PropertiesUtils.save(fileChooserText.getText(), config);
-			
+
 			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
 			reloadingMonitoringSetting(input);
-			
+
 			// 4. 성공 Alert 띄우기
 			Alert successAlert = new Alert(AlertType.INFORMATION);
 			successAlert.setHeaderText("Preset 생성");
@@ -198,46 +227,52 @@ public class SettingMenuController implements Initializable {
 			successAlert.show();
 		});
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 새로운 DB/Server 접속정보 작성 폼을 생성한다.
+	 * 
 	 * @param parentSP
 	 * @param connInfo
 	 * @param connInfoIdx
 	 * @param connInfoMap
 	 * @param cntText
 	 */
-	private void addConnInfo(StackPane parentSP, Object connInfo, int connInfoIdx, Map<Integer, AnchorPane> connInfoMap, Text cntText) {
+	private void addConnInfo(StackPane parentSP, Object connInfo, int connInfoIdx, Map<Integer, AnchorPane> connInfoMap,
+			Text cntText) {
 		String newConnInfoId = String.valueOf(new Date().getTime());
-		if(connInfo instanceof JdbcConnectionInfo) {
-			createJdbcConnInfoElements(parentSP, (JdbcConnectionInfo) connInfo, newConnInfoId);	
-		} else if(connInfo instanceof JschConnectionInfo) {
+		if (connInfo instanceof JdbcConnectionInfo) {
+			createJdbcConnInfoElements(parentSP, (JdbcConnectionInfo) connInfo, newConnInfoId);
+		} else if (connInfo instanceof JschConnectionInfo) {
 			createJschConnInfoElements(parentSP, (JschConnectionInfo) connInfo, newConnInfoId);
 		}
 		cntText.setText("(" + (connInfoIdx + 1) + "/" + connInfoMap.size() + ")");
 		bringFrontConnInfoAnchorPane(connInfoMap, connInfoIdx, cntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 새로운 DB 접속정보 작성 폼을 생성한다.
+	 * 
 	 * @param e
 	 */
 	public void addDbConnInfo(ActionEvent e) {
 		dbConnInfoIdx = dbConnInfoIdxMap.size();
 		addConnInfo(dbConnInfoStackPane, new JdbcConnectionInfo(), dbConnInfoIdx, dbConnInfoIdxMap, dbInfoCntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 새로운 DB 접속정보 작성 폼을 생성한다.
+	 * 
 	 * @param e
 	 */
 	public void addServerConnInfo(ActionEvent e) {
 		serverConnInfoIdx = serverConnInfoIdxMap.size();
-		addConnInfo(serverConnInfoStackPane, new JschConnectionInfo(), serverConnInfoIdx, serverConnInfoIdxMap, serverInfoCntText);
+		addConnInfo(serverConnInfoStackPane, new JschConnectionInfo(), serverConnInfoIdx, serverConnInfoIdxMap,
+				serverInfoCntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 해당되는 DB/서버 접속정보 AnchorPane을 가장 앞으로 가져온다.
+	 * 
 	 * @param connInfoMap
 	 * @param connInfoIdx
 	 * @param cntText
@@ -249,66 +284,75 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * [설정] - [접속정보 설정] - 이전 DB 접속정보 페이지로 이동한다.
+	 * 
 	 * @param e
 	 */
 	public void prevDbConnInfo(ActionEvent e) {
-		if(dbConnInfoIdxMap.size() == 0) return;
+		if (dbConnInfoIdxMap.size() == 0)
+			return;
 		dbConnInfoIdx = dbConnInfoIdx == 0 ? dbConnInfoIdxMap.size() - 1 : dbConnInfoIdx - 1;
 		bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, dbConnInfoIdx, dbInfoCntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 이전 서버 접속정보 페이지로 이동한다.
+	 * 
 	 * @param e
 	 */
 	public void prevServerConnInfo(ActionEvent e) {
-		if(serverConnInfoIdxMap.size() == 0) return;
+		if (serverConnInfoIdxMap.size() == 0)
+			return;
 		serverConnInfoIdx = serverConnInfoIdx == 0 ? serverConnInfoIdxMap.size() - 1 : serverConnInfoIdx - 1;
 		bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, serverConnInfoIdx, serverInfoCntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 다음 DB 접속정보 페이지로 이동한다.
+	 * 
 	 * @param e
 	 */
 	public void nextDbConnInfo(ActionEvent e) {
-		if(dbConnInfoIdxMap.size() == 0) return;
+		if (dbConnInfoIdxMap.size() == 0)
+			return;
 		dbConnInfoIdx = dbConnInfoIdx == dbConnInfoIdxMap.size() - 1 ? 0 : dbConnInfoIdx + 1;
 		bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, dbConnInfoIdx, dbInfoCntText);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 다음 서버 접속정보 페이지로 이동한다.
+	 * 
 	 * @param e
 	 */
 	public void nextServerConnInfo(ActionEvent e) {
-		if(serverConnInfoIdxMap.size() == 0) return;
+		if (serverConnInfoIdxMap.size() == 0)
+			return;
 		serverConnInfoIdx = serverConnInfoIdx == serverConnInfoIdxMap.size() - 1 ? 0 : serverConnInfoIdx + 1;
 		bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, serverConnInfoIdx, serverInfoCntText);
 	}
-	
+
 	/**
-	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다.
-	 * 사용자가 선택한 파일의 경로에서 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다.
-	 * 그렇지 않다면, '잘못된 파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
+	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 사용자가 선택한 파일의 경로에서
+	 * 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 그렇지 않다면, '잘못된
+	 * 파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
+	 * 
 	 * @param e
 	 */
 	public void openFileChooser(ActionEvent e) {
 		FileChooser fileChooser = new FileChooser();
-		
+
 		// 선택가능한 Extension 제한
 		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("Properties", ".properties"));
-		
+
 		// 초기 파일경로 지정
 		fileChooser.setInitialDirectory(new File("./config"));
-		
+
 		// 파일 선택창 열고, 선택된 파일 반환받음
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
 
-		if(selectedFile == null) {
-			// NOTHING 
+		if (selectedFile == null) {
+			// NOTHING
 		} else {
-			if(selectedFile.isFile() && selectedFile.exists()) {
+			if (selectedFile.isFile() && selectedFile.exists()) {
 				// 올바른 파일
 				String filePath = selectedFile.getAbsolutePath();
 				loadSelectedConfigFile(filePath);
@@ -318,44 +362,45 @@ public class SettingMenuController implements Initializable {
 			}
 		}
 	}
-	
+
 	/**
 	 * [설정] - 프로퍼티파일을 읽는다.
+	 * 
 	 * @param filePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
 		boolean loadResult = false;
-		
+
 		try {
 			// 1. 절대경로를 상대경로로 변환한다.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
-			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);	
-			
+			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
+
 			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
 			propertyRepository.loadConnectionInfoConfig(filePath);
-			
+
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
 			// 4. 첫번째 접속정보를 맨 앞으로 가져온다.
 			bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, 0, dbInfoCntText);
 			bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
-			
+
 			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propertyRepository.getConfiguration("rememberConfig");
-		    rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
-		    propertyRepository.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
+			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
+			propertyRepository.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
-		    // 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
-			fileChooserText.setText(filePath);	
+			// 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+			fileChooserText.setText(filePath);
 
 			loadResult = true;
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		} finally {
-			
+
 			// 7. 파일 load가 완료되었다는 메시지를 띄운다.
-			if(loadResult) {
+			if (loadResult) {
 				Alert successAlert = new Alert(AlertType.INFORMATION);
 				successAlert.setHeaderText("설정파일 불러오기");
 				successAlert.setContentText("설정파일을 정상적으로 불러왔습니다.");
@@ -370,7 +415,7 @@ public class SettingMenuController implements Initializable {
 			}
 		}
 	}
-	
+
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
 		dbMonitorings = propertyRepository.getDBMonitoringContents();
@@ -381,211 +426,210 @@ public class SettingMenuController implements Initializable {
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - 변경사항을 .properties파일에 저장한다.
+	 * 
 	 * @param e
 	 */
 	public void saveConnInfoSettings(ActionEvent e) {
-		// TODO 입력값 검사 
-	
+		// TODO 입력값 검사
+
 		String configFilePath = fileChooserText.getText();
 		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
-		
+
 		/*
 		 * DB 접속정보 StackPane에서 얻어내야 할 데이터
 		 * 
-		 * (TextField) 		{dbName}HostTextField				{dbName}.jdbc.host
-		 * (TextField) 		{dbName}PortTextField				{dbName}.jdbc.port
-		 * (TextField) 		{dbName}SIDTextField				{dbName}		
-		 * (TextField) 		{dbName}UrlTextField				{dbName}.jdbc.url
-		 * (TextField) 		{dbName}AliasTextField				{dbName}.jdbc.alias
-		 * (TextField) 		{dbName}UserTextField				{dbName}.jdbc.id
-		 * (PasswordField) 	{dbName}PasswordTextField			{dbName}.jdbc.pw
-		 * (JFXComboBox) 	{dbName}DriverComboBox				{dbName}.jdbc.driver
+		 * (TextField) {dbName}HostTextField {dbName}.jdbc.host (TextField)
+		 * {dbName}PortTextField {dbName}.jdbc.port (TextField) {dbName}SIDTextField
+		 * {dbName} (TextField) {dbName}UrlTextField {dbName}.jdbc.url (TextField)
+		 * {dbName}AliasTextField {dbName}.jdbc.alias (TextField) {dbName}UserTextField
+		 * {dbName}.jdbc.id (PasswordField) {dbName}PasswordTextField {dbName}.jdbc.pw
+		 * (JFXComboBox) {dbName}DriverComboBox {dbName}.jdbc.driver
 		 */
-		
+
 		List<String> dbNames = new ArrayList<String>(Arrays.asList(propertyRepository.getMonitoringDBNames()));
-		for(AnchorPane ap : dbConnInfoIdxMap.values()) {
+		for (AnchorPane ap : dbConnInfoIdxMap.values()) {
 			String apId = ap.getId();
-			
+
 			Matcher m = DB_CONNINFO_AP_NAME_PATTERN.matcher(apId);
-			if(m.matches()) {
+			if (m.matches()) {
 				String elementId = m.group(1);
 				String newElementId = elementId;
 				boolean isNewConnInfo = false;
-				
+
 				// 새로 추가된 접속정보
-				if(!dbNames.contains(elementId)) {
+				if (!dbNames.contains(elementId)) {
 					Set<Node> textFields = ap.lookupAll("TextField");
-					for(Node n : textFields) {
-						if(((TextField) n).getId().equals(elementId + "AliasTextField")) {
+					for (Node n : textFields) {
+						if (((TextField) n).getId().equals(elementId + "AliasTextField")) {
 							isNewConnInfo = true;
 							newElementId = ((TextField) n).getText();
 							logger.debug("NEW dbName : " + newElementId);
 							break;
 						}
 					}
-				} 
-				
+				}
+
 				String elementIdLower = newElementId.toLowerCase();
-			
+
 				// dbNames 추가
-				if(isNewConnInfo) {
+				if (isNewConnInfo) {
 					dbNames.add(newElementId);
 					config.setProperty("#DB", newElementId);
 					config.setProperty(elementIdLower + ".jdbc.validation", "select 1 from dual");
 					config.setProperty(elementIdLower + ".jdbc.connections", 10);
 				}
-				
+
 				// TextField Value Update
 				Set<Node> textFields = ap.lookupAll("TextField");
-				for(Node n : textFields) {
+				for (Node n : textFields) {
 					TextField tf = (TextField) n;
 					String tfId = tf.getId();
 					String tfText = tf.getText();
-					
-					if(tfId.equals(elementId + "UserTextField")) {
+
+					if (tfId.equals(elementId + "UserTextField")) {
 						config.setProperty(elementIdLower + ".jdbc.id", tfText);
-					} else if(tfId.equals(elementId + "UrlTextField")) {
+					} else if (tfId.equals(elementId + "UrlTextField")) {
 						config.setProperty(elementIdLower + ".jdbc.url", tfText);
-					} else if(tfId.equals(elementId + "AliasTextField")) {
+					} else if (tfId.equals(elementId + "AliasTextField")) {
 						config.setProperty(elementIdLower + ".jdbc.alias", tfText);
-					} 
+					}
 				}
-				
+
 				// PasswordField Value Update
 				Set<Node> passwordFields = ap.lookupAll("PasswordField");
-				for(Node n : passwordFields) {
+				for (Node n : passwordFields) {
 					PasswordField pf = (PasswordField) n;
 					String pfId = pf.getId();
 					String pfText = pf.getText();
-					
-					if(pfId.equals(elementId + "PasswordTextField")) {
+
+					if (pfId.equals(elementId + "PasswordTextField")) {
 						config.setProperty(elementIdLower + ".jdbc.pw", pfText);
-					} 
+					}
 				}
-				
+
 				// JFXComboBox Value Update
 				Set<Node> comboBoxs = ap.lookupAll("JFXComboBox");
-				for(Node n : comboBoxs) {
+				for (Node n : comboBoxs) {
 					@SuppressWarnings("unchecked")
 					JFXComboBox<String> cb = (JFXComboBox<String>) n;
 					String cbId = cb.getId();
 					String cbSelectedItem = cb.getSelectionModel().getSelectedItem();
-					
-					if(cbId.equals(elementId + "DriverComboBox")) {
-						if(cbSelectedItem.equals("thin")) {
+
+					if (cbId.equals(elementId + "DriverComboBox")) {
+						if (cbSelectedItem.equals("thin")) {
 							// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
 							config.setProperty(elementIdLower + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
 						}
-					} 
+					}
 				}
 			}
 		}
 		// dbNames Update
 		config.setProperty("dbnames", dbNames);
 
-		
 		/*
 		 * 서버 접속정보 StackPane에서 얻어내야 할 데이터
 		 * 
-		 * (TextField) 		{ServerName}HostTextField				{ServerName}.server.host
-		 * (TextField) 		{ServerName}PortTextField				{ServerName}.server.port
-		 * (TextField) 		{ServerName}NameTextField				{ServerName}		
-		 * (TextField) 		{ServerName}UserNameTextField			{ServerName}.server.username
-		 * (TextField) 		{ServerName}AlertLogFilePathTextField	{ServerName}.server.alertlog.filepath
-		 * (PasswordField) 	{ServerName}PasswordTextField			{ServerName}.server.password
-		 * (JFXComboBox) 	{ServerName}AlertLogDateFormatComboBox	{ServerName}.server.alertlog.dateformat
+		 * (TextField) {ServerName}HostTextField {ServerName}.server.host (TextField)
+		 * {ServerName}PortTextField {ServerName}.server.port (TextField)
+		 * {ServerName}NameTextField {ServerName} (TextField)
+		 * {ServerName}UserNameTextField {ServerName}.server.username (TextField)
+		 * {ServerName}AlertLogFilePathTextField {ServerName}.server.alertlog.filepath
+		 * (PasswordField) {ServerName}PasswordTextField {ServerName}.server.password
+		 * (JFXComboBox) {ServerName}AlertLogDateFormatComboBox
+		 * {ServerName}.server.alertlog.dateformat
 		 */
 		List<String> serverNames = new ArrayList<String>(Arrays.asList(config.getStringArray("servernames")));
-		for(AnchorPane ap : serverConnInfoIdxMap.values()) {
+		for (AnchorPane ap : serverConnInfoIdxMap.values()) {
 			String apId = ap.getId();
-			
+
 			Matcher m = SERVER_CONNINFO_AP_NAME_PATTERN.matcher(apId);
-			if(m.matches()) {
+			if (m.matches()) {
 				String elementId = m.group(1);
 				String newElementId = elementId;
 				boolean isNewConnInfo = false;
-				
+
 				// 새로 추가된 접속정보
-				if(!serverNames.contains(elementId)) {
+				if (!serverNames.contains(elementId)) {
 					Set<Node> textFields = ap.lookupAll("TextField");
-					for(Node n : textFields) {
-						if(((TextField) n).getId().equals(elementId + "NameTextField")) {
+					for (Node n : textFields) {
+						if (((TextField) n).getId().equals(elementId + "NameTextField")) {
 							isNewConnInfo = true;
 							newElementId = ((TextField) n).getText();
 							logger.debug("NEW ServerName : " + newElementId);
 							break;
 						}
 					}
-				} 
-				
+				}
+
 				String elementIdLower = newElementId.toLowerCase();
-			
+
 				// ServerNames 추가
-				if(isNewConnInfo) {
+				if (isNewConnInfo) {
 					serverNames.add(newElementId);
 					config.setProperty("#Server", newElementId);
 					config.setProperty(elementIdLower + ".server.alertlog.readLine", 500);
 				}
-				
+
 				// TextField Value Update
 				Set<Node> textFields = ap.lookupAll("TextField");
-				for(Node n : textFields) {
+				for (Node n : textFields) {
 					TextField tf = (TextField) n;
 					String tfId = tf.getId();
 					String tfText = tf.getText();
-					
-					if(tfId.equals(elementId + "HostTextField")) {
+
+					if (tfId.equals(elementId + "HostTextField")) {
 						config.setProperty(elementIdLower + ".server.host", tfText);
-					} else if(tfId.equals(elementId + "PortTextField")) {
+					} else if (tfId.equals(elementId + "PortTextField")) {
 						config.setProperty(elementIdLower + ".server.port", tfText);
-					} else if(tfId.equals(elementId + "UserNameTextField")) {
+					} else if (tfId.equals(elementId + "UserNameTextField")) {
 						config.setProperty(elementIdLower + ".server.username", tfText);
-					} else if(tfId.equals(elementId + "AlertLogFilePathTextField")) {
+					} else if (tfId.equals(elementId + "AlertLogFilePathTextField")) {
 						config.setProperty(elementIdLower + ".server.alertlog.filepath", tfText);
-					} 
+					}
 				}
-				
+
 				// PasswordField Value Update
 				Set<Node> passwordFields = ap.lookupAll("PasswordField");
-				for(Node n : passwordFields) {
+				for (Node n : passwordFields) {
 					PasswordField pf = (PasswordField) n;
 					String pfId = pf.getId();
 					String pfText = pf.getText();
-					
-					if(pfId.equals(elementId + "PasswordTextField")) {
+
+					if (pfId.equals(elementId + "PasswordTextField")) {
 						config.setProperty(elementIdLower + ".server.password", pfText);
-					} 
+					}
 				}
-				
+
 				// JFXComboBox Value Update
 				Set<Node> comboBoxs = ap.lookupAll("JFXComboBox");
-				for(Node n : comboBoxs) {
+				for (Node n : comboBoxs) {
 					@SuppressWarnings("unchecked")
 					JFXComboBox<String> cb = (JFXComboBox<String>) n;
 					String cbId = cb.getId();
 					String cbSelectedItem = cb.getSelectionModel().getSelectedItem();
-					
-					if(cbId.equals(elementId + "AlertLogDateFormatComboBox")) {
+
+					if (cbId.equals(elementId + "AlertLogDateFormatComboBox")) {
 						config.setProperty(elementIdLower + ".server.alertlog.dateformat", cbSelectedItem);
-						if(isNewConnInfo) {
+						if (isNewConnInfo) {
 							String dateFormatRegex = "";
-							if(cbSelectedItem.equals("EEE MMM dd HH:mm:ss yyyy")) {
+							if (cbSelectedItem.equals("EEE MMM dd HH:mm:ss yyyy")) {
 								dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
 							} else if (cbSelectedItem.equals("yyyy-MM-dd")) {
 								dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
 							}
 							config.setProperty(elementIdLower + ".server.alertlog.dateformatregex", dateFormatRegex);
 						}
-					} 
+					}
 				}
 			}
 		}
 		// ServerNames Update
 		config.setProperty("servernames", serverNames);
-		
+
 		// 변경사항 저장
 		propertyRepository.save(configFilePath, config);
 		// 설정파일 ReLoading
@@ -594,21 +638,22 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * [설정] - [모니터링 여부 설정] - 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
+	 * 
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
 		PropertiesConfiguration config = PropertiesUtils.monitoringConfig;
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
-		
-		if(!monitoringFilePath.isEmpty()) {
-			for(Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
+
+		if (!monitoringFilePath.isEmpty()) {
+			for (Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
 				JFXToggleButton thisToggle = (JFXToggleButton) n;
 				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
 			}
 			propertyRepository.save(monitoringFilePath, config);
 			loadMonitoringConfigFile(monitoringFilePath);
-			
+
 			Alert failAlert = new Alert(AlertType.INFORMATION);
 			failAlert.setHeaderText("설정 저장");
 			failAlert.setContentText("모니터링여부 설정이 저장되었습니다.");
@@ -619,30 +664,32 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * 모니터링 여부 설정할 요소들 동적 생성
+	 * 
 	 * @param rootVBox
 	 * @param monitoringElements
 	 * @param elementContents
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
-		for(String mName : monitoringElements) {
+		for (String mName : monitoringElements) {
 			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
-			
+
 			// Header
 			VBox eachWrapVBox = new VBox();
 			eachWrapVBox.setFillWidth(true);
-			
+
 			HBox headerHBox = new HBox();
 			headerHBox.setFillHeight(true);
 			headerHBox.setPrefHeight(40);
-			
+
 			Label headerLabel = new Label();
 			headerLabel.setText(mName);
 			headerLabel.setTextAlignment(TextAlignment.LEFT);
 			headerLabel.setAlignment(Pos.CENTER_LEFT);
 			headerLabel.setPrefWidth(200);
 			headerLabel.setPrefHeight(40);
-			headerLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 14px;");
-			
+			headerLabel.setStyle(
+					"-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 14px;");
+
 			JFXToggleButton headerToggleBtn = new JFXToggleButton();
 			headerToggleBtn.setId(headerToggleId);
 			headerToggleBtn.setSize(6);
@@ -652,19 +699,19 @@ public class SettingMenuController implements Initializable {
 			headerToggleBtn.setSelected(propertyRepository.isMonitoringContent(headerToggleId));
 			headerToggleBtn.setOnAction((ActionEvent e) -> {
 				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-				for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
+				for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 					((JFXToggleButton) n).setSelected(isSelected);
 				}
 			});
-			
+
 			headerHBox.getChildren().addAll(headerToggleBtn, headerLabel);
-			
+
 			// Content
 			FlowPane contentFlowPane = new FlowPane();
 			contentFlowPane.prefWidthProperty().bind(rootVBox.widthProperty());
 			contentFlowPane.minWidthProperty().bind(rootVBox.minWidthProperty());
-			
-			for(String s : elementContents) {
+
+			for (String s : elementContents) {
 				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
 				HBox contentHBox = new HBox();
 				Label contentLabel = new Label();
@@ -675,7 +722,7 @@ public class SettingMenuController implements Initializable {
 				contentLabel.setMaxWidth(80);
 				contentLabel.setPrefHeight(40);
 				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-size: 12px;");
-				
+
 				JFXToggleButton contentToggleBtn = new JFXToggleButton();
 				contentToggleBtn.setId(contentToggleId);
 				contentToggleBtn.setSize(4);
@@ -686,73 +733,68 @@ public class SettingMenuController implements Initializable {
 				contentToggleBtn.setSelected(propertyRepository.isMonitoringContent(contentToggleId));
 				contentToggleBtn.setOnAction((ActionEvent e) -> {
 					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-					
+
 					/*
-						1. 하위요소가 선택되었을 때, 
-							1.1. 부모요소가 선택되었는지 확인
-						 		1.1.1. 선택됨 	- break;
-						 		1.1.2. 선택안됨 	- isSelected = true
-						2. 하위요소가 선택되지 않았을 때,
-							2.1. 부모요소가 선택되었는지 확인
-								2.1.1. 선택안됨	- break;
-								2.1.2. 선택됨		
-									2.1.2.1. 모든 하위요소 선택여부 확인
-										2.1.2.1.1. 모든 하위요소 선택되지않음 - 부모요소 isSelected = false;
-					*/
-					if(isSelected == true) {
-						for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
+					 * 1. 하위요소가 선택되었을 때, 1.1. 부모요소가 선택되었는지 확인 1.1.1. 선택됨 - break; 1.1.2. 선택안됨 -
+					 * isSelected = true 2. 하위요소가 선택되지 않았을 때, 2.1. 부모요소가 선택되었는지 확인 2.1.1. 선택안됨 -
+					 * break; 2.1.2. 선택됨 2.1.2.1. 모든 하위요소 선택여부 확인 2.1.2.1.1. 모든 하위요소 선택되지않음 - 부모요소
+					 * isSelected = false;
+					 */
+					if (isSelected == true) {
+						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if(thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
-								if(thisToggle.isSelected() == false) {
+							if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
+								if (thisToggle.isSelected() == false) {
 									thisToggle.setSelected(true);
 									break;
 								}
-							} 
+							}
 						}
 					} else {
 						boolean isNotAllSelected = false;
 						boolean isParentSelected = true;
-						for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
+						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if(thisToggle.getId().equals(headerToggleId) == false) { // 자식 Toggle
-								if(thisToggle.isSelected() == true) {
+							if (thisToggle.getId().equals(headerToggleId) == false) { // 자식 Toggle
+								if (thisToggle.isSelected() == true) {
 									isNotAllSelected = true;
 									break;
 								}
 							} else {
-								if(thisToggle.isSelected() == false) {
+								if (thisToggle.isSelected() == false) {
 									isParentSelected = false;
 									break;
 								}
 							}
 						}
-						
-						if(isNotAllSelected == false && isParentSelected == true) {
-							for(Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
+
+						if (isNotAllSelected == false && isParentSelected == true) {
+							for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
 								JFXToggleButton thisToggle = (JFXToggleButton) n;
-								if(thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
+								if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
 									thisToggle.setSelected(false);
 									break;
-								} 
+								}
 							}
 						}
 					}
 				});
-				
+
 				contentHBox.getChildren().addAll(contentToggleBtn, contentLabel);
 				contentFlowPane.getChildren().addAll(contentHBox);
 			}
-			
+
 			eachWrapVBox.getChildren().addAll(headerHBox, contentFlowPane);
 
 			rootVBox.getChildren().addAll(eachWrapVBox);
 		}
-		
+
 		rootVBox.getChildren().add(new Separator());
 	}
 
 	/**
 	 * DB 접속정보 동적 생성
+	 * 
 	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
 	 */
 	private void createJdbcConnInfoElements(StackPane rootStackPane, JdbcConnectionInfo connInfo, String elementId) {
@@ -769,7 +811,7 @@ public class SettingMenuController implements Initializable {
 		AnchorPane.setLeftAnchor(dbConnInfoDetailGP, 5.0);
 		dbConnInfoDetailGP.setPadding(new Insets(5, 10, 5, 10));
 		dbConnInfoDetailGP.setStyle("-fx-background-color: white;");
-		
+
 		// GridPane Col/Row Constraints Setting
 		ColumnConstraints col1 = new ColumnConstraints();
 		ColumnConstraints col2 = new ColumnConstraints();
@@ -813,7 +855,8 @@ public class SettingMenuController implements Initializable {
 		dbPortLabel.setPadding(new Insets(0, 0, 0, 10));
 		dbDriverLabel.setPadding(new Insets(0, 0, 0, 10));
 		dbAliasLabel.setPadding(new Insets(0, 0, 0, 10));
-		setLabelsStyleClass("gridTitleLabel", dbHostLabel, dbSIDLabel, dbUserLabel, dbPasswordLabel, dbUrlLabel, dbPortLabel, dbDriverLabel, dbAliasLabel);
+		setLabelsStyleClass("gridTitleLabel", dbHostLabel, dbSIDLabel, dbUserLabel, dbPasswordLabel, dbUrlLabel,
+				dbPortLabel, dbDriverLabel, dbAliasLabel);
 
 		// Create TextField
 		TextField dbHostTextField = new TextField();
@@ -829,7 +872,7 @@ public class SettingMenuController implements Initializable {
 		dbUrlTextField.setPrefWidth(424.0);
 		dbPasswordTextField.setPromptText("<hidden>");
 		dbDriverComboBox.getItems().addAll(propertyRepository.getOracleDrivers());
-		
+
 		// Setting TextField ID
 		dbHostTextField.setId(elementId + "HostTextField");
 		dbSIDTextField.setId(elementId + "SIDTextField");
@@ -839,7 +882,7 @@ public class SettingMenuController implements Initializable {
 		dbPortTextField.setId(elementId + "PortTextField");
 		dbAliasTextField.setId(elementId + "AliasTextField");
 		dbDriverComboBox.setId(elementId + "DriverComboBox");
-		
+
 		// TODO 새로 추가되는 접속정보 AP에서 Driver, URL 기본값 세팅
 		// TextField Value Setting
 		dbHostTextField.setText(connInfo.getJdbcHost());
@@ -850,26 +893,37 @@ public class SettingMenuController implements Initializable {
 		dbPortTextField.setText(connInfo.getJdbcPort());
 		dbAliasTextField.setText(connInfo.getJdbcDBName());
 		dbDriverComboBox.getSelectionModel().select(connInfo.getJdbcOracleDriver());
-		
+
 		// TextField onKeyPressedListener
 		String dbms = "oracle";
-		dbDriverComboBox.setOnInputMethodTextChanged(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbHostTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbPortTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
-		dbSIDTextField.setOnKeyReleased(s -> dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbDriverComboBox.setOnInputMethodTextChanged(s -> dbUrlTextField
+				.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(),
+						dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbHostTextField.setOnKeyReleased(s -> dbUrlTextField
+				.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(),
+						dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbPortTextField.setOnKeyReleased(s -> dbUrlTextField
+				.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(),
+						dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
+		dbSIDTextField.setOnKeyReleased(s -> dbUrlTextField
+				.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(),
+						dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText())));
 		dbUrlTextField.setOnKeyReleased(s -> {
-			String text = ((TextField)s.getSource()).getText();
-			Pattern p = Pattern.compile("(.*):(.*):" + dbDriverComboBox.getSelectionModel().getSelectedItem() + ":@(.*):(.*)/(.*)");
+			String text = ((TextField) s.getSource()).getText();
+			Pattern p = Pattern.compile(
+					"(.*):(.*):" + dbDriverComboBox.getSelectionModel().getSelectedItem() + ":@(.*):(.*)/(.*)");
 			Matcher m = p.matcher(text);
-			if(m.matches()) {
+			if (m.matches()) {
 				dbHostTextField.setText(m.group(3));
 				dbPortTextField.setText(m.group(4));
 				dbSIDTextField.setText(m.group(5));
 			} else {
-				dbUrlTextField.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(), dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
+				dbUrlTextField
+						.setText(generateJdbcURLString(dbms, dbDriverComboBox.getSelectionModel().getSelectedItem(),
+								dbHostTextField.getText(), dbPortTextField.getText(), dbSIDTextField.getText()));
 			}
-		});	
-		
+		});
+
 		// GridPane Value Setting
 		dbConnInfoDetailGP.addRow(0, dbHostLabel, dbHostTextField, dbPortLabel, dbPortTextField);
 		dbConnInfoDetailGP.addRow(1, dbSIDLabel, dbSIDTextField, dbDriverLabel, dbDriverComboBox);
@@ -880,13 +934,14 @@ public class SettingMenuController implements Initializable {
 		GridPane.setColumnSpan(dbUserTextField, 2);
 		GridPane.setColumnSpan(dbPasswordTextField, 2);
 		GridPane.setColumnSpan(dbUrlTextField, 3);
-		
+
 		dbConnInfoDetailAP.getChildren().add(dbConnInfoDetailGP);
 		rootStackPane.getChildren().add(dbConnInfoDetailAP);
 	}
-	
+
 	/**
 	 * 서버 접속정보 동적 생성
+	 * 
 	 * @param rootStackPane 접속정보 Layout을 담을 StackPane
 	 */
 	private void createJschConnInfoElements(StackPane rootStackPane, JschConnectionInfo connInfo, String elementId) {
@@ -894,7 +949,7 @@ public class SettingMenuController implements Initializable {
 		connInfoDetailAP.setId("serverConnInfo" + elementId + "AP");
 		connInfoDetailAP.setStyle("-fx-background-color: white");
 		serverConnInfoIdxMap.put(serverConnInfoIdxMap.size(), connInfoDetailAP);
-		
+
 		// GridPane Margin Setting
 		GridPane connInfoDetailGP = new GridPane();
 		AnchorPane.setTopAnchor(connInfoDetailGP, 5.0);
@@ -904,7 +959,7 @@ public class SettingMenuController implements Initializable {
 		connInfoDetailGP.setId(elementId + "connInfoGP");
 		connInfoDetailGP.setPadding(new Insets(5, 10, 5, 10));
 		connInfoDetailGP.setStyle("-fx-background-color: white;");
-		
+
 		// GridPane Col/Row Constraints Setting
 		ColumnConstraints col1 = new ColumnConstraints();
 		ColumnConstraints col2 = new ColumnConstraints();
@@ -948,8 +1003,9 @@ public class SettingMenuController implements Initializable {
 		Label serverPortLabel = new Label("Port :");
 		Label serverAlertLogDateFormatLabel = new Label("AlertLog DateFormat :");
 		serverPortLabel.setPadding(new Insets(0, 0, 0, 10));
-		setLabelsStyleClass("gridTitleLabel", serverHostLabel, serverNameLabel, serverUserNameLabel, serverPasswordLabel, serverAlertLogFilePathLabel, serverPortLabel, serverAlertLogDateFormatLabel);
-		
+		setLabelsStyleClass("gridTitleLabel", serverHostLabel, serverNameLabel, serverUserNameLabel,
+				serverPasswordLabel, serverAlertLogFilePathLabel, serverPortLabel, serverAlertLogDateFormatLabel);
+
 		// Create TextField
 		TextField serverHostTextField = new TextField();
 		TextField serverNameTextField = new TextField();
@@ -962,9 +1018,10 @@ public class SettingMenuController implements Initializable {
 		serverPasswordTextField.setPrefWidth(200.0);
 		serverAlertLogFilePathTextField.setPrefWidth(424.0);
 		serverAlertLogDateFormatComboBox.setPrefWidth(424.0);
-		serverAlertLogDateFormatComboBox.getItems().addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+		serverAlertLogDateFormatComboBox.getItems()
+				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
 		serverPasswordTextField.setPromptText("<hidden>");
-		
+
 		// Setting TextField ID
 		serverHostTextField.setId(elementId + "HostTextField");
 		serverNameTextField.setId(elementId + "NameTextField");
@@ -973,7 +1030,7 @@ public class SettingMenuController implements Initializable {
 		serverAlertLogFilePathTextField.setId(elementId + "AlertLogFilePathTextField");
 		serverPortTextField.setId(elementId + "PortTextField");
 		serverAlertLogDateFormatComboBox.setId(elementId + "AlertLogDateFormatComboBox");
-		
+
 		// TODO 새로 추가되는 접속정보 AP에서 DateFormat ComboBox 기본값 세팅
 		// TextField Value Setting
 		serverHostTextField.setText(connInfo.getHost());
@@ -981,9 +1038,11 @@ public class SettingMenuController implements Initializable {
 		serverUserNameTextField.setText(connInfo.getUserName());
 		serverPasswordTextField.setText(connInfo.getPassword());
 		serverAlertLogFilePathTextField.setText(connInfo.getAlc() == null ? "" : connInfo.getAlc().getReadFilePath());
-		serverPortTextField.setText(String.valueOf(connInfo.getPort()).equals("0") ? "" : String.valueOf(connInfo.getPort()));
-		serverAlertLogDateFormatComboBox.getSelectionModel().select(connInfo.getAlc() == null ? "" : connInfo.getAlc().getDateFormat());
-		
+		serverPortTextField
+				.setText(String.valueOf(connInfo.getPort()).equals("0") ? "" : String.valueOf(connInfo.getPort()));
+		serverAlertLogDateFormatComboBox.getSelectionModel()
+				.select(connInfo.getAlc() == null ? "" : connInfo.getAlc().getDateFormat());
+
 		// GridPane Value Setting
 		connInfoDetailGP.addRow(0, serverHostLabel, serverHostTextField, serverPortLabel, serverPortTextField);
 		connInfoDetailGP.addRow(1, serverNameLabel, serverNameTextField);
@@ -996,24 +1055,26 @@ public class SettingMenuController implements Initializable {
 		GridPane.setColumnSpan(serverPasswordTextField, 2);
 		GridPane.setColumnSpan(serverAlertLogFilePathTextField, 3);
 		GridPane.setColumnSpan(serverAlertLogDateFormatComboBox, 3);
-		
+
 		connInfoDetailAP.getChildren().add(connInfoDetailGP);
 		rootStackPane.getChildren().add(connInfoDetailAP);
 	}
 
 	/**
 	 * Label의 클래스를 설정한다.
+	 * 
 	 * @param styleClass
 	 * @param labels
 	 */
-	private void setLabelsStyleClass(String styleClass, Label...labels) {
-		for(Label l : labels) {
+	private void setLabelsStyleClass(String styleClass, Label... labels) {
+		for (Label l : labels) {
 			l.getStyleClass().add(styleClass);
 		}
 	}
-	
+
 	/**
 	 * [설정] - [접속정보 설정] - URL TextField의 Value를 결정한다.
+	 * 
 	 * @param dbms
 	 * @param driver
 	 * @param host
@@ -1023,17 +1084,17 @@ public class SettingMenuController implements Initializable {
 	 */
 	private String generateJdbcURLString(String dbms, String driver, String host, String port, String sid) {
 		StringBuffer sb = new StringBuffer();
-		sb.append("jdbc:").append(dbms).append(":").append(driver).append(":@")
-		.append(host).append(":").append(port).append("/").append(sid);
+		sb.append("jdbc:").append(dbms).append(":").append(driver).append(":@").append(host).append(":").append(port)
+				.append("/").append(sid);
 		return sb.toString();
 	}
-	
+
 	/**
 	 * [설정] - 설정파일을 불러온 후, 동적 UI를 생성한다.
 	 */
 	private void createSettingDynamicElements() {
 		boolean createResult = false;
-		
+
 		try {
 			// 기존 요소 초기화
 			dbConnInfoIdx = 0;
@@ -1042,20 +1103,20 @@ public class SettingMenuController implements Initializable {
 			serverConnInfoStackPane.getChildren().removeIf(c -> !c.getId().contains("noPropertiesFileAP1"));
 			dbConnInfoIdxMap.clear();
 			serverConnInfoIdxMap.clear();
-			
+
 			dbNames = propertyRepository.getMonitoringDBNames();
 			serverNames = propertyRepository.getMonitoringServerNames();
-			
+
 			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 			jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 			alcMap = PropertiesUtils.getAlertLogCommandMap();
-			
+
 			// [설정] - [모니터링 여부 설정]
 			reloadingMonitoringSetting("");
 
 			// [설정] - [접속정보 설정] TAB 동적 요소 생성
-			if(jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
-				dbConnInfoNoDataAP.setVisible(true);	
+			if (jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
+				dbConnInfoNoDataAP.setVisible(true);
 				dbInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
 			} else {
 				dbConnInfoNoDataAP.setVisible(true);
@@ -1064,9 +1125,9 @@ public class SettingMenuController implements Initializable {
 				});
 				dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
 			}
-			
-			if(jschConnInfoList.size() == 0) { // 서버 접속정보 없음
-				serverConnInfoNoDataAP.setVisible(true);	
+
+			if (jschConnInfoList.size() == 0) { // 서버 접속정보 없음
+				serverConnInfoNoDataAP.setVisible(true);
 				serverInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
 			} else {
 				serverConnInfoNoDataAP.setVisible(true);
@@ -1076,25 +1137,26 @@ public class SettingMenuController implements Initializable {
 				});
 				serverInfoCntText.setText("(" + (serverConnInfoIdx + 1) + "/" + serverConnInfoIdxMap.size() + ")");
 			}
-			
+
 			createResult = true;
 		} catch (Exception e) {
 			createResult = false;
 		} finally {
-			if(createResult) {
-				// Hide No Properties File AnchorPane 
+			if (createResult) {
+				// Hide No Properties File AnchorPane
 				noPropertiesFileAP1.setVisible(false);
 				noPropertiesFileAP2.setVisible(false);
 			} else {
-				// Show No Properties File AnchorPane 
+				// Show No Properties File AnchorPane
 				noPropertiesFileAP1.setVisible(true);
-				noPropertiesFileAP2.setVisible(true);	
+				noPropertiesFileAP2.setVisible(true);
 			}
 		}
 	}
 
 	/**
 	 * [설정] - [모니터링여부설정] - Preset을 다시 불러온다.
+	 * 
 	 * @param curPresetName
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
@@ -1106,18 +1168,19 @@ public class SettingMenuController implements Initializable {
 		// Preset Map & Preset Combo Clear
 		monitoringPresetMap.clear();
 		monitoringPresetComboBox.getItems().clear();
-		
-		// 모니터링여부 설정 Preset Map 값 초기화 
+
+		// 모니터링여부 설정 Preset Map 값 초기화
 		monitoringPresetMap = propertyRepository.getMonitoringPresetMap();
 		String lastUsePresetName = propertyRepository.getLastUseMonitoringPresetName();
-		
+
 		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
 		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
-		
-		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
-		if(presetName.isEmpty()) {
+
+		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로
+		// 세팅한다.
+		if (presetName.isEmpty()) {
 			// 최근 사용된 모니터링 설정 읽기
-			if(lastUsePresetName.isEmpty() && monitoringPresetComboBox.getItems().size() != 0) {
+			if (lastUsePresetName.isEmpty() && monitoringPresetComboBox.getItems().size() != 0) {
 				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
 				readPresetName = monitoringPresetComboBox.getItems().get(0);
 				logger.debug("첫번째 Preset: " + readPresetName);
@@ -1133,10 +1196,66 @@ public class SettingMenuController implements Initializable {
 		logger.debug("readPresetName : " + readPresetName);
 		logger.debug("readPresetFilePath : " + readPresetFilePath);
 
-		// ComboBox 선택 및 Preset 파일 읽기 
-		if(!readPresetName.isEmpty()) {
+		// ComboBox 선택 및 Preset 파일 읽기
+		if (!readPresetName.isEmpty()) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
 			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
 		}
+	}
+
+	/**
+	 * [설정] - [접속정보설정] - 입력된 설정 값으로 DB 연동 테스트를 시도한다.
+	 * 
+	 * @param e
+	 */
+	public void testDbConnection(ActionEvent e) {
+		// 1. 현재 dbConnInfoStackPane 의 최상단에 있는 접속정보를 가져온다.
+		// 2. JdbcConnectionInfo 객체를 생성한다.
+		// 3. Usecase를 이용하거나 static 메서드를 이용하여 커넥션 시도
+		// 4. 커넥션 성공 시 성공 Alert, 실패 시 실패 Alert
+
+		AnchorPane curAP = dbConnInfoIdxMap.get(dbConnInfoIdx);
+
+		// Get element Id
+		String curAPId = curAP.getId();
+		int startIdx = curAPId.indexOf("dbConnInfo") + 10;
+		int endIdx = curAPId.lastIndexOf("AP");
+		String elementId = curAPId.substring(startIdx, endIdx);
+
+		// Get TextFields
+		Map<String, String> textFieldMap = curAP.lookupAll("TextField").stream()
+				.collect(Collectors.toMap(Node::getId, (n) -> ((TextField) n).getText()));
+
+		String jdbcUrl = textFieldMap.get(elementId + "UrlTextField");
+		String jdbcId = textFieldMap.get(elementId + "UserTextField");
+
+		// Get PasswordField
+		Map<String, String> passwordFieldMap = curAP.lookupAll("PasswordField").stream()
+				.collect(Collectors.toMap(Node::getId, (n) -> ((PasswordField) n).getText()));
+
+		String jdbcPw = passwordFieldMap.get(elementId + "PasswordTextField");
+
+		// TODO JdbcDriver 하드코딩 변경
+		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
+				"SELECT 1 FROM DUAL", 1);
+		JdbcDatabase db = new JdbcDatabase(jdbc);
+		db.init();
+		boolean isConn = JdbcDatabase.validateConn(db.getConn(), jdbc.getJdbcValidation());
+
+		if (isConn) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
+					"데이터베이스가 성공적으로 연동되었습니다.\nURL: " + jdbc.getJdbcUrl() + "\nDriver: " + jdbc.getJdbcDriver());
+		} else {
+			AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트", "데이터베이스 연동에 실패했습니다. 접속정보를 확인해주세요.\nURL: "
+					+ jdbc.getJdbcUrl() + "\nDriver: " + jdbc.getJdbcDriver());
+		}
+	}
+
+	/**
+	 * [설정] - [접속정보설정] - 입력된 설정 값으로 Server 연동 테스트를 시도한다.
+	 * 
+	 * @param e
+	 */
+	public void testServerConnection(ActionEvent e) {
 	}
 }
