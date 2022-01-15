@@ -110,7 +110,7 @@ public class JdbcDatabase implements AbstractDatabase {
 	 * @param validationQuery the query to be executed with the connection
 	 * @return 1 if valid, else return -1
 	 */
-	public boolean validateConn(Connection conn, String validationQuery) {
+	public static boolean validateConn(Connection conn, String validationQuery) {
 		if (conn == null) {
 			return false;
 		}
