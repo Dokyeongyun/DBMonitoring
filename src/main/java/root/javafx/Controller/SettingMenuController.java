@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.log4j.Logger;
@@ -63,8 +62,8 @@ import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
-import root.javafx.Service.DatabaseConnectService;
-import root.utils.AlertUtils;
+import root.javafx.CustomView.ConnectionInfoVBox;
+import root.javafx.CustomView.DBConnectionInfoAnchorPane;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
@@ -120,6 +119,9 @@ public class SettingMenuController implements Initializable {
 	@FXML
 	FlowPane connectInfoFlowPane; // DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
 
+	@FXML
+	VBox connInfoVBox;
+	
 	@FXML
 	StackPane dbConnInfoStackPane; // DB접속정보 설정 그리드를 담는 컨테이너
 
@@ -404,8 +406,8 @@ public class SettingMenuController implements Initializable {
 			createSettingDynamicElements();
 
 			// 4. 첫번째 접속정보를 맨 앞으로 가져온다.
-			bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, 0, dbInfoCntText);
-			bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
+			//bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, 0, dbInfoCntText);
+			//bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
 
 			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propertyRepository.getConfiguration("rememberConfig");
@@ -444,7 +446,7 @@ public class SettingMenuController implements Initializable {
 
 		propertyRepository.loadMonitoringInfoConfig(filePath);
 
-		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
+	//	createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 	}
 
@@ -1117,35 +1119,39 @@ public class SettingMenuController implements Initializable {
 		boolean createResult = false;
 
 		try {
-			// 기존 요소 초기화
-			dbConnInfoIdx = 0;
-			serverConnInfoIdx = 0;
-			dbConnInfoStackPane.getChildren().removeIf(c -> !c.getId().contains("noPropertiesFileAP2"));
-			serverConnInfoStackPane.getChildren().removeIf(c -> !c.getId().contains("noPropertiesFileAP1"));
-			dbConnInfoIdxMap.clear();
-			serverConnInfoIdxMap.clear();
-
-			dbNames = propertyRepository.getMonitoringDBNames();
-			serverNames = propertyRepository.getMonitoringServerNames();
-
-			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
-			jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 			alcMap = PropertiesUtils.getAlertLogCommandMap();
+			
+			dbNames = propertyRepository.getMonitoringDBNames();
+			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();			
+
+			ConnectionInfoVBox dbConnVBox = new ConnectionInfoVBox();
+			connInfoVBox.getChildren().add(dbConnVBox);
+
+			for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
+				
+				DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+				dbConnAP.getDriverCB().getItems().addAll(propertyRepository.getOracleDrivers());
+				dbConnAP.setInitialValue(jdbc);
+
+				dbConnVBox.addConnectionInfoAP(dbConnAP);
+			}
+
+			// [설정] - [접속정보 설정] TAB 동적 요소 생성
+//			if (connInfoList.size() == 0) { // DB 접속정보 없음
+//				connInfoNoDataAP.setVisible(true);
+//				connInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
+//			} else {
+//				connInfoNoDataAP.setVisible(true);
+//				connInfoList.forEach(info -> {
+////					createJdbcConnInfoElements(connInfoStackPane, info, "info.getJdbcDBName()");
+//				});
+//				connInfoCntText.setText("(" + (connInfoIdx + 1) + "/" + connInfoIdxMap.size() + ")");
+//			}
+			
+			
 
 			// [설정] - [모니터링 여부 설정]
 			reloadingMonitoringSetting("");
-
-			// [설정] - [접속정보 설정] TAB 동적 요소 생성
-			if (jdbcConnInfoList.size() == 0) { // DB 접속정보 없음
-				dbConnInfoNoDataAP.setVisible(true);
-				dbInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
-			} else {
-				dbConnInfoNoDataAP.setVisible(true);
-				jdbcConnInfoList.forEach(info -> {
-					createJdbcConnInfoElements(dbConnInfoStackPane, info, info.getJdbcDBName());
-				});
-				dbInfoCntText.setText("(" + (dbConnInfoIdx + 1) + "/" + dbConnInfoIdxMap.size() + ")");
-			}
 
 			if (jschConnInfoList.size() == 0) { // 서버 접속정보 없음
 				serverConnInfoNoDataAP.setVisible(true);
@@ -1222,64 +1228,6 @@ public class SettingMenuController implements Initializable {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
 			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
 		}
-	}
-
-	/**
-	 * [설정] - [접속정보설정] - 입력된 설정 값으로 DB 연동 테스트를 시도한다.
-	 * 
-	 * @param e
-	 */
-	public void testDbConnection(ActionEvent e) {
-		// TODO dbConnInfoAP에 접속정보가 입력되어있는지 확인 (입력값 검사)
-		// TODO 입력되어있지 않으면 버튼 비활성화
-
-		// 아이콘 변경
-		FontAwesomeIconView icon = (FontAwesomeIconView) dbConnTestBtn.lookup("#icon");
-		icon.setIcon(FontAwesomeIcon.SPINNER);
-		icon.setFill(Paint.valueOf("#484989"));
-		icon.getStyleClass().add("fa-spin");
-
-		AnchorPane curAP = dbConnInfoIdxMap.get(dbConnInfoIdx);
-
-		// Get element Id
-		String curAPId = curAP.getId();
-		int startIdx = curAPId.indexOf("dbConnInfo") + 10;
-		int endIdx = curAPId.lastIndexOf("AP");
-		String elementId = curAPId.substring(startIdx, endIdx);
-
-		// Get TextFields
-		Map<String, String> textFieldMap = curAP.lookupAll("TextField").stream()
-				.collect(Collectors.toMap(Node::getId, (n) -> ((TextField) n).getText()));
-
-		String jdbcUrl = textFieldMap.get(elementId + "UrlTextField");
-		String jdbcId = textFieldMap.get(elementId + "UserTextField");
-
-		// Get PasswordField
-		Map<String, String> passwordFieldMap = curAP.lookupAll("PasswordField").stream()
-				.collect(Collectors.toMap(Node::getId, (n) -> ((PasswordField) n).getText()));
-
-		String jdbcPw = passwordFieldMap.get(elementId + "PasswordTextField");
-
-		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
-		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
-				"SELECT 1 FROM DUAL", 1);
-
-		DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
-		dbConnService.setOnSucceeded(s -> {
-			AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
-					String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
-			icon.setIcon(FontAwesomeIcon.CHECK);
-			icon.setFill(Paint.valueOf("#49a157"));
-		});
-
-		dbConnService.setOnFailed(f -> {
-			AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트",
-					String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
-			icon.setIcon(FontAwesomeIcon.TIMES);
-			icon.setFill(Paint.valueOf("#c40a0a"));
-		});
-
-		dbConnService.start();
 	}
 
 	/**
