@@ -22,7 +22,7 @@
    <children>
       <AnchorPane>
          <children>
-            <Label graphicTextGap="10.0" maxHeight="50.0" minHeight="50.0" text="DB 접속정보" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <Label fx:id="menuTitleLB" graphicTextGap="10.0" maxHeight="50.0" minHeight="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <padding>
                   <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                </padding>
@@ -32,7 +32,7 @@
                   <String fx:value="font-black" />
                </styleClass>
                <graphic>
-                  <FontAwesomeIconView fill="#0132ac" glyphName="DATABASE" selectionFill="BLACK" size="20" />
+                  <FontAwesomeIconView fx:id="menuIconIV" fill="#0132ac" glyphName="" selectionFill="BLACK" size="20" />
                </graphic>
             </Label>
             <ToolBar style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">

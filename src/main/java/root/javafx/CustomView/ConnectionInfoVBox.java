@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -20,17 +21,22 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
-import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
 import root.utils.AlertUtils;
 
+@EqualsAndHashCode(callSuper = false)
+@Data
 public class ConnectionInfoVBox extends VBox {
 
-	/* Dependency Injection */
-	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
-	
+	@FXML
+	Label menuTitleLB;
+
+	@FXML
+	FontAwesomeIconView menuIconIV;
+
 	@FXML
 	StackPane connInfoStackPane; // 접속정보 설정 그리드를 담는 컨테이너
 
@@ -43,11 +49,14 @@ public class ConnectionInfoVBox extends VBox {
 	@FXML
 	JFXButton connTestBtn;
 
+	private Class<? extends AnchorPane> childAPClazz;
+
 	private Map<Integer, AnchorPane> connInfoAPMap = new HashMap<>();
 
 	private int connInfoIdx = 0;
 
-	public ConnectionInfoVBox() {
+	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
+		this.childAPClazz = childAPClazz;
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConnectionInfoVBox.fxml"));
 			loader.setController(this);
@@ -59,6 +68,11 @@ public class ConnectionInfoVBox extends VBox {
 		}
 	}
 
+	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
+		menuTitleLB.setText(menuTitle);
+		menuIconIV.setIcon(menuIcon);
+	}
+
 	public void addConnectionInfoAP(Node connInfoAP) {
 		connInfoAPMap.put(connInfoAPMap.size(), (AnchorPane) connInfoAP);
 		connInfoStackPane.getChildren().add(connInfoAP);
@@ -67,16 +81,12 @@ public class ConnectionInfoVBox extends VBox {
 
 	public void addConnInfo(ActionEvent e) {
 		connInfoIdx = connInfoAPMap.size();
-		
-//		String newConnInfoId = String.valueOf(new Date().getTime());
-//		JdbcConnectionInfo jdbc = new JdbcConnectionInfo();
-//		jdbc.setJdbcDBName(newConnInfoId);
 
-		DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-		dbConnAP.getDriverCB().getItems().addAll(propertyRepository.getOracleDrivers());
-//		dbConnAP.setInitialValue(jdbc);
-
-		addConnectionInfoAP(dbConnAP);
+		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+			addConnectionInfoAP(new DBConnectionInfoAnchorPane());
+		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
+			addConnectionInfoAP(new ServerConnectionInfoAnchorPane());
+		}
 	}
 
 	public void bringFrontConnInfoAnchorPane(int connInfoIdx) {
@@ -129,33 +139,36 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void testConnection(ActionEvent e) {
+		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+			// 아이콘 변경
+			setConnectionBtnIcon(4);
 
-		// 아이콘 변경
-		setConnectionBtnIcon(4);
+			AnchorPane curAP = connInfoAPMap.get(connInfoIdx);
 
-		AnchorPane curAP = connInfoAPMap.get(connInfoIdx);
+			String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
+			String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
+			String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
 
-		String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
-		String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
-		String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
+			// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
+			JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
+					"SELECT 1 FROM DUAL", 1);
 
-		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
-		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
-				"SELECT 1 FROM DUAL", 1);
+			DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
+			dbConnService.setOnSucceeded(s -> {
+				AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
+						String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+				setConnectionBtnIcon(2);
+			});
 
-		DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
-		dbConnService.setOnSucceeded(s -> {
-			AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
-					String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
-			setConnectionBtnIcon(2);
-		});
+			dbConnService.setOnFailed(f -> {
+				AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트",
+						String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+				setConnectionBtnIcon(3);
+			});
 
-		dbConnService.setOnFailed(f -> {
-			AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트",
-					String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
-			setConnectionBtnIcon(3);
-		});
-
-		dbConnService.start();
+			dbConnService.start();
+		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
+			
+		}
 	}
 }

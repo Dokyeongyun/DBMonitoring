@@ -12,10 +12,15 @@ import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class DBConnectionInfoAnchorPane extends AnchorPane {
+
+	/* Dependency Injection */
+	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
 
 	@FXML
 	TextField hostTF;
@@ -54,6 +59,8 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 	}
 
 	public void setInitialValue(JdbcConnectionInfo jdbc) {
+		driverCB.getItems().addAll(propertyRepository.getOracleDrivers());
+
 		hostTF.setText(jdbc.getJdbcHost());
 		sidTF.setText(jdbc.getJdbcSID());
 		userTF.setText(jdbc.getJdbcId());

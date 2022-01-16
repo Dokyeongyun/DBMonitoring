@@ -64,6 +64,7 @@ import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnectionInfoAnchorPane;
+import root.javafx.CustomView.ServerConnectionInfoAnchorPane;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
@@ -115,9 +116,6 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	AnchorPane connectInfoAnchorPane;
-
-	@FXML
-	FlowPane connectInfoFlowPane; // DB접속정보 VBOX, Server접속정보 VOX를 담는 컨테이너
 
 	@FXML
 	VBox connInfoVBox;
@@ -1119,37 +1117,33 @@ public class SettingMenuController implements Initializable {
 		boolean createResult = false;
 
 		try {
-			alcMap = PropertiesUtils.getAlertLogCommandMap();
 			
-			dbNames = propertyRepository.getMonitoringDBNames();
 			jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();			
+			jschConnInfoList = PropertiesUtils.getJschConnectionMap();			
+			alcMap = PropertiesUtils.getAlertLogCommandMap();
 
-			ConnectionInfoVBox dbConnVBox = new ConnectionInfoVBox();
+			// DB 접속정보 UI
+			ConnectionInfoVBox dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
+			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
 			connInfoVBox.getChildren().add(dbConnVBox);
 
 			for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
-				
 				DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-				dbConnAP.getDriverCB().getItems().addAll(propertyRepository.getOracleDrivers());
 				dbConnAP.setInitialValue(jdbc);
-
 				dbConnVBox.addConnectionInfoAP(dbConnAP);
 			}
 
-			// [설정] - [접속정보 설정] TAB 동적 요소 생성
-//			if (connInfoList.size() == 0) { // DB 접속정보 없음
-//				connInfoNoDataAP.setVisible(true);
-//				connInfoCntText.setText("※프로퍼티파일을 열거나 접속정보를 추가해주세요.");
-//			} else {
-//				connInfoNoDataAP.setVisible(true);
-//				connInfoList.forEach(info -> {
-////					createJdbcConnInfoElements(connInfoStackPane, info, "info.getJdbcDBName()");
-//				});
-//				connInfoCntText.setText("(" + (connInfoIdx + 1) + "/" + connInfoIdxMap.size() + ")");
-//			}
-			
-			
+			// Server 접속정보 UI
+			ConnectionInfoVBox serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
+			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
+			connInfoVBox.getChildren().add(serverConnVBox);
 
+			for (JschConnectionInfo jsch : jschConnInfoList) {
+				ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+				serverConnAP.setInitialValue(jsch);
+				serverConnVBox.addConnectionInfoAP(serverConnAP);
+			}
+			
 			// [설정] - [모니터링 여부 설정]
 			reloadingMonitoringSetting("");
 
