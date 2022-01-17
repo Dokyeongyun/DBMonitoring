@@ -2,15 +2,11 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -33,7 +29,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -63,9 +58,11 @@ public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
 
 	/**
-	 * Pattern 객체를 정적필드로 선언한 이유 - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state
-	 * machine)을 생성하기 때문에 인스턴스 생성비용이 높다. - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. - 뿐만
-	 * 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
+	 * Pattern 객체를 정적필드로 선언한 이유 
+	 * - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite statemachine)을 
+	 *   생성하기 때문에 인스턴스 생성비용이 높다. 
+	 * - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. 
+	 * - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
 	 */
 	private static Pattern DB_CONNINFO_AP_NAME_PATTERN = Pattern.compile("dbConnInfo(.*)AP");
 	private static Pattern SERVER_CONNINFO_AP_NAME_PATTERN = Pattern.compile("serverConnInfo(.*)AP");
@@ -101,9 +98,6 @@ public class SettingMenuController implements Initializable {
 	@FXML
 	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
 
-	@FXML
-	JFXButton dbConnTestBtn;
-
 	/* Common Data */
 	String[] dbMonitorings;
 	String[] serverMonitorings;
@@ -111,18 +105,9 @@ public class SettingMenuController implements Initializable {
 	String[] dbNames;
 	String[] serverNames;
 
-	// dbConnInfo
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
 	Map<String, AlertLogCommand> alcMap;
-
-	// dbConnInfo Index 배열
-	Map<Integer, AnchorPane> dbConnInfoIdxMap = new HashMap<>();
-	int dbConnInfoIdx = 0;
-
-	// serverConnInfo Index 배열
-	Map<Integer, AnchorPane> serverConnInfoIdxMap = new HashMap<>();
-	int serverConnInfoIdx = 0;
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
 
@@ -253,10 +238,6 @@ public class SettingMenuController implements Initializable {
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// 4. 첫번째 접속정보를 맨 앞으로 가져온다.
-			// bringFrontConnInfoAnchorPane(dbConnInfoIdxMap, 0, dbInfoCntText);
-			// bringFrontConnInfoAnchorPane(serverConnInfoIdxMap, 0, serverInfoCntText);
-
 			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propertyRepository.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
@@ -312,97 +293,8 @@ public class SettingMenuController implements Initializable {
 		String configFilePath = fileChooserText.getText();
 		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
 
-		/*
-		 * DB 접속정보 StackPane에서 얻어내야 할 데이터
-		 * 
-		 * (TextField) {dbName}HostTextField {dbName}.jdbc.host (TextField)
-		 * {dbName}PortTextField {dbName}.jdbc.port (TextField) {dbName}SIDTextField
-		 * {dbName} (TextField) {dbName}UrlTextField {dbName}.jdbc.url (TextField)
-		 * {dbName}AliasTextField {dbName}.jdbc.alias (TextField) {dbName}UserTextField
-		 * {dbName}.jdbc.id (PasswordField) {dbName}PasswordTextField {dbName}.jdbc.pw
-		 * (JFXComboBox) {dbName}DriverComboBox {dbName}.jdbc.driver
-		 */
-
-		List<String> dbNames = new ArrayList<String>(Arrays.asList(propertyRepository.getMonitoringDBNames()));
-		for (AnchorPane ap : dbConnInfoIdxMap.values()) {
-			String apId = ap.getId();
-
-			Matcher m = DB_CONNINFO_AP_NAME_PATTERN.matcher(apId);
-			if (m.matches()) {
-				String elementId = m.group(1);
-				String newElementId = elementId;
-				boolean isNewConnInfo = false;
-
-				// 새로 추가된 접속정보
-				if (!dbNames.contains(elementId)) {
-					Set<Node> textFields = ap.lookupAll("TextField");
-					for (Node n : textFields) {
-						if (((TextField) n).getId().equals(elementId + "AliasTextField")) {
-							isNewConnInfo = true;
-							newElementId = ((TextField) n).getText();
-							logger.debug("NEW dbName : " + newElementId);
-							break;
-						}
-					}
-				}
-
-				String elementIdLower = newElementId.toLowerCase();
-
-				// dbNames 추가
-				if (isNewConnInfo) {
-					dbNames.add(newElementId);
-					config.setProperty("#DB", newElementId);
-					config.setProperty(elementIdLower + ".jdbc.validation", "select 1 from dual");
-					config.setProperty(elementIdLower + ".jdbc.connections", 10);
-				}
-
-				// TextField Value Update
-				Set<Node> textFields = ap.lookupAll("TextField");
-				for (Node n : textFields) {
-					TextField tf = (TextField) n;
-					String tfId = tf.getId();
-					String tfText = tf.getText();
-
-					if (tfId.equals(elementId + "UserTextField")) {
-						config.setProperty(elementIdLower + ".jdbc.id", tfText);
-					} else if (tfId.equals(elementId + "UrlTextField")) {
-						config.setProperty(elementIdLower + ".jdbc.url", tfText);
-					} else if (tfId.equals(elementId + "AliasTextField")) {
-						config.setProperty(elementIdLower + ".jdbc.alias", tfText);
-					}
-				}
-
-				// PasswordField Value Update
-				Set<Node> passwordFields = ap.lookupAll("PasswordField");
-				for (Node n : passwordFields) {
-					PasswordField pf = (PasswordField) n;
-					String pfId = pf.getId();
-					String pfText = pf.getText();
-
-					if (pfId.equals(elementId + "PasswordTextField")) {
-						config.setProperty(elementIdLower + ".jdbc.pw", pfText);
-					}
-				}
-
-				// JFXComboBox Value Update
-				Set<Node> comboBoxs = ap.lookupAll("JFXComboBox");
-				for (Node n : comboBoxs) {
-					@SuppressWarnings("unchecked")
-					JFXComboBox<String> cb = (JFXComboBox<String>) n;
-					String cbId = cb.getId();
-					String cbSelectedItem = cb.getSelectionModel().getSelectedItem();
-
-					if (cbId.equals(elementId + "DriverComboBox")) {
-						if (cbSelectedItem.equals("thin")) {
-							// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
-							config.setProperty(elementIdLower + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
-						}
-					}
-				}
-			}
-		}
-		// dbNames Update
-		config.setProperty("dbnames", dbNames);
+		ConnectionInfoVBox dbConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#dbConnVBox");
+		dbConnVBox.saveConnInfoSettings("configFilePath");
 
 		/*
 		 * 서버 접속정보 StackPane에서 얻어내야 할 데이터
@@ -416,8 +308,11 @@ public class SettingMenuController implements Initializable {
 		 * (JFXComboBox) {ServerName}AlertLogDateFormatComboBox
 		 * {ServerName}.server.alertlog.dateformat
 		 */
+		
+		/*
 		List<String> serverNames = new ArrayList<String>(Arrays.asList(config.getStringArray("servernames")));
-		for (AnchorPane ap : serverConnInfoIdxMap.values()) {
+		ConnectionInfoVBox serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
+		for (AnchorPane ap : serverConnVBox.getConnInfoAPMap().values()) {
 			String apId = ap.getId();
 
 			Matcher m = SERVER_CONNINFO_AP_NAME_PATTERN.matcher(apId);
@@ -503,7 +398,8 @@ public class SettingMenuController implements Initializable {
 		}
 		// ServerNames Update
 		config.setProperty("servernames", serverNames);
-
+		*/
+		
 		// 변경사항 저장
 		propertyRepository.save(configFilePath, config);
 		// 설정파일 ReLoading
@@ -678,6 +574,7 @@ public class SettingMenuController implements Initializable {
 		// DB 접속정보 UI
 		ConnectionInfoVBox dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
 		dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
+		dbConnVBox.setId("dbConnVBox");
 		connInfoVBox.getChildren().add(dbConnVBox);
 
 		for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
@@ -689,6 +586,7 @@ public class SettingMenuController implements Initializable {
 		// Server 접속정보 UI
 		ConnectionInfoVBox serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
 		serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
+		serverConnVBox.setId("serverConnVBox");
 		connInfoVBox.getChildren().add(serverConnVBox);
 
 		for (JschConnectionInfo jsch : jschConnInfoList) {

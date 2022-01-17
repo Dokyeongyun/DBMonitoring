@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.configuration2.PropertiesConfiguration;
+
 import com.jfoenix.controls.JFXButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -24,13 +26,19 @@ import javafx.scene.text.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
 import root.utils.AlertUtils;
+import root.utils.PropertiesUtils;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class ConnectionInfoVBox extends VBox {
 
+	/* Dependency Injection */
+	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
+	
 	@FXML
 	Label menuTitleLB;
 
@@ -170,5 +178,31 @@ public class ConnectionInfoVBox extends VBox {
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
 			
 		}
+	}
+	
+	public void saveConnInfoSettings(String configFilePath) {
+		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+
+		if(childAPClazz == DBConnectionInfoAnchorPane.class) {
+			
+		}
+		for (AnchorPane childAP : this.connInfoAPMap.values()) {
+			DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP;
+			JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
+			System.out.println(jdbc);
+			
+			String dbName = jdbc.getJdbcDBName().toLowerCase();
+			config.setProperty("#DB", dbName);
+			config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
+			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
+			config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
+			config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
+			// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
+			config.setProperty(dbName + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
+			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
+			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
+		}
+		
+		propertyRepository.save(configFilePath, config);
 	}
 }

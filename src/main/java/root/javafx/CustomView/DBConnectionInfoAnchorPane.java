@@ -97,6 +97,21 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 			}
 		});
 	}
+	
+	public JdbcConnectionInfo getInputValues() {
+		JdbcConnectionInfo jdbc = new JdbcConnectionInfo();
+		jdbc.setJdbcDBName(this.aliasTF.getText());
+		jdbc.setJdbcHost(this.hostTF.getText());
+		jdbc.setJdbcPort(this.portTF.getText());
+		jdbc.setJdbcDriver(this.driverCB.getSelectionModel().getSelectedItem());
+		jdbc.setJdbcId(this.userTF.getText());
+		jdbc.setJdbcPw(this.passwordPF.getText());
+		jdbc.setJdbcSID(this.sidTF.getText());
+		jdbc.setJdbcUrl(this.urlTF.getText());
+		jdbc.setJdbcValidation("SELECT 1 FROM DUAL");
+		jdbc.setJdbcConnections(10);
+		return jdbc;
+	}
 
 	/**
 	 * 키 입력 또는 콤보박스 선택을 통해 입력된 Database 접속정보를 이용해 URL을 생성하는 이벤트
