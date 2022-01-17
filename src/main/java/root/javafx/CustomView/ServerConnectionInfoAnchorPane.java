@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
@@ -67,5 +68,19 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());
 		alertLogDateFormatCB.getSelectionModel().select(jsch.getAlc().getDateFormat());
+	}
+
+	public JschConnectionInfo getInputValues() {
+		JschConnectionInfo jsch = new JschConnectionInfo();
+		jsch.setServerName(this.serverNameTF.getText());
+		jsch.setHost(this.hostTF.getText());
+		jsch.setPort(Integer.valueOf(this.portTF.getText()));
+		jsch.setUserName(this.userTF.getText());
+		jsch.setPassword(this.passwordPF.getText());
+		AlertLogCommand alc = new AlertLogCommand();
+		alc.setReadFilePath(this.alertLogFilePathTF.getText());
+		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+		jsch.setAlc(alc);
+		return jsch;
 	}
 }

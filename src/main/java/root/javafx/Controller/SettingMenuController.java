@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.regex.Pattern;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.log4j.Logger;
@@ -64,8 +63,6 @@ public class SettingMenuController implements Initializable {
 	 * - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. 
 	 * - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
 	 */
-	private static Pattern DB_CONNINFO_AP_NAME_PATTERN = Pattern.compile("dbConnInfo(.*)AP");
-	private static Pattern SERVER_CONNINFO_AP_NAME_PATTERN = Pattern.compile("serverConnInfo(.*)AP");
 
 	/* Dependency Injection */
 	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
@@ -187,9 +184,9 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 사용자가 선택한 파일의 경로에서
-	 * 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 그렇지 않다면, '잘못된
-	 * 파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
+	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 
+	 * 사용자가 선택한 파일의 경로에서 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 
+	 * 그렇지 않다면, '잘못된파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
 	 * 
 	 * @param e
 	 */
@@ -291,117 +288,13 @@ public class SettingMenuController implements Initializable {
 		// TODO 입력값 검사
 
 		String configFilePath = fileChooserText.getText();
-		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
 
 		ConnectionInfoVBox dbConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#dbConnVBox");
-		dbConnVBox.saveConnInfoSettings("configFilePath");
-
-		/*
-		 * 서버 접속정보 StackPane에서 얻어내야 할 데이터
-		 * 
-		 * (TextField) {ServerName}HostTextField {ServerName}.server.host (TextField)
-		 * {ServerName}PortTextField {ServerName}.server.port (TextField)
-		 * {ServerName}NameTextField {ServerName} (TextField)
-		 * {ServerName}UserNameTextField {ServerName}.server.username (TextField)
-		 * {ServerName}AlertLogFilePathTextField {ServerName}.server.alertlog.filepath
-		 * (PasswordField) {ServerName}PasswordTextField {ServerName}.server.password
-		 * (JFXComboBox) {ServerName}AlertLogDateFormatComboBox
-		 * {ServerName}.server.alertlog.dateformat
-		 */
+		dbConnVBox.saveConnInfoSettings(configFilePath);
 		
-		/*
-		List<String> serverNames = new ArrayList<String>(Arrays.asList(config.getStringArray("servernames")));
 		ConnectionInfoVBox serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
-		for (AnchorPane ap : serverConnVBox.getConnInfoAPMap().values()) {
-			String apId = ap.getId();
-
-			Matcher m = SERVER_CONNINFO_AP_NAME_PATTERN.matcher(apId);
-			if (m.matches()) {
-				String elementId = m.group(1);
-				String newElementId = elementId;
-				boolean isNewConnInfo = false;
-
-				// 새로 추가된 접속정보
-				if (!serverNames.contains(elementId)) {
-					Set<Node> textFields = ap.lookupAll("TextField");
-					for (Node n : textFields) {
-						if (((TextField) n).getId().equals(elementId + "NameTextField")) {
-							isNewConnInfo = true;
-							newElementId = ((TextField) n).getText();
-							logger.debug("NEW ServerName : " + newElementId);
-							break;
-						}
-					}
-				}
-
-				String elementIdLower = newElementId.toLowerCase();
-
-				// ServerNames 추가
-				if (isNewConnInfo) {
-					serverNames.add(newElementId);
-					config.setProperty("#Server", newElementId);
-					config.setProperty(elementIdLower + ".server.alertlog.readLine", 500);
-				}
-
-				// TextField Value Update
-				Set<Node> textFields = ap.lookupAll("TextField");
-				for (Node n : textFields) {
-					TextField tf = (TextField) n;
-					String tfId = tf.getId();
-					String tfText = tf.getText();
-
-					if (tfId.equals(elementId + "HostTextField")) {
-						config.setProperty(elementIdLower + ".server.host", tfText);
-					} else if (tfId.equals(elementId + "PortTextField")) {
-						config.setProperty(elementIdLower + ".server.port", tfText);
-					} else if (tfId.equals(elementId + "UserNameTextField")) {
-						config.setProperty(elementIdLower + ".server.username", tfText);
-					} else if (tfId.equals(elementId + "AlertLogFilePathTextField")) {
-						config.setProperty(elementIdLower + ".server.alertlog.filepath", tfText);
-					}
-				}
-
-				// PasswordField Value Update
-				Set<Node> passwordFields = ap.lookupAll("PasswordField");
-				for (Node n : passwordFields) {
-					PasswordField pf = (PasswordField) n;
-					String pfId = pf.getId();
-					String pfText = pf.getText();
-
-					if (pfId.equals(elementId + "PasswordTextField")) {
-						config.setProperty(elementIdLower + ".server.password", pfText);
-					}
-				}
-
-				// JFXComboBox Value Update
-				Set<Node> comboBoxs = ap.lookupAll("JFXComboBox");
-				for (Node n : comboBoxs) {
-					@SuppressWarnings("unchecked")
-					JFXComboBox<String> cb = (JFXComboBox<String>) n;
-					String cbId = cb.getId();
-					String cbSelectedItem = cb.getSelectionModel().getSelectedItem();
-
-					if (cbId.equals(elementId + "AlertLogDateFormatComboBox")) {
-						config.setProperty(elementIdLower + ".server.alertlog.dateformat", cbSelectedItem);
-						if (isNewConnInfo) {
-							String dateFormatRegex = "";
-							if (cbSelectedItem.equals("EEE MMM dd HH:mm:ss yyyy")) {
-								dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
-							} else if (cbSelectedItem.equals("yyyy-MM-dd")) {
-								dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
-							}
-							config.setProperty(elementIdLower + ".server.alertlog.dateformatregex", dateFormatRegex);
-						}
-					}
-				}
-			}
-		}
-		// ServerNames Update
-		config.setProperty("servernames", serverNames);
-		*/
+		serverConnVBox.saveConnInfoSettings(configFilePath);
 		
-		// 변경사항 저장
-		propertyRepository.save(configFilePath, config);
 		// 설정파일 ReLoading
 		loadSelectedConfigFile(configFilePath);
 	}

@@ -1,7 +1,9 @@
 package root.javafx.CustomView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -26,6 +28,7 @@ import javafx.scene.text.Text;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
@@ -38,7 +41,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	/* Dependency Injection */
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
-	
+
 	@FXML
 	Label menuTitleLB;
 
@@ -91,9 +94,13 @@ public class ConnectionInfoVBox extends VBox {
 		connInfoIdx = connInfoAPMap.size();
 
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
-			addConnectionInfoAP(new DBConnectionInfoAnchorPane());
+			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+			dbConnAP.setInitialValue(new JdbcConnectionInfo());
+			addConnectionInfoAP(dbConnAP);
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
-			addConnectionInfoAP(new ServerConnectionInfoAnchorPane());
+			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+			serverConnAP.setInitialValue(new JschConnectionInfo());
+			addConnectionInfoAP(serverConnAP);
 		}
 	}
 
@@ -176,33 +183,71 @@ public class ConnectionInfoVBox extends VBox {
 
 			dbConnService.start();
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
-			
+
 		}
 	}
-	
+
 	public void saveConnInfoSettings(String configFilePath) {
+
 		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
 
-		if(childAPClazz == DBConnectionInfoAnchorPane.class) {
-			
+		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+
+			List<String> dbNames = new ArrayList<>();
+			for (AnchorPane childAP : this.connInfoAPMap.values()) {
+				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP;
+				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
+
+				String dbName = jdbc.getJdbcDBName().toLowerCase();
+				config.setProperty("#DB", dbName);
+				config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
+				config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
+				config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
+				config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
+				// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
+				config.setProperty(dbName + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
+				config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
+				config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
+
+				dbNames.add(dbName);
+			}
+
+			config.setProperty("dbnames", dbNames);
+		} else {
+
+			List<String> serverNames = new ArrayList<>();
+
+			for (AnchorPane childAP : this.connInfoAPMap.values()) {
+				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP;
+				JschConnectionInfo jsch = serverConnAP.getInputValues();
+
+				String serverName = jsch.getServerName().toLowerCase();
+				config.setProperty(serverName + ".server.servername", jsch.getServerName());
+				config.setProperty(serverName + ".server.host", jsch.getHost());
+				config.setProperty(serverName + ".server.port", jsch.getPort());
+				config.setProperty(serverName + ".server.username", jsch.getUserName());
+				config.setProperty(serverName + ".server.password", jsch.getPassword());
+
+				String dateFormat = jsch.getAlc().getDateFormat();
+				String dateFormatRegex = "";
+
+				if (dateFormat.equals("EEE MMM dd HH:mm:ss yyyy")) {
+					dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
+				} else if (dateFormat.equals("yyyy-MM-dd")) {
+					dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
+				}
+
+				config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
+				config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
+				config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
+				config.setProperty(serverName + ".server.alertlog.readLine", 500);
+
+				serverNames.add(serverName);
+			}
+
+			config.setProperty("servernames", serverNames);
 		}
-		for (AnchorPane childAP : this.connInfoAPMap.values()) {
-			DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP;
-			JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
-			System.out.println(jdbc);
-			
-			String dbName = jdbc.getJdbcDBName().toLowerCase();
-			config.setProperty("#DB", dbName);
-			config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
-			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
-			config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
-			config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
-			// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
-			config.setProperty(dbName + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
-			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
-			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
-		}
-		
+
 		propertyRepository.save(configFilePath, config);
 	}
 }
