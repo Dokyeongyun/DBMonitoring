@@ -464,23 +464,36 @@ public class SettingMenuController implements Initializable {
 		jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 		alcMap = PropertiesUtils.getAlertLogCommandMap();
 
-		// DB 접속정보 UI
-		ConnectionInfoVBox dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
-		dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
-		dbConnVBox.setId("dbConnVBox");
-		connInfoVBox.getChildren().add(dbConnVBox);
-
+		ConnectionInfoVBox dbConnVBox = null;
+		if (connInfoVBox.lookup("#dbConnVBox") != null) {
+			dbConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#dbConnVBox");
+			dbConnVBox.clearConnInfoMap();
+		} else {
+			// DB 접속정보 UI
+			dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
+			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
+			dbConnVBox.setId("dbConnVBox");
+			connInfoVBox.getChildren().add(dbConnVBox);
+		}
+		
 		for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.setInitialValue(jdbc);
 			dbConnVBox.addConnectionInfoAP(dbConnAP);
 		}
-
-		// Server 접속정보 UI
-		ConnectionInfoVBox serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
-		serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
-		serverConnVBox.setId("serverConnVBox");
-		connInfoVBox.getChildren().add(serverConnVBox);
+		
+		ConnectionInfoVBox serverConnVBox = null;
+		if(connInfoVBox.lookup("#serverConnVBox") != null) {
+			((ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox")).clearConnInfoMap();
+			serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
+			serverConnVBox.clearConnInfoMap();
+		} else {
+			// Server 접속정보 UI
+			serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
+			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
+			serverConnVBox.setId("serverConnVBox");
+			connInfoVBox.getChildren().add(serverConnVBox);
+		}
 
 		for (JschConnectionInfo jsch : jschConnInfoList) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();

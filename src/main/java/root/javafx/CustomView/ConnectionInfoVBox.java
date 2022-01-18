@@ -78,6 +78,10 @@ public class ConnectionInfoVBox extends VBox {
 			e.printStackTrace();
 		}
 	}
+	
+	public void clearConnInfoMap() {
+		this.connInfoAPMap.clear();
+	}
 
 	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
 		menuTitleLB.setText(menuTitle);
