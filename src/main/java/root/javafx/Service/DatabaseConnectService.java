@@ -2,10 +2,8 @@ package root.javafx.Service;
 
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.scene.control.Alert.AlertType;
 import root.common.database.implement.JdbcDatabase;
 import root.core.domain.JdbcConnectionInfo;
-import root.utils.AlertUtils;
 
 public class DatabaseConnectService extends Service<Boolean> {
 

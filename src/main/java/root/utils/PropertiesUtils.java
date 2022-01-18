@@ -133,7 +133,8 @@ public class PropertiesUtils {
 		int serverPort = connInfoConfig.getInt(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
 		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
-		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword);
+		AlertLogCommand alc = getAlertLogCommand(serverName);
+		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword, alc);
 	}
 	
 	/**
