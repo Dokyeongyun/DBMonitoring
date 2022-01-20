@@ -25,8 +25,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
@@ -62,7 +64,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	private Class<? extends AnchorPane> childAPClazz;
 
-	private Map<Integer, AnchorPane> connInfoAPMap = new HashMap<>();
+	private Map<Integer, StatefulAP> connInfoAPMap = new HashMap<>();
 
 	private int connInfoIdx = 0;
 
@@ -73,7 +75,7 @@ public class ConnectionInfoVBox extends VBox {
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,6 +83,7 @@ public class ConnectionInfoVBox extends VBox {
 	
 	public void clearConnInfoMap() {
 		this.connInfoAPMap.clear();
+		connInfoIdx = 0;
 	}
 
 	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
@@ -89,29 +92,32 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void addConnectionInfoAP(Node connInfoAP) {
-		connInfoAPMap.put(connInfoAPMap.size(), (AnchorPane) connInfoAP);
+		connInfoAPMap.put(connInfoAPMap.size(), new StatefulAP(1, (AnchorPane) connInfoAP));
 		connInfoStackPane.getChildren().add(connInfoAP);
 		bringFrontConnInfoAnchorPane(connInfoAPMap.size() - 1);
 	}
 
-	public void addConnInfo(ActionEvent e) {
-		connInfoIdx = connInfoAPMap.size();
-
+	public void addNewConnInfo(ActionEvent e) {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.setInitialValue(new JdbcConnectionInfo());
 			addConnectionInfoAP(dbConnAP);
+
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 			serverConnAP.setInitialValue(new JschConnectionInfo());
 			addConnectionInfoAP(serverConnAP);
+
 		}
 	}
 
-	public void bringFrontConnInfoAnchorPane(int connInfoIdx) {
-		this.connInfoIdx = connInfoIdx;
-		connInfoAPMap.get(connInfoIdx).toFront();
-		connInfoText.setText(String.format("(%d/%d)", connInfoIdx + 1, connInfoAPMap.size()));
+	public void removeConnInfo(ActionEvent e) {
+
+	}
+
+	public void bringFrontConnInfoAnchorPane(int index) {
+		connInfoAPMap.get(index).getAp().toFront();
+		connInfoText.setText(String.format("(%d/%d)", index + 1, connInfoAPMap.size()));
 	}
 
 	public void prevConnInfo(ActionEvent e) {
@@ -162,7 +168,7 @@ public class ConnectionInfoVBox extends VBox {
 			// 아이콘 변경
 			setConnectionBtnIcon(4);
 
-			AnchorPane curAP = connInfoAPMap.get(connInfoIdx);
+			AnchorPane curAP = connInfoAPMap.get(connInfoIdx).getAp();
 
 			String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
 			String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
@@ -198,8 +204,8 @@ public class ConnectionInfoVBox extends VBox {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 
 			List<String> dbNames = new ArrayList<>();
-			for (AnchorPane childAP : this.connInfoAPMap.values()) {
-				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP;
+			for (StatefulAP childAP : this.connInfoAPMap.values()) {
+				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
 				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
 
 				String dbName = jdbc.getJdbcDBName().toLowerCase();
@@ -221,8 +227,8 @@ public class ConnectionInfoVBox extends VBox {
 
 			List<String> serverNames = new ArrayList<>();
 
-			for (AnchorPane childAP : this.connInfoAPMap.values()) {
-				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP;
+			for (StatefulAP childAP : this.connInfoAPMap.values()) {
+				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 				JschConnectionInfo jsch = serverConnAP.getInputValues();
 
 				String serverName = jsch.getServerName().toLowerCase();
@@ -254,4 +260,13 @@ public class ConnectionInfoVBox extends VBox {
 
 		propertyRepository.save(configFilePath, config);
 	}
+
+	@AllArgsConstructor
+	@NoArgsConstructor
+	@Data
+	private static class StatefulAP {
+		private int status;
+		private AnchorPane ap;
+	}
+
 }
