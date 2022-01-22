@@ -2,6 +2,7 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	private Map<Integer, StatefulAP> connInfoAPMap = new HashMap<>();
 
-	private int connInfoIdx = 0;
+	private static int connInfoIdx = 0;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
 		this.childAPClazz = childAPClazz;
@@ -261,12 +262,65 @@ public class ConnectionInfoVBox extends VBox {
 		propertyRepository.save(configFilePath, config);
 	}
 
+
 	@AllArgsConstructor
-	@NoArgsConstructor
 	@Data
 	private static class StatefulAP {
-		private int status;
+		private int status; // 1: 신규, 2: 기존, 3: 제거
 		private AnchorPane ap;
 	}
 
+	private static class ConnInfoAPMap {
+		private Map<Integer, StatefulAP> map;
+
+		public ConnInfoAPMap() {
+			this.map = new HashMap<>();
+		}
+		
+		public void put(int index, StatefulAP ap) {
+			this.map.put(index, ap);
+			System.out.println(connInfoIdx+ " " + this.map.keySet());
+		}
+		
+		public void remove(int index) {
+			this.map.get(index).setStatus(3);
+			
+			String values = "[";
+			for(Integer key : this.map.keySet()) {
+				if(map.get(key).getStatus() != 3) {
+					values += key +" ";
+				}
+			}
+			values += "]";
+			System.out.println(connInfoIdx+ " " + values);
+		}
+		
+		public StatefulAP get(int index) {
+			return this.map.get(index);
+		}
+		
+		public int getActiveAPCnt() {
+			int count = 0;
+			for (StatefulAP ap : map.values()) {
+				if (ap.getStatus() != 3) {
+					count++;
+				}
+			}
+			return count;
+		}
+		
+		public Collection<StatefulAP> getActiveAPs() {
+			List<StatefulAP> result = new ArrayList<>();	
+			for (StatefulAP ap : map.values()) {
+				if (ap.getStatus() != 3) {
+					result.add(ap);
+				}
+			}
+			return result;
+		}
+		
+		public void clear() {
+			this.map.clear();
+		}
+	}
 }
