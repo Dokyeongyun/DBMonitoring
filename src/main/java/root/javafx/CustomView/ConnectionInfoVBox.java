@@ -65,9 +65,11 @@ public class ConnectionInfoVBox extends VBox {
 
 	private Class<? extends AnchorPane> childAPClazz;
 
-	private Map<Integer, StatefulAP> connInfoAPMap = new HashMap<>();
+	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 
-	private static int connInfoIdx = 0;
+	private int connInfoCnt= 0;
+	
+	private static int connInfoIdx= 0;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
 		this.childAPClazz = childAPClazz;
@@ -76,6 +78,7 @@ public class ConnectionInfoVBox extends VBox {
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
+			
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -93,9 +96,11 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void addConnectionInfoAP(Node connInfoAP) {
-		connInfoAPMap.put(connInfoAPMap.size(), new StatefulAP(1, (AnchorPane) connInfoAP));
+		connInfoAPMap.put(connInfoCnt, new StatefulAP(1, (AnchorPane) connInfoAP));
+		connInfoAP.setId(String.valueOf(connInfoCnt));
+		connInfoCnt++;
 		connInfoStackPane.getChildren().add(connInfoAP);
-		bringFrontConnInfoAnchorPane(connInfoAPMap.size() - 1);
+		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
 	public void addNewConnInfo(ActionEvent e) {
@@ -113,30 +118,34 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void removeConnInfo(ActionEvent e) {
-
+		Node removeNode = this.connInfoStackPane.lookup("#"+connInfoIdx);
+		this.connInfoStackPane.getChildren().remove(removeNode);
+		this.connInfoAPMap.remove(connInfoIdx);
+		// TODO ReIndexing
+		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
 	public void bringFrontConnInfoAnchorPane(int index) {
 		connInfoAPMap.get(index).getAp().toFront();
-		connInfoText.setText(String.format("(%d/%d)", index + 1, connInfoAPMap.size()));
+		connInfoText.setText(String.format("(%d/%d)", index + 1, connInfoAPMap.getActiveAPCnt()));
 	}
 
 	public void prevConnInfo(ActionEvent e) {
-		if (connInfoAPMap.size() == 0) {
+		if (connInfoAPMap.getActiveAPCnt() == 0) {
 			return;
 		}
 
-		connInfoIdx = connInfoIdx == 0 ? connInfoAPMap.size() - 1 : connInfoIdx - 1;
+		connInfoIdx = connInfoIdx == 0 ? connInfoAPMap.getActiveAPCnt() - 1 : connInfoIdx - 1;
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
 	public void nextConnInfo(ActionEvent e) {
-		if (connInfoAPMap.size() == 0) {
+		if (connInfoAPMap.getActiveAPCnt() == 0) {
 			return;
 		}
 
-		connInfoIdx = connInfoIdx == connInfoAPMap.size() - 1 ? 0 : connInfoIdx + 1;
+		connInfoIdx = connInfoIdx == connInfoAPMap.getActiveAPCnt() - 1 ? 0 : connInfoIdx + 1;
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
@@ -205,7 +214,7 @@ public class ConnectionInfoVBox extends VBox {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 
 			List<String> dbNames = new ArrayList<>();
-			for (StatefulAP childAP : this.connInfoAPMap.values()) {
+			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs()) {
 				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
 				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
 
@@ -228,7 +237,7 @@ public class ConnectionInfoVBox extends VBox {
 
 			List<String> serverNames = new ArrayList<>();
 
-			for (StatefulAP childAP : this.connInfoAPMap.values()) {
+			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs()) {
 				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 				JschConnectionInfo jsch = serverConnAP.getInputValues();
 
@@ -261,7 +270,6 @@ public class ConnectionInfoVBox extends VBox {
 
 		propertyRepository.save(configFilePath, config);
 	}
-
 
 	@AllArgsConstructor
 	@Data
