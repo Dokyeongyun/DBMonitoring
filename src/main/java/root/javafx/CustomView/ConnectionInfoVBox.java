@@ -96,10 +96,16 @@ public class ConnectionInfoVBox extends VBox {
 		connInfoAP.setId(String.valueOf(newIdx));
 		connInfoStackPane.getChildren().add(connInfoAP);
 
-		if(connInfoIdx == -1) {
+		if (connInfoIdx == -1) {
 			connInfoIdx = this.connInfoAPMap.getFirstActiveIdx();
 		}
-		bringFrontConnInfoAnchorPane(connInfoIdx);
+
+		if (type == 1) {
+			bringFrontConnInfoAnchorPane(connInfoIdx);
+		} else if (type == 2) {
+			bringFrontConnInfoAnchorPane(this.connInfoAPMap.getLastActiveIdx());
+		}
+		
 
 		this.connInfoAPMap.print(connInfoIdx);
 	}
@@ -131,6 +137,7 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void bringFrontConnInfoAnchorPane(long index) {
+		connInfoIdx = index;
 		
 		if(connInfoStackPane.lookup("#" + (index)) != null) {
 			connInfoStackPane.lookup("#" + (index)).toFront();
