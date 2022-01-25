@@ -479,7 +479,7 @@ public class SettingMenuController implements Initializable {
 		for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.setInitialValue(jdbc);
-			dbConnVBox.addConnectionInfoAP(dbConnAP);
+			dbConnVBox.addConnectionInfoAP(1, dbConnAP);
 		}
 		
 		ConnectionInfoVBox serverConnVBox = null;
@@ -497,7 +497,7 @@ public class SettingMenuController implements Initializable {
 		for (JschConnectionInfo jsch : jschConnInfoList) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 			serverConnAP.setInitialValue(jsch);
-			serverConnVBox.addConnectionInfoAP(serverConnAP);
+			serverConnVBox.addConnectionInfoAP(1, serverConnAP);
 		}
 
 		// [설정] - [모니터링 여부 설정]

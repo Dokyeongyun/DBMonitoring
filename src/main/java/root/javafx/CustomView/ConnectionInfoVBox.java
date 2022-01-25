@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 
 import com.jfoenix.controls.JFXButton;
-import com.sun.javafx.css.StyleCache.Key;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -98,8 +97,8 @@ public class ConnectionInfoVBox extends VBox {
 		menuIconIV.setIcon(menuIcon);
 	}
 
-	public void addConnectionInfoAP(Node connInfoAP) {
-		long newIdx = connInfoAPMap.put(new StatefulAP(2, (AnchorPane) connInfoAP));
+	public void addConnectionInfoAP(int type, Node connInfoAP) {
+		long newIdx = connInfoAPMap.put(new StatefulAP(type, (AnchorPane) connInfoAP));
 		connInfoAP.setId(String.valueOf(newIdx));
 		connInfoStackPane.getChildren().add(connInfoAP);
 		
@@ -112,12 +111,12 @@ public class ConnectionInfoVBox extends VBox {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.setInitialValue(new JdbcConnectionInfo());
-			addConnectionInfoAP(dbConnAP);
+			addConnectionInfoAP(2, dbConnAP);
 
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 			serverConnAP.setInitialValue(new JschConnectionInfo());
-			addConnectionInfoAP(serverConnAP);
+			addConnectionInfoAP(2, serverConnAP);
 
 		}
 	}
