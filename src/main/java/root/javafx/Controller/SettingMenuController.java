@@ -484,7 +484,6 @@ public class SettingMenuController implements Initializable {
 		
 		ConnectionInfoVBox serverConnVBox = null;
 		if(connInfoVBox.lookup("#serverConnVBox") != null) {
-			((ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox")).clearConnInfoMap();
 			serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
