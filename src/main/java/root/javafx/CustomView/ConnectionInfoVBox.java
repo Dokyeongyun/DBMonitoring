@@ -378,7 +378,8 @@ public class ConnectionInfoVBox extends VBox {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
-					.filter(key -> key <= connInfoIdx)
+					.filter(key -> key < connInfoIdx)
+					.sorted(Collections.reverseOrder())
 					.findFirst()
 					.orElse(getFirstActiveIdx());
 		}
