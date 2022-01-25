@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 
 import com.jfoenix.controls.JFXButton;
+import com.sun.javafx.css.StyleCache.Key;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -103,6 +104,8 @@ public class ConnectionInfoVBox extends VBox {
 		connInfoStackPane.getChildren().add(connInfoAP);
 		
 		bringFrontConnInfoAnchorPane(connInfoIdx);
+
+		this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	public void addNewConnInfo(ActionEvent e) {
@@ -120,13 +123,15 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void removeConnInfo(ActionEvent e) {
-		this.connInfoAPMap.print();
-		long removeIdx = connInfoIdx;
-		
-		Node removeNode = this.connInfoStackPane.lookup("#"+removeIdx);
+		// Remove view
+		Node removeNode = this.connInfoStackPane.lookup("#"+connInfoIdx);
 		this.connInfoStackPane.getChildren().remove(removeNode);
-		connInfoIdx = this.connInfoAPMap.remove(removeIdx);
+		
+		// Remove data
+		connInfoIdx = this.connInfoAPMap.remove(connInfoIdx);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
+		
+		this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	public void bringFrontConnInfoAnchorPane(long index) {
@@ -158,6 +163,8 @@ public class ConnectionInfoVBox extends VBox {
 		connInfoIdx = this.connInfoAPMap.getPrevActiveIdx(connInfoIdx);
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
+		
+		this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	public void nextConnInfo(ActionEvent e) {
@@ -168,6 +175,8 @@ public class ConnectionInfoVBox extends VBox {
 		connInfoIdx = this.connInfoAPMap.getNextActiveIdx(connInfoIdx);
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
+		
+		this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	// TODO Convert to Enum class
@@ -393,8 +402,17 @@ public class ConnectionInfoVBox extends VBox {
 					.orElse(getLastActiveIdx());
 		}
 		
-		public void print() {
-			System.out.println(this.map.keySet());
+		public void print(long index) {
+			System.out.println("Current Index: " + index);
+			for (Long key : map.keySet()) {
+				if(key == index) {
+					System.out.print(key + "[:" + map.get(key).getStatus() + ":], ");	
+				} else {
+					System.out.print(key + "[" + map.get(key).getStatus() + "], ");
+				}
+				
+			}
+			System.out.println();
 		}
 	}
 }
