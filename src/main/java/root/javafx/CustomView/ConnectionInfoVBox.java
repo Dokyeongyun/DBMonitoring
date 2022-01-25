@@ -67,7 +67,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 	
-	private static long connInfoIdx;
+	private long connInfoIdx;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
 		this.childAPClazz = childAPClazz;
@@ -120,22 +120,34 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void removeConnInfo(ActionEvent e) {
+		this.connInfoAPMap.print();
 		long removeIdx = connInfoIdx;
 		
 		Node removeNode = this.connInfoStackPane.lookup("#"+removeIdx);
 		this.connInfoStackPane.getChildren().remove(removeNode);
-		this.connInfoAPMap.remove(removeIdx);
+		connInfoIdx = this.connInfoAPMap.remove(removeIdx);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
 	public void bringFrontConnInfoAnchorPane(long index) {
 		
-		long curIdxTxt = this.connInfoAPMap.getActiveCurIdx();
+		if(connInfoStackPane.lookup("#" + (index)) != null) {
+			connInfoStackPane.lookup("#" + (index)).toFront();
+		}
+		
+		setConnInfoIndexText();	
+	}
+	
+	private void setConnInfoIndexText() {
+		long curIdxTxt = this.connInfoAPMap.getActiveCurIdx(connInfoIdx);
 		long maxIdxTxt = this.connInfoAPMap.getActiveAPCnt();
 		
-		System.out.println(index + " " + curIdxTxt + " " + maxIdxTxt);
-		connInfoStackPane.lookup("#" + (curIdxTxt-1)).toFront();
-		connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
+		if(curIdxTxt == 0 && maxIdxTxt == 0) {
+			connInfoText.setText("※접속정보를 추가해주세요.");	
+		} else {
+			connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
+		}
+			
 	}
 
 	public void prevConnInfo(ActionEvent e) {
@@ -143,7 +155,7 @@ public class ConnectionInfoVBox extends VBox {
 			return;
 		}
 
-		connInfoIdx = this.connInfoAPMap.getPrevActiveIdx();
+		connInfoIdx = this.connInfoAPMap.getPrevActiveIdx(connInfoIdx);
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
@@ -153,7 +165,7 @@ public class ConnectionInfoVBox extends VBox {
 			return;
 		}
 
-		connInfoIdx = this.connInfoAPMap.getNextActiveIdx();
+		connInfoIdx = this.connInfoAPMap.getNextActiveIdx(connInfoIdx);
 		setConnectionBtnIcon(1);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
@@ -286,13 +298,6 @@ public class ConnectionInfoVBox extends VBox {
 		private int status; // 1: 기존, 2: 신규, 3: 제거
 		private AnchorPane ap;
 	}
-	
-	@AllArgsConstructor
-	@Data
-	private static class IndexPair {
-		private int curIdx;
-		private int maxIdx;
-	}
 
 	private static class ConnInfoAPMap {
 		private Map<Long, StatefulAP> map;
@@ -307,19 +312,19 @@ public class ConnectionInfoVBox extends VBox {
 			return newIdx;
 		}
 		
-		public void remove(long index) {
+		public long remove(long index) {
 			// 상태 변경 (→ 삭제)
 			this.map.get(index).setStatus(3);
 			
 			// 현재 인덱스 뒤에 삭제되지 않은 AnchorPane 갯수 카운트
 			long count = this.map.keySet()
 					.stream()
-					.filter(key -> key >= connInfoIdx)
+					.filter(key -> key >= index)
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 
 			// 인덱스 업데이트
-			connInfoIdx += count > 0 ? getNextActiveIdx() : getPrevActiveIdx();
+			return count > 0 ? getNextActiveIdx(index) : getPrevActiveIdx(index);
 		}
 		
 		public StatefulAP get(long index) {
@@ -342,10 +347,9 @@ public class ConnectionInfoVBox extends VBox {
 		
 		public void clear() {
 			this.map.clear();
-			connInfoIdx = 0;
 		}
 		
-		public long getActiveCurIdx() {
+		public long getActiveCurIdx(long connInfoIdx) {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> key <= connInfoIdx)
@@ -370,7 +374,7 @@ public class ConnectionInfoVBox extends VBox {
 					.orElse((long) -1);
 		}
 		
-		public long getPrevActiveIdx() {
+		public long getPrevActiveIdx(long connInfoIdx) {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
@@ -379,13 +383,17 @@ public class ConnectionInfoVBox extends VBox {
 					.orElse(getFirstActiveIdx());
 		}
 		
-		public long getNextActiveIdx() {
+		public long getNextActiveIdx(long connInfoIdx) {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
 					.filter(key -> key > connInfoIdx)
 					.findFirst()
 					.orElse(getLastActiveIdx());
+		}
+		
+		public void print() {
+			System.out.println(this.map.keySet());
 		}
 	}
 }
