@@ -67,7 +67,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 	
-	private long connInfoIdx;
+	private long connInfoIdx = -1;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
 		this.childAPClazz = childAPClazz;
@@ -76,20 +76,14 @@ public class ConnectionInfoVBox extends VBox {
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
-			
-			connInfoIdx = 0;
-			System.out.println(childAPClazz.getName() + " Created!");
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void clearConnInfoMap() {
-		System.out.println("clear before: "+connInfoIdx);
 		this.connInfoAPMap.clear();
-		connInfoIdx = 0;
-		System.out.println("clear after: "+connInfoIdx);
+		connInfoIdx = -1;
 	}
 
 	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
@@ -101,7 +95,10 @@ public class ConnectionInfoVBox extends VBox {
 		long newIdx = connInfoAPMap.put(new StatefulAP(type, (AnchorPane) connInfoAP));
 		connInfoAP.setId(String.valueOf(newIdx));
 		connInfoStackPane.getChildren().add(connInfoAP);
-		
+
+		if(connInfoIdx == -1) {
+			connInfoIdx = this.connInfoAPMap.getFirstActiveIdx();
+		}
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 
 		this.connInfoAPMap.print(connInfoIdx);
@@ -315,9 +312,8 @@ public class ConnectionInfoVBox extends VBox {
 		}
 		
 		public long put(StatefulAP ap) {
-			long newIdx = (long) this.map.size();
-			this.map.put(newIdx, ap);
-			return newIdx;
+			this.map.put((long) this.map.size(), ap);
+			return this.map.size() - 1;
 		}
 		
 		public long remove(long index) {
