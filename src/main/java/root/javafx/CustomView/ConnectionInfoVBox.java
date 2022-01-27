@@ -386,6 +386,9 @@ public class ConnectionInfoVBox extends VBox {
 		}
 		
 		public long getPrevActiveIdx(long connInfoIdx) {
+			if(connInfoIdx == getFirstActiveIdx()) {
+				return getLastActiveIdx();
+			}
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
@@ -396,6 +399,9 @@ public class ConnectionInfoVBox extends VBox {
 		}
 		
 		public long getNextActiveIdx(long connInfoIdx) {
+			if(connInfoIdx == getLastActiveIdx()) {
+				return getFirstActiveIdx();
+			}
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
