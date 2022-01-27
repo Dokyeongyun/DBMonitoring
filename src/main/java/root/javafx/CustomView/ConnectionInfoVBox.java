@@ -276,6 +276,13 @@ public class ConnectionInfoVBox extends VBox {
 		// Set ConnectionInfo index text
 		setConnInfoIndexText();
 		
+		// Button disabled when there is no active ConnectionInfoAP
+		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
+			setButtonsDisable(true);
+		} else {
+			setButtonsDisable(false);
+		}
+		
 		// Index logging
 		this.connInfoAPMap.print(connInfoIdx);
 	}
@@ -316,6 +323,12 @@ public class ConnectionInfoVBox extends VBox {
 		}
 	}
 	
+	private void setButtonsDisable(boolean disabled) {
+		this.connTestBtn.setDisable(disabled);
+		this.connInfoRemoveBtn.setDisable(disabled);
+		this.prevConnInfoBtn.setDisable(disabled);
+		this.nextConnInfoBtn.setDisable(disabled);
+	}
 	
 	@AllArgsConstructor
 	@Data
