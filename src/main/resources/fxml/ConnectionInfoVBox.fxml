@@ -127,14 +127,24 @@
       </Separator>
       <StackPane fx:id="connInfoStackPane">
          <children>
-            <AnchorPane fx:id="dbConnInfoNoDataAP" style="-fx-background-color: white;" visible="false">
+            <AnchorPane fx:id="connInfoNoDataAP" minHeight="200.0" style="-fx-background-color: white;">
                <children>
-                  <Label alignment="CENTER" text="There is No Data.  Please open .properties file" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <styleClass>
-                        <String fx:value="basic-font" />
-                        <String fx:value="bold" />
-                     </styleClass>
-                  </Label>
+                  <HBox alignment="CENTER" layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+                     <children>
+                        <JFXButton ellipsisString="" graphicTextGap="8.0" maxWidth="70.0" minWidth="70.0" onAction="#addNewConnInfo" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="추가">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <graphic>
+                              <FontAwesomeIconView glyphName="PLUS_SQUARE_ALT" size="13" />
+                           </graphic>
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </JFXButton>
+                        <Label graphicTextGap="13.0" style="-fx-alignment: center;" styleClass="basic-font" text="버튼을 눌러 접속정보를 추가해주세요." />
+                     </children>
+                  </HBox>
                </children>
                <padding>
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
