@@ -479,12 +479,11 @@ public class SettingMenuController implements Initializable {
 		for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.setInitialValue(jdbc);
-			dbConnVBox.addConnectionInfoAP(dbConnAP);
+			dbConnVBox.addConnectionInfoAP(1, dbConnAP);
 		}
 		
 		ConnectionInfoVBox serverConnVBox = null;
 		if(connInfoVBox.lookup("#serverConnVBox") != null) {
-			((ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox")).clearConnInfoMap();
 			serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
@@ -498,7 +497,7 @@ public class SettingMenuController implements Initializable {
 		for (JschConnectionInfo jsch : jschConnInfoList) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 			serverConnAP.setInitialValue(jsch);
-			serverConnVBox.addConnectionInfoAP(serverConnAP);
+			serverConnVBox.addConnectionInfoAP(1, serverConnAP);
 		}
 
 		// [설정] - [모니터링 여부 설정]
