@@ -1,17 +1,17 @@
 package root.javafx.CustomView;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.configuration2.PropertiesConfiguration;
+import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,18 +25,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
 import root.utils.AlertUtils;
-import root.utils.PropertiesUtils;
 
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class ConnectionInfoVBox extends VBox {
 
 	/* Dependency Injection */
@@ -60,11 +57,23 @@ public class ConnectionInfoVBox extends VBox {
 	@FXML
 	JFXButton connTestBtn;
 
+	@FXML
+	JFXButton connInfoAddBtn;
+
+	@FXML
+	JFXButton connInfoRemoveBtn;
+
+	@FXML
+	JFXButton prevConnInfoBtn;
+
+	@FXML
+	JFXButton nextConnInfoBtn;
+
 	private Class<? extends AnchorPane> childAPClazz;
 
-	private Map<Integer, AnchorPane> connInfoAPMap = new HashMap<>();
-
-	private int connInfoIdx = 0;
+	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
+	
+	private long connInfoIdx = -1;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
 		this.childAPClazz = childAPClazz;
@@ -73,7 +82,6 @@ public class ConnectionInfoVBox extends VBox {
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -81,88 +89,56 @@ public class ConnectionInfoVBox extends VBox {
 	
 	public void clearConnInfoMap() {
 		this.connInfoAPMap.clear();
+		connInfoIdx = -1;
 	}
 
-	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
-		menuTitleLB.setText(menuTitle);
-		menuIconIV.setIcon(menuIcon);
-	}
-
-	public void addConnectionInfoAP(Node connInfoAP) {
-		connInfoAPMap.put(connInfoAPMap.size(), (AnchorPane) connInfoAP);
+	public void addConnectionInfoAP(int type, Node connInfoAP) {
+		long newIdx = connInfoAPMap.put(new StatefulAP(type, (AnchorPane) connInfoAP));
+		connInfoAP.setId(String.valueOf(newIdx));
 		connInfoStackPane.getChildren().add(connInfoAP);
-		bringFrontConnInfoAnchorPane(connInfoAPMap.size() - 1);
+
+		if (connInfoIdx == -1) {
+			connInfoIdx = this.connInfoAPMap.getFirstActiveIdx();
+		}
+
+		if (type == 1) {
+			bringFrontConnInfoAnchorPane(connInfoIdx);
+		} else if (type == 2) {
+			bringFrontConnInfoAnchorPane(this.connInfoAPMap.getLastActiveIdx());
+		}
 	}
 
-	public void addConnInfo(ActionEvent e) {
-		connInfoIdx = connInfoAPMap.size();
-
+	// TODO 다형성을 이용해 클래스 타입체크 제거하기
+	public void saveConnInfoSettings(String configFilePath) {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
-			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-			dbConnAP.setInitialValue(new JdbcConnectionInfo());
-			addConnectionInfoAP(dbConnAP);
-		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
-			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
-			serverConnAP.setInitialValue(new JschConnectionInfo());
-			addConnectionInfoAP(serverConnAP);
+			Map<String, JdbcConnectionInfo> config = new HashMap<>();
+
+			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
+				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
+				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
+				config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
+			}
+			propertyRepository.saveDBConnectionInfo(configFilePath, config);
+		} else {
+			Map<String, JschConnectionInfo> config = new HashMap<>();
+
+			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
+				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
+				JschConnectionInfo jsch = serverConnAP.getInputValues();
+				config.put(jsch.getServerName().toUpperCase(), jsch);
+			}
+			propertyRepository.saveServerConnectionInfo(configFilePath, config);
 		}
 	}
-
-	public void bringFrontConnInfoAnchorPane(int connInfoIdx) {
-		this.connInfoIdx = connInfoIdx;
-		connInfoAPMap.get(connInfoIdx).toFront();
-		connInfoText.setText(String.format("(%d/%d)", connInfoIdx + 1, connInfoAPMap.size()));
-	}
-
-	public void prevConnInfo(ActionEvent e) {
-		if (connInfoAPMap.size() == 0) {
-			return;
-		}
-
-		connInfoIdx = connInfoIdx == 0 ? connInfoAPMap.size() - 1 : connInfoIdx - 1;
-		setConnectionBtnIcon(1);
-		bringFrontConnInfoAnchorPane(connInfoIdx);
-	}
-
-	public void nextConnInfo(ActionEvent e) {
-		if (connInfoAPMap.size() == 0) {
-			return;
-		}
-
-		connInfoIdx = connInfoIdx == connInfoAPMap.size() - 1 ? 0 : connInfoIdx + 1;
-		setConnectionBtnIcon(1);
-		bringFrontConnInfoAnchorPane(connInfoIdx);
-	}
-
-	private void setConnectionBtnIcon(int type) {
-		FontAwesomeIconView icon = (FontAwesomeIconView) connTestBtn.lookup("#icon");
-		switch (type) {
-		case 1:
-			icon.setIcon(FontAwesomeIcon.PLUG);
-			icon.setFill(Paint.valueOf("#000000"));
-			break;
-		case 2:
-			icon.setIcon(FontAwesomeIcon.CHECK);
-			icon.setFill(Paint.valueOf("#49a157"));
-			break;
-		case 3:
-			icon.setIcon(FontAwesomeIcon.TIMES);
-			icon.setFill(Paint.valueOf("#c40a0a"));
-			break;
-		case 4:
-			icon.setIcon(FontAwesomeIcon.SPINNER);
-			icon.setFill(Paint.valueOf("#484989"));
-			icon.getStyleClass().add("fa-spin");
-			break;
-		}
-	}
-
+	
+	/* Button Click Listener */
+	
 	public void testConnection(ActionEvent e) {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			// 아이콘 변경
 			setConnectionBtnIcon(4);
 
-			AnchorPane curAP = connInfoAPMap.get(connInfoIdx);
+			AnchorPane curAP = connInfoAPMap.get(connInfoIdx).getAp();
 
 			String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
 			String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
@@ -190,68 +166,238 @@ public class ConnectionInfoVBox extends VBox {
 
 		}
 	}
-
-	public void saveConnInfoSettings(String configFilePath) {
-
-		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
-
+	
+	public void addNewConnInfo(ActionEvent e) {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+			dbConnAP.setInitialValue(new JdbcConnectionInfo());
+			addConnectionInfoAP(2, dbConnAP);
 
-			List<String> dbNames = new ArrayList<>();
-			for (AnchorPane childAP : this.connInfoAPMap.values()) {
-				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP;
-				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
+		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
+			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+			serverConnAP.setInitialValue(new JschConnectionInfo());
+			addConnectionInfoAP(2, serverConnAP);
 
-				String dbName = jdbc.getJdbcDBName().toLowerCase();
-				config.setProperty("#DB", dbName);
-				config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
-				config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
-				config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
-				config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
-				// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
-				config.setProperty(dbName + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
-				config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
-				config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
+		}
+	}
 
-				dbNames.add(dbName);
-			}
-
-			config.setProperty("dbnames", dbNames);
-		} else {
-
-			List<String> serverNames = new ArrayList<>();
-
-			for (AnchorPane childAP : this.connInfoAPMap.values()) {
-				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP;
-				JschConnectionInfo jsch = serverConnAP.getInputValues();
-
-				String serverName = jsch.getServerName().toLowerCase();
-				config.setProperty(serverName + ".server.servername", jsch.getServerName());
-				config.setProperty(serverName + ".server.host", jsch.getHost());
-				config.setProperty(serverName + ".server.port", jsch.getPort());
-				config.setProperty(serverName + ".server.username", jsch.getUserName());
-				config.setProperty(serverName + ".server.password", jsch.getPassword());
-
-				String dateFormat = jsch.getAlc().getDateFormat();
-				String dateFormatRegex = "";
-
-				if (dateFormat.equals("EEE MMM dd HH:mm:ss yyyy")) {
-					dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
-				} else if (dateFormat.equals("yyyy-MM-dd")) {
-					dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
-				}
-
-				config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
-				config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
-				config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
-				config.setProperty(serverName + ".server.alertlog.readLine", 500);
-
-				serverNames.add(serverName);
-			}
-
-			config.setProperty("servernames", serverNames);
+	public void removeConnInfo(ActionEvent e) {
+		// Remove view
+		Node removeNode = this.connInfoStackPane.lookup("#"+connInfoIdx);
+		this.connInfoStackPane.getChildren().remove(removeNode);
+		
+		// Remove data
+		connInfoIdx = this.connInfoAPMap.remove(connInfoIdx);
+		bringFrontConnInfoAnchorPane(connInfoIdx);
+	}
+	
+	public void prevConnInfo(ActionEvent e) {
+		if (connInfoAPMap.getActiveAPCnt() == 0) {
+			return;
 		}
 
-		propertyRepository.save(configFilePath, config);
+		connInfoIdx = this.connInfoAPMap.getPrevActiveIdx(connInfoIdx);
+		setConnectionBtnIcon(1);
+		bringFrontConnInfoAnchorPane(connInfoIdx);
+	}
+
+	public void nextConnInfo(ActionEvent e) {
+		if (connInfoAPMap.getActiveAPCnt() == 0) {
+			return;
+		}
+
+		connInfoIdx = this.connInfoAPMap.getNextActiveIdx(connInfoIdx);
+		setConnectionBtnIcon(1);
+		bringFrontConnInfoAnchorPane(connInfoIdx);
+	}
+
+	
+	/* View Control Method */
+	
+	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
+		menuTitleLB.setText(menuTitle);
+		menuIconIV.setIcon(menuIcon);
+	}
+	
+	
+	// When connectionInfo index changed, this method always will be invoked.
+	private void bringFrontConnInfoAnchorPane(long index) {
+		connInfoIdx = index;
+		
+		if(connInfoStackPane.lookup("#" + (index)) != null) {
+			connInfoStackPane.lookup("#" + (index)).toFront();
+		}
+		
+		// Set ConnectionInfo index text
+		setConnInfoIndexText();
+		
+		// Button disabled when there is no active ConnectionInfoAP
+		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
+			setButtonsDisable(true);
+		} else {
+			setButtonsDisable(false);
+		}
+		
+		// Index logging
+		// this.connInfoAPMap.print(connInfoIdx);
+	}
+
+	private void setConnInfoIndexText() {
+		long curIdxTxt = this.connInfoAPMap.getActiveCurIdx(connInfoIdx);
+		long maxIdxTxt = this.connInfoAPMap.getActiveAPCnt();
+		
+		if(curIdxTxt == 0 && maxIdxTxt == 0) {
+			connInfoText.setText("※접속정보를 추가해주세요.");	
+		} else {
+			connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
+		}
+			
+	}
+	
+	// TODO Convert to Enum class
+	private void setConnectionBtnIcon(int type) {
+		FontAwesomeIconView icon = (FontAwesomeIconView) connTestBtn.lookup("#icon");
+		switch (type) {
+		case 1:
+			icon.setIcon(FontAwesomeIcon.PLUG);
+			icon.setFill(Paint.valueOf("#000000"));
+			break;
+		case 2:
+			icon.setIcon(FontAwesomeIcon.CHECK);
+			icon.setFill(Paint.valueOf("#49a157"));
+			break;
+		case 3:
+			icon.setIcon(FontAwesomeIcon.TIMES);
+			icon.setFill(Paint.valueOf("#c40a0a"));
+			break;
+		case 4:
+			icon.setIcon(FontAwesomeIcon.SPINNER);
+			icon.setFill(Paint.valueOf("#484989"));
+			icon.getStyleClass().add("fa-spin");
+			break;
+		}
+	}
+	
+	private void setButtonsDisable(boolean disabled) {
+		this.connTestBtn.setDisable(disabled);
+		this.connInfoRemoveBtn.setDisable(disabled);
+		this.prevConnInfoBtn.setDisable(disabled);
+		this.nextConnInfoBtn.setDisable(disabled);
+	}
+	
+	@AllArgsConstructor
+	@Data
+	private static class StatefulAP {
+		private int status; // 1: 기존, 2: 신규, 3: 제거
+		private AnchorPane ap;
+	}
+
+	private static class ConnInfoAPMap {
+		private ObservableMap<Long, StatefulAP> map = FXCollections.observableHashMap();
+		
+		public long put(StatefulAP ap) {
+			this.map.put((long) this.map.size(), ap);
+			return this.map.size() - 1;
+		}
+		
+		public long remove(long index) {
+			// 상태 변경 (→ 삭제)
+			this.map.get(index).setStatus(3);
+			
+			// 현재 인덱스 뒤에 삭제되지 않은 AnchorPane 갯수 카운트
+			long count = this.map.keySet()
+					.stream()
+					.filter(key -> key >= index)
+					.filter(key -> map.get(key).getStatus() != 3)
+					.count();
+
+			// 인덱스 업데이트
+			return count > 0 ? getNextActiveIdx(index) : getPrevActiveIdx(index);
+		}
+		
+		public StatefulAP get(long index) {
+			return this.map.get(index);
+		}
+		
+		public Map<Long, StatefulAP> getActiveAPs() {
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.collect(Collectors.toMap(key -> key, key -> map.get(key)));
+		}
+		
+		public long getActiveAPCnt() {
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.count();
+		}
+		
+		public void clear() {
+			this.map.clear();
+		}
+		
+		public long getActiveCurIdx(long connInfoIdx) {
+			return this.map.keySet()
+					.stream()
+					.filter(key -> key <= connInfoIdx)
+					.filter(key -> map.get(key).getStatus() != 3)
+					.count();
+		}
+		
+		public long getFirstActiveIdx() {
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.findFirst()
+					.orElse((long) -1);
+		}
+		
+		public long getLastActiveIdx() {
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.sorted(Collections.reverseOrder())
+					.findFirst()
+					.orElse((long) -1);
+		}
+		
+		public long getPrevActiveIdx(long connInfoIdx) {
+			if(connInfoIdx == getFirstActiveIdx()) {
+				return getLastActiveIdx();
+			}
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.filter(key -> key < connInfoIdx)
+					.sorted(Collections.reverseOrder())
+					.findFirst()
+					.orElse(getFirstActiveIdx());
+		}
+		
+		public long getNextActiveIdx(long connInfoIdx) {
+			if(connInfoIdx == getLastActiveIdx()) {
+				return getFirstActiveIdx();
+			}
+			return this.map.keySet()
+					.stream()
+					.filter(key -> map.get(key).getStatus() != 3)
+					.filter(key -> key > connInfoIdx)
+					.findFirst()
+					.orElse(getLastActiveIdx());
+		}
+		
+		public void print(long index) {
+			System.out.println("Current Index: " + index);
+			for (Long key : map.keySet()) {
+				if(key == index) {
+					System.out.print(key + "[:" + map.get(key).getStatus() + ":], ");	
+				} else {
+					System.out.print(key + "[" + map.get(key).getStatus() + "], ");
+				}
+				
+			}
+			System.out.println();
+		}
 	}
 }

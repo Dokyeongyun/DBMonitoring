@@ -1,9 +1,7 @@
 package root.core.domain;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 public class JschConnectionInfo {
 	private String serverName;
@@ -12,6 +10,10 @@ public class JschConnectionInfo {
 	private String userName;
 	private String password;
 	private AlertLogCommand alc;
+	
+	public JschConnectionInfo() {
+		this.alc = new AlertLogCommand();
+	}
 
 	public JschConnectionInfo(String serverName, String host, int port, String userName, String password) {
 		this.serverName = serverName;

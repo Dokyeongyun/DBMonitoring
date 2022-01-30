@@ -30,6 +30,9 @@ public class JdbcConnectionInfo {
 		this.jdbcPw = jdbcPw;
 		this.jdbcValidation = jdbcValidation;
 		this.jdbcConnections = jdbcConnections;
+		
+		// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
+		this.jdbcOracleDriver = "oracle.jdbc.driver.OracleDriver";
 	}
 
 	public JdbcConnectionInfo(String jdbcDBName, String jdbcDriver, String jdbcUrl, String jdbcId, String jdbcPw,
