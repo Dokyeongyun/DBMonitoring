@@ -39,6 +39,11 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	/****************************************************************************/
 	
+	@Override
+	public boolean isFileExist(String filePath) {
+		return new File(filePath).exists();
+	}
+
 	/**
 	 * Configuration 객체를 반환한다.
 	 * TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와 의존성 제거목적으로 일단 이렇게 함..
