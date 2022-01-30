@@ -1,17 +1,26 @@
 package root.core.repository.implement;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration.PropertiesWriter;
+import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 
+import lombok.extern.slf4j.Slf4j;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.utils.PropertiesUtils;
 
+@Slf4j
 public class PropertyRepositoryImpl implements PropertyRepository {
 	
 	// Private 필드로 선언 후 Singletone으로 관리
@@ -25,6 +34,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		return propertyService;
 	}
 	
+	private static Pattern dbPropPattern = Pattern.compile("(.*).jdbc.(.*)");
+	private static Pattern serverPropPattern = Pattern.compile("(.*).server.(.*)");
+
 	/****************************************************************************/
 	
 	/**
@@ -43,6 +55,136 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public void save(String filePath, PropertiesConfiguration config) {
 		PropertiesUtils.save(filePath, config);
+	}
+	
+	@Override
+	public void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> dbConfig) {
+		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+
+		// TODO dbnames property.. 
+		String dbNames = "";
+		for(String dbName : dbConfig.keySet()) {
+			dbNames += dbName + ",";
+			
+			JdbcConnectionInfo jdbc = dbConfig.get(dbName);
+			config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
+			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
+			config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
+			config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
+			config.setProperty(dbName + ".jdbc.driver", jdbc.getJdbcOracleDriver());
+			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
+			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
+		}
+		
+		config.setProperty("dbnames", dbNames.substring(0, dbNames.length()-1));
+
+		PropertiesConfigurationLayout layout = config.getLayout();
+		try {
+			PropertiesWriter writer = config.getIOFactory()
+					.createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
+			
+			// Write Header Comment
+			writer.writeln(layout.getHeaderComment());
+			
+			for (final String key : layout.getKeys()) {
+				Matcher m = dbPropPattern.matcher(key);
+				if (m.matches()) {
+					String dbName = m.group(1);
+					if(!dbConfig.containsKey(dbName)) {
+						continue;
+					} 
+				}
+				
+				// Output blank lines before property
+				for (int i = 0; i < layout.getBlancLinesBefore(key); i++) {
+					writer.writeln(null);
+				}
+
+				// Output the property and its value
+				boolean singleLine = layout.isForceSingleLine() || layout.isSingleLine(key);
+				writer.setCurrentSeparator(layout.getSeparator(key));
+				writer.writeProperty(key, config.getProperty(key), singleLine);
+			}
+
+			writer.writeln(layout.getCanonicalFooterCooment(true));
+			writer.flush();
+
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
+		}
+	}
+	
+	@Override
+	public void saveServerConnectionInfo(String filePath, Map<String, JschConnectionInfo> serverConfig) {
+		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+
+		// TODO servernames property.. 
+		String serverNames = "";
+		for(String serverName : serverConfig.keySet()) {
+			serverNames += serverName + ",";
+			
+			JschConnectionInfo jsch = serverConfig.get(serverName);
+			config.setProperty(serverName + ".server.servername", jsch.getServerName());
+			config.setProperty(serverName + ".server.host", jsch.getHost());
+			config.setProperty(serverName + ".server.port", jsch.getPort());
+			config.setProperty(serverName + ".server.username", jsch.getUserName());
+			config.setProperty(serverName + ".server.password", jsch.getPassword());
+			
+			String dateFormat = jsch.getAlc().getDateFormat();
+			String dateFormatRegex = "";
+
+			if (dateFormat.equals("EEE MMM dd HH:mm:ss yyyy")) {
+				dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
+			} else if (dateFormat.equals("yyyy-MM-dd")) {
+				dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
+			}
+
+			config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
+			config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
+			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
+			config.setProperty(serverName + ".server.alertlog.readLine", 500);
+		}
+		
+		config.setProperty("servernames", serverNames.substring(0, serverNames.length()-1));
+
+		PropertiesConfigurationLayout layout = config.getLayout();
+		try {
+			PropertiesWriter writer = config.getIOFactory()
+					.createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
+			
+			// Write Header Comment
+			writer.writeln(layout.getHeaderComment());
+			
+			for (final String key : layout.getKeys()) {
+				Matcher m = serverPropPattern.matcher(key);
+				if (m.matches()) {
+					String serverName = m.group(1);
+					if(!serverConfig.containsKey(serverName)) {
+						continue;
+					} 
+				}
+				
+				// Output blank lines before property
+				for (int i = 0; i < layout.getBlancLinesBefore(key); i++) {
+					writer.writeln(null);
+				}
+
+				// Output the property and its value
+				boolean singleLine = layout.isForceSingleLine() || layout.isSingleLine(key);
+				writer.setCurrentSeparator(layout.getSeparator(key));
+				writer.writeProperty(key, config.getProperty(key), singleLine);
+			}
+
+			writer.writeln(layout.getCanonicalFooterCooment(true));
+			writer.flush();
+
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
+		}
 	}
 	
 	/**

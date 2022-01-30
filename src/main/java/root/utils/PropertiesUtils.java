@@ -128,7 +128,6 @@ public class PropertiesUtils {
 	 * @return
 	 */
 	public static JschConnectionInfo getJschConnectionInfo(String serverName) {
-		serverName = serverName.toLowerCase();
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
 		int serverPort = connInfoConfig.getInt(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
@@ -155,7 +154,6 @@ public class PropertiesUtils {
 	 * @return
 	 */
 	public static JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
-		dbName = dbName.toLowerCase();
 		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
 		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
 		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");
@@ -183,10 +181,10 @@ public class PropertiesUtils {
 	 * @return
 	 */
 	public static AlertLogCommand getAlertLogCommand(String serverName) {
-		String alertLogFilePath = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.filepath");
-		String alertLogReadLine = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.readline");
-		String alertLogDateFormat = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformat");
-		String alertLogDateFormatRegex = connInfoConfig.getString(serverName.toLowerCase() + ".server.alertlog.dateformatregex");
+		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
+		String alertLogReadLine = connInfoConfig.getString(serverName + ".server.alertlog.readline");
+		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
+		String alertLogDateFormatRegex = connInfoConfig.getString(serverName + ".server.alertlog.dateformatregex");
 		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 		return alc;
 	}
