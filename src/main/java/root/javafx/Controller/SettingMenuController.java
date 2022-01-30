@@ -72,10 +72,10 @@ public class SettingMenuController implements Initializable {
 	SplitPane rootSplitPane;
 
 	@FXML
-	AnchorPane noPropertiesFileAP1; // [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+	AnchorPane noConnInfoConfigAP; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
 
 	@FXML
-	AnchorPane noPropertiesFileAP2; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
+	AnchorPane noMonitoringConfigAP; // [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
 
 	@FXML
 	VBox monitoringElementsVBox;
@@ -119,13 +119,16 @@ public class SettingMenuController implements Initializable {
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
 		if (lastUsePropertiesFile != null && propertyRepository.isFileExist(lastUsePropertiesFile)) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
-		}
 
-		// [설정] - [모니터링 여부 설정] - Preset 변경 Event
-		monitoringPresetComboBox.getSelectionModel().selectedItemProperty()
-				.addListener((options, oldValue, newValue) -> {
-					loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
-				});
+			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
+			monitoringPresetComboBox.getSelectionModel().selectedItemProperty()
+					.addListener((options, oldValue, newValue) -> {
+						loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+					});
+		} else {
+			noConnInfoConfigAP.toFront();
+			noMonitoringConfigAP.toFront();
+		}
 	}
 
 	/**
