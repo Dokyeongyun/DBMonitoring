@@ -1,13 +1,10 @@
 package root.javafx.CustomView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.apache.commons.configuration2.PropertiesConfiguration;
 
 import com.jfoenix.controls.JFXButton;
 
@@ -36,7 +33,6 @@ import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.DatabaseConnectService;
 import root.utils.AlertUtils;
-import root.utils.PropertiesUtils;
 
 public class ConnectionInfoVBox extends VBox {
 
@@ -112,68 +108,27 @@ public class ConnectionInfoVBox extends VBox {
 		}
 	}
 
+	// TODO 다형성을 이용해 클래스 타입체크 제거하기
 	public void saveConnInfoSettings(String configFilePath) {
-
-		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
-
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+			Map<String, JdbcConnectionInfo> config = new HashMap<>();
 
-			List<String> dbNames = new ArrayList<>();
 			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
 				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
 				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
-
-				String dbName = jdbc.getJdbcDBName().toLowerCase();
-				config.setProperty("#DB", dbName);
-				config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
-				config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
-				config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
-				config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
-				// TODO 선택된 Oracle Driver Type에 따라서, Driver 값 변경하기, 현재는 임시로 모두 동일한 값 입력
-				config.setProperty(dbName + ".jdbc.driver", "oracle.jdbc.driver.OracleDriver");
-				config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
-				config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
-
-				dbNames.add(dbName);
+				config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
 			}
-
-			config.setProperty("dbnames", dbNames);
+			propertyRepository.saveDBConnectionInfo(configFilePath, config);
 		} else {
-
-			List<String> serverNames = new ArrayList<>();
+			Map<String, JschConnectionInfo> config = new HashMap<>();
 
 			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
 				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 				JschConnectionInfo jsch = serverConnAP.getInputValues();
-
-				String serverName = jsch.getServerName().toLowerCase();
-				config.setProperty(serverName + ".server.servername", jsch.getServerName());
-				config.setProperty(serverName + ".server.host", jsch.getHost());
-				config.setProperty(serverName + ".server.port", jsch.getPort());
-				config.setProperty(serverName + ".server.username", jsch.getUserName());
-				config.setProperty(serverName + ".server.password", jsch.getPassword());
-
-				String dateFormat = jsch.getAlc().getDateFormat();
-				String dateFormatRegex = "";
-
-				if (dateFormat.equals("EEE MMM dd HH:mm:ss yyyy")) {
-					dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
-				} else if (dateFormat.equals("yyyy-MM-dd")) {
-					dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
-				}
-
-				config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
-				config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
-				config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
-				config.setProperty(serverName + ".server.alertlog.readLine", 500);
-
-				serverNames.add(serverName);
+				config.put(jsch.getServerName().toUpperCase(), jsch);
 			}
-
-			config.setProperty("servernames", serverNames);
+			propertyRepository.saveServerConnectionInfo(configFilePath, config);
 		}
-
-		propertyRepository.save(configFilePath, config);
 	}
 	
 	/* Button Click Listener */
@@ -284,7 +239,7 @@ public class ConnectionInfoVBox extends VBox {
 		}
 		
 		// Index logging
-		this.connInfoAPMap.print(connInfoIdx);
+		// this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	private void setConnInfoIndexText() {
