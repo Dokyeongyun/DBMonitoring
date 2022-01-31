@@ -6,7 +6,7 @@ import lombok.Data;
 public class JschConnectionInfo {
 	private String serverName;
 	private String host;
-	private int port;
+	private String port;
 	private String userName;
 	private String password;
 	private AlertLogCommand alc;
@@ -15,7 +15,7 @@ public class JschConnectionInfo {
 		this.alc = new AlertLogCommand();
 	}
 
-	public JschConnectionInfo(String serverName, String host, int port, String userName, String password) {
+	public JschConnectionInfo(String serverName, String host, String port, String userName, String password) {
 		this.serverName = serverName;
 		this.host = host;
 		this.port = port;
@@ -24,7 +24,7 @@ public class JschConnectionInfo {
 		this.alc = new AlertLogCommand();
 	}
 
-	public JschConnectionInfo(String serverName, String host, int port, String userName, String password,
+	public JschConnectionInfo(String serverName, String host, String port, String userName, String password,
 			AlertLogCommand alc) {
 		this.serverName = serverName;
 		this.host = host;

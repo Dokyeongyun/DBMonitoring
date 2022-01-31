@@ -9,9 +9,9 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
@@ -24,7 +24,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -41,7 +40,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
@@ -51,6 +49,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnectionInfoAnchorPane;
 import root.javafx.CustomView.ServerConnectionInfoAnchorPane;
+import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
 
 public class SettingMenuController implements Initializable {
@@ -58,7 +57,7 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * Pattern 객체를 정적필드로 선언한 이유 
-	 * - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite statemachine)을 
+	 * - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state machine)을 
 	 *   생성하기 때문에 인스턴스 생성비용이 높다. 
 	 * - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. 
 	 * - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
@@ -79,12 +78,6 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	VBox monitoringElementsVBox;
-
-	@FXML
-	JFXButton settingSaveBtn;
-
-	@FXML
-	Button fileChooserBtn; // 설정파일을 선택하기 위한 FileChooser
 
 	@FXML
 	TextField fileChooserText; // 설정파일 경로를 입력/출력하는 TextField
@@ -108,16 +101,13 @@ public class SettingMenuController implements Initializable {
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
 
-	// 모니터링 여부 설정 Preset Popup
-	Popup presetInputPopup = new Popup();
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 		String lastUsePropertiesFile = propertyRepository.getLastUseConnInfoFilePath();
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
-		if (lastUsePropertiesFile != null && propertyRepository.isFileExist(lastUsePropertiesFile)) {
+		if (propertyRepository.isFileExist(lastUsePropertiesFile)) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
@@ -126,8 +116,8 @@ public class SettingMenuController implements Initializable {
 						loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
 					});
 		} else {
-			noConnInfoConfigAP.toFront();
-			noMonitoringConfigAP.toFront();
+			setVisible(noConnInfoConfigAP, true);
+			setVisible(noMonitoringConfigAP, true);
 		}
 	}
 
@@ -137,7 +127,6 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void showMonitoringPresetPopup(ActionEvent e) {
-
 		// TextInputDialog 생성
 		TextInputDialog presetInputDialog = new TextInputDialog();
 		// ICON
@@ -167,7 +156,7 @@ public class SettingMenuController implements Initializable {
 			String connInfoFileName = connInfoFile.getName().substring(0,
 					connInfoFile.getName().indexOf(".properties"));
 			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
-			PropertiesUtils.createNewPropertiesFile(filePath);
+			PropertiesUtils.createNewPropertiesFile(filePath, "Monitoring");
 
 			// 2. 접속정보설정파일에 Preset 추가
 			PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
@@ -238,12 +227,12 @@ public class SettingMenuController implements Initializable {
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
+			// 4. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propertyRepository.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 			propertyRepository.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
-			// 6. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+			// 5. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);
 
 			loadResult = true;
@@ -251,7 +240,7 @@ public class SettingMenuController implements Initializable {
 			e1.printStackTrace();
 		} finally {
 
-			// 7. 파일 load가 완료되었다는 메시지를 띄운다.
+			// 6. 파일 load가 완료되었다는 메시지를 띄운다.
 			if (loadResult) {
 				Alert successAlert = new Alert(AlertType.INFORMATION);
 				successAlert.setHeaderText("설정파일 불러오기");
@@ -268,6 +257,11 @@ public class SettingMenuController implements Initializable {
 		}
 	}
 
+	/**
+	 * [설정] - [모니터링 여부 설정] - 모니터링 여부 설정파일을 불러온다.
+	 * 
+	 * @param filePath
+	 */
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
 		dbMonitorings = propertyRepository.getDBMonitoringContents();
@@ -479,10 +473,18 @@ public class SettingMenuController implements Initializable {
 			connInfoVBox.getChildren().add(dbConnVBox);
 		}
 		
-		for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
+		if (jdbcConnInfoList.size() == 0) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-			dbConnAP.setInitialValue(jdbc);
+			dbConnAP.init();
+			dbConnAP.setInitialValue(new JdbcConnectionInfo());
 			dbConnVBox.addConnectionInfoAP(1, dbConnAP);
+		} else {
+			for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
+				DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+				dbConnAP.init();
+				dbConnAP.setInitialValue(jdbc);
+				dbConnVBox.addConnectionInfoAP(1, dbConnAP);
+			}
 		}
 		
 		ConnectionInfoVBox serverConnVBox = null;
@@ -496,11 +498,17 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
 		}
-
-		for (JschConnectionInfo jsch : jschConnInfoList) {
+		
+		if (jschConnInfoList.size() == 0) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
-			serverConnAP.setInitialValue(jsch);
+			serverConnAP.setInitialValue(new JschConnectionInfo());
 			serverConnVBox.addConnectionInfoAP(1, serverConnAP);
+		} else {
+			for (JschConnectionInfo jsch : jschConnInfoList) {
+				ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+				serverConnAP.setInitialValue(jsch);
+				serverConnVBox.addConnectionInfoAP(1, serverConnAP);
+			}
 		}
 
 		// [설정] - [모니터링 여부 설정]
@@ -529,11 +537,11 @@ public class SettingMenuController implements Initializable {
 		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
 		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
 
-		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로
-		// 세팅한다.
+		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 
+		// 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
 		if (presetName.isEmpty()) {
 			// 최근 사용된 모니터링 설정 읽기
-			if (lastUsePresetName.isEmpty() && monitoringPresetComboBox.getItems().size() != 0) {
+			if (StringUtils.isEmpty(lastUsePresetName) && monitoringPresetComboBox.getItems().size() != 0) {
 				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
 				readPresetName = monitoringPresetComboBox.getItems().get(0);
 				logger.debug("첫번째 Preset: " + readPresetName);
@@ -550,9 +558,69 @@ public class SettingMenuController implements Initializable {
 		logger.debug("readPresetFilePath : " + readPresetFilePath);
 
 		// ComboBox 선택 및 Preset 파일 읽기
-		if (!readPresetName.isEmpty()) {
+		if (!StringUtils.isEmpty(readPresetName)) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
 			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
 		}
+	}
+	
+	private void setVisible(Node node, boolean isVisible) {
+		node.setVisible(isVisible);
+		if (isVisible) {
+			node.toFront();
+		} else {
+			node.toBack();
+		}
+	}
+
+	/**
+	 * [설정] - [접속정보 설정] - 새로운 접속정보 설정파일을 생성한다.
+	 * @param e
+	 */
+	public void createNewConfigFile(ActionEvent e) {
+		// TextInputDialog 생성
+		TextInputDialog configInputDialog = new TextInputDialog();
+		// ICON
+		configInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
+		// CSS
+		configInputDialog.getDialogPane().getStylesheets()
+				.add(getClass().getResource("/css/dialog.css").toExternalForm());
+		configInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
+		// Dialog ICON
+		Stage stage = (Stage) configInputDialog.getDialogPane().getScene().getWindow();
+		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
+		// Button Custom
+		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
+		configInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
+		configInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
+		// Content
+		configInputDialog.setTitle("접속정보 설정파일 생성");
+		configInputDialog.setHeaderText("새로운 접속정보 설정파일의 이름을 입력해주세요.");
+		configInputDialog.setContentText("설정파일명: ");
+		// Result
+		Optional<String> result = configInputDialog.showAndWait();
+		result.ifPresent(input -> {
+			if (input.length() == 0) {
+				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정파일 생성", "설정파일명을 입력해주세요.");
+				return;
+			}
+			
+			// TODO 입력값 검사 (영어만)
+			
+			// 1. 접속정보 설정파일 생성 (./config/connectioninfo/{접속정보설정파일명}.properties
+			String filePath = "./config/connectioninfo/" + input + ".properties";
+			PropertiesUtils.createNewPropertiesFile(filePath, "ConnectionInfo");
+			
+			// 2. 모니터링여부 Preset 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{default}.properties
+			String presetConfigPath = "./config/monitoring/" + input + "/default.properties";
+			PropertiesUtils.createNewPropertiesFile(presetConfigPath, "Monitoring");
+			
+			// 3. Set Node Visible
+			setVisible(noConnInfoConfigAP, false);
+			setVisible(noMonitoringConfigAP, false);
+			
+			// 4. 생성된 설정파일 Load 
+			loadSelectedConfigFile(filePath);
+		});
 	}
 }

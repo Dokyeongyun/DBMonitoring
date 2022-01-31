@@ -25,7 +25,8 @@ public class JschServer {
 		session = null;
 		
 		try {
-			session = jsch.getSession(jschConnectionInfo.getUserName(), jschConnectionInfo.getHost(), jschConnectionInfo.getPort());
+			session = jsch.getSession(jschConnectionInfo.getUserName(), jschConnectionInfo.getHost(),
+					Integer.valueOf(jschConnectionInfo.getPort()));
 			session.setPassword(jschConnectionInfo.getPassword());
 			
 			Properties config = new Properties();

@@ -52,7 +52,7 @@
                                                                   <VBox fx:id="connInfoVBox" style="-fx-background-color: white;" />
                                                                </content>
                                                             </ScrollPane>
-                                                            <AnchorPane fx:id="noConnInfoConfigAP" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <AnchorPane fx:id="noConnInfoConfigAP" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
                                                                   <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <children>
@@ -71,7 +71,7 @@
                                                                         </HBox>
                                                                         <HBox alignment="CENTER">
                                                                            <children>
-                                                                              <JFXButton alignment="CENTER" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="새로만들기" textOverrun="CLIP">
+                                                                              <JFXButton alignment="CENTER" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#createNewConfigFile" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="새로만들기" textOverrun="CLIP">
                                                                                  <cursor>
                                                                                     <Cursor fx:constant="HAND" />
                                                                                  </cursor>

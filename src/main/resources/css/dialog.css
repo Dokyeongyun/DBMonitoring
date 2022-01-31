@@ -5,9 +5,10 @@
 
 .textInputDialog .button {
 	-fx-background-color: #ffffff;
-	-fx-font-weight: bold;
-	-fx-text-fill:  #2381E9;
-	-fx-border-color:  #2381E9;
+	-fx-border-color: #ddd;
+	-fx-font-size: 12px;
+	-fx-border-radius: 30px;
+	-fx-text-fill: black;
 }
 
 .textInputDialog .text-field {
