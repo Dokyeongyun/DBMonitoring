@@ -251,11 +251,17 @@ public class PropertiesUtils {
 			FileUtils.touch(newFile);
 			
 			if (type.equals("ConnectionInfo")) {
+				String connInfoConfigFileName = newFile.getName().substring(0, newFile.getName().indexOf(".properties"));
+				
 				BufferedWriter bw = new BufferedWriter(new FileWriter(newFile));
 
 				// Default properties
-				bw.write("dbnames=\n");
-				bw.write("servernames=\n");
+				bw.append("monitoring.setting.preset.lastuse=").append("default").append("\n");
+				bw.append("monitoring.setting.preset.default.filepath=").append("./config/monitoring/")
+						.append(connInfoConfigFileName).append("/default.properties").append("\n");
+
+				bw.append("dbnames=").append("\n");
+				bw.append("servernames=").append("\n");
 
 				bw.flush();
 				bw.close();
