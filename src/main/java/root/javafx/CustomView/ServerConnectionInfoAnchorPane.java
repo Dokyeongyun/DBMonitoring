@@ -63,7 +63,7 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 
 		serverNameTF.setText(jsch.getServerName());
 		hostTF.setText(jsch.getHost());
-		portTF.setText(String.valueOf(jsch.getPort()).equals("0") ? "" : String.valueOf(jsch.getPort()));
+		portTF.setText(jsch.getPort());
 		userTF.setText(jsch.getUserName());
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());
@@ -74,7 +74,7 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 		JschConnectionInfo jsch = new JschConnectionInfo();
 		jsch.setServerName(this.serverNameTF.getText());
 		jsch.setHost(this.hostTF.getText());
-		jsch.setPort(Integer.valueOf(this.portTF.getText()));
+		jsch.setPort(this.portTF.getText());
 		jsch.setUserName(this.userTF.getText());
 		jsch.setPassword(this.passwordPF.getText());
 		AlertLogCommand alc = new AlertLogCommand();

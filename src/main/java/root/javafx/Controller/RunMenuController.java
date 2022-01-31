@@ -109,7 +109,7 @@ public class RunMenuController implements Initializable {
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
 			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 			lastUseConnInfoFilePath = propertyRepository.getLastUseConnInfoFilePath();
-			if(lastUseConnInfoFilePath != null) {
+			if(propertyRepository.isFileExist(lastUseConnInfoFilePath)) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
 				loadConnectionInfoProperties(lastUseConnInfoFilePath);
 			}

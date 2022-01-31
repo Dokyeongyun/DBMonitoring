@@ -10,6 +10,8 @@ import root.core.domain.JschConnectionInfo;
 
 public interface PropertyRepository {
 	
+	boolean isFileExist(String filePath);
+	
 	PropertiesConfiguration getConfiguration(String config);
 	
 	void save(String filePath, PropertiesConfiguration config);

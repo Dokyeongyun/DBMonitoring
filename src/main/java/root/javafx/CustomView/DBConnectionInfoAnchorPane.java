@@ -13,14 +13,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class DBConnectionInfoAnchorPane extends AnchorPane {
 
 	/* Dependency Injection */
@@ -62,27 +58,19 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 		}
 	}
 
-	public void setInitialValue(JdbcConnectionInfo jdbc) {
+	public void init() {
 		driverCB.getItems().addAll(propertyRepository.getOracleDrivers());
-
-		hostTF.setText(jdbc.getJdbcHost());
-		sidTF.setText(jdbc.getJdbcSID());
-		userTF.setText(jdbc.getJdbcId());
-		passwordPF.setText(jdbc.getJdbcPw());
-		urlTF.setText(jdbc.getJdbcUrl());
-		portTF.setText(jdbc.getJdbcPort());
-		driverCB.getSelectionModel().select(jdbc.getJdbcOracleDriver());
-		aliasTF.setText(jdbc.getJdbcDBName());
 
 		// DB Url Generate Event Setting
 		String dbms = "oracle";
 		DBUrlGenerateEvent urlEvent = new DBUrlGenerateEvent(dbms);
 
-		driverCB.setOnInputMethodTextChanged(urlEvent);
+		driverCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			urlEvent.handle(null);
+		});
 		hostTF.setOnKeyReleased(urlEvent);
 		portTF.setOnKeyReleased(urlEvent);
 		sidTF.setOnKeyReleased(urlEvent);
-
 		urlTF.setOnKeyReleased(s -> {
 			String text = ((TextField) s.getSource()).getText();
 			Pattern p = Pattern
@@ -96,6 +84,18 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 				urlEvent.handle(s);
 			}
 		});
+	}
+	
+	public void setInitialValue(JdbcConnectionInfo jdbc) {
+		hostTF.setText(jdbc.getJdbcHost());
+		sidTF.setText(jdbc.getJdbcSID());
+		userTF.setText(jdbc.getJdbcId());
+		passwordPF.setText(jdbc.getJdbcPw());
+		urlTF.setText(jdbc.getJdbcUrl());
+		portTF.setText(jdbc.getJdbcPort());
+		// TODO
+		driverCB.getSelectionModel().select("thin");
+		aliasTF.setText(jdbc.getJdbcDBName());
 	}
 	
 	public JdbcConnectionInfo getInputValues() {
@@ -131,8 +131,10 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 		public void handle(Event event) {
 			StringBuffer url = new StringBuffer();
 			url.append("jdbc:").append(dbms).append(":").append(driverCB.getSelectionModel().getSelectedItem())
-					.append(":@").append(hostTF.getText()).append(":").append(portTF.getText()).append("/")
-					.append(sidTF.getText());
+					.append(":@")
+					.append(hostTF.getText() == null ? "" : hostTF.getText()).append(":")
+					.append(portTF.getText() == null ? "" : portTF.getText()).append("/")
+					.append(sidTF.getText() == null ? "" : sidTF.getText());
 
 			urlTF.setText(url.toString());
 		}

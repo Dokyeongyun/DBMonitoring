@@ -170,6 +170,7 @@ public class ConnectionInfoVBox extends VBox {
 	public void addNewConnInfo(ActionEvent e) {
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+			dbConnAP.init();
 			dbConnAP.setInitialValue(new JdbcConnectionInfo());
 			addConnectionInfoAP(2, dbConnAP);
 

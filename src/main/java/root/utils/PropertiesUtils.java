@@ -1,5 +1,6 @@
 package root.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration.PropertiesWriter;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 import org.apache.commons.configuration2.builder.CopyObjectDefaultHandler;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -116,6 +118,9 @@ public class PropertiesUtils {
 	 */
 	public static List<JschConnectionInfo> getJschConnectionMap() {
 		String[] serverNames = connInfoConfig.getStringArray("servernames");
+		if(serverNames == null || serverNames.length == 0) {
+			return new ArrayList<>();
+		}
 		List<JschConnectionInfo> jschList = new ArrayList<>();
 		for(String serverName : serverNames) jschList.add(getJschConnectionInfo(serverName));
 		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ?  -1 : 1);
@@ -129,7 +134,7 @@ public class PropertiesUtils {
 	 */
 	public static JschConnectionInfo getJschConnectionInfo(String serverName) {
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
-		int serverPort = connInfoConfig.getInt(serverName + ".server.port");
+		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
 		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
 		AlertLogCommand alc = getAlertLogCommand(serverName);
@@ -142,6 +147,9 @@ public class PropertiesUtils {
 	 */
 	public static List<JdbcConnectionInfo> getJdbcConnectionMap() {
 		String[] dbNames = connInfoConfig.getStringArray("dbnames");
+		if(dbNames == null || dbNames.length == 0) {
+			return new ArrayList<>();
+		}
 		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
 		for(String dbName : dbNames) jdbcList.add(getJdbcConnectionInfo(dbName));
 		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ?  -1 : 1);
@@ -234,9 +242,33 @@ public class PropertiesUtils {
 	 * 지정된 경로에 새로운 파일을 생성한다.
 	 * @param filePath
 	 */
-	public static void createNewPropertiesFile(String filePath) {
+	public static void createNewPropertiesFile(String filePath, String type) {
 		try {
-			FileUtils.touch(new File(filePath));
+			File newFile = new File(filePath);
+			
+			// 파일 및 디렉터리 생성
+			new File(newFile.getParent()).mkdirs();
+			FileUtils.touch(newFile);
+			
+			if (type.equals("ConnectionInfo")) {
+				String connInfoConfigFileName = newFile.getName().substring(0, newFile.getName().indexOf(".properties"));
+				
+				BufferedWriter bw = new BufferedWriter(new FileWriter(newFile));
+
+				// Default properties
+				bw.append("monitoring.setting.preset.lastuse=").append("default").append("\n");
+				bw.append("monitoring.setting.preset.default.filepath=").append("./config/monitoring/")
+						.append(connInfoConfigFileName).append("/default.properties").append("\n");
+
+				bw.append("dbnames=").append("\n");
+				bw.append("servernames=").append("\n");
+
+				bw.flush();
+				bw.close();
+
+			} else if (type.equals("Monitoring")) {
+
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
