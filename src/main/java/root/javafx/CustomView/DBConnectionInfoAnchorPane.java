@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -113,6 +116,11 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 		return jdbc;
 	}
 
+	public boolean isAnyEmptyInput() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
+				passwordPF.getText(), driverCB.getSelectionModel().getSelectedItem());
+	}
+	
 	/**
 	 * 키 입력 또는 콤보박스 선택을 통해 입력된 Database 접속정보를 이용해 URL을 생성하는 이벤트
 	 * 
@@ -129,6 +137,8 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 
 		@Override
 		public void handle(Event event) {
+			System.out.println("Fire!");
+			
 			StringBuffer url = new StringBuffer();
 			url.append("jdbc:").append(dbms).append(":").append(driverCB.getSelectionModel().getSelectedItem())
 					.append(":@")
@@ -137,6 +147,28 @@ public class DBConnectionInfoAnchorPane extends AnchorPane {
 					.append(sidTF.getText() == null ? "" : sidTF.getText());
 
 			urlTF.setText(url.toString());
+			
+			if (event == null) {
+				System.out.println("Event is Null");
+				return;
+			}
+
+			Node node = (Node) event.getTarget();
+			Node topParent = null;
+			while (true) {
+				if (node.getParent() == null) {
+					break;
+				}
+				node = node.getParent();
+				topParent = node;
+			}
+
+			if (topParent == null) {
+				System.out.println("TopParent is Null");
+				return;
+			}
+
+			topParent.lookup("#connTestBtn").setDisable(isAnyEmptyInput());
 		}
 	}
 }

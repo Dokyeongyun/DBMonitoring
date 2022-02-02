@@ -9,15 +9,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 
-@EqualsAndHashCode(callSuper = false)
-@Data
 public class ServerConnectionInfoAnchorPane extends AnchorPane {
 
 	/* Dependency Injection */

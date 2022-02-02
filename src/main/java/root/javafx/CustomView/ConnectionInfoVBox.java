@@ -173,6 +173,7 @@ public class ConnectionInfoVBox extends VBox {
 			dbConnAP.init();
 			dbConnAP.setInitialValue(new JdbcConnectionInfo());
 			addConnectionInfoAP(2, dbConnAP);
+			connTestBtn.setDisable(true);
 
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
 			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
@@ -220,7 +221,6 @@ public class ConnectionInfoVBox extends VBox {
 		menuIconIV.setIcon(menuIcon);
 	}
 	
-	
 	// When connectionInfo index changed, this method always will be invoked.
 	private void bringFrontConnInfoAnchorPane(long index) {
 		connInfoIdx = index;
@@ -234,9 +234,15 @@ public class ConnectionInfoVBox extends VBox {
 		
 		// Button disabled when there is no active ConnectionInfoAP
 		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
-			setButtonsDisable(true);
+			connTestBtn.setDisable(true);
+			connInfoRemoveBtn.setDisable(true);
+			prevConnInfoBtn.setDisable(true);
+			nextConnInfoBtn.setDisable(true);
 		} else {
-			setButtonsDisable(false);
+			connTestBtn.setDisable(false);
+			connInfoRemoveBtn.setDisable(false);
+			prevConnInfoBtn.setDisable(false);
+			nextConnInfoBtn.setDisable(false);
 		}
 		
 		// Index logging
@@ -277,13 +283,6 @@ public class ConnectionInfoVBox extends VBox {
 			icon.getStyleClass().add("fa-spin");
 			break;
 		}
-	}
-	
-	private void setButtonsDisable(boolean disabled) {
-		this.connTestBtn.setDisable(disabled);
-		this.connInfoRemoveBtn.setDisable(disabled);
-		this.prevConnInfoBtn.setDisable(disabled);
-		this.nextConnInfoBtn.setDisable(disabled);
 	}
 	
 	@AllArgsConstructor
