@@ -28,6 +28,12 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 	}
 
 	@Override
+	public boolean canConnectionTest(ConnectionInfoAP curAP) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
 	public ConnectionTestService getConnectionTestService(ConnectionInfoAP curAP) {
 		// TODO Auto-generated method stub
 		System.out.println("Server test()");
@@ -47,5 +53,4 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 		serverConnAP.setInitialValue(connInfo);
 		return serverConnAP;
 	}
-
 }

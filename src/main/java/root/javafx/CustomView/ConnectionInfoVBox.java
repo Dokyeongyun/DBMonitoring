@@ -106,7 +106,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 	
 	public void addConnInfoList(List<T> connInfoList) {
 		if (connInfoList.isEmpty()) {
-			addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
+			connInfoNoDataAP.toFront();	
 			return;
 		}
 		
@@ -208,7 +208,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 			prevConnInfoBtn.setDisable(true);
 			nextConnInfoBtn.setDisable(true);
 		} else {
-			connTestBtn.setDisable(false);
+			connTestBtn.setDisable(connInfoControl.canConnectionTest(this.connInfoAPMap.get(index).getAp()));
 			connInfoRemoveBtn.setDisable(false);
 			prevConnInfoBtn.setDisable(false);
 			nextConnInfoBtn.setDisable(false);

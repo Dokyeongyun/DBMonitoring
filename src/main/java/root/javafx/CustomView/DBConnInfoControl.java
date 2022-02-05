@@ -30,7 +30,12 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 		}
 		propertyRepository.saveDBConnectionInfo(configFilePath, config);
 	}
-	
+
+	@Override
+	public boolean canConnectionTest(ConnectionInfoAP curAP) {
+		return ((DBConnectionInfoAnchorPane) curAP).isAnyEmptyInput();
+	}
+
 	@Override
 	public ConnectionTestService getConnectionTestService(ConnectionInfoAP curAP) {
 		String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
