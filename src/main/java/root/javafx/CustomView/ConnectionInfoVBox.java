@@ -2,7 +2,6 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -16,10 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -27,12 +23,8 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
-import root.javafx.Service.DatabaseConnectService;
-import root.utils.AlertUtils;
 
 public class ConnectionInfoVBox extends VBox {
 
@@ -69,7 +61,7 @@ public class ConnectionInfoVBox extends VBox {
 	@FXML
 	JFXButton nextConnInfoBtn;
 
-	private Class<? extends AnchorPane> childAPClazz;
+//	private Class<? extends AnchorPane> childAPClazz;
 	
 	private ConnInfoControl<ConnectionInfoAP> connInfoControl;
 
@@ -78,7 +70,7 @@ public class ConnectionInfoVBox extends VBox {
 	private long connInfoIdx = -1;
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz, ConnInfoControl<ConnectionInfoAP> connInfoControl) {
-		this.childAPClazz = childAPClazz;
+//		this.childAPClazz = childAPClazz;
 		this.connInfoControl = connInfoControl;
 		
 		try {
@@ -114,6 +106,8 @@ public class ConnectionInfoVBox extends VBox {
 
 	// TODO 다형성을 이용해 클래스 타입체크 제거하기
 	public void saveConnInfoSettings(String configFilePath) {
+		connInfoControl.save();
+		/*
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			Map<String, JdbcConnectionInfo> config = new HashMap<>();
 
@@ -133,11 +127,14 @@ public class ConnectionInfoVBox extends VBox {
 			}
 			propertyRepository.saveServerConnectionInfo(configFilePath, config);
 		}
+		*/
 	}
 	
 	/* Button Click Listener */
 	
 	public void testConnection(ActionEvent e) {
+		connInfoControl.test();
+		/*
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			// 아이콘 변경
 			setConnectionBtnIcon(4);
@@ -169,9 +166,12 @@ public class ConnectionInfoVBox extends VBox {
 		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
 
 		}
+		*/
 	}
 	
 	public void addNewConnInfo(ActionEvent e) {
+		connInfoControl.getNewConnInfoAP();
+		/*
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 			dbConnAP.init();
@@ -184,6 +184,7 @@ public class ConnectionInfoVBox extends VBox {
 			addConnectionInfoAP(2, serverConnAP);
 
 		}
+		*/
 	}
 
 	public void removeConnInfo(ActionEvent e) {
