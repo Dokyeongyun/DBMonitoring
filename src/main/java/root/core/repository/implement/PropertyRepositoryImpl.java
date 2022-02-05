@@ -76,7 +76,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
 			config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
 			config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
-			config.setProperty(dbName + ".jdbc.driver", jdbc.getJdbcOracleDriver());
+			config.setProperty(dbName + ".jdbc.driver", jdbc.getJdbcDriver());
 			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
 			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
 		}

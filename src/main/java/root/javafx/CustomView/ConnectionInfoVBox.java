@@ -100,13 +100,13 @@ public class ConnectionInfoVBox<T> extends VBox {
 		}
 	}
 
-	public void saveConnInfoSettings(String configFilePath) {
-		connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
+	public boolean saveConnInfoSettings(String configFilePath) {
+		return connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
 	}
 	
 	public void addConnInfoList(List<T> connInfoList) {
 		if (connInfoList.isEmpty()) {
-			addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
+			connInfoNoDataAP.toFront();	
 			return;
 		}
 		
@@ -203,9 +203,15 @@ public class ConnectionInfoVBox<T> extends VBox {
 		
 		// Button disabled when there is no active ConnectionInfoAP
 		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
-			setButtonsDisable(true);
+			connTestBtn.setDisable(true);
+			connInfoRemoveBtn.setDisable(true);
+			prevConnInfoBtn.setDisable(true);
+			nextConnInfoBtn.setDisable(true);
 		} else {
-			setButtonsDisable(false);
+			connTestBtn.setDisable(connInfoControl.canConnectionTest(this.connInfoAPMap.get(index).getAp()));
+			connInfoRemoveBtn.setDisable(false);
+			prevConnInfoBtn.setDisable(false);
+			nextConnInfoBtn.setDisable(false);
 		}
 		
 		// Index logging
@@ -246,13 +252,6 @@ public class ConnectionInfoVBox<T> extends VBox {
 			icon.getStyleClass().add("fa-spin");
 			break;
 		}
-	}
-	
-	private void setButtonsDisable(boolean disabled) {
-		this.connTestBtn.setDisable(disabled);
-		this.connInfoRemoveBtn.setDisable(disabled);
-		this.prevConnInfoBtn.setDisable(disabled);
-		this.nextConnInfoBtn.setDisable(disabled);
 	}
 	
 	@AllArgsConstructor

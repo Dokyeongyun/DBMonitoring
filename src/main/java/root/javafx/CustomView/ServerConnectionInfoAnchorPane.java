@@ -2,6 +2,8 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.fxml.FXML;
@@ -54,12 +56,17 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-
-	// "※프로퍼티파일을 열거나 접속정보를 추가해주세요."
-	public void setInitialValue(JschConnectionInfo jsch) {
+	
+	public void init() {
+		// Set textFormatter
+		portTF.setTextFormatter(new NumberTextFormatter());
+		
+		// Set AlertLogDateFormat ComboBox values
 		alertLogDateFormatCB.getItems()
-				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+		.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+	}
 
+	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
 		hostTF.setText(jsch.getHost());
 		portTF.setText(jsch.getPort());
@@ -81,5 +88,11 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 		jsch.setAlc(alc);
 		return jsch;
+	}
+
+	public boolean isAnyEmptyInput() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), serverNameTF.getText(),
+				passwordPF.getText(), alertLogFilePathTF.getText(),
+				alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 	}
 }
