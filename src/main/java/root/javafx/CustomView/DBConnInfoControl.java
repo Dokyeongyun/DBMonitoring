@@ -13,7 +13,7 @@ import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.DatabaseConnectService;
 
-public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
+public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 
 	/* Dependency Injection */
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
@@ -48,6 +48,14 @@ public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 		DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
 		dbConnAP.init();
 		dbConnAP.setInitialValue(new JdbcConnectionInfo());
+		return dbConnAP;
+	}
+
+	@Override
+	public ConnectionInfoAP getConnInfoAP(JdbcConnectionInfo connInfo) {
+		DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+		dbConnAP.init();
+		dbConnAP.setInitialValue(connInfo);
 		return dbConnAP;
 	}
 }

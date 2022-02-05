@@ -2,6 +2,7 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -27,7 +28,7 @@ import lombok.Data;
 import root.javafx.Service.ConnectionTestService;
 import root.utils.AlertUtils;
 
-public class ConnectionInfoVBox extends VBox {
+public class ConnectionInfoVBox<T> extends VBox {
 
 	@FXML
 	Label menuTitleLB;
@@ -59,13 +60,13 @@ public class ConnectionInfoVBox extends VBox {
 	@FXML
 	JFXButton nextConnInfoBtn;
 	
-	private ConnInfoControl<ConnectionInfoAP> connInfoControl;
+	private ConnInfoControl<T> connInfoControl;
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 	
 	private long connInfoIdx = -1;
 
-	public ConnectionInfoVBox(ConnInfoControl<ConnectionInfoAP> connInfoControl) {
+	public ConnectionInfoVBox(ConnInfoControl<T> connInfoControl) {
 		this.connInfoControl = connInfoControl;
 		
 		try {
@@ -101,6 +102,18 @@ public class ConnectionInfoVBox extends VBox {
 
 	public void saveConnInfoSettings(String configFilePath) {
 		connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
+	}
+	
+	public void addConnInfoList(List<T> connInfoList) {
+		if (connInfoList.isEmpty()) {
+			addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
+			return;
+		}
+		
+		for(T connInfo : connInfoList) {
+			ConnectionInfoAP connInfoAP = connInfoControl.getConnInfoAP(connInfo);
+			addConnectionInfoAP(1, connInfoAP);
+		}
 	}
 	
 	/* Button Click Listener */

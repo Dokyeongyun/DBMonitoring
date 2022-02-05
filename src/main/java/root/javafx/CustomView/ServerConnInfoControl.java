@@ -10,7 +10,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 
-public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
+public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo> {
 
 	/* Dependency Injection */
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
@@ -38,6 +38,13 @@ public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> 
 	public ConnectionInfoAP getNewConnInfoAP() {
 		ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 		serverConnAP.setInitialValue(new JschConnectionInfo());
+		return serverConnAP;
+	}
+
+	@Override
+	public ConnectionInfoAP getConnInfoAP(JschConnectionInfo connInfo) {
+		ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+		serverConnAP.setInitialValue(connInfo);
 		return serverConnAP;
 	}
 
