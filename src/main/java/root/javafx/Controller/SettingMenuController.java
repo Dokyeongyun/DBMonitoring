@@ -469,7 +469,7 @@ public class SettingMenuController implements Initializable {
 			dbConnVBox.clearConnInfoMap();
 		} else {
 			// DB 접속정보 UI
-			dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class, new DBConnInfoControl());
+			dbConnVBox = new ConnectionInfoVBox(new DBConnInfoControl());
 			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
@@ -495,7 +495,7 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox.clearConnInfoMap();
 		} else {
 			// Server 접속정보 UI
-			serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class, new ServerConnInfoControl());
+			serverConnVBox = new ConnectionInfoVBox(new ServerConnInfoControl());
 			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);

@@ -60,8 +60,6 @@ public class ConnectionInfoVBox extends VBox {
 
 	@FXML
 	JFXButton nextConnInfoBtn;
-
-//	private Class<? extends AnchorPane> childAPClazz;
 	
 	private ConnInfoControl<ConnectionInfoAP> connInfoControl;
 
@@ -69,8 +67,7 @@ public class ConnectionInfoVBox extends VBox {
 	
 	private long connInfoIdx = -1;
 
-	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz, ConnInfoControl<ConnectionInfoAP> connInfoControl) {
-//		this.childAPClazz = childAPClazz;
+	public ConnectionInfoVBox(ConnInfoControl<ConnectionInfoAP> connInfoControl) {
 		this.connInfoControl = connInfoControl;
 		
 		try {
@@ -106,7 +103,7 @@ public class ConnectionInfoVBox extends VBox {
 
 	// TODO 다형성을 이용해 클래스 타입체크 제거하기
 	public void saveConnInfoSettings(String configFilePath) {
-		connInfoControl.save();
+		connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
 		/*
 		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
 			Map<String, JdbcConnectionInfo> config = new HashMap<>();
