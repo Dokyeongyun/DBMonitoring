@@ -56,12 +56,17 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-
-	// "※프로퍼티파일을 열거나 접속정보를 추가해주세요."
-	public void setInitialValue(JschConnectionInfo jsch) {
+	
+	public void init() {
+		// Set textFormatter
+		portTF.setTextFormatter(new NumberTextFormatter());
+		
+		// Set AlertLogDateFormat ComboBox values
 		alertLogDateFormatCB.getItems()
-				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+		.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+	}
 
+	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
 		hostTF.setText(jsch.getHost());
 		portTF.setText(jsch.getPort());

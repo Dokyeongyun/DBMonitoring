@@ -52,6 +52,7 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 	@Override
 	public ConnectionInfoAP getNewConnInfoAP() {
 		ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+		serverConnAP.init();
 		serverConnAP.setInitialValue(new JschConnectionInfo());
 		return serverConnAP;
 	}
@@ -59,6 +60,7 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 	@Override
 	public ConnectionInfoAP getConnInfoAP(JschConnectionInfo connInfo) {
 		ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+		serverConnAP.init();
 		serverConnAP.setInitialValue(connInfo);
 		return serverConnAP;
 	}

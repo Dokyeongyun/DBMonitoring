@@ -88,7 +88,10 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 				changedEvent.handle(s);
 			}
 		});
-		
+
+		// Set textFormatter
+		portTF.setTextFormatter(new NumberTextFormatter());
+
 		// Set driver ComboBox values
 		driverCB.getItems().addAll(propertyRepository.getOracleDrivers());
 	}
