@@ -47,8 +47,8 @@ import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox;
-import root.javafx.CustomView.DBConnectionInfoAnchorPane;
-import root.javafx.CustomView.ServerConnectionInfoAnchorPane;
+import root.javafx.CustomView.DBConnInfoControl;
+import root.javafx.CustomView.ServerConnInfoControl;
 import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
 
@@ -281,17 +281,20 @@ public class SettingMenuController implements Initializable {
 	 * 
 	 * @param e
 	 */
+	@SuppressWarnings("unchecked")
 	public void saveConnInfoSettings(ActionEvent e) {
 		// TODO 입력값 검사
 
 		String configFilePath = fileChooserText.getText();
 
-		ConnectionInfoVBox dbConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#dbConnVBox");
+		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox
+				.lookup("#dbConnVBox");
 		dbConnVBox.saveConnInfoSettings(configFilePath);
-		
-		ConnectionInfoVBox serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
+
+		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox
+				.lookup("#serverConnVBox");
 		serverConnVBox.saveConnInfoSettings(configFilePath);
-		
+
 		// 설정파일 ReLoading
 		loadSelectedConfigFile(configFilePath);
 	}
@@ -455,61 +458,40 @@ public class SettingMenuController implements Initializable {
 	/**
 	 * [설정] - 설정파일을 불러온 후, 동적 UI를 생성한다.
 	 */
+	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
 
 		jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
 		jschConnInfoList = PropertiesUtils.getJschConnectionMap();
 		alcMap = PropertiesUtils.getAlertLogCommandMap();
 
-		ConnectionInfoVBox dbConnVBox = null;
+		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = null;
 		if (connInfoVBox.lookup("#dbConnVBox") != null) {
-			dbConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#dbConnVBox");
+			dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox.lookup("#dbConnVBox");
 			dbConnVBox.clearConnInfoMap();
 		} else {
 			// DB 접속정보 UI
-			dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
+			dbConnVBox = new ConnectionInfoVBox<>(new DBConnInfoControl());
 			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
 		}
 		
-		if (jdbcConnInfoList.size() == 0) {
-			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-			dbConnAP.init();
-			dbConnAP.setInitialValue(new JdbcConnectionInfo());
-			dbConnVBox.addConnectionInfoAP(1, dbConnAP);
-		} else {
-			for (JdbcConnectionInfo jdbc : jdbcConnInfoList) {
-				DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-				dbConnAP.init();
-				dbConnAP.setInitialValue(jdbc);
-				dbConnVBox.addConnectionInfoAP(1, dbConnAP);
-			}
-		}
+		dbConnVBox.addConnInfoList(jdbcConnInfoList);
 		
-		ConnectionInfoVBox serverConnVBox = null;
+		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = null;
 		if(connInfoVBox.lookup("#serverConnVBox") != null) {
-			serverConnVBox = (ConnectionInfoVBox) connInfoVBox.lookup("#serverConnVBox");
+			serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
 			// Server 접속정보 UI
-			serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
+			serverConnVBox = new ConnectionInfoVBox<>(new ServerConnInfoControl());
 			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
 		}
 		
-		if (jschConnInfoList.size() == 0) {
-			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
-			serverConnAP.setInitialValue(new JschConnectionInfo());
-			serverConnVBox.addConnectionInfoAP(1, serverConnAP);
-		} else {
-			for (JschConnectionInfo jsch : jschConnInfoList) {
-				ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
-				serverConnAP.setInitialValue(jsch);
-				serverConnVBox.addConnectionInfoAP(1, serverConnAP);
-			}
-		}
+		serverConnVBox.addConnInfoList(jschConnInfoList);
 
 		// [설정] - [모니터링 여부 설정]
 		reloadingMonitoringSetting("");
