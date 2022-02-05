@@ -2,6 +2,8 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.fxml.FXML;
@@ -81,5 +83,11 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 		jsch.setAlc(alc);
 		return jsch;
+	}
+
+	public boolean isAnyEmptyInput() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), serverNameTF.getText(),
+				passwordPF.getText(), alertLogFilePathTF.getText(),
+				alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 	}
 }

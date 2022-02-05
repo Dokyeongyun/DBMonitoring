@@ -56,11 +56,9 @@ public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
 
 	/**
-	 * Pattern 객체를 정적필드로 선언한 이유 
-	 * - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state machine)을 
-	 *   생성하기 때문에 인스턴스 생성비용이 높다. 
-	 * - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. 
-	 * - 뿐만 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
+	 * Pattern 객체를 정적필드로 선언한 이유 - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state
+	 * machine)을 생성하기 때문에 인스턴스 생성비용이 높다. - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. - 뿐만
+	 * 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
 	 */
 
 	/* Dependency Injection */
@@ -176,9 +174,9 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 
-	 * 사용자가 선택한 파일의 경로에서 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 
-	 * 그렇지 않다면, '잘못된파일입니다'라는 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
+	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 사용자가 선택한 파일의 경로에서
+	 * 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 그렇지 않다면, '잘못된파일입니다'라는
+	 * 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
 	 * 
 	 * @param e
 	 */
@@ -268,10 +266,10 @@ public class SettingMenuController implements Initializable {
 		serverMonitorings = propertyRepository.getServerMonitoringContents();
 
 		propertyRepository.loadMonitoringInfoConfig(filePath);
-		
+
 		dbNames = propertyRepository.getMonitoringDBNames();
 		serverNames = propertyRepository.getMonitoringServerNames();
-		
+
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
 	}
@@ -289,11 +287,19 @@ public class SettingMenuController implements Initializable {
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox
 				.lookup("#dbConnVBox");
-		dbConnVBox.saveConnInfoSettings(configFilePath);
+		
+		boolean isDBSaveSucceed = dbConnVBox.saveConnInfoSettings(configFilePath);
+		if (!isDBSaveSucceed) {
+			return;
+		}
 
 		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox
 				.lookup("#serverConnVBox");
-		serverConnVBox.saveConnInfoSettings(configFilePath);
+		
+		boolean isServerSaveSucceed = serverConnVBox.saveConnInfoSettings(configFilePath);
+		if (!isServerSaveSucceed) {
+			return;
+		}
 
 		// 설정파일 ReLoading
 		loadSelectedConfigFile(configFilePath);
@@ -476,11 +482,11 @@ public class SettingMenuController implements Initializable {
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
 		}
-		
+
 		dbConnVBox.addConnInfoList(jdbcConnInfoList);
-		
+
 		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = null;
-		if(connInfoVBox.lookup("#serverConnVBox") != null) {
+		if (connInfoVBox.lookup("#serverConnVBox") != null) {
 			serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
@@ -490,7 +496,7 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
 		}
-		
+
 		serverConnVBox.addConnInfoList(jschConnInfoList);
 
 		// [설정] - [모니터링 여부 설정]
@@ -519,7 +525,7 @@ public class SettingMenuController implements Initializable {
 		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
 		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
 
-		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다. 
+		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다.
 		// 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
 		if (presetName.isEmpty()) {
 			// 최근 사용된 모니터링 설정 읽기
@@ -545,7 +551,7 @@ public class SettingMenuController implements Initializable {
 			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
 		}
 	}
-	
+
 	private void setVisible(Node node, boolean isVisible) {
 		node.setVisible(isVisible);
 		if (isVisible) {
@@ -557,6 +563,7 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * [설정] - [접속정보 설정] - 새로운 접속정보 설정파일을 생성한다.
+	 * 
 	 * @param e
 	 */
 	public void createNewConfigFile(ActionEvent e) {
@@ -586,22 +593,23 @@ public class SettingMenuController implements Initializable {
 				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정파일 생성", "설정파일명을 입력해주세요.");
 				return;
 			}
-			
+
 			// TODO 입력값 검사 (영어만)
-			
+
 			// 1. 접속정보 설정파일 생성 (./config/connectioninfo/{접속정보설정파일명}.properties
 			String filePath = "./config/connectioninfo/" + input + ".properties";
 			PropertiesUtils.createNewPropertiesFile(filePath, "ConnectionInfo");
-			
-			// 2. 모니터링여부 Preset 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{default}.properties
+
+			// 2. 모니터링여부 Preset 설정파일 생성
+			// (./config/monitoring/{접속정보설정파일명}/{default}.properties
 			String presetConfigPath = "./config/monitoring/" + input + "/default.properties";
 			PropertiesUtils.createNewPropertiesFile(presetConfigPath, "Monitoring");
-			
+
 			// 3. Set Node Visible
 			setVisible(noConnInfoConfigAP, false);
 			setVisible(noMonitoringConfigAP, false);
-			
-			// 4. 생성된 설정파일 Load 
+
+			// 4. 생성된 설정파일 Load
 			loadSelectedConfigFile(filePath);
 		});
 	}

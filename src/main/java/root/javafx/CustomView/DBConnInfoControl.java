@@ -6,12 +6,14 @@ import java.util.Map;
 
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.DatabaseConnectService;
+import root.utils.AlertUtils;
 
 public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 
@@ -19,21 +21,28 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
 
 	@Override
-	public void save(String configFilePath, Collection<StatefulAP> statefulAP) {
+	public boolean save(String configFilePath, Collection<StatefulAP> statefulAP) {
 
 		Map<String, JdbcConnectionInfo> config = new HashMap<>();
 
 		for (StatefulAP childAP : statefulAP) {
 			DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
+			if (dbConnAP.isAnyEmptyInput()) {
+				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정 저장", "DB 접속정보를 모두 입력해주세요");
+				return false;
+			}
 			JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
 			config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
 		}
+		
 		propertyRepository.saveDBConnectionInfo(configFilePath, config);
+		
+		return true;
 	}
 
 	@Override
 	public boolean canConnectionTest(ConnectionInfoAP curAP) {
-		return ((DBConnectionInfoAnchorPane) curAP).isAnyEmptyInput();
+		return ((DBConnectionInfoAnchorPane) curAP).isAnyEmptyInputForDBConnectionTest();
 	}
 
 	@Override

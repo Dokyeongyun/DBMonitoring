@@ -7,7 +7,7 @@ import root.javafx.Service.ConnectionTestService;
 
 public interface ConnInfoControl<T> {
 
-	void save(String configFilePath, Collection<StatefulAP> statefulAP);
+	boolean save(String configFilePath, Collection<StatefulAP> statefulAP);
 	
 	boolean canConnectionTest(ConnectionInfoAP curAP);
 

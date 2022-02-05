@@ -119,9 +119,14 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		return jdbc;
 	}
 
-	public boolean isAnyEmptyInput() {
+	public boolean isAnyEmptyInputForDBConnectionTest() {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
 				passwordPF.getText(), driverCB.getSelectionModel().getSelectedItem());
+	}
+	
+	public boolean isAnyEmptyInput() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
+				passwordPF.getText(), aliasTF.getText(), driverCB.getSelectionModel().getSelectedItem());
 	}
 	
 	private String generateURL(String dbms) {
@@ -153,7 +158,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 			}
 
 			// DB Connection test button lookup and setDisable
-			topParent.lookup("#connTestBtn").setDisable(isAnyEmptyInput());
+			topParent.lookup("#connTestBtn").setDisable(isAnyEmptyInputForDBConnectionTest());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

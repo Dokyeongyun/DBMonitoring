@@ -100,8 +100,8 @@ public class ConnectionInfoVBox<T> extends VBox {
 		}
 	}
 
-	public void saveConnInfoSettings(String configFilePath) {
-		connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
+	public boolean saveConnInfoSettings(String configFilePath) {
+		return connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
 	}
 	
 	public void addConnInfoList(List<T> connInfoList) {
