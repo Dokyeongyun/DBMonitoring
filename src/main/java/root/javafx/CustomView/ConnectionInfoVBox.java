@@ -15,6 +15,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
@@ -25,6 +26,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.javafx.Service.ConnectionTestService;
+import root.utils.AlertUtils;
 
 public class ConnectionInfoVBox extends VBox {
 
@@ -101,69 +104,40 @@ public class ConnectionInfoVBox extends VBox {
 		}
 	}
 
-	// TODO 다형성을 이용해 클래스 타입체크 제거하기
 	public void saveConnInfoSettings(String configFilePath) {
 		connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
-		/*
-		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
-			Map<String, JdbcConnectionInfo> config = new HashMap<>();
-
-			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
-				DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
-				JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
-				config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
-			}
-			propertyRepository.saveDBConnectionInfo(configFilePath, config);
-		} else {
-			Map<String, JschConnectionInfo> config = new HashMap<>();
-
-			for (StatefulAP childAP : this.connInfoAPMap.getActiveAPs().values()) {
-				ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
-				JschConnectionInfo jsch = serverConnAP.getInputValues();
-				config.put(jsch.getServerName().toUpperCase(), jsch);
-			}
-			propertyRepository.saveServerConnectionInfo(configFilePath, config);
-		}
-		*/
 	}
 	
 	/* Button Click Listener */
 	
 	public void testConnection(ActionEvent e) {
-		connInfoControl.test();
-		/*
-		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
+
+		// 현재 AP에 작성된 접속정보를 이용해 연결 테스트
+		ConnectionInfoAP curAP = connInfoAPMap.get(connInfoIdx).getAp();
+		
+		ConnectionTestService testService = connInfoControl.getConnectionTestService(curAP);
+		
+		if (testService != null) {
 			// 아이콘 변경
 			setConnectionBtnIcon(4);
 
-			AnchorPane curAP = connInfoAPMap.get(connInfoIdx).getAp();
-
-			String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
-			String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
-			String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
-
-			// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
-			JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
-					"SELECT 1 FROM DUAL", 1);
-
-			DatabaseConnectService dbConnService = new DatabaseConnectService(jdbc);
-			dbConnService.setOnSucceeded(s -> {
-				AlertUtils.showAlert(AlertType.INFORMATION, "DB 연동테스트",
-						String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+			// 성공시 콜백 이벤트 설정
+			testService.setOnSucceeded(s -> {
+				testService.alertSucceed();
 				setConnectionBtnIcon(2);
 			});
-
-			dbConnService.setOnFailed(f -> {
-				AlertUtils.showAlert(AlertType.ERROR, "DB 연동테스트",
-						String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
+			
+			// 실패시 콜백 이벤트 설정
+			testService.setOnFailed(f -> {
+				testService.alertFailed();
 				setConnectionBtnIcon(3);
 			});
 
-			dbConnService.start();
-		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
-
+			// 연결테스트 시작
+			testService.start();
+		} else {
+			AlertUtils.showAlert(AlertType.ERROR, "연결 테스트", "연결 테스트를 수행하기 위한 정보가 부족합니다.\n접속정보를 입력해주세요.");
 		}
-		*/
 	}
 	
 	public void addNewConnInfo(ActionEvent e) {

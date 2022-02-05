@@ -4,10 +4,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
+import root.javafx.Service.ConnectionTestService;
+import root.javafx.Service.DatabaseConnectService;
 
 public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 
@@ -26,11 +30,17 @@ public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 		}
 		propertyRepository.saveDBConnectionInfo(configFilePath, config);
 	}
-
+	
 	@Override
-	public void test() {
-		// TODO Auto-generated method stub
-		System.out.println("DB test()");
+	public ConnectionTestService getConnectionTestService(ConnectionInfoAP curAP) {
+		String jdbcUrl = ((TextField) curAP.lookup("#urlTF")).getText();
+		String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
+		String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
+
+		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
+		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
+				"SELECT 1 FROM DUAL", 1);
+		return new DatabaseConnectService(jdbc);
 	}
 
 	@Override
@@ -38,5 +48,4 @@ public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 		// TODO Auto-generated method stub
 		System.out.println("DB getNewConnInfoAP()");
 	}
-
 }

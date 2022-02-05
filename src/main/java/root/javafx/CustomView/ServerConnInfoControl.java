@@ -8,6 +8,7 @@ import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
+import root.javafx.Service.ConnectionTestService;
 
 public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 
@@ -27,9 +28,10 @@ public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> 
 	}
 
 	@Override
-	public void test() {
+	public ConnectionTestService getConnectionTestService(ConnectionInfoAP curAP) {
 		// TODO Auto-generated method stub
 		System.out.println("Server test()");
+		return null;
 	}
 
 	@Override
@@ -37,4 +39,5 @@ public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> 
 		// TODO Auto-generated method stub
 		System.out.println("Server getNewConnInfoAP()");
 	}
+
 }
