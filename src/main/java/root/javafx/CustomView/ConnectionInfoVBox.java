@@ -3,7 +3,6 @@ package root.javafx.CustomView;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -71,6 +70,8 @@ public class ConnectionInfoVBox extends VBox {
 	JFXButton nextConnInfoBtn;
 
 	private Class<? extends AnchorPane> childAPClazz;
+	
+	private ConnInfoControl<ConnectionInfoAP> connInfoControl;
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 	
@@ -78,6 +79,8 @@ public class ConnectionInfoVBox extends VBox {
 
 	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz, ConnInfoControl<ConnectionInfoAP> connInfoControl) {
 		this.childAPClazz = childAPClazz;
+		this.connInfoControl = connInfoControl;
+		
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConnectionInfoVBox.fxml"));
 			loader.setController(this);

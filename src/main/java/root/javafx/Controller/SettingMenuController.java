@@ -47,7 +47,9 @@ import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox;
+import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.DBConnectionInfoAnchorPane;
+import root.javafx.CustomView.ServerConnInfoControl;
 import root.javafx.CustomView.ServerConnectionInfoAnchorPane;
 import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
@@ -467,7 +469,7 @@ public class SettingMenuController implements Initializable {
 			dbConnVBox.clearConnInfoMap();
 		} else {
 			// DB 접속정보 UI
-			dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class);
+			dbConnVBox = new ConnectionInfoVBox(DBConnectionInfoAnchorPane.class, new DBConnInfoControl());
 			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
@@ -493,7 +495,7 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox.clearConnInfoMap();
 		} else {
 			// Server 접속정보 UI
-			serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class);
+			serverConnVBox = new ConnectionInfoVBox(ServerConnectionInfoAnchorPane.class, new ServerConnInfoControl());
 			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
@@ -504,7 +506,7 @@ public class SettingMenuController implements Initializable {
 			serverConnAP.setInitialValue(new JschConnectionInfo());
 			serverConnVBox.addConnectionInfoAP(1, serverConnAP);
 		} else {
-			for (JschConnectionInfo jsch : jschConnInfoList) {
+			for (JschConnectionInfo  jsch : jschConnInfoList) {
 				ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
 				serverConnAP.setInitialValue(jsch);
 				serverConnVBox.addConnectionInfoAP(1, serverConnAP);
