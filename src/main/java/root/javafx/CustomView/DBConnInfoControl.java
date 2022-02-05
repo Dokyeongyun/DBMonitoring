@@ -44,8 +44,10 @@ public class DBConnInfoControl implements ConnInfoControl<ConnectionInfoAP> {
 	}
 
 	@Override
-	public void getNewConnInfoAP() {
-		// TODO Auto-generated method stub
-		System.out.println("DB getNewConnInfoAP()");
+	public ConnectionInfoAP getNewConnInfoAP() {
+		DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
+		dbConnAP.init();
+		dbConnAP.setInitialValue(new JdbcConnectionInfo());
+		return dbConnAP;
 	}
 }

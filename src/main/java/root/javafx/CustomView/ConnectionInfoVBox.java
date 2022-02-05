@@ -24,15 +24,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Service.ConnectionTestService;
 import root.utils.AlertUtils;
 
 public class ConnectionInfoVBox extends VBox {
-
-	/* Dependency Injection */
-	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
 
 	@FXML
 	Label menuTitleLB;
@@ -141,21 +136,7 @@ public class ConnectionInfoVBox extends VBox {
 	}
 	
 	public void addNewConnInfo(ActionEvent e) {
-		connInfoControl.getNewConnInfoAP();
-		/*
-		if (childAPClazz == DBConnectionInfoAnchorPane.class) {
-			DBConnectionInfoAnchorPane dbConnAP = new DBConnectionInfoAnchorPane();
-			dbConnAP.init();
-			dbConnAP.setInitialValue(new JdbcConnectionInfo());
-			addConnectionInfoAP(2, dbConnAP);
-
-		} else if (childAPClazz == ServerConnectionInfoAnchorPane.class) {
-			ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
-			serverConnAP.setInitialValue(new JschConnectionInfo());
-			addConnectionInfoAP(2, serverConnAP);
-
-		}
-		*/
+		addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
 	}
 
 	public void removeConnInfo(ActionEvent e) {
@@ -195,7 +176,6 @@ public class ConnectionInfoVBox extends VBox {
 		menuTitleLB.setText(menuTitle);
 		menuIconIV.setIcon(menuIcon);
 	}
-	
 	
 	// When connectionInfo index changed, this method always will be invoked.
 	private void bringFrontConnInfoAnchorPane(long index) {

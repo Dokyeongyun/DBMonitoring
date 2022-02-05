@@ -35,9 +35,10 @@ public class ServerConnInfoControl implements ConnInfoControl<ConnectionInfoAP> 
 	}
 
 	@Override
-	public void getNewConnInfoAP() {
-		// TODO Auto-generated method stub
-		System.out.println("Server getNewConnInfoAP()");
+	public ConnectionInfoAP getNewConnInfoAP() {
+		ServerConnectionInfoAnchorPane serverConnAP = new ServerConnectionInfoAnchorPane();
+		serverConnAP.setInitialValue(new JschConnectionInfo());
+		return serverConnAP;
 	}
 
 }

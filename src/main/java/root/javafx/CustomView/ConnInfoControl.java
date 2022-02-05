@@ -11,5 +11,5 @@ public interface ConnInfoControl<T extends ConnectionInfoAP> {
 
 	ConnectionTestService getConnectionTestService(ConnectionInfoAP curAP);
 	
-	void getNewConnInfoAP();
+	ConnectionInfoAP getNewConnInfoAP();
 }
