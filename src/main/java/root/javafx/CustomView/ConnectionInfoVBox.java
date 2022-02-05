@@ -3,6 +3,7 @@ package root.javafx.CustomView;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -75,7 +76,7 @@ public class ConnectionInfoVBox extends VBox {
 	
 	private long connInfoIdx = -1;
 
-	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz) {
+	public ConnectionInfoVBox(Class<? extends AnchorPane> childAPClazz, ConnInfoControl<ConnectionInfoAP> connInfoControl) {
 		this.childAPClazz = childAPClazz;
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConnectionInfoVBox.fxml"));
@@ -93,7 +94,7 @@ public class ConnectionInfoVBox extends VBox {
 	}
 
 	public void addConnectionInfoAP(int type, Node connInfoAP) {
-		long newIdx = connInfoAPMap.put(new StatefulAP(type, (AnchorPane) connInfoAP));
+		long newIdx = connInfoAPMap.put(new StatefulAP(type, (ConnectionInfoAP) connInfoAP));
 		connInfoAP.setId(String.valueOf(newIdx));
 		connInfoStackPane.getChildren().add(connInfoAP);
 
@@ -288,9 +289,9 @@ public class ConnectionInfoVBox extends VBox {
 	
 	@AllArgsConstructor
 	@Data
-	private static class StatefulAP {
+	public static class StatefulAP {
 		private int status; // 1: 기존, 2: 신규, 3: 제거
-		private AnchorPane ap;
+		private ConnectionInfoAP ap;
 	}
 
 	private static class ConnInfoAPMap {

@@ -12,12 +12,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 
-public class DBConnectionInfoAnchorPane extends AnchorPane {
+public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	/* Dependency Injection */
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
