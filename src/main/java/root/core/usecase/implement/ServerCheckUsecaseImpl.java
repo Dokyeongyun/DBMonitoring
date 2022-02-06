@@ -160,8 +160,8 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void printOSDiskUsage(String command) {
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+	public void printOSDiskUsage() {
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		
 		boolean isError = false;
 		for(OSDiskUsage data : result) {
@@ -187,10 +187,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void writeExcelOSDiskUsage(String command) throws Exception {
+	public void writeExcelOSDiskUsage() throws Exception {
 		if(!"STS".equals(serverCheckRepository.getServerName())) return;
 		
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -232,10 +232,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void writeCsvOSDiskUsage(String command) throws Exception {
+	public void writeCsvOSDiskUsage() throws Exception {
 		String serverName = serverCheckRepository.getServerName();
 
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 
 		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\OSDiskUsage\\";
 		String fileName = serverName;
@@ -256,8 +256,8 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public List<OSDiskUsage> getCurrentOSDiskUsage(String command) {
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+	public List<OSDiskUsage> getCurrentOSDiskUsage() {
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		return result;
 	}
 	

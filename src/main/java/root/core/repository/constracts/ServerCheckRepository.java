@@ -19,5 +19,5 @@ public interface ServerCheckRepository {
 	int getAlertLogFileLineCount(AlertLogCommand alc);
 	String checkAlertLog(AlertLogCommand alc);
 	AlertLog checkAlertLogDuringPeriod(AlertLogCommandPeriod alc);
-	List<OSDiskUsage> checkOSDiskUsage(String command);
+	List<OSDiskUsage> checkOSDiskUsage();
 }

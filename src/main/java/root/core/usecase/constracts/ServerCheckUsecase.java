@@ -10,11 +10,11 @@ import root.core.domain.OSDiskUsage;
 public interface ServerCheckUsecase {
 	void printAlertLog(AlertLogCommand alc);
 	void printAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
-	void printOSDiskUsage(String command);
+	void printOSDiskUsage();
 	
-	void writeExcelOSDiskUsage(String command) throws Exception;
-	void writeCsvOSDiskUsage(String command) throws Exception;
+	void writeExcelOSDiskUsage() throws Exception;
+	void writeCsvOSDiskUsage() throws Exception;
 	
-	List<OSDiskUsage> getCurrentOSDiskUsage(String command);
+	List<OSDiskUsage> getCurrentOSDiskUsage();
 	AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
 }

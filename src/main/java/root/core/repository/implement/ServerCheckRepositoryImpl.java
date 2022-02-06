@@ -209,12 +209,12 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public List<OSDiskUsage> checkOSDiskUsage(String command) {
+	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
 			Session session = this.getSession();
 			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, command);
+			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
 			InputStream in = jsch.connectChannel(channel);
 			String result = IOUtils.toString(in, "UTF-8");
 			list = stringToOsDiskUsageList(result);
