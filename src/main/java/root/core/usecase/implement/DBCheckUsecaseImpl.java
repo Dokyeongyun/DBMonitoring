@@ -19,7 +19,6 @@ import dnl.utils.text.table.csv.CsvTableModel;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.UnitString;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ReportRepository;
 import root.core.usecase.constracts.DBCheckUsecase;
@@ -84,9 +83,9 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void writeExcelArchiveUsageCheck() throws Exception {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		UnitString archiveUsage = result.get(0).getUsedPercent();
+		double archiveUsage = result.get(0).getUsedPercent();
 		
-		if(result.get(0).getUsedPercent().getValue() >= 90) {
+		if(archiveUsage >= 90) {
 			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "¢º Archive Usage Check : Usage 90% ÃÊ°ú!"+ConsoleUtils.RESET+"\n");
 		} else {
 			System.out.println("\t¢º Archive Usage Check : SUCCESS\n");
@@ -119,9 +118,9 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 			is = new FileInputStream(file);
 		} 
 		
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
+		Workbook workbook = ExcelUtils.getWorkbook(is, fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
-		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage.getValue() + archiveUsage.getUnit());
+		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 	}

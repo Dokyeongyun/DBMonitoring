@@ -25,7 +25,6 @@ import root.core.domain.AlertLogCommand;
 import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
-import root.core.domain.UnitString;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.usecase.constracts.ServerCheckUsecase;
 import root.utils.ConsoleUtils;
@@ -166,7 +165,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		boolean isError = false;
 		for(OSDiskUsage data : result) {
-			if(data.getUsedPercent().getValue() >= 80) {
+			if(data.getUsedPercent() >= 80) {
 				isError = true;
 			//	data.setUsedPercentString(ConsoleUtils.FONT_RED + data.getUsedPercentString() + ConsoleUtils.RESET);
 			} 
@@ -214,12 +213,16 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
 
-		for(OSDiskUsage data : result) {
+		for (OSDiskUsage data : result) {
 			String mountedOn = data.getMountedOn();
-			UnitString usePercent = data.getUsedPercent();
-			if(!mountedOn.startsWith("/oradata")) continue;
-			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
-			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent.getValue() + usePercent.getUnit());
+			double usePercent = data.getUsedPercent();
+			
+			if (!mountedOn.startsWith("/oradata")) {
+				continue;
+			}
+				
+			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length() - 1)) + 38;
+			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent + "%");
 		}
 
 		OutputStream os = new FileOutputStream(file);

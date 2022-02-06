@@ -3,12 +3,10 @@ package root.core.domain;
 import java.util.List;
 
 import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByName;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import root.javafx.CustomView.UnitStringConverter;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,20 +19,20 @@ public class ASMDiskUsage {
 	@CsvBindByName(column = "TYPE")
 	private String asmDiskGroupType;
 
-	@CsvCustomBindByName(column = "TOTAL_RAW(MB)", converter = UnitStringConverter.class)
-	private UnitString totalRawSpace;
+	@CsvBindByName(column = "TOTAL_RAW(MB)")
+	private double totalRawSpace;
 
-	@CsvCustomBindByName(column = "TOTAL_USABLE(MB)", converter = UnitStringConverter.class)
-	private UnitString totalFreeSpace;
+	@CsvBindByName(column = "TOTAL_USABLE(MB)")
+	private double totalFreeSpace;
 
-	@CsvCustomBindByName(column = "FREE(MB)", converter = UnitStringConverter.class)
-	private UnitString freeSpace;
+	@CsvBindByName(column = "FREE(MB)")
+	private double freeSpace;
 
-	@CsvCustomBindByName(column = "USED(MB)", converter = UnitStringConverter.class)
-	private UnitString usedSpace;
+	@CsvBindByName(column = "USED(MB)")
+	private double usedSpace;
 
-	@CsvCustomBindByName(column = "USED(%)", converter = UnitStringConverter.class)
-	private UnitString usedPercent;
+	@CsvBindByName(column = "USED(%)")
+	private double usedPercent;
 
 	@CsvBindByName(column = "RESULT")
 	private String resultMsg;
@@ -46,11 +44,11 @@ public class ASMDiskUsage {
 		for (ASMDiskUsage data : list) {
 			toCsv.append(data.getAsmDiskGroupName()).append(",");
 			toCsv.append(data.getAsmDiskGroupType()).append(",");
-			toCsv.append(data.getTotalRawSpace().getValue()).append(data.getTotalRawSpace().getUnit()).append(",");
-			toCsv.append(data.getTotalFreeSpace().getValue()).append(data.getTotalFreeSpace().getUnit()).append(",");
-			toCsv.append(data.getFreeSpace().getValue()).append(data.getFreeSpace().getUnit()).append(",");
-			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
-			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
+			toCsv.append(data.getTotalRawSpace()).append(",");
+			toCsv.append(data.getTotalFreeSpace()).append(",");
+			toCsv.append(data.getFreeSpace()).append(",");
+			toCsv.append(data.getUsedSpace()).append(",");
+			toCsv.append(data.getUsedPercent()).append(",");
 			toCsv.append(data.getResultMsg()).append("\n");
 		}
 
