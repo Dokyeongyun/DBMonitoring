@@ -23,6 +23,7 @@ import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ReportRepository;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.utils.ConsoleUtils;
+import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
 import root.utils.ExcelUtils;
@@ -44,7 +45,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t¢º Archive Usage Check");
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(ArchiveUsage.toCsvString(result)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -57,7 +58,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
 		System.out.println("\t¢º TableSpace Usage Check");
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(TableSpaceUsage.toCsvString(result)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -70,7 +71,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t¢º ASM Disk Usage Check");
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(ASMDiskUsage.toCsvString(result)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -131,7 +132,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		reportRepository.writeReportFile("ArchiveUsage"
 				, dbCheckRepository.getDBName()
 				, ".txt"
-				, new Date().toString() + "\n" + ArchiveUsage.toCsvString(result));
+				, new Date().toString() + "\n" + CsvUtils.toCsvString(result, ArchiveUsage.class));
 	}
 
 	@Override
@@ -140,7 +141,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		reportRepository.writeReportFile("TableSpaceUsage"
 				, dbCheckRepository.getDBName()
 				, ".txt"
-				, new Date().toString() + "\n" + TableSpaceUsage.toCsvString(result));
+				, new Date().toString() + "\n" + CsvUtils.toCsvString(result, TableSpaceUsage.class));
 	}
 	
 	@Override
@@ -149,7 +150,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		reportRepository.writeReportFile("ASMDiskUsage"
 				, dbCheckRepository.getDBName()
 				, ".txt"
-				, new Date().toString() + "\n" + ASMDiskUsage.toCsvString(result));
+				, new Date().toString() + "\n" + CsvUtils.toCsvString(result, ASMDiskUsage.class));
 	}
 
 	@Override

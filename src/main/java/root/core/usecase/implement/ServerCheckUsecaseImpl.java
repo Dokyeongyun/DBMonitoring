@@ -28,6 +28,7 @@ import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.usecase.constracts.ServerCheckUsecase;
 import root.utils.ConsoleUtils;
+import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
 import root.utils.ExcelUtils;
@@ -177,7 +178,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 			System.out.println("\t¢º OS Disk Usage : SUCCESS!");
 		}
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, OSDiskUsage.class)));
 			tt.printTable(System.out, 8);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -237,7 +238,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 
 		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 
-		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\OSDiskUsage\\";
+		String filePath = "./report/OSDiskUsage/";
 		String fileName = serverName;
 		String extension = ".txt";
 		File file = new File(filePath + fileName + extension);
@@ -250,7 +251,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 		bw.append(new Date().toString()).append("\n");
-		bw.append(OSDiskUsage.toCsvString(result)).append("\n");
+		bw.append(CsvUtils.toCsvString(result, OSDiskUsage.class)).append("\n");
 		bw.flush();
 		bw.close();
 	}
