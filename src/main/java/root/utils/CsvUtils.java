@@ -54,6 +54,27 @@ public class CsvUtils {
 	
 	/**
 	 * 
+	 * @param fieldNames
+	 * @return
+	 */
+	public static String createCsvHeader(Class<?> clazz) {
+		StringBuffer sb = new StringBuffer();
+		
+		try {
+			Field[] fields = clazz.getDeclaredFields();
+			List<String> fieldName = Arrays.asList(fields).stream().map(f -> (f.getName()))
+					.collect(Collectors.toList());
+
+			sb.append(createCsvHeader(fieldName));
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+
+		return sb.toString();
+	}
+	
+	/**
+	 * 
 	 * @param object
 	 * @param clazz
 	 * @return
@@ -66,7 +87,9 @@ public class CsvUtils {
 
 		if (StringUtils.equals(object.getClass().getName(), clazz.getName())) {
 			for (Field f : clazz.getDeclaredFields()) {
-				boolean accessible = f.canAccess(object);
+				@SuppressWarnings("deprecation")
+				boolean accessible = f.isAccessible();
+				
 				f.setAccessible(true);
 
 				String appender = sb.isEmpty() ? StringUtils.getIfEmpty(f.get(object).toString(), () -> "-")
@@ -79,5 +102,4 @@ public class CsvUtils {
 
 		return sb.toString();
 	}
-
 }
