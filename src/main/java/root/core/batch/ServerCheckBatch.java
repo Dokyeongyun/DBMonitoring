@@ -27,11 +27,11 @@ public class ServerCheckBatch {
 		}
 	}
 	
-	public void startBatchOSDiskUsageCheck(String command) {
+	public void startBatchOSDiskUsageCheck() {
 		try {
-			this.serverCheckUsecase.printOSDiskUsage(command);
-			this.serverCheckUsecase.writeExcelOSDiskUsage(command);
-			this.serverCheckUsecase.writeCsvOSDiskUsage(command);
+			this.serverCheckUsecase.printOSDiskUsage();
+			this.serverCheckUsecase.writeExcelOSDiskUsage();
+			this.serverCheckUsecase.writeCsvOSDiskUsage();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

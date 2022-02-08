@@ -103,7 +103,7 @@ public class Application {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
 			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
-			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
+			serverBatch.startBatchOSDiskUsageCheck();
 			//System.out.println("бр [ " + serverName + " Monitoring End ]\n\n");
 		} 
 	}

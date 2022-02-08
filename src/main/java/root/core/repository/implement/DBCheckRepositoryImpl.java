@@ -10,9 +10,9 @@ import java.util.List;
 import root.common.database.contracts.AbstractDatabase;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
-import root.utils.UnitUtils;
 
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private AbstractDatabase db;
@@ -38,7 +38,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 
 	@Override
-	public List<ArchiveUsage> checkArchiveUsage() {
+	public MonitoringResult<ArchiveUsage> checkArchiveUsage() {
 
 		List<ArchiveUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -46,9 +46,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 		ResultSet rs = null;
 		StringBuilder sb = new StringBuilder();
 		sb.append(" SELECT NAME, ROUND(SPACE_USED/SPACE_LIMIT*100) USED_RATE, ");
-		sb.append("ROUND(SPACE_LIMIT/1024/1024/1024) AS SPACE_LIMIT_GB, ");
-		sb.append("ROUND(SPACE_USED/1024/1024/1024) AS SPACE_USED_GB, ");
-		sb.append("ROUND(SPACE_RECLAIMABLE/1024/1024/1024) AS SPACE_RECLAIMABLE_GB, ");
+		sb.append("ROUND(SPACE_LIMIT) AS SPACE_LIMIT_B, ");
+		sb.append("ROUND(SPACE_USED) AS SPACE_USED_B, ");
+		sb.append("ROUND(SPACE_RECLAIMABLE) AS SPACE_RECLAIMABLE_B, ");
 		sb.append("NUMBER_OF_FILES, ");
 		sb.append("TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS') AS DNT ");
 		sb.append("FROM V$RECOVERY_FILE_DEST ");
@@ -60,19 +60,15 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			
 			while(rs.next()) {
 	            String name = rs.getString("NAME");
-	            String usedRate = rs.getString("USED_RATE");
-	            String spaceLimitGb = rs.getString("SPACE_LIMIT_GB");
-	            String spaceUsedGb = rs.getString("SPACE_USED_GB");
-	            String spaceReclaimableGb = rs.getString("SPACE_RECLAIMABLE_GB");
+	            double usedRate = rs.getDouble("USED_RATE");
+	            double spaceLimit = rs.getDouble("SPACE_LIMIT_B");
+	            double spaceUsed = rs.getDouble("SPACE_USED_B");
+	            double spaceReclaimable = rs.getDouble("SPACE_RECLAIMABLE_B");
 	            int numberOfFiles = rs.getInt("NUMBER_OF_FILES");
 	            String dnt = rs.getString("DNT");
 	            
 	            ArchiveUsage data = new ArchiveUsage(name, numberOfFiles, 
-	            		UnitUtils.parseFileSizeString(spaceLimitGb),
-	            		UnitUtils.parseFileSizeString(spaceReclaimableGb),
-	            		UnitUtils.parseFileSizeString(spaceUsedGb),
-	            		UnitUtils.parseFileSizeString(usedRate),
-	            		dnt);
+	            		spaceLimit, spaceReclaimable, spaceUsed, usedRate, dnt);
 				result.add(data);
 			}
 			
@@ -82,11 +78,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 	
 	@Override
-	public List<TableSpaceUsage> checkTableSpaceUsage() {
+	public MonitoringResult<TableSpaceUsage> checkTableSpaceUsage() {
 
 		List<TableSpaceUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -95,10 +91,10 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 		
 		StringBuffer sb = new StringBuffer();
 		sb.append(" SELECT F.TNAME AS TableSpace, ");
-		sb.append(" ROUND(SUM(D.BYTES)/1024/1024/1024, 2) AS \"Total(G)\", ");
-		sb.append(" ROUND((SUM(D.BYTES) - SUM(F.BYTES))/1024/1024/1024, 2) AS \"UsedSpace(G)\", ");
+		sb.append(" ROUND(SUM(D.BYTES), 2) AS \"Total(B)\", ");
+		sb.append(" ROUND((SUM(D.BYTES) - SUM(F.BYTES)), 2) AS \"UsedSpace(B)\", ");
 		sb.append(" ROUND((SUM(D.BYTES) - SUM(F.BYTES))/SUM(D.BYTES)*100, 0) AS \"Used(%)\", ");
-		sb.append(" ROUND(SUM(F.BYTES)/1024/1024/1024, 2) AS \"FreeSpace(G)\" ");
+		sb.append(" ROUND(SUM(F.BYTES), 2) AS \"FreeSpace(B)\" ");
 		sb.append("FROM ( ");
 		sb.append(" SELECT SUM(BYTES) BYTES, TABLESPACE_NAME TNAME ");
 		sb.append(" FROM DBA_FREE_SPACE ");
@@ -120,18 +116,12 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			
 			while(rs.next()) {
 	            String tableSpace = rs.getString("TableSpace");
-	            String totalGb = rs.getString("Total(G)");
-	            String usedSpaceGb = rs.getString("UsedSpace(G)");
-	            String usedPercent = rs.getString("Used(%)");
-	            String freeSpaceGb = rs.getString("FreeSpace(G)");
+	            double totalSpace = rs.getDouble("Total(B)");
+	            double usedSpace = rs.getDouble("UsedSpace(B)");
+	            double usedPercent = rs.getDouble("Used(%)");
+	            double freeSpace = rs.getDouble("FreeSpace(B)");
 	           
-				TableSpaceUsage data = new TableSpaceUsage(tableSpace, 
-						UnitUtils.parseFileSizeString(totalGb),
-						UnitUtils.parseFileSizeString(freeSpaceGb),
-						UnitUtils.parseFileSizeString(usedSpaceGb),
-						UnitUtils.parseFileSizeString(usedPercent));
-				
-				result.add(data);
+				result.add(new TableSpaceUsage(tableSpace, totalSpace, freeSpace, usedSpace, usedPercent));
 			}
 			
 		} catch (SQLException e) {
@@ -140,11 +130,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 	
 	@Override
-	public List<ASMDiskUsage> checkASMDiskUsage() {
+	public MonitoringResult<ASMDiskUsage> checkASMDiskUsage() {
 
 		List<ASMDiskUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -157,16 +147,16 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 		sb.append("FROM (");
 		sb.append("		SELECT NAME \"ASM_DISK_GROUP_NAME\", ");
 		sb.append("     	TYPE \"Type\", ");
-		sb.append("         TOTAL_MB \"Tot_RAW(MB)\", ");
-		sb.append("         CASE WHEN TYPE='EXTERN' THEN TOTAL_MB ");
+		sb.append("         TOTAL_MB * 1024 * 1024 \"Tot_RAW(B)\", ");
+		sb.append("         CASE WHEN TYPE='EXTERN' THEN TOTAL_MB * 1024 * 1024 ");
 		sb.append("              WHEN TYPE='NORMAL' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2 ");
 		sb.append("              WHEN TYPE='HIGH' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3 ");
-		sb.append(" 	    ELSE 0 END AS \"Tot_Usable(MB)\", ");
-		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN COLD_USED_MB ");
-		sb.append(" 		 	 WHEN TYPE='NORMAL' THEN COLD_USED_MB/2 ");
-		sb.append(" 		 	 WHEN TYPE='HIGH' THEN COLD_USED_MB/3 ");
-		sb.append(" 	    ELSE 0 END AS \"Used(MB)\", ");
-		sb.append(" 	    USABLE_FILE_MB \"Free(MB)\", ");
+		sb.append(" 	    ELSE 0 END AS \"Tot_Usable(B)\", ");
+		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN COLD_USED_MB * 1024 * 1024 ");
+		sb.append(" 		 	 WHEN TYPE='NORMAL' THEN COLD_USED_MB/2 * 1024 * 1024 ");
+		sb.append(" 		 	 WHEN TYPE='HIGH' THEN COLD_USED_MB/3 * 1024 * 1024 ");
+		sb.append(" 	    ELSE 0 END AS \"Used(B)\", ");
+		sb.append(" 	    USABLE_FILE_MB * 1024 * 1024 \"Free(B)\", ");
 		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN ROUND((TOTAL_MB-USABLE_FILE_MB)/TOTAL_MB*100,2) ");
 		sb.append("				 WHEN TYPE='NORMAL' THEN ROUND(((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2-USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2)*100,2) ");
 		sb.append("				 WHEN TYPE='HIGH'   THEN ROUND(((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3-USABLE_FILE_MB)/((TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3)*100,2) ");
@@ -182,21 +172,15 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			while(rs.next()) {
 	            String asmDiskGroupName = rs.getString("ASM_DISK_GROUP_NAME");
 	            String asmDiskGroupType = rs.getString("Type");
-	            String totalRawSpace = rs.getString("Tot_RAW(MB)");
-	            String totalAvailableSpace = rs.getString("Tot_Usable(MB)");
-	            String availableSpace = rs.getString("Free(MB)");
-	            String usedSpace = rs.getString("Used(MB)");
-	            String usedPercent = rs.getString("Used(%)");
-	            String resultMsg = rs.getString("Result");
+	            double totalRawSpace = rs.getDouble("Tot_RAW(B)");
+	            double totalAvailableSpace = rs.getDouble("Tot_Usable(B)");
+	            double availableSpace = rs.getDouble("Free(B)");
+	            double usedSpace = rs.getDouble("Used(B)");
+	            double usedPercent = rs.getDouble("Used(%)");
+				String resultMsg = rs.getString("Result");
 
-	            ASMDiskUsage data = new ASMDiskUsage(asmDiskGroupName, asmDiskGroupType,
-						UnitUtils.parseFileSizeString(totalRawSpace),
-						UnitUtils.parseFileSizeString(totalAvailableSpace),
-						UnitUtils.parseFileSizeString(availableSpace),
-						UnitUtils.parseFileSizeString(usedSpace),
-						UnitUtils.parseFileSizeString(usedPercent),
-						resultMsg);
-				result.add(data);
+				result.add(new ASMDiskUsage(asmDiskGroupName, asmDiskGroupType, totalRawSpace, totalAvailableSpace,
+						availableSpace, usedSpace, usedPercent, resultMsg));
 			}
 			
 		} catch (SQLException e) {
@@ -205,7 +189,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 
 }

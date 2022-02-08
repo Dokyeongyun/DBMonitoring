@@ -159,4 +159,15 @@ public class DateUtils {
 		}
 		return convertedDateString;
 	}
+	
+	/**
+	 * Date 객체를 포맷팅한다.
+	 * 
+	 * @param date
+	 * @param toFormat
+	 * @return
+	 */
+	public static String format(Date date, String toFormat) {
+		return new SimpleDateFormat(toFormat).format(date);
+	}
 }

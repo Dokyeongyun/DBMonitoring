@@ -1,9 +1,8 @@
 package root.core.usecase.constracts;
 
-import java.util.List;
-
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 
 public interface DBCheckUsecase {
@@ -16,8 +15,8 @@ public interface DBCheckUsecase {
 	void writeCsvTableSpaceUsage();
 	void writeCsvASMDiskUsage();
 	
-	List<ArchiveUsage> getCurrentArchiveUsage();
-	List<TableSpaceUsage> getCurrentTableSpaceUsage();
-	List<ASMDiskUsage> getCurrentASMDiskUsage();
+	MonitoringResult<ArchiveUsage> getCurrentArchiveUsage();
+	MonitoringResult<TableSpaceUsage> getCurrentTableSpaceUsage();
+	MonitoringResult<ASMDiskUsage> getCurrentASMDiskUsage();
 	
 }
