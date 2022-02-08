@@ -1,9 +1,8 @@
 package root.core.repository.constracts;
 
-import java.util.List;
-
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 
 public interface DBCheckRepository {
@@ -12,7 +11,7 @@ public interface DBCheckRepository {
 	Object getTran();
 	void endTran(Object conn);
 	
-	List<ArchiveUsage> checkArchiveUsage();
-	List<TableSpaceUsage> checkTableSpaceUsage();
-	List<ASMDiskUsage> checkASMDiskUsage();
+	MonitoringResult<ArchiveUsage> checkArchiveUsage();
+	MonitoringResult<TableSpaceUsage> checkTableSpaceUsage();
+	MonitoringResult<ASMDiskUsage> checkASMDiskUsage();
 }

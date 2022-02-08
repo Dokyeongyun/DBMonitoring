@@ -10,6 +10,7 @@ import java.util.List;
 import root.common.database.contracts.AbstractDatabase;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
 
@@ -37,7 +38,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 
 	@Override
-	public List<ArchiveUsage> checkArchiveUsage() {
+	public MonitoringResult<ArchiveUsage> checkArchiveUsage() {
 
 		List<ArchiveUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -77,11 +78,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 	
 	@Override
-	public List<TableSpaceUsage> checkTableSpaceUsage() {
+	public MonitoringResult<TableSpaceUsage> checkTableSpaceUsage() {
 
 		List<TableSpaceUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -129,11 +130,11 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 	
 	@Override
-	public List<ASMDiskUsage> checkASMDiskUsage() {
+	public MonitoringResult<ASMDiskUsage> checkASMDiskUsage() {
 
 		List<ASMDiskUsage> result = new ArrayList<>();
 		Connection conn = null;
@@ -188,7 +189,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			this.endTran(conn);
 		}
 		
-		return result;
+		return new MonitoringResult<>(result);
 	}
 
 }
