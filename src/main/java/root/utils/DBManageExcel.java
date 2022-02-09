@@ -6,6 +6,7 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 public class DBManageExcel extends ExcelUtils {
@@ -24,7 +25,7 @@ public class DBManageExcel extends ExcelUtils {
 
 		OutputStream fos;
 		try {
-			String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
+			String filePath = "./report/";
 			String fileName = "DB관리대장_종합_"+year+"."+month;
 			String extension = ".xlsx";
 			fos = new FileOutputStream(filePath + fileName + extension);
@@ -33,14 +34,14 @@ public class DBManageExcel extends ExcelUtils {
 			
 			// CellStyle 생성
 			// 1. 회색 배경, 검은색 실선 테두리, 중앙정렬
-			XSSFCellStyle grayCS = excel.createCellStyle("d0cece", false);
+			XSSFCellStyle grayCS = excel.createCellStyle(IndexedColors.GREY_25_PERCENT, false); /// "#d0cece"
 			// 2. 회색 배경, 검은색 실선 테두리, 왼쪽정렬
-			XSSFCellStyle grayCSLeft = excel.createCellStyle("d0cece", false);
+			XSSFCellStyle grayCSLeft = excel.createCellStyle(IndexedColors.GREY_25_PERCENT, false);
 			grayCSLeft.setAlignment(HorizontalAlignment.LEFT);
 			// 3. 흰색 배경, 검은색 실선 테두리, 중앙정렬
-			XSSFCellStyle whiteCS = excel.createCellStyle("ffffff", false);
+			XSSFCellStyle whiteCS = excel.createCellStyle(IndexedColors.WHITE, false);
 			// 4. 흰색 배경, 검은색 실선 테두리, 왼쪽정렬
-			XSSFCellStyle whiteCSLeft = excel.createCellStyle("ffffff", false);
+			XSSFCellStyle whiteCSLeft = excel.createCellStyle(IndexedColors.WHITE, false);
 			whiteCSLeft.setAlignment(HorizontalAlignment.LEFT);
 			
 			// Write Header Region

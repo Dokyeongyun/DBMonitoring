@@ -1,10 +1,9 @@
 package root.core.usecase.implement;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -104,20 +103,17 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 			rowIndex = 29;
 		}
 
-		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
+		String filePath = "./report/";
 		String fileName = "DB관리대장_종합_" + year + "." + month;
 		String extension = ".xlsx";
-		String file = filePath + fileName + extension;
-
-		InputStream is = null;
-		try {
-			is = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+		File file = new File(filePath + fileName + extension);
+		
+		if(!file.exists()) {
+			file.getParentFile().mkdirs();
 			DBManageExcel.createMonthlyReportInExcel(year, month);
-			is = new FileInputStream(file);
 		}
-
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName + extension);
+		
+		Workbook workbook = ExcelUtils.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
 		OutputStream os = new FileOutputStream(file);

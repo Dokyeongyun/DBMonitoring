@@ -108,7 +108,7 @@ public class ExcelUtils {
 		addRow(null, (short) 0, rows);
 	}
 
-	public void addRow(String backgroundColor, List<String> rows) {
+	public void addRow(IndexedColors backgroundColor, List<String> rows) {
 		addRow(backgroundColor, (short) 0, rows);
 	}
 
@@ -120,7 +120,7 @@ public class ExcelUtils {
 	 * @param boldweight
 	 * @param cellStrings
 	 */
-	public void addRow(String backgroundColor, short boldweight, List<String> cellStrings) {
+	public void addRow(IndexedColors backgroundColor, short boldweight, List<String> cellStrings) {
 		Row header = sheet.createRow(rowIndex++);
 		int cellIndex = colIndex;
 		for (String value : cellStrings) {
@@ -156,7 +156,7 @@ public class ExcelUtils {
 					boldweight = Short.parseShort(styleMap.get("boldweight"));
 				}
 			}
-			cell.setCellStyle(createCellStyle(backgroundColor, boldweight == 0 ? false : true));
+			cell.setCellStyle(createCellStyle(IndexedColors.valueOf(backgroundColor), boldweight == 0 ? false : true));
 		}
 		if (maxCols < cellIndex) {
 			maxCols = cellIndex;
@@ -170,12 +170,12 @@ public class ExcelUtils {
 	 * @param boldweight
 	 * @return
 	 */
-	public XSSFCellStyle createCellStyle(String backgroundColor, boolean isBold) {
+	public XSSFCellStyle createCellStyle(IndexedColors backgroundColor, boolean isBold) {
 		XSSFCellStyle cellStyle = sheet.getWorkbook().createCellStyle();
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		if (backgroundColor != null) {
-			cellStyle.setFillForegroundColor(IndexedColors.valueOf(backgroundColor).getIndex());
+			cellStyle.setFillForegroundColor(backgroundColor.getIndex());
 			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		}
 		setSolidBorder(cellStyle);
