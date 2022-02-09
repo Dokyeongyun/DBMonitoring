@@ -38,7 +38,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelUtils {
+public class ExcelSheet {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	private int rowIndex = 0;
@@ -48,7 +48,7 @@ public class ExcelUtils {
 	// 1. DB 관리대장 포맷을 월별로 작성해주는 메서드 작성 (관리대장 신규 생성)
 	// 2. 기존 관리대장을 읽어 특정 날짜의 DB 모니터링 결과를 추가하는 메서드 작성 (모니터링 결과 작성)
 
-	public ExcelUtils(String sheetName) {
+	public ExcelSheet(String sheetName) {
 		workbook = new XSSFWorkbook();
 		sheet = workbook.createSheet(sheetName);
 	}

@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
-public class DBManageExcel extends ExcelUtils {
+public class DBManageExcel extends ExcelSheet {
 
 	public DBManageExcel(String sheetName) {
 		super(sheetName);
@@ -30,7 +30,7 @@ public class DBManageExcel extends ExcelUtils {
 			String extension = ".xlsx";
 			fos = new FileOutputStream(filePath + fileName + extension);
 		
-			ExcelUtils excel = new ExcelUtils("MonthlyReport");
+			ExcelSheet excel = new ExcelSheet("MonthlyReport");
 			
 			// CellStyle 생성
 			// 1. 회색 배경, 검은색 실선 테두리, 중앙정렬

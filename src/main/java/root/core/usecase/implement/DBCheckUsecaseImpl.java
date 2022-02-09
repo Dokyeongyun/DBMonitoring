@@ -22,7 +22,7 @@ import root.utils.ConsoleUtils;
 import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
-import root.utils.ExcelUtils;
+import root.utils.ExcelSheet;
 
 public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	private DBCheckRepository dbCheckRepository;
@@ -113,7 +113,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 			DBManageExcel.createMonthlyReportInExcel(year, month);
 		}
 		
-		Workbook workbook = ExcelUtils.getWorkbook(new FileInputStream(file), fileName + extension);
+		Workbook workbook = ExcelSheet.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
 		OutputStream os = new FileOutputStream(file);
