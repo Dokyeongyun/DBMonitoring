@@ -1,10 +1,8 @@
 package Utils;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -12,7 +10,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -22,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import com.opencsv.bean.CsvToBeanBuilder;
 
 import root.core.domain.ArchiveUsage;
+import root.core.repository.implement.ReportRepositoryImplTest;
 
 public class CsvUtilsTest {
 
@@ -48,64 +46,25 @@ public class CsvUtilsTest {
 	public static void setUp() {
 //		headers = getHeadersFromText();
 //		csvString = getCsvStringFromText();
-		
+
 		File file = new File("./report/ArchiveUsage/ERP.txt");
-		headers = getHeadersFromFile(file);
-		csvString = getCsvStringFromFile(file);
+		headers = ReportRepositoryImplTest.getHeadersFromFile(file);
+		csvString = ReportRepositoryImplTest.getCsvStringFromFile(file);
 		System.out.println("Before parsing: \n" + csvString);
 	}
 
 	// @Test
 	public void testFile() {
-		System.out.println(getHeadersFromFile(new File("./report/ArchiveUsage/ERP.txt")));
+		System.out.println(ReportRepositoryImplTest.getHeadersFromFile(new File("./report/ArchiveUsage/ERP.txt")));
 	}
 
-	private static List<String> getHeadersFromFile(File file) {
-		List<String> result = new ArrayList<>();
-
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-
-			String firstLine = br.readLine();
-			Map<Integer, String> headerMap = parseCsvLine(firstLine);
-			List<Integer> sortedKeyList = headerMap.keySet().stream().sorted().collect(Collectors.toList());
-
-			for (int i : sortedKeyList) {
-				result.add(headerMap.get(i));
-			}
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return result;
-	}
-
-	private static String getCsvStringFromFile(File file) {
-		StringBuilder result = new StringBuilder();
-
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-
-			String line = br.readLine();
-			while ((line = br.readLine()) != null) {
-				result.append(line).append(System.lineSeparator());
-			}
-			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return result.toString();
-	}
-
+	@SuppressWarnings("unused")
 	private static List<String> getHeadersFromText() {
 		List<String> headers = List.of("FIRST", "SECOND", "THIRD");
 		return headers;
 	}
 
+	@SuppressWarnings("unused")
 	private static String getCsvStringFromText() {
 		String first = wrapInDoubleQuotation("1");
 		String second = wrapInDoubleQuotation("\\역슬래쉬");
@@ -125,7 +84,7 @@ public class CsvUtilsTest {
 		return StringUtils.joinWith("\n", csvString1, csvString2, csvString3);
 	}
 
-	//@Test
+	// @Test
 	public void parseCsvString() {
 		String[] csvLines = csvString.split("\n");
 
@@ -149,7 +108,7 @@ public class CsvUtilsTest {
 
 		System.out.println(result);
 	}
-	
+
 	@Test
 	public void parseCsvStringAndMappingToBean() {
 		String[] csvLines = csvString.split("\n");
@@ -170,24 +129,36 @@ public class CsvUtilsTest {
 
 			result.add(map);
 		}
-		
-		List<ArchiveUsage> beanList = new ArrayList<>();
-		
-		for(Map<String, String> row : result) {
-			ArchiveUsage instance = new ArchiveUsage();
-			Class<?> archiveUsageClass = instance.getClass();
+
+		csvStringToBean(result, ArchiveUsage.class);
+	}
+
+	private static <T> List<T> csvStringToBean(List<Map<String, String>> result, Class<T> clazz) {
+		List<T> beanList = new ArrayList<>();
+
+		for (Map<String, String> row : result) {
 			
+			Constructor<T> constructor;
+			Object instance;
+			Class<?> instanceClass;
+			
+			try {
+				constructor = clazz.getConstructor();
+				instance = constructor.newInstance();
+				instanceClass = instance.getClass();
+			} catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+
 			for (String header : row.keySet()) {
 				String setterName = "set" + header.substring(0, 1).toUpperCase() + header.substring(1);
 				try {
-					
+
 					List<Field> allFields = getAllFields(instance.getClass());
-					Class<?> fieldType = allFields
-							.stream()
-							.filter(f -> f.getName().equals(header))
-							.findFirst()
-							.get()
+					Class<?> fieldType = allFields.stream().filter(f -> f.getName().equals(header)).findFirst().get()
 							.getType();
+					
 					Object fieldValue = null;
 					if (fieldType == int.class) {
 						fieldValue = Integer.valueOf(row.get(header));
@@ -197,21 +168,23 @@ public class CsvUtilsTest {
 						fieldValue = row.get(header);
 					}
 
-					Method method = archiveUsageClass.getMethod(setterName, fieldType);
+					Method method = instanceClass.getMethod(setterName, fieldType);
 					method.invoke(instance, fieldValue);
 				} catch (Exception e) {
 					e.printStackTrace();
 					break;
 				}
 			}
-			beanList.add(instance);
+			beanList.add(clazz.cast(instance));
 		}
-		
+
 		beanList.stream().forEach(bean -> System.out.println(bean));
+
+		return beanList;
 	}
 
-	private static Map<Integer, String> parseCsvLine(String csvLine) {
-		
+	public static Map<Integer, String> parseCsvLine(String csvLine) {
+
 		System.out.println("parseLine: " + csvLine);
 		Map<Integer, String> map = new LinkedHashMap<>();
 
@@ -228,7 +201,8 @@ public class CsvUtilsTest {
 				}
 
 				if (!isOpen) {
-					//System.out.println("PUT!: " + index + " " + StringEscapeUtils.unescapeHtml4(element.toString()));
+					// System.out.println("PUT!: " + index + " " +
+					// StringEscapeUtils.unescapeHtml4(element.toString()));
 					map.put(index, StringEscapeUtils.unescapeHtml4(element.toString()));
 					element = new StringBuilder();
 				}
@@ -249,7 +223,7 @@ public class CsvUtilsTest {
 	private static String wrapInDoubleQuotation(String string) {
 		return StringUtils.join("\"", StringEscapeUtils.escapeHtml4(string), "\"");
 	}
-	
+
 	/**
 	 * 부모클래스의 Field Reflection하여 반환한다.
 	 * 
