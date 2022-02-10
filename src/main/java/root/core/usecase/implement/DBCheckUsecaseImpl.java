@@ -37,6 +37,17 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void printArchiveUsageCheck() {
 		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t▶ Archive Usage Check");
+
+		result.getMonitoringResults().forEach(r -> {
+			if (r.getUsedPercent() >= 90) {
+				System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
+						+ "▶ Archive Usage Check : Usage 90% 초과! (" + r.getArchiveName() + ")" + ConsoleUtils.RESET
+						+ "\n");
+			} else {
+				System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
+			}
+		});
+		
 		try {
 			TextTable tt = new TextTable(
 					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ArchiveUsage.class)));
@@ -80,14 +91,6 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void writeExcelArchiveUsageCheck() throws Exception {
 		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		double archiveUsage = result.getMonitoringResults().get(0).getUsedPercent();
-
-		if (archiveUsage >= 90) {
-			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "▶ Archive Usage Check : Usage 90% 초과!" + ConsoleUtils.RESET + "\n");
-		} else {
-			System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
-		}
 
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -104,7 +107,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		}
 
 		String filePath = "./report/";
-		String fileName = "DB관리대장_종합_" + year + "." + month;
+		String fileName = "DB관리대장_종합_" + year + "." + DateUtils.getTwoDigitDate(month);
 		String extension = ".xlsx";
 		File file = new File(filePath + fileName + extension);
 		
@@ -113,6 +116,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 			DBManageExcel.createMonthlyReportInExcel(year, month);
 		}
 		
+		double archiveUsage = result.getMonitoringResults().get(0).getUsedPercent(); 
 		Workbook workbook = ExcelSheet.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
