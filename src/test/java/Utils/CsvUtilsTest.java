@@ -5,8 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +55,7 @@ public class CsvUtilsTest {
 		System.out.println("Before parsing: \n" + csvString);
 	}
 
-	@Test
+	// @Test
 	public void testFile() {
 		System.out.println(getHeadersFromFile(new File("./report/ArchiveUsage/ERP.txt")));
 	}
@@ -85,10 +87,9 @@ public class CsvUtilsTest {
 
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 
-			br.readLine();
-			String line = "";
+			String line = br.readLine();
 			while ((line = br.readLine()) != null) {
-				result.append(line);
+				result.append(line).append(System.lineSeparator());
 			}
 			
 		} catch (FileNotFoundException e) {
@@ -124,7 +125,7 @@ public class CsvUtilsTest {
 		return StringUtils.joinWith("\n", csvString1, csvString2, csvString3);
 	}
 
-	@Test
+	//@Test
 	public void parseCsvString() {
 		String[] csvLines = csvString.split("\n");
 
@@ -148,8 +149,70 @@ public class CsvUtilsTest {
 
 		System.out.println(result);
 	}
+	
+	@Test
+	public void parseCsvStringAndMappingToBean() {
+		String[] csvLines = csvString.split("\n");
+
+		List<Map<String, String>> result = new ArrayList<>();
+
+		for (String line : csvLines) {
+			Map<String, String> map = new LinkedHashMap<>();
+
+			Map<Integer, String> lineMap = parseCsvLine(line);
+			for (int index : lineMap.keySet()) {
+				if (index >= headers.size()) {
+					continue;
+				} else {
+					map.put(headers.get(index), lineMap.get(index));
+				}
+			}
+
+			result.add(map);
+		}
+		
+		List<ArchiveUsage> beanList = new ArrayList<>();
+		
+		for(Map<String, String> row : result) {
+			ArchiveUsage instance = new ArchiveUsage();
+			Class<?> archiveUsageClass = instance.getClass();
+			
+			for (String header : row.keySet()) {
+				String setterName = "set" + header.substring(0, 1).toUpperCase() + header.substring(1);
+				try {
+					
+					List<Field> allFields = getAllFields(instance.getClass());
+					Class<?> fieldType = allFields
+							.stream()
+							.filter(f -> f.getName().equals(header))
+							.findFirst()
+							.get()
+							.getType();
+					Object fieldValue = null;
+					if (fieldType == int.class) {
+						fieldValue = Integer.valueOf(row.get(header));
+					} else if (fieldType == double.class) {
+						fieldValue = Double.valueOf(row.get(header));
+					} else {
+						fieldValue = row.get(header);
+					}
+
+					Method method = archiveUsageClass.getMethod(setterName, fieldType);
+					method.invoke(instance, fieldValue);
+				} catch (Exception e) {
+					e.printStackTrace();
+					break;
+				}
+			}
+			beanList.add(instance);
+		}
+		
+		beanList.stream().forEach(bean -> System.out.println(bean));
+	}
 
 	private static Map<Integer, String> parseCsvLine(String csvLine) {
+		
+		System.out.println("parseLine: " + csvLine);
 		Map<Integer, String> map = new LinkedHashMap<>();
 
 		int index = 0;
@@ -161,7 +224,11 @@ public class CsvUtilsTest {
 				isOpen = !isOpen;
 				if (isFirst) {
 					isFirst = false;
-				} else {
+					continue;
+				}
+
+				if (!isOpen) {
+					//System.out.println("PUT!: " + index + " " + StringEscapeUtils.unescapeHtml4(element.toString()));
 					map.put(index, StringEscapeUtils.unescapeHtml4(element.toString()));
 					element = new StringBuilder();
 				}
@@ -181,5 +248,24 @@ public class CsvUtilsTest {
 
 	private static String wrapInDoubleQuotation(String string) {
 		return StringUtils.join("\"", StringEscapeUtils.escapeHtml4(string), "\"");
+	}
+	
+	/**
+	 * 부모클래스의 Field Reflection하여 반환한다.
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private static List<Field> getAllFields(Class<?> clazz) {
+		List<Field> fields = new ArrayList<Field>();
+
+		fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+
+		Class<?> superClazz = clazz.getSuperclass();
+		if (superClazz != null) {
+			fields.addAll(getAllFields(superClazz));
+		}
+
+		return fields;
 	}
 }
