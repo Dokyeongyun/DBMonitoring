@@ -38,7 +38,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class ExcelUtils {
+public class ExcelSheet {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
 	private int rowIndex = 0;
@@ -48,7 +48,7 @@ public class ExcelUtils {
 	// 1. DB 관리대장 포맷을 월별로 작성해주는 메서드 작성 (관리대장 신규 생성)
 	// 2. 기존 관리대장을 읽어 특정 날짜의 DB 모니터링 결과를 추가하는 메서드 작성 (모니터링 결과 작성)
 
-	public ExcelUtils(String sheetName) {
+	public ExcelSheet(String sheetName) {
 		workbook = new XSSFWorkbook();
 		sheet = workbook.createSheet(sheetName);
 	}
@@ -108,7 +108,7 @@ public class ExcelUtils {
 		addRow(null, (short) 0, rows);
 	}
 
-	public void addRow(String backgroundColor, List<String> rows) {
+	public void addRow(IndexedColors backgroundColor, List<String> rows) {
 		addRow(backgroundColor, (short) 0, rows);
 	}
 
@@ -120,7 +120,7 @@ public class ExcelUtils {
 	 * @param boldweight
 	 * @param cellStrings
 	 */
-	public void addRow(String backgroundColor, short boldweight, List<String> cellStrings) {
+	public void addRow(IndexedColors backgroundColor, short boldweight, List<String> cellStrings) {
 		Row header = sheet.createRow(rowIndex++);
 		int cellIndex = colIndex;
 		for (String value : cellStrings) {
@@ -156,7 +156,7 @@ public class ExcelUtils {
 					boldweight = Short.parseShort(styleMap.get("boldweight"));
 				}
 			}
-			cell.setCellStyle(createCellStyle(backgroundColor, boldweight == 0 ? false : true));
+			cell.setCellStyle(createCellStyle(IndexedColors.valueOf(backgroundColor), boldweight == 0 ? false : true));
 		}
 		if (maxCols < cellIndex) {
 			maxCols = cellIndex;
@@ -170,12 +170,12 @@ public class ExcelUtils {
 	 * @param boldweight
 	 * @return
 	 */
-	public XSSFCellStyle createCellStyle(String backgroundColor, boolean isBold) {
+	public XSSFCellStyle createCellStyle(IndexedColors backgroundColor, boolean isBold) {
 		XSSFCellStyle cellStyle = sheet.getWorkbook().createCellStyle();
 		cellStyle.setAlignment(HorizontalAlignment.CENTER);
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		if (backgroundColor != null) {
-			cellStyle.setFillForegroundColor(IndexedColors.valueOf(backgroundColor).getIndex());
+			cellStyle.setFillForegroundColor(backgroundColor.getIndex());
 			cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 		}
 		setSolidBorder(cellStyle);

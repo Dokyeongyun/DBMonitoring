@@ -1,10 +1,9 @@
 package root.core.usecase.implement;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,7 +22,7 @@ import root.utils.ConsoleUtils;
 import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
-import root.utils.ExcelUtils;
+import root.utils.ExcelSheet;
 
 public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	private DBCheckRepository dbCheckRepository;
@@ -38,6 +37,17 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void printArchiveUsageCheck() {
 		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t▶ Archive Usage Check");
+
+		result.getMonitoringResults().forEach(r -> {
+			if (r.getUsedPercent() >= 90) {
+				System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
+						+ "▶ Archive Usage Check : Usage 90% 초과! (" + r.getArchiveName() + ")" + ConsoleUtils.RESET
+						+ "\n");
+			} else {
+				System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
+			}
+		});
+		
 		try {
 			TextTable tt = new TextTable(
 					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ArchiveUsage.class)));
@@ -81,14 +91,6 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	public void writeExcelArchiveUsageCheck() throws Exception {
 		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		double archiveUsage = result.getMonitoringResults().get(0).getUsedPercent();
-
-		if (archiveUsage >= 90) {
-			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "▶ Archive Usage Check : Usage 90% 초과!" + ConsoleUtils.RESET + "\n");
-		} else {
-			System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
-		}
 
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -104,20 +106,18 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 			rowIndex = 29;
 		}
 
-		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
-		String fileName = "DB관리대장_종합_" + year + "." + month;
+		String filePath = "./report/";
+		String fileName = "DB관리대장_종합_" + year + "." + DateUtils.getTwoDigitDate(month);
 		String extension = ".xlsx";
-		String file = filePath + fileName + extension;
-
-		InputStream is = null;
-		try {
-			is = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+		File file = new File(filePath + fileName + extension);
+		
+		if(!file.exists()) {
+			file.getParentFile().mkdirs();
 			DBManageExcel.createMonthlyReportInExcel(year, month);
-			is = new FileInputStream(file);
 		}
-
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName + extension);
+		
+		double archiveUsage = result.getMonitoringResults().get(0).getUsedPercent(); 
+		Workbook workbook = ExcelSheet.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
 		OutputStream os = new FileOutputStream(file);

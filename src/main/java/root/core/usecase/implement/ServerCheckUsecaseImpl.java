@@ -32,7 +32,7 @@ import root.utils.ConsoleUtils;
 import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
-import root.utils.ExcelUtils;
+import root.utils.ExcelSheet;
 
 public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	private ServerCheckRepository serverCheckRepository;
@@ -212,7 +212,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 			is = new FileInputStream(file);
 		}
 		
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
+		Workbook workbook = ExcelSheet.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
 
 		for (OSDiskUsage data : result.getMonitoringResults()) {
