@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -14,7 +15,6 @@ import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
-import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ReportRepository;
@@ -36,11 +36,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printArchiveUsageCheck() {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		System.out.println("\t▶ Archive Usage Check");
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ArchiveUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -50,11 +50,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printTableSpaceCheck() {
-		MonitoringResult<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
 		System.out.println("\t▶ TableSpace Usage Check");
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), TableSpaceUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -64,11 +64,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printASMDiskCheck() {
-		MonitoringResult<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t▶ ASM Disk Usage Check");
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ASMDiskUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -79,9 +79,9 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	// TODO General한 양식작성이 가능하도록.. 현재 Hard Coding이 너무 많음
 	@Override
 	public void writeExcelArchiveUsageCheck() throws Exception {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		double archiveUsage = result.getMonitoringResults().get(0).getUsedPercent();
+		double archiveUsage = result.get(0).getUsedPercent();
 
 		if (archiveUsage >= 90) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
@@ -126,34 +126,34 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void writeCsvArchiveUsage() {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result, ArchiveUsage.class);
 	}
 
 	@Override
 	public void writeCsvTableSpaceUsage() {
-		MonitoringResult<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result, TableSpaceUsage.class);
 	}
 
 	@Override
 	public void writeCsvASMDiskUsage() {
-		MonitoringResult<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result, ASMDiskUsage.class);
 	}
 
 	@Override
-	public MonitoringResult<ArchiveUsage> getCurrentArchiveUsage() {
+	public List<ArchiveUsage> getCurrentArchiveUsage() {
 		return dbCheckRepository.checkArchiveUsage();
 	}
 
 	@Override
-	public MonitoringResult<TableSpaceUsage> getCurrentTableSpaceUsage() {
+	public List<TableSpaceUsage> getCurrentTableSpaceUsage() {
 		return dbCheckRepository.checkTableSpaceUsage();
 	}
 
 	@Override
-	public MonitoringResult<ASMDiskUsage> getCurrentASMDiskUsage() {
+	public List<ASMDiskUsage> getCurrentASMDiskUsage() {
 		return dbCheckRepository.checkASMDiskUsage();
 	}
 }

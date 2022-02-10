@@ -1,13 +1,35 @@
 package root.core.domain;
 
-import lombok.AllArgsConstructor;
+import java.util.Date;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class TableSpaceUsage {
+public class TableSpaceUsage extends MonitoringResult {
+
+	public TableSpaceUsage(Date monitoringDate, String tableSpaceName, double totalSpace,
+			double freeSpace, double usedSpace, double usedPercent) {
+		super(monitoringDate);
+		this.tableSpaceName = tableSpaceName;
+		this.totalSpace = totalSpace;
+		this.freeSpace = freeSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+	}
+
+	public TableSpaceUsage(String monitoringDate, String monitoringTime, String tableSpaceName, double totalSpace,
+			double freeSpace, double usedSpace, double usedPercent) {
+		super(monitoringDate, monitoringTime);
+		this.tableSpaceName = tableSpaceName;
+		this.totalSpace = totalSpace;
+		this.freeSpace = freeSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+	}
 
 	private String tableSpaceName;
 
