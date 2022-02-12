@@ -1,13 +1,24 @@
 package root.core.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class OSDiskUsage {
+public class OSDiskUsage extends MonitoringResult {
+
+	public OSDiskUsage(String monitoringDate, String monitoringTime, String fileSystem, String mountedOn,
+			double totalSpace, double freeSpace, double usedSpace, double usedPercent) {
+		super(monitoringDate, monitoringTime);
+		this.fileSystem = fileSystem;
+		this.mountedOn = mountedOn;
+		this.totalSpace = totalSpace;
+		this.freeSpace = freeSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+	}
 
 	private String fileSystem;
 

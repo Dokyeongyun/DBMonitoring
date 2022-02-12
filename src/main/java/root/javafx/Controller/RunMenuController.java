@@ -27,6 +27,7 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
+import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
@@ -188,7 +189,7 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T> void initAndAddMonitoringAnchorPane(String name,
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(String name,
 			MonitoringAnchorPane<T> monitoringAP, 
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
 			Map<String, TypeAndFieldName> tableColumns) {
@@ -287,9 +288,9 @@ public class RunMenuController implements Initializable {
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, reportRepository);
-			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage().getMonitoringResults());
-			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage().getMonitoringResults());
-			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage().getMonitoringResults());
+			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
+			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
+			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
 			db.uninit();
 		} 
 		
@@ -310,7 +311,7 @@ public class RunMenuController implements Initializable {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 
-			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage().getMonitoringResults());
+			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage());
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
 		}
 		

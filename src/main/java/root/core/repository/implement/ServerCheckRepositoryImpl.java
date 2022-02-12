@@ -19,7 +19,6 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.Log;
-import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.utils.DateUtils;
@@ -210,7 +209,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public MonitoringResult<OSDiskUsage> checkOSDiskUsage() {
+	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
 			Session session = this.getSession();
@@ -225,7 +224,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			e.printStackTrace();
 		}
 		
-		return new MonitoringResult<>(list);
+		return list;
 	}
 	
 	public List<OSDiskUsage> stringToOsDiskUsageList (String result) {

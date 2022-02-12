@@ -1,7 +1,6 @@
 package root.javafx.CustomView;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,10 +9,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
-import com.opencsv.bean.CsvToBeanBuilder;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,13 +28,19 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.MonitoringResult;
+import root.core.repository.constracts.ReportRepository;
+import root.core.repository.implement.ReportRepositoryImpl;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
+import root.utils.CsvUtils;
 
-@EqualsAndHashCode(callSuper= false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Slf4j
-public class MonitoringAnchorPane<T> extends AnchorPane {
+public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
+
+	private ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
 
 	@FXML
 	Label label;
@@ -55,7 +60,7 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 
 	@FXML
 	TableView<T> monitoringResultTV;
-	
+
 	@FXML
 	DatePicker inquiryDatePicker;
 
@@ -78,10 +83,10 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
 				}
 			});
-			
+
 			// Setting inquiry datepicker initial value
 			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
-			
+
 		} catch (IOException e) {
 		}
 	}
@@ -217,41 +222,43 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
-		
+
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = getComboBox().getSelectionModel().getSelectedItem();
-		String fileRootDir = getReportFilePath() + selected + "/";
-		File reportList = new File(fileRootDir);
+		File reportFile = new File(getReportFilePath() + "/" + selected + ".txt");
+
+		if (!reportFile.exists()) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", String.format("%s 의 모니터링 기록이 없습니다.", selected));
+			return;
+		}
+
+		// TODO Show Progress UI
 
 		// Clear data
 		clearTableData(selected);
 
 		// Read csv report file and add table data
-		List<T> tableDataList = new ArrayList<>();
-		for (String fileName : reportList.list()) {
-			
-			if(!fileName.startsWith(inquiryDate)) {
-				continue;
-			}
-			
-			String filePath = fileRootDir + fileName;
-			File reportFile = new File(filePath);
-
-			List<T> data = parseCsvReportFile(reportFile);
-			if (data != null) {
-				tableDataList.addAll(data);
-			}
+		List<T> allDataList = parseCsvReportFile(reportFile);
+		if (allDataList == null) {
+			AlertUtils.showAlert(AlertType.ERROR, "모니터링 기록 조회", "모니터링 기록 조회에 실패했습니다.\n데이터를 확인해주세요.");
+			return;
 		}
 		
+		// Find data on inquiry date
+		List<T> tableDataList = allDataList.stream()
+				.filter(data -> data.getMonitoringDate().equals(inquiryDate))
+				.collect(Collectors.toList());
+
 		if (tableDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
 		}
 
+		// Add and Sync data
 		addTableDataSet(selected, tableDataList);
 		syncTableData(selected);
 	}
-
+	
 	/**
 	 * csv 파일을 읽어 Model 객체로 변환한다.
 	 * 
@@ -260,22 +267,20 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	 */
 	private List<T> parseCsvReportFile(File file) {
 		List<T> result = null;
-		try {
 
-			result = new CsvToBeanBuilder<T>(new FileReader(file))
-					.withSkipLines(1)
-					.withSeparator(',')
-					.withIgnoreEmptyLine(true)
-					.withType(getClazz())
-					.build()
-					.parse();
-			
+		try {
+			List<String> headers = reportRepository.getReportHeaders(file);
+			String csvString = reportRepository.getReportContentsInCsv(file);
+
+			result = CsvUtils.parseCsvToBeanList(headers, csvString, getClazz());
+		
 		} catch (Exception e) {
 			log.error("Parsing error!" + file);
 		}
+		
 		return result;
 	}
-	
+
 	/**
 	 * 현재 선택된 조회조건으로 재검색한다.
 	 * 
@@ -284,13 +289,13 @@ public class MonitoringAnchorPane<T> extends AnchorPane {
 	public void refresh(ActionEvent e) {
 		run(e);
 	}
-	
+
 	/**
 	 * 현재 TableView에 세팅된 값을 Excel파일로 다운로드한다.
 	 * 
 	 * @param e
 	 */
 	public void excelDownload(ActionEvent e) {
-		
+
 	}
 }
