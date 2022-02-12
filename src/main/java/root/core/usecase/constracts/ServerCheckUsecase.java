@@ -1,9 +1,10 @@
 package root.core.usecase.constracts;
 
+import java.util.List;
+
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.AlertLogCommandPeriod;
-import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 
 public interface ServerCheckUsecase {
@@ -17,7 +18,7 @@ public interface ServerCheckUsecase {
 
 	void writeCsvOSDiskUsage() throws Exception;
 
-	MonitoringResult<OSDiskUsage> getCurrentOSDiskUsage();
+	List<OSDiskUsage> getCurrentOSDiskUsage();
 
 	AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
 }

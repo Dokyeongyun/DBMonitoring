@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -13,7 +14,6 @@ import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
-import root.core.domain.MonitoringResult;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ReportRepository;
@@ -35,22 +35,22 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printArchiveUsageCheck() {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		System.out.println("\t¢∫ Archive Usage Check");
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		System.out.println("\t‚ñ∂ Archive Usage Check");
 
 		result.getMonitoringResults().forEach(r -> {
 			if (r.getUsedPercent() >= 90) {
 				System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-						+ "¢∫ Archive Usage Check : Usage 90% √ ∞˙! (" + r.getArchiveName() + ")" + ConsoleUtils.RESET
+						+ "‚ñ∂ Archive Usage Check : Usage 90% Ï¥àÍ≥º! (" + r.getArchiveName() + ")" + ConsoleUtils.RESET
 						+ "\n");
 			} else {
-				System.out.println("\t¢∫ Archive Usage Check : SUCCESS\n");
+				System.out.println("\t‚ñ∂ Archive Usage Check : SUCCESS\n");
 			}
 		});
 		
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ArchiveUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -60,11 +60,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printTableSpaceCheck() {
-		MonitoringResult<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		System.out.println("\t¢∫ TableSpace Usage Check");
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+		System.out.println("\t‚ñ∂ TableSpace Usage Check");
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), TableSpaceUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -74,11 +74,11 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void printASMDiskCheck() {
-		MonitoringResult<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		System.out.println("\t¢∫ ASM Disk Usage Check");
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+		System.out.println("\t‚ñ∂ ASM Disk Usage Check");
 		try {
 			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result.getMonitoringResults(), ASMDiskUsage.class)));
+					new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -86,10 +86,10 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		}
 	}
 
-	// TODO General«— æÁΩƒ¿€º∫¿Ã ∞°¥…«œµµ∑œ.. «ˆ¿Á Hard Coding¿Ã ≥ π´ ∏π¿Ω
+	// TODO GeneralÌïú ÏñëÏãùÏûëÏÑ±Ïù¥ Í∞ÄÎä•ÌïòÎèÑÎ°ù.. ÌòÑÏû¨ Hard CodingÏù¥ ÎÑàÎ¨¥ ÎßéÏùå
 	@Override
 	public void writeExcelArchiveUsageCheck() throws Exception {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
 
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
@@ -107,7 +107,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		}
 
 		String filePath = "./report/";
-		String fileName = "DB∞¸∏Æ¥Î¿Â_¡æ«’_" + year + "." + DateUtils.getTwoDigitDate(month);
+		String fileName = "DBÍ¥ÄÎ¶¨ÎåÄÏû•_Ï¢ÖÌï©_" + year + "." + DateUtils.getTwoDigitDate(month);
 		String extension = ".xlsx";
 		File file = new File(filePath + fileName + extension);
 		
@@ -126,34 +126,34 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 
 	@Override
 	public void writeCsvArchiveUsage() {
-		MonitoringResult<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
+		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result, ArchiveUsage.class);
 	}
 
 	@Override
 	public void writeCsvTableSpaceUsage() {
-		MonitoringResult<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
+		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result, TableSpaceUsage.class);
 	}
 
 	@Override
 	public void writeCsvASMDiskUsage() {
-		MonitoringResult<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result);
+		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
+		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result, ASMDiskUsage.class);
 	}
 
 	@Override
-	public MonitoringResult<ArchiveUsage> getCurrentArchiveUsage() {
+	public List<ArchiveUsage> getCurrentArchiveUsage() {
 		return dbCheckRepository.checkArchiveUsage();
 	}
 
 	@Override
-	public MonitoringResult<TableSpaceUsage> getCurrentTableSpaceUsage() {
+	public List<TableSpaceUsage> getCurrentTableSpaceUsage() {
 		return dbCheckRepository.checkTableSpaceUsage();
 	}
 
 	@Override
-	public MonitoringResult<ASMDiskUsage> getCurrentASMDiskUsage() {
+	public List<ASMDiskUsage> getCurrentASMDiskUsage() {
 		return dbCheckRepository.checkASMDiskUsage();
 	}
 }
