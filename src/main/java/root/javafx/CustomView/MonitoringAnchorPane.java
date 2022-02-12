@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.event.ActionEvent;
@@ -23,7 +22,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
@@ -35,7 +33,6 @@ import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
 @EqualsAndHashCode(callSuper = false)
-@Data
 public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
 
 	private ReportUsecase reportUsecase;
@@ -44,17 +41,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	Label label;
 
 	@FXML
-	JFXComboBox<String> comboBox;
-
-	// TODO Button을 List<Button>으로 만들어 놓고, 각자 주입받을 수 있도록 구현하기
-	@FXML
-	JFXButton refreshBtn;
-
-	@FXML
-	JFXButton excelDownBtn;
-
-	@FXML
-	JFXButton showGraphBtn;
+	JFXComboBox<String> aliasComboBox;
 
 	@FXML
 	TableView<T> monitoringResultTV;
@@ -63,7 +50,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	DatePicker inquiryDatePicker;
 
 	private Class<T> clazz;
-	private String reportFilePath;
+	
 	private Map<String, List<T>> tableDataMap = new HashMap<>();
 
 	public MonitoringAnchorPane(Class<T> clazz) {
@@ -77,7 +64,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			loader.load();
 
 			// Add comoboBox click listner
-			this.comboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
+			this.aliasComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
 				monitoringResultTV.getItems().clear();
 				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
 					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
@@ -141,7 +128,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		}
 		monitoringResultTV.getItems().clear();
 		monitoringResultTV.getItems().setAll(tableDataMap.get(id));
-		comboBox.getSelectionModel().select(id);
+		aliasComboBox.getSelectionModel().select(id);
 	}
 	
 	/**
@@ -225,7 +212,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		String selected = getComboBox().getSelectionModel().getSelectedItem();
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
 		// TODO Show Progress UI
 
@@ -233,7 +220,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		clearTableData(selected);
 
 		// Acquire data
-		List<T> allDataList = reportUsecase.getMonitoringReportData(getClazz(), selected, FileSize.GB, 2);
+		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, FileSize.GB, 2);
 		if (allDataList == null) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
 					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
@@ -270,5 +257,20 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 */
 	public void excelDownload(ActionEvent e) {
 
+	}
+	
+	/*==========================================================================================*/
+	
+	public void setAliasComboBoxLabelText(String text) {
+		this.label.setText(text);
+	}
+	
+	public void setAliasComboBoxItems(String[] items) {
+		this.aliasComboBox.getItems().addAll(items);
+		this.aliasComboBox.getSelectionModel().selectFirst();
+	}
+	
+	public String getSelectedAliasComboBoxItem() {
+		return this.aliasComboBox.getSelectionModel().getSelectedItem();
 	}
 }

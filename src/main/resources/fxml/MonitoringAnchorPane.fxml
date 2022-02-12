@@ -27,7 +27,7 @@
                         <Insets right="10.0" />
                      </padding>
                   </Label>
-                  <JFXComboBox fx:id="comboBox" maxHeight="25.0" minHeight="20.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                  <JFXComboBox fx:id="aliasComboBox" maxHeight="25.0" minHeight="20.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
                   <DatePicker fx:id="inquiryDatePicker" maxHeight="25.0" maxWidth="120.0" minHeight="20.0" prefHeight="25.0" styleClass="basic-font" />
                   <JFXButton fx:id="runBtn" ellipsisString="" minHeight="20.0" onAction="#run" styleClass="basic-font" text="실행">
                      <graphic>

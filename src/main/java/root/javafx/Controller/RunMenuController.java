@@ -200,14 +200,9 @@ public class RunMenuController implements Initializable {
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
 			Map<String, TypeAndFieldName> tableColumns) {
 		
-		// Report file path setting
-		// TODO [설정]메뉴에서 report file path를 설정할 수 있도록 하기
-		monitoringAP.setReportFilePath("./report/" + name + "/");
-		
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
-		monitoringAP.getLabel().setText(labelText); // ComboBox 좌측 Lebel Text 설정
-		monitoringAP.getComboBox().getItems().addAll(comboBoxItems); // ComboBox Items 설정
-		monitoringAP.getComboBox().getSelectionModel().selectFirst();
+		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox 좌측 Lebel Text 설정
+		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items 설정
 		for(String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
 			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key), key);
 		}
@@ -321,10 +316,10 @@ public class RunMenuController implements Initializable {
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
 		}
 		
-		archiveUsageMAP.syncTableData(archiveUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem());
+		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem());
+		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem());
+		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem());
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	
