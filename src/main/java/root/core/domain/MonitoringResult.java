@@ -6,11 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import root.utils.DateUtils;
+import root.utils.UnitUtils.FileSize;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class MonitoringResult {
+public abstract class MonitoringResult {
 	
 	private String monitoringDate;
 
@@ -20,4 +21,6 @@ public class MonitoringResult {
 		this.monitoringDate = DateUtils.format(date, "yyyyMMdd");
 		this.monitoringTime = DateUtils.format(date, "HHmmss");
 	}
+	
+	public abstract void convertUnit(FileSize fromUnit, FileSize toUnit, int round);
 }

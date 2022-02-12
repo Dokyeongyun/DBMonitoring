@@ -5,14 +5,16 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import root.utils.UnitUtils;
+import root.utils.UnitUtils.FileSize;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class TableSpaceUsage extends MonitoringResult {
 
-	public TableSpaceUsage(Date monitoringDate, String tableSpaceName, double totalSpace,
-			double freeSpace, double usedSpace, double usedPercent) {
+	public TableSpaceUsage(Date monitoringDate, String tableSpaceName, double totalSpace, double freeSpace,
+			double usedSpace, double usedPercent) {
 		super(monitoringDate);
 		this.tableSpaceName = tableSpaceName;
 		this.totalSpace = totalSpace;
@@ -40,4 +42,11 @@ public class TableSpaceUsage extends MonitoringResult {
 	private double usedSpace;
 
 	private double usedPercent;
+
+	@Override
+	public void convertUnit(FileSize fromUnit, FileSize toUnit, int round) {
+		this.totalSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalSpace, round);
+		this.freeSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, freeSpace, round);
+		this.usedSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, usedSpace, round);
+	}
 }

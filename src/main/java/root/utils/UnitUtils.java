@@ -28,4 +28,18 @@ public class UnitUtils {
 	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value) {
 		return beforeUnit == afterUnit ? value : value / Math.pow(1024, (afterUnit.order - beforeUnit.order));
 	}
+
+	/**
+	 * 파일 사이즈 단위를 변환하고, 지정한 자릿수로 반올림한다.
+	 * 
+	 * @param beforeUnit
+	 * @param afterUnit
+	 * @param value
+	 * @param round
+	 * @return
+	 */
+	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value, int round) {
+		double convertValue = UnitUtils.convertFileUnit(beforeUnit, afterUnit, value);
+		return Double.valueOf(String.format("%."+round+"f", convertValue)); 
+	}
 }

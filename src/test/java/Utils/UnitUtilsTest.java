@@ -93,7 +93,36 @@ public class UnitUtilsTest {
 		assertEquals(354334801.92, after);
 	}
 	
+	@Test
+	public void convertAndRound_B_to_KB() {
+		double before = 5123523.0;
+		double after = UnitUtilsTest.convertFileUnit(FileSize.B, FileSize.KB, before, 2);
+		
+		assertEquals(5003.44, after);
+	}
+	
+	@Test
+	public void convertAndRound_B_to_MB() {
+		double before = 112500.0;
+		double after = UnitUtilsTest.convertFileUnit(FileSize.B, FileSize.MB, before, 2);
+		
+		assertEquals(0.11, after);
+	}
+	
+	@Test
+	public void convertAndRound_B_to_GB() {
+		double before = 5123523.0;
+		double after = UnitUtilsTest.convertFileUnit(FileSize.B, FileSize.GB, before, 2);
+		
+		assertEquals(0.00, after);
+	}
+	
 	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value) {
 		return beforeUnit == afterUnit ? value : value / Math.pow(1024, (afterUnit.order - beforeUnit.order));
+	}
+	
+	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value, int round) {
+		double convertValue = UnitUtilsTest.convertFileUnit(beforeUnit, afterUnit, value);
+		return Double.valueOf(String.format("%."+round+"f", convertValue)); 
 	}
 }

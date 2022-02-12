@@ -1,6 +1,5 @@
 package root.javafx.CustomView;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -33,6 +32,7 @@ import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
+import root.utils.UnitUtils.FileSize;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -143,7 +143,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		monitoringResultTV.getItems().setAll(tableDataMap.get(id));
 		comboBox.getSelectionModel().select(id);
 	}
-
+	
 	/**
 	 * TableView에 TableColumn을 추가한다.
 	 * 
@@ -226,12 +226,6 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = getComboBox().getSelectionModel().getSelectedItem();
-		File reportFile = new File(getReportFilePath() + "/" + selected + ".txt");
-
-		if (!reportFile.exists()) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", String.format("%s 의 모니터링 기록이 없습니다.", selected));
-			return;
-		}
 
 		// TODO Show Progress UI
 
@@ -239,9 +233,10 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		clearTableData(selected);
 
 		// Acquire data
-		List<T> allDataList = reportUsecase.getMonitoringReportData(getClazz(), selected);
+		List<T> allDataList = reportUsecase.getMonitoringReportData(getClazz(), selected, FileSize.GB, 2);
 		if (allDataList == null) {
-			AlertUtils.showAlert(AlertType.ERROR, "모니터링 기록 조회", "모니터링 기록 조회에 실패했습니다.\n데이터를 확인해주세요.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
+					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
 			return;
 		}
 		
