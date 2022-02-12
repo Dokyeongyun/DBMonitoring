@@ -26,22 +26,20 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
-import root.core.repository.constracts.ReportRepository;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
+import root.core.usecase.constracts.ReportUsecase;
+import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
-import root.utils.CsvUtils;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
-@Slf4j
 public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
 
-	private ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
-
+	private ReportUsecase reportUsecase;
+	
 	@FXML
 	Label label;
 
@@ -69,6 +67,8 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	private Map<String, List<T>> tableDataMap = new HashMap<>();
 
 	public MonitoringAnchorPane(Class<T> clazz) {
+		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
+		
 		try {
 			this.clazz = clazz;
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAnchorPane.fxml"));
@@ -238,8 +238,8 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		// Clear data
 		clearTableData(selected);
 
-		// Read csv report file and add table data
-		List<T> allDataList = parseCsvReportFile(reportFile);
+		// Acquire data
+		List<T> allDataList = reportUsecase.getMonitoringReportData(getClazz(), selected);
 		if (allDataList == null) {
 			AlertUtils.showAlert(AlertType.ERROR, "모니터링 기록 조회", "모니터링 기록 조회에 실패했습니다.\n데이터를 확인해주세요.");
 			return;
@@ -257,28 +257,6 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		// Add and Sync data
 		addTableDataSet(selected, tableDataList);
 		syncTableData(selected);
-	}
-	
-	/**
-	 * csv 파일을 읽어 Model 객체로 변환한다.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	private List<T> parseCsvReportFile(File file) {
-		List<T> result = null;
-
-		try {
-			List<String> headers = reportRepository.getReportHeaders(file);
-			String csvString = reportRepository.getReportContentsInCsv(file);
-
-			result = CsvUtils.parseCsvToBeanList(headers, csvString, getClazz());
-		
-		} catch (Exception e) {
-			log.error("Parsing error!" + file);
-		}
-		
-		return result;
 	}
 
 	/**

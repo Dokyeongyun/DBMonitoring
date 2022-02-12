@@ -36,7 +36,7 @@ import root.core.repository.constracts.ReportRepository;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
 import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerCheckUsecase;
@@ -53,7 +53,7 @@ public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
 	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
-	ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
+	ReportRepository reportRepository = ReportFileRepo.getInstance();
 
 	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
@@ -72,11 +72,11 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
-	Map<String, AlertLog> alertLogMonitoringResultMap = new HashMap<>();
+	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP;
+	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP;
+	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP;
+	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP;
+	Map<String, AlertLog> alertLogMonitoringResultMap;
 	
 	/* Common Data */
 	String lastUseConnInfoFilePath = null;
@@ -86,13 +86,19 @@ public class RunMenuController implements Initializable {
 	String[] connInfoFiles = null;
 	List<String> presetList = null;
 	
+	public RunMenuController() {
+		archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
+		tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
+		asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
+		osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
+		alertLogMonitoringResultMap = new HashMap<>();
+	}
+	
 	/**
 	 * 실행메뉴 화면 진입시 초기화를 수행한다.
 	 */
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
 		/*
 		 * 1. 접속정보 프로퍼티 파일 ComboBox를 설정한다.
 		 * 2. 접속정보 프로퍼티 파일 유무를 확인한다.
