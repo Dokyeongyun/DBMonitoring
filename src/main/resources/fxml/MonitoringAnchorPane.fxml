@@ -46,6 +46,17 @@
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="BAR_CHART_ALT" size="18" />
                      </graphic></JFXButton>
+                  <FontAwesomeIconView fill="#3342cf" glyphName="SAVE" size="18" />
+                  <JFXComboBox fx:id="unitComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="단위설정">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXComboBox>
+                  <JFXComboBox fx:id="roundComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="반올림단위설정">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </JFXComboBox>
                </items>
                <padding>
                   <Insets right="20.0" />

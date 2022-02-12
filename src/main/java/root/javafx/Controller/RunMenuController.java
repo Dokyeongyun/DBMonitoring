@@ -137,47 +137,47 @@ public class RunMenuController implements Initializable {
 		
 		// Archive Usage TableView Setting
 		Map<String, TypeAndFieldName> archiveUsageTCM = new LinkedHashMap<>(); // LinkedHashMap은 순서가 보장된다.
-		archiveUsageTCM.put("Archive Name", new TypeAndFieldName(String.class, "archiveName"));
-		archiveUsageTCM.put("Number Of Files", new TypeAndFieldName(Integer.class, "numberOfFiles"));
-		archiveUsageTCM.put("Total Space(G)", new TypeAndFieldName(Double.class, "totalSpace"));
-		archiveUsageTCM.put("Reclaimable Space(G)", new TypeAndFieldName(Double.class, "reclaimableSpace"));
-		archiveUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
-		archiveUsageTCM.put("Used Percent(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		archiveUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, "dnt"));
-		initAndAddMonitoringAnchorPane("ArchiveUsage", archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
+		archiveUsageTCM.put("Archive명", new TypeAndFieldName(String.class, "archiveName"));
+		archiveUsageTCM.put("파일 개수", new TypeAndFieldName(Integer.class, "numberOfFiles"));
+		archiveUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		archiveUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "reclaimableSpace"));
+		archiveUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		archiveUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "dnt"));
+		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
 		Map<String, TypeAndFieldName> tableSpaceUsageTCM = new LinkedHashMap<>();
-		tableSpaceUsageTCM.put("Table Space Name", new TypeAndFieldName(String.class, "tableSpaceName"));
-		tableSpaceUsageTCM.put("Total Space(G)", new TypeAndFieldName(Double.class, "totalSpace"));
-		tableSpaceUsageTCM.put("Free Space(G)", new TypeAndFieldName(Double.class, "freeSpace"));
-		tableSpaceUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
-		tableSpaceUsageTCM.put("Used Percent(G)", new TypeAndFieldName(Double.class, "usedPercent"));
-		tableSpaceUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("TableSpaceUsage", tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
+		tableSpaceUsageTCM.put("테이블스페이스명", new TypeAndFieldName(String.class, "tableSpaceName"));
+		tableSpaceUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		tableSpaceUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		tableSpaceUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		tableSpaceUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
 		Map<String, TypeAndFieldName> asmDiskUsageTCM = new LinkedHashMap<>();
-		asmDiskUsageTCM.put("Disk Group", new TypeAndFieldName(String.class, "asmDiskGroupName"));
-		asmDiskUsageTCM.put("Disk Type", new TypeAndFieldName(String.class, "asmDiskGroupType"));
-		asmDiskUsageTCM.put("Total Space(MB)", new TypeAndFieldName(Double.class, "totalRawSpace"));
-		asmDiskUsageTCM.put("Total Usable(MB)", new TypeAndFieldName(Double.class, "totalFreeSpace"));
-		asmDiskUsageTCM.put("Free Space(MB)", new TypeAndFieldName(Double.class, "freeSpace"));
-		asmDiskUsageTCM.put("Used Space(MB)", new TypeAndFieldName(Double.class, "usedSpace"));
-		asmDiskUsageTCM.put("Used Percent(MB)", new TypeAndFieldName(Double.class, "usedPercent"));
-		asmDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("ASMDiskUsage", asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
+		asmDiskUsageTCM.put("디스크 그룹", new TypeAndFieldName(String.class, "asmDiskGroupName"));
+		asmDiskUsageTCM.put("디스크 타입", new TypeAndFieldName(String.class, "asmDiskGroupType"));
+		asmDiskUsageTCM.put("전체 공간(Raw)", new TypeAndFieldName(Double.class, "totalRawSpace"));
+		asmDiskUsageTCM.put("전체 공간(Actual)", new TypeAndFieldName(Double.class, "totalFreeSpace"));
+		asmDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		asmDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		asmDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
 		Map<String, TypeAndFieldName> osDiskUsageTCM = new LinkedHashMap<>();
-		osDiskUsageTCM.put("File System", new TypeAndFieldName(String.class, "fileSystem"));
-		osDiskUsageTCM.put("Mounted On", new TypeAndFieldName(String.class, "mountedOn"));
-		osDiskUsageTCM.put("Total Space", new TypeAndFieldName(Double.class, "totalSpace"));
-		osDiskUsageTCM.put("Available Space", new TypeAndFieldName(Double.class, "freeSpace"));
-		osDiskUsageTCM.put("Used Space", new TypeAndFieldName(Double.class, "usedSpace"));
-		osDiskUsageTCM.put("Used Percent", new TypeAndFieldName(Double.class, "usedPercent"));
-		osDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("OSDiskUsage", osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
+		osDiskUsageTCM.put("파일 시스템", new TypeAndFieldName(String.class, "fileSystem"));
+		osDiskUsageTCM.put("마운트 위치", new TypeAndFieldName(String.class, "mountedOn"));
+		osDiskUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		osDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		osDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		osDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
 		// ex) TableColumnHeaderText, Width, Align
@@ -195,11 +195,9 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(String name,
-			MonitoringAnchorPane<T> monitoringAP, 
-			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
-			Map<String, TypeAndFieldName> tableColumns) {
-		
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP,
+			AnchorPane parentAP, String labelText, String[] comboBoxItems, Map<String, TypeAndFieldName> tableColumns) {
+
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
 		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox 좌측 Lebel Text 설정
 		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items 설정

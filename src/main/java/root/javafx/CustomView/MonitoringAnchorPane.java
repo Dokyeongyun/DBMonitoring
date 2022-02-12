@@ -22,7 +22,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lombok.EqualsAndHashCode;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.repository.implement.ReportFileRepo;
@@ -32,7 +31,6 @@ import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
-@EqualsAndHashCode(callSuper = false)
 public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
 
 	private ReportUsecase reportUsecase;
@@ -42,6 +40,12 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 
 	@FXML
 	JFXComboBox<String> aliasComboBox;
+	
+	@FXML
+	JFXComboBox<FileSize> unitComboBox;
+	
+	@FXML
+	JFXComboBox<Integer> roundComboBox;
 
 	@FXML
 	TableView<T> monitoringResultTV;
@@ -74,6 +78,11 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			// Setting inquiry datepicker initial value
 			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
 
+			this.unitComboBox.getItems().addAll(FileSize.values());
+			this.unitComboBox.getSelectionModel().select(FileSize.GB);
+			
+			this.roundComboBox.getItems().addAll(List.of(1, 2, 3, 4, 5));
+			this.roundComboBox.getSelectionModel().select(Integer.valueOf(2));
 		} catch (IOException e) {
 		}
 	}
@@ -213,6 +222,8 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		FileSize selectedUnit = unitComboBox.getSelectionModel().getSelectedItem();
+		int selectedRoundUnit = roundComboBox.getSelectionModel().getSelectedItem();
 
 		// TODO Show Progress UI
 
@@ -220,7 +231,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		clearTableData(selected);
 
 		// Acquire data
-		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, FileSize.GB, 2);
+		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, selectedUnit, selectedRoundUnit);
 		if (allDataList == null) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
 					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
