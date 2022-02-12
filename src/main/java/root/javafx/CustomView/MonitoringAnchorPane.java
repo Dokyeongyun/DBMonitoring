@@ -24,6 +24,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
@@ -34,6 +36,8 @@ import root.utils.UnitUtils.FileSize;
 public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
 
 	private ReportUsecase reportUsecase;
+	
+	private PropertyRepository propertyRepo = PropertyRepositoryImpl.getInstance();
 	
 	@FXML
 	Label label;
@@ -79,10 +83,12 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
 
 			this.unitComboBox.getItems().addAll(FileSize.values());
-			this.unitComboBox.getSelectionModel().select(FileSize.GB);
+			FileSize defaultFileSizeUnit = FileSize.valueOf(propertyRepo.getCommonResource("unit.filesize"));
+			this.unitComboBox.getSelectionModel().select(defaultFileSizeUnit);
 			
 			this.roundComboBox.getItems().addAll(List.of(1, 2, 3, 4, 5));
-			this.roundComboBox.getSelectionModel().select(Integer.valueOf(2));
+			int defaultRoundingDigits = propertyRepo.getIntegerCommonResource("unit.rounding");
+			this.roundComboBox.getSelectionModel().select(Integer.valueOf(defaultRoundingDigits));
 		} catch (IOException e) {
 		}
 	}

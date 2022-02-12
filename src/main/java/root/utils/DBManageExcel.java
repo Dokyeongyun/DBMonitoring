@@ -26,7 +26,7 @@ public class DBManageExcel extends ExcelSheet {
 		OutputStream fos;
 		try {
 			String filePath = "./report/";
-			String fileName = "DB관리대장_종합_"+year+"."+month;
+			String fileName = "DB관리대장_종합_"+year+"."+DateUtils.getTwoDigitDate(month);
 			String extension = ".xlsx";
 			fos = new FileOutputStream(filePath + fileName + extension);
 		

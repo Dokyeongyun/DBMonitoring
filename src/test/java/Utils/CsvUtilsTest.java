@@ -1,7 +1,6 @@
 package Utils;
 
 import java.io.File;
-import java.io.FileReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,28 +15,10 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.opencsv.bean.CsvToBeanBuilder;
-
 import root.core.domain.ArchiveUsage;
 import root.core.repository.implement.ReportRepositoryImplTest;
 
 public class CsvUtilsTest {
-
-	// @Test
-	public void csvToBeanTest() {
-		List<ArchiveUsage> result = null;
-		File file = new File("./report/ArchiveUsage/ERP.txt");
-
-		try {
-
-			result = new CsvToBeanBuilder<ArchiveUsage>(new FileReader(file)).withSeparator(',')
-					.withIgnoreEmptyLine(true).withType(ArchiveUsage.class).build().parse();
-
-			System.out.println(result);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 
 	public static List<String> headers;
 	public static String csvString;

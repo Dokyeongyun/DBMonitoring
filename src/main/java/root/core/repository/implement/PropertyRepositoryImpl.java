@@ -191,6 +191,15 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
 		}
 	}
+
+	@Override
+	public void saveCommonConfig(Map<String, Object> values) {
+		PropertiesConfiguration config = PropertiesUtils.getConfig("commonConfig");
+		for (String key : values.keySet()) {
+			config.setProperty(key, values.get(key));
+		}
+		PropertiesUtils.save("./config/common.properties", config);
+	}
 	
 	/**
 	 * 접속정보 프로퍼티 파일을 Load한다.
@@ -234,7 +243,23 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	/**
-	 * DB에 연결하여 모니터링할 내용을 반환한다.
+	 * commons.properties에서 값을 읽어 반환한다.
+	 */
+	@Override
+	public String getCommonResource(String key) {
+		return PropertiesUtils.combinedConfig.getString(key);
+	}
+	
+	/**
+	 * commons.properties에서 값을 읽어 반환한다.
+	 */
+	@Override
+	public int getIntegerCommonResource(String key) {
+		return PropertiesUtils.combinedConfig.getInt(key);
+	}
+	
+	/**
+	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String[] getCommonResources(String key) {

@@ -148,8 +148,8 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 		sb.append("     	TYPE \"Type\", ");
 		sb.append("         TOTAL_MB * 1024 * 1024 \"Tot_RAW(B)\", ");
 		sb.append("         CASE WHEN TYPE='EXTERN' THEN TOTAL_MB * 1024 * 1024 ");
-		sb.append("              WHEN TYPE='NORMAL' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2 ");
-		sb.append("              WHEN TYPE='HIGH' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3 ");
+		sb.append("              WHEN TYPE='NORMAL' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/2 * 1024 * 1024 ");
+		sb.append("              WHEN TYPE='HIGH' THEN (TOTAL_MB-REQUIRED_MIRROR_FREE_MB)/3 * 1024 * 1024 ");
 		sb.append(" 	    ELSE 0 END AS \"Tot_Usable(B)\", ");
 		sb.append(" 	    CASE WHEN TYPE='EXTERN' THEN COLD_USED_MB * 1024 * 1024 ");
 		sb.append(" 		 	 WHEN TYPE='NORMAL' THEN COLD_USED_MB/2 * 1024 * 1024 ");
