@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,21 +16,32 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import root.core.domain.ASMDiskUsage;
+import root.core.domain.ArchiveUsage;
+import root.core.domain.OSDiskUsage;
+import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.ReportRepository;
 import root.utils.CsvUtils;
 
 @Slf4j
-public class ReportRepositoryImpl implements ReportRepository {
+public class ReportFileRepo implements ReportRepository {
 
-	private static ReportRepository reportRepository = new ReportRepositoryImpl();
+	private static ReportRepository reportRepo = new ReportFileRepo();
 
-	private String rootDirectory = "./report";
+	private String rootDirectory;
+	private Map<Class<?>, String> monitoringFileDirMap = new HashMap<>();
 
-	private ReportRepositoryImpl() {
+	private ReportFileRepo() {
+		rootDirectory = "./report";
+
+		monitoringFileDirMap.put(ArchiveUsage.class, rootDirectory + "/ArchiveUsage");
+		monitoringFileDirMap.put(TableSpaceUsage.class, rootDirectory + "/TableSpaceUsage");
+		monitoringFileDirMap.put(ASMDiskUsage.class, rootDirectory + "/ASMDiskUsage");
+		monitoringFileDirMap.put(OSDiskUsage.class, rootDirectory + "/OSDiskUsage");
 	}
 
 	public static ReportRepository getInstance() {
-		return reportRepository;
+		return reportRepo;
 	}
 
 	/**
@@ -43,12 +55,15 @@ public class ReportRepositoryImpl implements ReportRepository {
 		String content = null;
 		try {
 
+			boolean isNewFile = false;
 			if (!file.exists()) {
 				file.getParentFile().mkdirs();
-				file.createNewFile();
+				isNewFile = file.createNewFile();
 			}
 
-			content = CsvUtils.createCsvHeader(clazz);
+			if(isNewFile) {
+				content = CsvUtils.createCsvHeader(clazz);	
+			}
 
 			for (Object t : monitoringResult) {
 				String row = CsvUtils.createCsvRow(t, t.getClass());
@@ -63,7 +78,7 @@ public class ReportRepositoryImpl implements ReportRepository {
 			return;
 		}
 
-		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, false))) {
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
 			bw.append(content);
 			bw.flush();
 			bw.close();
@@ -73,10 +88,12 @@ public class ReportRepositoryImpl implements ReportRepository {
 	}
 
 	@Override
-	public List<String> getReportHeaders(File file) {
+	public List<String> getReportHeaders(Class<?> monitoringType, String alias) {
 		List<String> result = new ArrayList<>();
 
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		File reportFile = new File(this.monitoringFileDirMap.get(monitoringType) + "/" + alias + ".txt");
+
+		try (BufferedReader br = new BufferedReader(new FileReader(reportFile))) {
 
 			String firstLine = br.readLine();
 			Map<Integer, String> headerMap = CsvUtils.parseCsvLine(firstLine);
@@ -96,9 +113,11 @@ public class ReportRepositoryImpl implements ReportRepository {
 	}
 
 	@Override
-	public String getReportContentsInCsv(File reportFile) {
+	public String getReportContentsInCsv(Class<?> monitoringType, String alias) {
 		StringBuilder result = new StringBuilder();
-
+		
+		File reportFile = new File(this.monitoringFileDirMap.get(monitoringType) + "/" + alias + ".txt");
+		
 		try (BufferedReader br = new BufferedReader(new FileReader(reportFile))) {
 
 			String line = br.readLine();

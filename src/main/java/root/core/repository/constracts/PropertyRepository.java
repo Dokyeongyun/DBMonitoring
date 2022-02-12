@@ -19,12 +19,18 @@ public interface PropertyRepository {
 	void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> config);
 
 	void saveServerConnectionInfo(String filePath, Map<String, JschConnectionInfo> config);
+	
+	void saveCommonConfig(Map<String, Object> values);
 
 	boolean loadConnectionInfoConfig(String filePath);
 
 	boolean loadMonitoringInfoConfig(String filePath);
 	
 	String[] getConnectionInfoFileNames();
+
+	String getCommonResource(String key);
+
+	int getIntegerCommonResource(String key);
 
 	String[] getCommonResources(String key);
 	

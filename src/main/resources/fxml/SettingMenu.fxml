@@ -18,7 +18,10 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -141,7 +144,7 @@
                                                    <center>
                                                       <AnchorPane>
                                                          <children>
-                                                            <AnchorPane fx:id="noMonitoringConfigAP" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                            <AnchorPane fx:id="noMonitoringConfigAP" style="-fx-background-color: white;" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                <children>
                                                                   <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="설정파일을 열어주세요." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -160,53 +163,41 @@
                                                                     <content>
                                                                       <AnchorPane fx:id="settingMainContentAnchorPane" style="-fx-border-color: white; -fx-background-color: white;">
                                                                            <children>
-                                                                              <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                 <children>
-                                                                                    <Label graphicTextGap="10.0" maxHeight="50.0" minHeight="50.0" text="모니터링 여부 설정" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                                                       <padding>
-                                                                                          <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
-                                                                                       </padding>
-                                                                                       <styleClass>
-                                                                                          <String fx:value="basic-font" />
-                                                                                          <String fx:value="bold" />
-                                                                                          <String fx:value="font-black" />
-                                                                                       </styleClass>
-                                                                                       <graphic>
-                                                                                          <FontAwesomeIconView fill="#0132ac" glyphName="DESKTOP" selectionFill="BLACK" size="20" />
-                                                                                       </graphic>
-                                                                                    </Label>
-                                                                                    <JFXComboBox fx:id="monitoringPresetComboBox" layoutX="173.0" layoutY="8.0" maxHeight="30.0" minHeight="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="99.0" AnchorPane.topAnchor="10.0" />
-                                                                                    <JFXButton fx:id="monitoringPresetAddBtn" ellipsisString="" graphicTextGap="8.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" onAction="#showMonitoringPresetPopup" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
-                                                                                       <styleClass>
-                                                                                          <String fx:value="bold" />
-                                                                                          <String fx:value="basic-font" />
-                                                                                       </styleClass>
-                                                                                       <cursor>
-                                                                                          <Cursor fx:constant="HAND" />
-                                                                                       </cursor>
-                                                                                       <graphic>
-                                                                                          <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
-                                                                                             <image>
-                                                                                                <Image url="@../image/add_icon.png" />
-                                                                                             </image>
-                                                                                          </ImageView>
-                                                                                       </graphic>
-                                                                                    </JFXButton>
-                                                                                    <Separator minHeight="5.0" prefHeight="5.6" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-                                                                                       <padding>
-                                                                                          <Insets left="10.0" right="10.0" top="10.0" />
-                                                                                       </padding>
-                                                                                    </Separator>
-                                                                                 </children>
+                                                                              <Label graphicTextGap="10.0" maxHeight="50.0" minHeight="50.0" text="모니터링 여부 설정" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                                  <padding>
-                                                                                    <Insets bottom="-1.0" left="-1.0" right="-1.0" top="-1.0" />
+                                                                                    <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
                                                                                  </padding>
-                                                                              </AnchorPane>
-                                                                              <VBox fx:id="monitoringElementsVBox" maxHeight="1.7976931348623157E308" minWidth="550.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                                                 <styleClass>
+                                                                                    <String fx:value="basic-font" />
+                                                                                    <String fx:value="bold" />
+                                                                                    <String fx:value="font-black" />
+                                                                                 </styleClass>
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView fill="#0132ac" glyphName="DESKTOP" selectionFill="BLACK" size="20" />
+                                                                                 </graphic>
+                                                                              </Label>
+                                                                              <JFXComboBox fx:id="monitoringPresetComboBox" layoutX="180.0" layoutY="10.0" maxHeight="30.0" minHeight="30.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="180.0" AnchorPane.rightAnchor="99.0" AnchorPane.topAnchor="10.0" />
+                                                                              <JFXButton fx:id="monitoringPresetAddBtn" ellipsisString="" graphicTextGap="8.0" layoutX="847.2000122070312" layoutY="10.0" maxHeight="30.0" maxWidth="70.0" minHeight="30.0" minWidth="70.0" onAction="#showMonitoringPresetPopup" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black; -fx-background-color: #ddd;" text="추가" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="10.0">
+                                                                                 <styleClass>
+                                                                                    <String fx:value="bold" />
+                                                                                    <String fx:value="basic-font" />
+                                                                                 </styleClass>
+                                                                                 <cursor>
+                                                                                    <Cursor fx:constant="HAND" />
+                                                                                 </cursor>
+                                                                                 <graphic>
+                                                                                    <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                                                                                       <image>
+                                                                                          <Image url="@../image/add_icon.png" />
+                                                                                       </image>
+                                                                                    </ImageView>
+                                                                                 </graphic>
+                                                                              </JFXButton>
+                                                                              <Separator layoutY="45.20000076293945" minHeight="5.0" prefHeight="5.6" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="48.0">
                                                                                  <padding>
-                                                                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                                    <Insets left="8.0" right="8.0" />
                                                                                  </padding>
-                                                                              </VBox>
+                                                                              </Separator>
                                                                            </children>
                                                                         </AnchorPane>
                                                                     </content>
@@ -214,6 +205,11 @@
                                                                         <Insets />
                                                                      </VBox.margin>
                                                                   </ScrollPane>
+                                                                  <VBox fx:id="monitoringElementsVBox" maxHeight="1.7976931348623157E308" minWidth="550.0">
+                                                                     <padding>
+                                                                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                                     </padding>
+                                                                  </VBox>
                                                                </children>
                                                             </VBox>
                                                          </children>
@@ -247,6 +243,102 @@
                                           </AnchorPane>
                                     </content>
                                   </Tab>
+                                    <Tab text="실행 설정">
+                                       <content>
+                                          <AnchorPane>
+                                             <children>
+                                                <BorderPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <center>
+                                                      <AnchorPane>
+                                                         <children>
+                                                            <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" minWidth="550.0" style="-fx-border-color: white; -fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <content>
+                                                                  <AnchorPane style="-fx-border-color: white; -fx-background-color: white;">
+                                                                     <children>
+                                                                        <HBox layoutX="1.0" layoutY="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                           <children>
+                                                                              <Label graphicTextGap="10.0" maxHeight="50.0" minHeight="50.0" text="조회 설정">
+                                                                                 <padding>
+                                                                                    <Insets bottom="5.0" left="20.0" right="20.0" top="5.0" />
+                                                                                 </padding>
+                                                                                 <styleClass>
+                                                                                    <String fx:value="basic-font" />
+                                                                                    <String fx:value="bold" />
+                                                                                    <String fx:value="font-black" />
+                                                                                 </styleClass>
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView fill="#0132ac" glyphName="COGS" selectionFill="BLACK" size="20" />
+                                                                                 </graphic>
+                                                                              </Label>
+                                                                           </children>
+                                                                        </HBox>
+                                                                        <Separator layoutY="45.20000076293945" minHeight="5.0" prefHeight="5.6" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="48.0">
+                                                                           <padding>
+                                                                              <Insets left="8.0" right="8.0" />
+                                                                           </padding>
+                                                                        </Separator>
+                                                                        <GridPane alignment="CENTER_LEFT" style="-fx-background-color: #f9f9f9;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                                          <columnConstraints>
+                                                                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+                                                                              <ColumnConstraints hgrow="SOMETIMES" percentWidth="30.0" />
+                                                                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="150.0" />
+                                                                            <ColumnConstraints hgrow="SOMETIMES" percentWidth="35.0" />
+                                                                          </columnConstraints>
+                                                                          <rowConstraints>
+                                                                            <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                          </rowConstraints>
+                                                                           <children>
+                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="조회결과 단위 설정">
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_RIGHT" size="13" />
+                                                                                 </graphic>
+                                                                                 <opaqueInsets>
+                                                                                    <Insets bottom="100.0" />
+                                                                                 </opaqueInsets>
+                                                                                 <styleClass>
+                                                                                    <String fx:value="basic-font" />
+                                                                                    <String fx:value="bold" />
+                                                                                 </styleClass>
+                                                                              </Label>
+                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="반올림 자릿수 설정" GridPane.columnIndex="2">
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_RIGHT" size="13" />
+                                                                                 </graphic>
+                                                                                 <opaqueInsets>
+                                                                                    <Insets bottom="100.0" />
+                                                                                 </opaqueInsets>
+                                                                                 <styleClass>
+                                                                                    <String fx:value="basic-font" />
+                                                                                    <String fx:value="bold" />
+                                                                                 </styleClass>
+                                                                              </Label>
+                                                                              <JFXComboBox fx:id="fileSizeCB" GridPane.columnIndex="1" />
+                                                                              <JFXComboBox fx:id="roundingDigitsCB" GridPane.columnIndex="3" />
+                                                                           </children>
+                                                                           <padding>
+                                                                              <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                                                                           </padding>
+                                                                        </GridPane>
+                                                                     </children>
+                                                                  </AnchorPane>
+                                                               </content>
+                                                            </ScrollPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </center>
+                                                   <bottom>
+                                                      <VBox maxHeight="50.0" minHeight="50.0" BorderPane.alignment="CENTER">
+                                                         <children>
+                                                            <Separator prefWidth="200.0" />
+                                                            <HBox alignment="CENTER_RIGHT" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" />
+                                                         </children>
+                                                      </VBox>
+                                                   </bottom>
+                                                </BorderPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </content>
+                                    </Tab>
                                 </tabs>
                               </TabPane>
                            </children>

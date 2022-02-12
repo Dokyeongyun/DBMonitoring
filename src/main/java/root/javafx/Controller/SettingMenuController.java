@@ -51,6 +51,7 @@ import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.ServerConnInfoControl;
 import root.utils.AlertUtils;
 import root.utils.PropertiesUtils;
+import root.utils.UnitUtils.FileSize;
 
 public class SettingMenuController implements Initializable {
 	private static Logger logger = Logger.getLogger(SettingMenuController.class);
@@ -85,6 +86,12 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
+	
+	@FXML
+	JFXComboBox<FileSize> fileSizeCB;
+	
+	@FXML
+	JFXComboBox<Integer> roundingDigitsCB;
 
 	/* Common Data */
 	String[] dbMonitorings;
@@ -117,6 +124,26 @@ public class SettingMenuController implements Initializable {
 			setVisible(noConnInfoConfigAP, true);
 			setVisible(noMonitoringConfigAP, true);
 		}
+		
+		this.fileSizeCB.getItems().addAll(FileSize.values());
+		FileSize fileSize = FileSize.valueOf(propertyRepository.getCommonResource("unit.filesize"));
+		this.fileSizeCB.getSelectionModel().select(fileSize);
+		
+		fileSizeCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("unit.filesize", newValue);
+			propertyRepository.saveCommonConfig(map);
+		});
+		
+		this.roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
+		int roundingDigits = propertyRepository.getIntegerCommonResource("unit.rounding");
+		this.roundingDigitsCB.getSelectionModel().select(Integer.valueOf(roundingDigits));
+		
+		roundingDigitsCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("unit.rounding", newValue);
+			propertyRepository.saveCommonConfig(map);
+		});
 	}
 
 	/**

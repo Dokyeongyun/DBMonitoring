@@ -1,6 +1,5 @@
 package root.javafx.CustomView;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.event.ActionEvent;
@@ -24,39 +22,34 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.extern.slf4j.Slf4j;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
-import root.core.repository.constracts.ReportRepository;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
+import root.core.usecase.constracts.ReportUsecase;
+import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
-import root.utils.CsvUtils;
+import root.utils.UnitUtils.FileSize;
 
-@EqualsAndHashCode(callSuper = false)
-@Data
-@Slf4j
 public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
 
-	private ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
-
+	private ReportUsecase reportUsecase;
+	
+	private PropertyRepository propertyRepo = PropertyRepositoryImpl.getInstance();
+	
 	@FXML
 	Label label;
 
 	@FXML
-	JFXComboBox<String> comboBox;
-
-	// TODO Button을 List<Button>으로 만들어 놓고, 각자 주입받을 수 있도록 구현하기
+	JFXComboBox<String> aliasComboBox;
+	
 	@FXML
-	JFXButton refreshBtn;
-
+	JFXComboBox<FileSize> unitComboBox;
+	
 	@FXML
-	JFXButton excelDownBtn;
-
-	@FXML
-	JFXButton showGraphBtn;
+	JFXComboBox<Integer> roundComboBox;
 
 	@FXML
 	TableView<T> monitoringResultTV;
@@ -65,10 +58,12 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	DatePicker inquiryDatePicker;
 
 	private Class<T> clazz;
-	private String reportFilePath;
+	
 	private Map<String, List<T>> tableDataMap = new HashMap<>();
 
 	public MonitoringAnchorPane(Class<T> clazz) {
+		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
+		
 		try {
 			this.clazz = clazz;
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAnchorPane.fxml"));
@@ -77,7 +72,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			loader.load();
 
 			// Add comoboBox click listner
-			this.comboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
+			this.aliasComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
 				monitoringResultTV.getItems().clear();
 				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
 					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
@@ -87,6 +82,13 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			// Setting inquiry datepicker initial value
 			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
 
+			this.unitComboBox.getItems().addAll(FileSize.values());
+			FileSize defaultFileSizeUnit = FileSize.valueOf(propertyRepo.getCommonResource("unit.filesize"));
+			this.unitComboBox.getSelectionModel().select(defaultFileSizeUnit);
+			
+			this.roundComboBox.getItems().addAll(List.of(1, 2, 3, 4, 5));
+			int defaultRoundingDigits = propertyRepo.getIntegerCommonResource("unit.rounding");
+			this.roundComboBox.getSelectionModel().select(Integer.valueOf(defaultRoundingDigits));
 		} catch (IOException e) {
 		}
 	}
@@ -141,9 +143,9 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		}
 		monitoringResultTV.getItems().clear();
 		monitoringResultTV.getItems().setAll(tableDataMap.get(id));
-		comboBox.getSelectionModel().select(id);
+		aliasComboBox.getSelectionModel().select(id);
 	}
-
+	
 	/**
 	 * TableView에 TableColumn을 추가한다.
 	 * 
@@ -225,23 +227,20 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		String selected = getComboBox().getSelectionModel().getSelectedItem();
-		File reportFile = new File(getReportFilePath() + "/" + selected + ".txt");
-
-		if (!reportFile.exists()) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", String.format("%s 의 모니터링 기록이 없습니다.", selected));
-			return;
-		}
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		FileSize selectedUnit = unitComboBox.getSelectionModel().getSelectedItem();
+		int selectedRoundUnit = roundComboBox.getSelectionModel().getSelectedItem();
 
 		// TODO Show Progress UI
 
 		// Clear data
 		clearTableData(selected);
 
-		// Read csv report file and add table data
-		List<T> allDataList = parseCsvReportFile(reportFile);
+		// Acquire data
+		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, selectedUnit, selectedRoundUnit);
 		if (allDataList == null) {
-			AlertUtils.showAlert(AlertType.ERROR, "모니터링 기록 조회", "모니터링 기록 조회에 실패했습니다.\n데이터를 확인해주세요.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
+					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
 			return;
 		}
 		
@@ -257,28 +256,6 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		// Add and Sync data
 		addTableDataSet(selected, tableDataList);
 		syncTableData(selected);
-	}
-	
-	/**
-	 * csv 파일을 읽어 Model 객체로 변환한다.
-	 * 
-	 * @param file
-	 * @return
-	 */
-	private List<T> parseCsvReportFile(File file) {
-		List<T> result = null;
-
-		try {
-			List<String> headers = reportRepository.getReportHeaders(file);
-			String csvString = reportRepository.getReportContentsInCsv(file);
-
-			result = CsvUtils.parseCsvToBeanList(headers, csvString, getClazz());
-		
-		} catch (Exception e) {
-			log.error("Parsing error!" + file);
-		}
-		
-		return result;
 	}
 
 	/**
@@ -297,5 +274,20 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 */
 	public void excelDownload(ActionEvent e) {
 
+	}
+	
+	/*==========================================================================================*/
+	
+	public void setAliasComboBoxLabelText(String text) {
+		this.label.setText(text);
+	}
+	
+	public void setAliasComboBoxItems(String[] items) {
+		this.aliasComboBox.getItems().addAll(items);
+		this.aliasComboBox.getSelectionModel().selectFirst();
+	}
+	
+	public String getSelectedAliasComboBoxItem() {
+		return this.aliasComboBox.getSelectionModel().getSelectedItem();
 	}
 }

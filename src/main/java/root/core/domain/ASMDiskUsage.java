@@ -5,6 +5,8 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import root.utils.UnitUtils;
+import root.utils.UnitUtils.FileSize;
 
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -53,5 +55,13 @@ public class ASMDiskUsage extends MonitoringResult {
 	private double usedPercent;
 
 	private String resultMsg;
+
+	@Override
+	public void convertUnit(FileSize fromUnit, FileSize toUnit, int round) {
+		this.totalRawSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalRawSpace, round);
+		this.totalFreeSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalFreeSpace, round);
+		this.freeSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, freeSpace, round);
+		this.usedSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, usedSpace, round);
+	}
 
 }
