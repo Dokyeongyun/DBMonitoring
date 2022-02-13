@@ -89,9 +89,12 @@ public class SettingMenuController implements Initializable {
 	
 	@FXML
 	JFXComboBox<FileSize> fileSizeCB;
-	
+
 	@FXML
 	JFXComboBox<Integer> roundingDigitsCB;
+	
+	@FXML
+	JFXComboBox<String> usageUICB;
 
 	/* Common Data */
 	String[] dbMonitorings;
@@ -142,6 +145,16 @@ public class SettingMenuController implements Initializable {
 		roundingDigitsCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.rounding", newValue);
+			propertyRepository.saveCommonConfig(map);
+		});
+		
+		this.usageUICB.getItems().addAll(List.of("Text", "Graphic"));
+		String usageUI = propertyRepository.getCommonResource("usageUI");
+		this.usageUICB.getSelectionModel().select(usageUI);
+		
+		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("usageUI", newValue);
 			propertyRepository.saveCommonConfig(map);
 		});
 	}

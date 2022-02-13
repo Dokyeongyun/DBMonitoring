@@ -17,6 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -171,14 +172,13 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		TableColumn<T, E> tc = new TableColumn<T, E>(tcHeaderText);
 		tc.setCellValueFactory(new PropertyValueFactory<>(fieldName));
 
-		if (fieldName.equals("usedPercent")) {
+		if (fieldName.equals("usedPercent") && propertyRepo.getCommonResource("usageUI").equals("Graphic")) {
 			tc.setCellFactory(col -> {
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
 						ProgressBar usage = new ProgressBar(newValue / 100.0);
-						ProgressBar noUsage = new ProgressBar(ProgressBar.INDETERMINATE_PROGRESS);
-						cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then(noUsage).otherwise(usage));
+						cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
 					}
 				});
 			    return (TableCell<T, E>) cell;

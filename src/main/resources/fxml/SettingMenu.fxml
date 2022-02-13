@@ -286,6 +286,7 @@
                                                                           </columnConstraints>
                                                                           <rowConstraints>
                                                                             <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
                                                                           </rowConstraints>
                                                                            <children>
                                                                               <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="조회결과 단위 설정">
@@ -314,6 +315,19 @@
                                                                               </Label>
                                                                               <JFXComboBox fx:id="fileSizeCB" GridPane.columnIndex="1" />
                                                                               <JFXComboBox fx:id="roundingDigitsCB" GridPane.columnIndex="3" />
+                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="사용량 표시 방법" GridPane.rowIndex="1">
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_RIGHT" size="13" />
+                                                                                 </graphic>
+                                                                                 <opaqueInsets>
+                                                                                    <Insets bottom="100.0" />
+                                                                                 </opaqueInsets>
+                                                                                 <styleClass>
+                                                                                    <String fx:value="basic-font" />
+                                                                                    <String fx:value="bold" />
+                                                                                 </styleClass>
+                                                                              </Label>
+                                                                              <JFXComboBox fx:id="usageUICB" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                                            </children>
                                                                            <padding>
                                                                               <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
