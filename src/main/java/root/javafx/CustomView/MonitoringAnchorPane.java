@@ -26,6 +26,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -172,13 +173,24 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		TableColumn<T, E> tc = new TableColumn<T, E>(tcHeaderText);
 		tc.setCellValueFactory(new PropertyValueFactory<>(fieldName));
 
+		// TODO Usage UI Type별로 구체화되는 TableCellFactory 만들기
 		UsageUIType usageUIType = UsageUIType.find(propertyRepo.getCommonResource("usage-ui-type"));
-		if (fieldName.equals("usedPercent") && usageUIType == UsageUIType.GRAPHIC_BAR) {
+		if (fieldName.equals("usedPercent")) {
 			tc.setCellFactory(col -> {
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
-						Node usage = new ProgressIndicatorBar(newValue, 90);
+
+						// TODO Change using Factory method pattern
+						Node usage = null;
+						if (usageUIType == UsageUIType.GRAPHIC_BAR) {
+							usage = new ProgressIndicatorBar(newValue, 90);
+						} else if (usageUIType == UsageUIType.GRAPHIC_PIE) {
+							usage = new ProgressIndicatorPie(newValue);
+						} else if (usageUIType == UsageUIType.NUMERIC) {
+							usage = new Text(newValue + "%");
+						}
+						
 						cell.graphicProperty()
 								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
 					}
