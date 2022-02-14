@@ -21,7 +21,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -177,7 +176,7 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
-						ProgressBar usage = new ProgressBar(newValue / 100.0);
+						Node usage = new ProgressIndicatorBar(newValue, 90);
 						cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
 					}
 				});

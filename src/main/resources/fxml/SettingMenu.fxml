@@ -285,8 +285,8 @@
                                                                             <ColumnConstraints hgrow="SOMETIMES" percentWidth="35.0" />
                                                                           </columnConstraints>
                                                                           <rowConstraints>
-                                                                            <RowConstraints prefHeight="40.0" vgrow="SOMETIMES" />
-                                                                              <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                            <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
+                                                                              <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
                                                                           </rowConstraints>
                                                                            <children>
                                                                               <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="조회결과 단위 설정">
