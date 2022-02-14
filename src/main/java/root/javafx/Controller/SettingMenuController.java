@@ -41,9 +41,11 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox;
@@ -94,7 +96,7 @@ public class SettingMenuController implements Initializable {
 	JFXComboBox<Integer> roundingDigitsCB;
 	
 	@FXML
-	JFXComboBox<String> usageUICB;
+	JFXComboBox<UsageUIType> usageUICB;
 
 	/* Common Data */
 	String[] dbMonitorings;
@@ -147,14 +149,25 @@ public class SettingMenuController implements Initializable {
 			map.put("unit.rounding", newValue);
 			propertyRepository.saveCommonConfig(map);
 		});
-		
-		this.usageUICB.getItems().addAll(List.of("Text", "Graphic"));
-		String usageUI = propertyRepository.getCommonResource("usageUI");
-		this.usageUICB.getSelectionModel().select(usageUI);
-		
+
+		// Set usage UI type comboBox items and Set setting value; 
+		String usageUICode = propertyRepository.getCommonResource("usage-ui-type");
+		usageUICB.setConverter(new StringConverter<UsageUIType>() {
+			@Override
+			public String toString(UsageUIType uiType) {
+				return uiType.getName();
+			}
+
+			@Override
+			public UsageUIType fromString(String string) {
+				return usageUICB.getItems().stream().filter(ui -> ui.getName().equals(string)).findFirst().orElse(null);
+			}
+		});
+		this.usageUICB.getItems().addAll(UsageUIType.values());
+		this.usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
 		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
-			map.put("usageUI", newValue);
+	 		map.put("usage-ui-type", newValue.getCode());
 			propertyRepository.saveCommonConfig(map);
 		});
 	}

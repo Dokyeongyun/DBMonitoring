@@ -27,6 +27,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import root.core.domain.MonitoringResult;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
@@ -171,16 +172,18 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		TableColumn<T, E> tc = new TableColumn<T, E>(tcHeaderText);
 		tc.setCellValueFactory(new PropertyValueFactory<>(fieldName));
 
-		if (fieldName.equals("usedPercent") && propertyRepo.getCommonResource("usageUI").equals("Graphic")) {
+		UsageUIType usageUIType = UsageUIType.find(propertyRepo.getCommonResource("usage-ui-type"));
+		if (fieldName.equals("usedPercent") && usageUIType == UsageUIType.GRAPHIC_BAR) {
 			tc.setCellFactory(col -> {
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
 						Node usage = new ProgressIndicatorBar(newValue, 90);
-						cell.graphicProperty().bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
+						cell.graphicProperty()
+								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
 					}
 				});
-			    return (TableCell<T, E>) cell;
+				return (TableCell<T, E>) cell;
 			});
 		}
 
