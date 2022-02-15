@@ -1,59 +1,67 @@
 package root.core.domain;
 
-import java.util.List;
+import java.util.Date;
 
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByName;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import root.javafx.CustomView.UnitStringConverter;
+import root.utils.UnitUtils;
+import root.utils.UnitUtils.FileSize;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class ASMDiskUsage {
+public class ASMDiskUsage extends MonitoringResult {
 
-	@CsvBindByName(column = "NAME")
+	public ASMDiskUsage(Date monitoringDate, String asmDiskGroupName, String asmDiskGroupType, double totalRawSpace,
+			double totalFreeSpace, double freeSpace, double usedSpace, double usedPercent, String resultMsg) {
+		super(monitoringDate);
+		this.asmDiskGroupName = asmDiskGroupName;
+		this.asmDiskGroupType = asmDiskGroupType;
+		this.totalRawSpace = totalRawSpace;
+		this.totalFreeSpace = totalFreeSpace;
+		this.freeSpace = freeSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+		this.resultMsg = resultMsg;
+	}
+
+	public ASMDiskUsage(String monitoringDate, String monitoringTime, String asmDiskGroupName, String asmDiskGroupType,
+			double totalRawSpace, double totalFreeSpace, double freeSpace, double usedSpace, double usedPercent,
+			String resultMsg) {
+		super(monitoringDate, monitoringTime);
+		this.asmDiskGroupName = asmDiskGroupName;
+		this.asmDiskGroupType = asmDiskGroupType;
+		this.totalRawSpace = totalRawSpace;
+		this.totalFreeSpace = totalFreeSpace;
+		this.freeSpace = freeSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+		this.resultMsg = resultMsg;
+	}
+
 	private String asmDiskGroupName;
 
-	@CsvBindByName(column = "TYPE")
 	private String asmDiskGroupType;
 
-	@CsvCustomBindByName(column = "TOTAL_RAW(MB)", converter = UnitStringConverter.class)
-	private UnitString totalRawSpace;
+	private double totalRawSpace;
 
-	@CsvCustomBindByName(column = "TOTAL_USABLE(MB)", converter = UnitStringConverter.class)
-	private UnitString totalFreeSpace;
+	private double totalFreeSpace;
 
-	@CsvCustomBindByName(column = "FREE(MB)", converter = UnitStringConverter.class)
-	private UnitString freeSpace;
+	private double freeSpace;
 
-	@CsvCustomBindByName(column = "USED(MB)", converter = UnitStringConverter.class)
-	private UnitString usedSpace;
+	private double usedSpace;
 
-	@CsvCustomBindByName(column = "USED(%)", converter = UnitStringConverter.class)
-	private UnitString usedPercent;
+	private double usedPercent;
 
-	@CsvBindByName(column = "RESULT")
 	private String resultMsg;
 
-	public static String toCsvString(List<ASMDiskUsage> list) {
-		StringBuffer toCsv = new StringBuffer();
-		toCsv.append("NAME,TYPE,TOTAL_RAW(MB),TOTAL_USABLE(MB),USED(MB),USED(%),FREE(MB),RESULT").append("\n");
-
-		for (ASMDiskUsage data : list) {
-			toCsv.append(data.getAsmDiskGroupName()).append(",");
-			toCsv.append(data.getAsmDiskGroupType()).append(",");
-			toCsv.append(data.getTotalRawSpace().getValue()).append(data.getTotalRawSpace().getUnit()).append(",");
-			toCsv.append(data.getTotalFreeSpace().getValue()).append(data.getTotalFreeSpace().getUnit()).append(",");
-			toCsv.append(data.getFreeSpace().getValue()).append(data.getFreeSpace().getUnit()).append(",");
-			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
-			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
-			toCsv.append(data.getResultMsg()).append("\n");
-		}
-
-		return toCsv.toString();
+	@Override
+	public void convertUnit(FileSize fromUnit, FileSize toUnit, int round) {
+		this.totalRawSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalRawSpace, round);
+		this.totalFreeSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalFreeSpace, round);
+		this.freeSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, freeSpace, round);
+		this.usedSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, usedSpace, round);
 	}
+
 }

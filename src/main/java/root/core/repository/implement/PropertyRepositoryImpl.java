@@ -39,6 +39,11 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	/****************************************************************************/
 	
+	@Override
+	public boolean isFileExist(String filePath) {
+		return new File(filePath).exists();
+	}
+
 	/**
 	 * Configuration 객체를 반환한다.
 	 * TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와 의존성 제거목적으로 일단 이렇게 함..
@@ -71,7 +76,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
 			config.setProperty(dbName + ".jdbc.pw", jdbc.getJdbcPw());
 			config.setProperty(dbName + ".jdbc.url", jdbc.getJdbcUrl());
-			config.setProperty(dbName + ".jdbc.driver", jdbc.getJdbcOracleDriver());
+			config.setProperty(dbName + ".jdbc.driver", jdbc.getJdbcDriver());
 			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
 			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
 		}
@@ -186,6 +191,15 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
 		}
 	}
+
+	@Override
+	public void saveCommonConfig(Map<String, Object> values) {
+		PropertiesConfiguration config = PropertiesUtils.getConfig("commonConfig");
+		for (String key : values.keySet()) {
+			config.setProperty(key, values.get(key));
+		}
+		PropertiesUtils.save("./config/common.properties", config);
+	}
 	
 	/**
 	 * 접속정보 프로퍼티 파일을 Load한다.
@@ -229,7 +243,23 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	/**
-	 * DB에 연결하여 모니터링할 내용을 반환한다.
+	 * commons.properties에서 값을 읽어 반환한다.
+	 */
+	@Override
+	public String getCommonResource(String key) {
+		return PropertiesUtils.combinedConfig.getString(key);
+	}
+	
+	/**
+	 * commons.properties에서 값을 읽어 반환한다.
+	 */
+	@Override
+	public int getIntegerCommonResource(String key) {
+		return PropertiesUtils.combinedConfig.getInt(key);
+	}
+	
+	/**
+	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String[] getCommonResources(String key) {

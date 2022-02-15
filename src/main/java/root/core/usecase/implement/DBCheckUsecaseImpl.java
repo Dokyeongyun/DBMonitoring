@@ -1,41 +1,34 @@
 package root.core.usecase.implement;
 
+import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
-import dnl.utils.text.table.MapBasedTableModel;
 import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.UnitString;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ReportRepository;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.utils.ConsoleUtils;
+import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
-import root.utils.ExcelUtils;
+import root.utils.ExcelSheet;
 
-@SuppressWarnings("rawtypes")
 public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	private DBCheckRepository dbCheckRepository;
 	private ReportRepository reportRepository;
 
-	public DBCheckUsecaseImpl(
-			DBCheckRepository dbCheckRepository,
-			ReportRepository reportRepository) {
+	public DBCheckUsecaseImpl(DBCheckRepository dbCheckRepository, ReportRepository reportRepository) {
 		this.dbCheckRepository = dbCheckRepository;
 		this.reportRepository = reportRepository;
 	}
@@ -43,22 +36,35 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	@Override
 	public void printArchiveUsageCheck() {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		System.out.println("\t¢∫ Archive Usage Check");
+		System.out.println("\t‚ñ∂ Archive Usage Check");
+
+		result.forEach(r -> {
+			if (r.getUsedPercent() >= 90) {
+				System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
+						+ "‚ñ∂ Archive Usage Check : Usage 90% Ï¥àÍ≥º! (" + r.getArchiveName() + ")" + ConsoleUtils.RESET
+						+ "\n");
+			} else {
+				System.out.println("\t‚ñ∂ Archive Usage Check : SUCCESS\n");
+			}
+		});
+		
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(ArchiveUsage.toCsvString(result)));
+			TextTable tt = new TextTable(
+					new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}	
+		}
 	}
 
 	@Override
 	public void printTableSpaceCheck() {
 		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		System.out.println("\t¢∫ TableSpace Usage Check");
+		System.out.println("\t‚ñ∂ TableSpace Usage Check");
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(TableSpaceUsage.toCsvString(result)));
+			TextTable tt = new TextTable(
+					new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -69,59 +75,51 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	@Override
 	public void printASMDiskCheck() {
 		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		System.out.println("\t¢∫ ASM Disk Usage Check");
+		System.out.println("\t‚ñ∂ ASM Disk Usage Check");
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(ASMDiskUsage.toCsvString(result)));
+			TextTable tt = new TextTable(
+					new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
-	// TODO General«— æÁΩƒ¿€º∫¿Ã ∞°¥…«œµµ∑œ.. «ˆ¿Á Hard Coding¿Ã ≥ π´ ∏π¿Ω
+
+	// TODO GeneralÌïú ÏñëÏãùÏûëÏÑ±Ïù¥ Í∞ÄÎä•ÌïòÎèÑÎ°ù.. ÌòÑÏû¨ Hard CodingÏù¥ ÎÑàÎ¨¥ ÎßéÏùå
 	@Override
 	public void writeExcelArchiveUsageCheck() throws Exception {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
 		String dbName = dbCheckRepository.getDBName();
-		UnitString archiveUsage = result.get(0).getUsedPercent();
-		
-		if(result.get(0).getUsedPercent().getValue() >= 90) {
-			System.out.println("\t"+ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE + "¢∫ Archive Usage Check : Usage 90% √ ∞˙!"+ConsoleUtils.RESET+"\n");
-		} else {
-			System.out.println("\t¢∫ Archive Usage Check : SUCCESS\n");
-		}
-		
+
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
 		int day = Integer.parseInt(DateUtils.getToday("dd"));
-		
+
 		int colIndex = day + 2;
 		int rowIndex = 0;
-		if(dbName.equals("ERP")) {
-			rowIndex = 7; 
-		} else if(dbName.equals("POSSALE")) {
+		if (dbName.equals("ERP")) {
+			rowIndex = 7;
+		} else if (dbName.equals("POSSALE")) {
 			rowIndex = 18;
-		} else if(dbName.equals("GPOSSALE")) {
+		} else if (dbName.equals("GPOSSALE")) {
 			rowIndex = 29;
 		}
 
-		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
-		String fileName = "DB∞¸∏Æ¥Î¿Â_¡æ«’_" + year + "." + month;
+		String filePath = "./report/";
+		String fileName = "DBÍ¥ÄÎ¶¨ÎåÄÏû•_Ï¢ÖÌï©_" + year + "." + DateUtils.getTwoDigitDate(month);
 		String extension = ".xlsx";
-		String file = filePath + fileName + extension;
+		File file = new File(filePath + fileName + extension);
 		
-		InputStream is = null;
-		try {
-			is = new FileInputStream(file);
-		} catch (FileNotFoundException e) {
+		if(!file.exists()) {
+			file.getParentFile().mkdirs();
 			DBManageExcel.createMonthlyReportInExcel(year, month);
-			is = new FileInputStream(file);
-		} 
+		}
 		
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
+		double archiveUsage = result.get(0).getUsedPercent(); 
+		Workbook workbook = ExcelSheet.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
-		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage.getValue() + archiveUsage.getUnit());
+		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
 		OutputStream os = new FileOutputStream(file);
 		workbook.write(os);
 	}
@@ -129,56 +127,33 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	@Override
 	public void writeCsvArchiveUsage() {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		reportRepository.writeReportFile("ArchiveUsage"
-				, dbCheckRepository.getDBName()
-				, ".txt"
-				, new Date().toString() + "\n" + ArchiveUsage.toCsvString(result));
+		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result, ArchiveUsage.class);
 	}
 
 	@Override
 	public void writeCsvTableSpaceUsage() {
 		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		reportRepository.writeReportFile("TableSpaceUsage"
-				, dbCheckRepository.getDBName()
-				, ".txt"
-				, new Date().toString() + "\n" + TableSpaceUsage.toCsvString(result));
+		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result, TableSpaceUsage.class);
 	}
-	
+
 	@Override
 	public void writeCsvASMDiskUsage() {
 		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		reportRepository.writeReportFile("ASMDiskUsage"
-				, dbCheckRepository.getDBName()
-				, ".txt"
-				, new Date().toString() + "\n" + ASMDiskUsage.toCsvString(result));
+		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result, ASMDiskUsage.class);
 	}
 
 	@Override
 	public List<ArchiveUsage> getCurrentArchiveUsage() {
 		return dbCheckRepository.checkArchiveUsage();
 	}
-	
+
 	@Override
 	public List<TableSpaceUsage> getCurrentTableSpaceUsage() {
 		return dbCheckRepository.checkTableSpaceUsage();
 	}
-	
+
 	@Override
 	public List<ASMDiskUsage> getCurrentASMDiskUsage() {
 		return dbCheckRepository.checkASMDiskUsage();
-	}
-	
-	/**
-	 * List<Map> «¸≈¬¿« µ•¿Ã≈Õ∏¶ ≈◊¿Ã∫Ì ∆˜∏À¿∏∑Œ √‚∑¬«—¥Ÿ.
-	 * 
-	 * @param mapList √‚∑¬«“ µ•¿Ã≈Õ
-	 * @param indent  µÈø©æ≤±‚
-	 */
-	public void printMapListToTableFormat(List<Map> mapList, int indent) {
-		// List<String> «¸≈¬¿« header ∏ÆΩ∫∆Æ
-		// List<Map> «¸≈¬¿« data ∏ÆΩ∫∆Æ
-		TextTable tt = new TextTable(new MapBasedTableModel(mapList));
-		tt.printTable(System.out, indent);
-		System.out.println();
 	}
 }

@@ -11,13 +11,18 @@ import root.core.domain.OSDiskUsage;
 
 public interface ServerCheckRepository {
 	String getServerName();
-	
+
 	Session getSession();
+
 	Session connectSession(Session session);
+
 	void disConnectSession(Session session);
-	
+
 	int getAlertLogFileLineCount(AlertLogCommand alc);
+
 	String checkAlertLog(AlertLogCommand alc);
+
 	AlertLog checkAlertLogDuringPeriod(AlertLogCommandPeriod alc);
-	List<OSDiskUsage> checkOSDiskUsage(String command);
+
+	List<OSDiskUsage> checkOSDiskUsage();
 }

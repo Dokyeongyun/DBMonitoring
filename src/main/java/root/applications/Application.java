@@ -14,7 +14,7 @@ import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
 import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerCheckUsecase;
@@ -36,7 +36,7 @@ public class Application {
     			PropertiesUtils.loadAppConfiguration(lastUsePropertiesFile, "connInfoConfig");
     			PropertiesUtils.loadAppConfiguration(propertiesFilePath);
     			PropertiesUtils.loadCombinedConfiguration();
-    			PropertiesUtils.loadAppConfiguration(".\\config\\connectioninfo\\connection.properties", "connInfoConfig");
+    			PropertiesUtils.loadAppConfiguration(".\\config\\connectioninfo\\test.properties", "connInfoConfig");
     		}catch(Exception e) {
     			System.out.println("configuration loading error\n"+e+"\n");
     			return;
@@ -50,7 +50,7 @@ public class Application {
     		}
 
     		if("on".equals(serverMonitoring)) {
-    			serverMonitoring();
+    		//	serverMonitoring();
     		}
     		
     	} catch (Exception e) {
@@ -72,7 +72,7 @@ public class Application {
 			AbstractDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
-			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportRepositoryImpl.getInstance());
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
 			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
 			dbBatch.startBatchArchiveUsageCheck();
 			dbBatch.startBatchTableSpaceUsageCheck();
@@ -103,7 +103,7 @@ public class Application {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
 			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
-			serverBatch.startBatchOSDiskUsageCheck("df -Ph");
+			serverBatch.startBatchOSDiskUsageCheck();
 			//System.out.println("бр [ " + serverName + " Monitoring End ]\n\n");
 		} 
 	}

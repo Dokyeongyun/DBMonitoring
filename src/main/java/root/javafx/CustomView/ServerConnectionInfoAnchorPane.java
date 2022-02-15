@@ -2,13 +2,14 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.AlertLogCommand;
@@ -18,7 +19,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
-public class ServerConnectionInfoAnchorPane extends AnchorPane {
+public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	/* Dependency Injection */
 	private PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
@@ -55,15 +56,20 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 			e.printStackTrace();
 		}
 	}
-
-	// "※프로퍼티파일을 열거나 접속정보를 추가해주세요."
-	public void setInitialValue(JschConnectionInfo jsch) {
+	
+	public void init() {
+		// Set textFormatter
+		portTF.setTextFormatter(new NumberTextFormatter());
+		
+		// Set AlertLogDateFormat ComboBox values
 		alertLogDateFormatCB.getItems()
-				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+		.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+	}
 
+	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
 		hostTF.setText(jsch.getHost());
-		portTF.setText(String.valueOf(jsch.getPort()).equals("0") ? "" : String.valueOf(jsch.getPort()));
+		portTF.setText(jsch.getPort());
 		userTF.setText(jsch.getUserName());
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());
@@ -74,7 +80,7 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 		JschConnectionInfo jsch = new JschConnectionInfo();
 		jsch.setServerName(this.serverNameTF.getText());
 		jsch.setHost(this.hostTF.getText());
-		jsch.setPort(Integer.valueOf(this.portTF.getText()));
+		jsch.setPort(this.portTF.getText());
 		jsch.setUserName(this.userTF.getText());
 		jsch.setPassword(this.passwordPF.getText());
 		AlertLogCommand alc = new AlertLogCommand();
@@ -82,5 +88,11 @@ public class ServerConnectionInfoAnchorPane extends AnchorPane {
 		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 		jsch.setAlc(alc);
 		return jsch;
+	}
+
+	public boolean isAnyEmptyInput() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), serverNameTF.getText(),
+				passwordPF.getText(), alertLogFilePathTF.getText(),
+				alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 	}
 }

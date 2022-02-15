@@ -27,6 +27,7 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
+import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
@@ -35,7 +36,7 @@ import root.core.repository.constracts.ReportRepository;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
 import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerCheckUsecase;
@@ -52,7 +53,7 @@ public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
 	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
-	ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
+	ReportRepository reportRepository = ReportFileRepo.getInstance();
 
 	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
@@ -71,11 +72,11 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
-	Map<String, AlertLog> alertLogMonitoringResultMap = new HashMap<>();
+	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP;
+	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP;
+	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP;
+	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP;
+	Map<String, AlertLog> alertLogMonitoringResultMap;
 	
 	/* Common Data */
 	String lastUseConnInfoFilePath = null;
@@ -85,13 +86,19 @@ public class RunMenuController implements Initializable {
 	String[] connInfoFiles = null;
 	List<String> presetList = null;
 	
+	public RunMenuController() {
+		archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
+		tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
+		asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
+		osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
+		alertLogMonitoringResultMap = new HashMap<>();
+	}
+	
 	/**
 	 * 실행메뉴 화면 진입시 초기화를 수행한다.
 	 */
-	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		
 		/*
 		 * 1. 접속정보 프로퍼티 파일 ComboBox를 설정한다.
 		 * 2. 접속정보 프로퍼티 파일 유무를 확인한다.
@@ -109,7 +116,7 @@ public class RunMenuController implements Initializable {
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
 			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 			lastUseConnInfoFilePath = propertyRepository.getLastUseConnInfoFilePath();
-			if(lastUseConnInfoFilePath != null) {
+			if(propertyRepository.isFileExist(lastUseConnInfoFilePath)) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
 				loadConnectionInfoProperties(lastUseConnInfoFilePath);
 			}
@@ -130,47 +137,47 @@ public class RunMenuController implements Initializable {
 		
 		// Archive Usage TableView Setting
 		Map<String, TypeAndFieldName> archiveUsageTCM = new LinkedHashMap<>(); // LinkedHashMap은 순서가 보장된다.
-		archiveUsageTCM.put("Archive Name", new TypeAndFieldName(String.class, "archiveName"));
-		archiveUsageTCM.put("Number Of Files", new TypeAndFieldName(Integer.class, "numberOfFiles"));
-		archiveUsageTCM.put("Total Space(G)", new TypeAndFieldName(Double.class, "totalSpace"));
-		archiveUsageTCM.put("Reclaimable Space(G)", new TypeAndFieldName(Double.class, "reclaimableSpace"));
-		archiveUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
-		archiveUsageTCM.put("Used Percent(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		archiveUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, "dnt"));
-		initAndAddMonitoringAnchorPane("ArchiveUsage", archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
+		archiveUsageTCM.put("Archive명", new TypeAndFieldName(String.class, "archiveName"));
+		archiveUsageTCM.put("파일 개수", new TypeAndFieldName(Integer.class, "numberOfFiles"));
+		archiveUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		archiveUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "reclaimableSpace"));
+		archiveUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		archiveUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "dnt"));
+		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
 		Map<String, TypeAndFieldName> tableSpaceUsageTCM = new LinkedHashMap<>();
-		tableSpaceUsageTCM.put("Table Space Name", new TypeAndFieldName(String.class, "tableSpaceName"));
-		tableSpaceUsageTCM.put("Total Space(G)", new TypeAndFieldName(Double.class, "totalSpace"));
-		tableSpaceUsageTCM.put("Free Space(G)", new TypeAndFieldName(Double.class, "freeSpace"));
-		tableSpaceUsageTCM.put("Used Space(G)", new TypeAndFieldName(Double.class, "usedSpace"));
-		tableSpaceUsageTCM.put("Used Percent(G)", new TypeAndFieldName(Double.class, "usedPercent"));
-		tableSpaceUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("TableSpaceUsage", tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
+		tableSpaceUsageTCM.put("테이블스페이스명", new TypeAndFieldName(String.class, "tableSpaceName"));
+		tableSpaceUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		tableSpaceUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		tableSpaceUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		tableSpaceUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
 		Map<String, TypeAndFieldName> asmDiskUsageTCM = new LinkedHashMap<>();
-		asmDiskUsageTCM.put("Disk Group", new TypeAndFieldName(String.class, "asmDiskGroupName"));
-		asmDiskUsageTCM.put("Disk Type", new TypeAndFieldName(String.class, "asmDiskGroupType"));
-		asmDiskUsageTCM.put("Total Space(MB)", new TypeAndFieldName(Double.class, "totalRawSpace"));
-		asmDiskUsageTCM.put("Total Usable(MB)", new TypeAndFieldName(Double.class, "totalFreeSpace"));
-		asmDiskUsageTCM.put("Free Space(MB)", new TypeAndFieldName(Double.class, "freeSpace"));
-		asmDiskUsageTCM.put("Used Space(MB)", new TypeAndFieldName(Double.class, "usedSpace"));
-		asmDiskUsageTCM.put("Used Percent(MB)", new TypeAndFieldName(Double.class, "usedPercent"));
-		asmDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("ASMDiskUsage", asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
+		asmDiskUsageTCM.put("디스크 그룹", new TypeAndFieldName(String.class, "asmDiskGroupName"));
+		asmDiskUsageTCM.put("디스크 타입", new TypeAndFieldName(String.class, "asmDiskGroupType"));
+		asmDiskUsageTCM.put("전체 공간(Raw)", new TypeAndFieldName(Double.class, "totalRawSpace"));
+		asmDiskUsageTCM.put("전체 공간(Actual)", new TypeAndFieldName(Double.class, "totalFreeSpace"));
+		asmDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		asmDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		asmDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
 		Map<String, TypeAndFieldName> osDiskUsageTCM = new LinkedHashMap<>();
-		osDiskUsageTCM.put("File System", new TypeAndFieldName(String.class, "fileSystem"));
-		osDiskUsageTCM.put("Mounted On", new TypeAndFieldName(String.class, "mountedOn"));
-		osDiskUsageTCM.put("Total Space", new TypeAndFieldName(Double.class, "totalSpace"));
-		osDiskUsageTCM.put("Available Space", new TypeAndFieldName(Double.class, "freeSpace"));
-		osDiskUsageTCM.put("Used Space", new TypeAndFieldName(Double.class, "usedSpace"));
-		osDiskUsageTCM.put("Used Percent", new TypeAndFieldName(Double.class, "usedPercent"));
-		osDiskUsageTCM.put("Monitoring Date", new TypeAndFieldName(String.class, ""));
-		initAndAddMonitoringAnchorPane("OSDiskUsage", osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
+		osDiskUsageTCM.put("파일 시스템", new TypeAndFieldName(String.class, "fileSystem"));
+		osDiskUsageTCM.put("마운트 위치", new TypeAndFieldName(String.class, "mountedOn"));
+		osDiskUsageTCM.put("전체 공간", new TypeAndFieldName(Double.class, "totalSpace"));
+		osDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
+		osDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
+		osDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
+		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
 		// ex) TableColumnHeaderText, Width, Align
@@ -188,21 +195,15 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T> void initAndAddMonitoringAnchorPane(String name,
-			MonitoringAnchorPane<T> monitoringAP, 
-			AnchorPane parentAP, String labelText, String[] comboBoxItems, 
-			Map<String, TypeAndFieldName> tableColumns) {
-		
-		// Report file path setting
-		// TODO [설정]메뉴에서 report file path를 설정할 수 있도록 하기
-		monitoringAP.setReportFilePath("./report/" + name + "/");
-		
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP,
+			AnchorPane parentAP, String labelText, String[] comboBoxItems, Map<String, TypeAndFieldName> tableColumns) {
+
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
-		monitoringAP.getLabel().setText(labelText); // ComboBox 좌측 Lebel Text 설정
-		monitoringAP.getComboBox().getItems().addAll(comboBoxItems); // ComboBox Items 설정
-		monitoringAP.getComboBox().getSelectionModel().selectFirst();
-		for(String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
-			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key), key);
+		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox 좌측 Lebel Text 설정
+		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items 설정
+		for (String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
+			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key).getClazz(),
+					tableColumns.get(key).getFieldName(), key);
 		}
 		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
 	}
@@ -310,14 +311,14 @@ public class RunMenuController implements Initializable {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 
-			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage("df -Ph"));
+			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage());
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
 		}
 		
-		archiveUsageMAP.syncTableData(archiveUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
-		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getComboBox().getSelectionModel().getSelectedItem());
+		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem());
+		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem());
+		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem());
+		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem());
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	

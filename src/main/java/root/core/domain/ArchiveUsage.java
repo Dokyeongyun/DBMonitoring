@@ -1,55 +1,61 @@
 package root.core.domain;
 
-import java.util.List;
+import java.util.Date;
 
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvCustomBindByName;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import root.javafx.CustomView.UnitStringConverter;
+import root.utils.UnitUtils;
+import root.utils.UnitUtils.FileSize;
 
-@AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Data
-public class ArchiveUsage {
+public class ArchiveUsage extends MonitoringResult {
 
-	@CsvBindByName(column = "NAME")
+	public ArchiveUsage(Date monitoringDate, String archiveName, int numberOfFiles, double totalSpace,
+			double reclaimableSpace, double usedSpace, double usedPercent, String dnt) {
+		super(monitoringDate);
+		this.archiveName = archiveName;
+		this.numberOfFiles = numberOfFiles;
+		this.totalSpace = totalSpace;
+		this.reclaimableSpace = reclaimableSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+		this.dnt = dnt;
+	}
+
+	public ArchiveUsage(String monitoringDate, String monitoringTime, String archiveName, int numberOfFiles,
+			double totalSpace, double reclaimableSpace, double usedSpace, double usedPercent, String dnt) {
+		super(monitoringDate, monitoringTime);
+		this.archiveName = archiveName;
+		this.numberOfFiles = numberOfFiles;
+		this.totalSpace = totalSpace;
+		this.reclaimableSpace = reclaimableSpace;
+		this.usedSpace = usedSpace;
+		this.usedPercent = usedPercent;
+		this.dnt = dnt;
+	}
+
 	private String archiveName;
 
-	@CsvBindByName(column = "NumberOfFiles")
 	private int numberOfFiles;
 
-	@CsvCustomBindByName(column = "LimitSpace(G)", converter = UnitStringConverter.class)
-	private UnitString totalSpace;
+	private double totalSpace;
 
-	@CsvCustomBindByName(column = "ReclaimableSpace(G)", converter = UnitStringConverter.class)
-	private UnitString reclaimableSpace;
+	private double reclaimableSpace;
 
-	@CsvCustomBindByName(column = "UsedSpace(G)", converter = UnitStringConverter.class)
-	private UnitString usedSpace;
+	private double usedSpace;
 
-	@CsvCustomBindByName(column = "Used(%)", converter = UnitStringConverter.class)
-	private UnitString usedPercent;
-	
-	@CsvBindByName(column = "DNT")
+	private double usedPercent;
+
 	private String dnt;
-	
-	public static String toCsvString(List<ArchiveUsage> list) {
-		StringBuffer toCsv = new StringBuffer();
-		toCsv.append("NAME,NumberOfFiles,Used(%),UsedSpace(G),ReclaimableSpace(G),LimitSpace(G),DNT").append("\n");
-		
-		for(ArchiveUsage data : list) {
-			toCsv.append(data.getArchiveName()).append(",");
-			toCsv.append(data.getNumberOfFiles()).append(",");
-			toCsv.append(data.getUsedPercent().getValue()).append(data.getUsedPercent().getUnit()).append(",");
-			toCsv.append(data.getUsedSpace().getValue()).append(data.getUsedSpace().getUnit()).append(",");
-			toCsv.append(data.getReclaimableSpace().getValue()).append(data.getReclaimableSpace().getUnit()).append(",");
-			toCsv.append(data.getTotalSpace().getValue()).append(data.getTotalSpace().getUnit()).append(",");
-			toCsv.append(data.getDnt()).append("\n");
-		}
-		
-		return toCsv.toString();
+
+	@Override
+	public void convertUnit(FileSize fromUnit, FileSize toUnit, int round) {
+		this.totalSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, totalSpace, round);
+		this.reclaimableSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, reclaimableSpace, round);
+		this.usedSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, usedSpace, round);
 	}
+
 }

@@ -25,13 +25,13 @@ import root.core.domain.AlertLogCommand;
 import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
-import root.core.domain.UnitString;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.usecase.constracts.ServerCheckUsecase;
 import root.utils.ConsoleUtils;
+import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
-import root.utils.ExcelUtils;
+import root.utils.ExcelSheet;
 
 public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	private ServerCheckRepository serverCheckRepository;
@@ -161,12 +161,12 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void printOSDiskUsage(String command) {
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+	public void printOSDiskUsage() {
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		
 		boolean isError = false;
 		for(OSDiskUsage data : result) {
-			if(data.getUsedPercent().getValue() >= 80) {
+			if(data.getUsedPercent() >= 80) {
 				isError = true;
 			//	data.setUsedPercentString(ConsoleUtils.FONT_RED + data.getUsedPercentString() + ConsoleUtils.RESET);
 			} 
@@ -178,7 +178,7 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 			System.out.println("\t¢º OS Disk Usage : SUCCESS!");
 		}
 		try {
-			TextTable tt = new TextTable(new CsvTableModel(OSDiskUsage.toCsvString(result)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, OSDiskUsage.class)));
 			tt.printTable(System.out, 8);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -188,10 +188,10 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void writeExcelOSDiskUsage(String command) throws Exception {
+	public void writeExcelOSDiskUsage() throws Exception {
 		if(!"STS".equals(serverCheckRepository.getServerName())) return;
 		
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		
 		int year = Integer.parseInt(DateUtils.getToday("yyyy"));
 		int month = Integer.parseInt(DateUtils.getToday("MM"));
@@ -211,15 +211,19 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 			is = new FileInputStream(file);
 		}
 		
-		Workbook workbook = ExcelUtils.getWorkbook(is, fileName+extension);
+		Workbook workbook = ExcelSheet.getWorkbook(is, fileName+extension);
 		Sheet sheet = workbook.getSheetAt(0);
 
-		for(OSDiskUsage data : result) {
+		for (OSDiskUsage data : result) {
 			String mountedOn = data.getMountedOn();
-			UnitString usePercent = data.getUsedPercent();
-			if(!mountedOn.startsWith("/oradata")) continue;
-			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length()-1)) + 38;
-			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent.getValue() + usePercent.getUnit());
+			double usePercent = data.getUsedPercent();
+			
+			if (!mountedOn.startsWith("/oradata")) {
+				continue;
+			}
+				
+			int rowIndex = Integer.parseInt(mountedOn.substring(mountedOn.length() - 1)) + 38;
+			sheet.getRow(rowIndex).getCell(colIndex).setCellValue(usePercent + "%");
 		}
 
 		OutputStream os = new FileOutputStream(file);
@@ -229,12 +233,12 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 	
 	@Override
-	public void writeCsvOSDiskUsage(String command) throws Exception {
+	public void writeCsvOSDiskUsage() throws Exception {
 		String serverName = serverCheckRepository.getServerName();
 
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 
-		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\OSDiskUsage\\";
+		String filePath = "./report/OSDiskUsage/";
 		String fileName = serverName;
 		String extension = ".txt";
 		File file = new File(filePath + fileName + extension);
@@ -247,14 +251,14 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 		
 		BufferedWriter bw = new BufferedWriter(new FileWriter(file, true));
 		bw.append(new Date().toString()).append("\n");
-		bw.append(OSDiskUsage.toCsvString(result)).append("\n");
+		bw.append(CsvUtils.toCsvString(result, OSDiskUsage.class)).append("\n");
 		bw.flush();
 		bw.close();
 	}
 	
 	@Override
-	public List<OSDiskUsage> getCurrentOSDiskUsage(String command) {
-		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage(command);
+	public List<OSDiskUsage> getCurrentOSDiskUsage() {
+		List<OSDiskUsage> result = serverCheckRepository.checkOSDiskUsage();
 		return result;
 	}
 	

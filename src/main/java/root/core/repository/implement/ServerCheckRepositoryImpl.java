@@ -22,7 +22,8 @@ import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.utils.DateUtils;
-import root.utils.UnitUtils;
+import root.utils.NumberUnitUtils;
+import root.utils.NumberUnitUtils.Unit;
 
 public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	private JschServer jsch;
@@ -208,12 +209,12 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public List<OSDiskUsage> checkOSDiskUsage(String command) {
+	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
 			Session session = this.getSession();
 			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, command);
+			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
 			InputStream in = jsch.connectChannel(channel);
 			String result = IOUtils.toString(in, "UTF-8");
 			list = stringToOsDiskUsageList(result);
@@ -228,9 +229,10 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	
 	public List<OSDiskUsage> stringToOsDiskUsageList (String result) {
 		StringTokenizer st = new StringTokenizer(result);
-		List<String> header = Arrays.asList(new String[] {"Filesystem", "Size", "Used", "Avail", "Use%", "Mounted on"});
+		List<String> header = Arrays
+				.asList(new String[] { "Filesystem", "1024-blocks", "Used", "Available", "Capacity", "Mounted on" });
 		List<OSDiskUsage> list = new ArrayList<>();
-		
+
 		boolean isHeader = true;
 		int index = 0;
 
@@ -245,16 +247,19 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 					row.setFileSystem(next);
 					break;
 				case "Size":
-					row.setTotalSpace(UnitUtils.parseFileSizeString(next));
+					row.setTotalSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
+							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
 				case "Used":
-					row.setUsedSpace(UnitUtils.parseFileSizeString(next));
+					row.setUsedSpace(NumberUnitUtils.toByteValue(Unit.KiloByte, 
+							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
 				case "Avail":
-					row.setFreeSpace(UnitUtils.parseFileSizeString(next));
+					row.setFreeSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
+							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
 				case "Use%":
-					row.setUsedPercent(UnitUtils.parseFileSizeString(next));
+					row.setUsedPercent(Double.valueOf(next.substring(0, next.indexOf("%"))));
 					break;
 				case "Mounted on":
 					row.setMountedOn(next);

@@ -8,16 +8,22 @@ import root.core.domain.TableSpaceUsage;
 
 public interface DBCheckUsecase {
 	void printArchiveUsageCheck();
+
 	void printTableSpaceCheck();
+
 	void printASMDiskCheck();
-	
+
 	void writeExcelArchiveUsageCheck() throws Exception;
+
 	void writeCsvArchiveUsage();
+
 	void writeCsvTableSpaceUsage();
+
 	void writeCsvASMDiskUsage();
-	
+
 	List<ArchiveUsage> getCurrentArchiveUsage();
+
 	List<TableSpaceUsage> getCurrentTableSpaceUsage();
+
 	List<ASMDiskUsage> getCurrentASMDiskUsage();
-	
 }

@@ -55,7 +55,8 @@ public class CsvReportSeparatorApp {
 		
 		for(String key : map.keySet()) {
 //			System.out.println("[" + key + "]\n" + map.get(key));
-			reportRepository.writeReportFile(filePath + "/" + fileName, key, ".txt", map.get(key).toString());
+			// TODO ¼öÁ¤
+		//	reportRepository.writeReportFile(filePath + "/" + fileName, key, ".txt", map.get(key).toString());
 		}
 	}
 }
