@@ -1,7 +1,6 @@
 package root.javafx.CustomView.UsageUI;
 
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import root.core.domain.enums.UsageUIType;
 
 public class UsageUIFactory {
@@ -12,7 +11,7 @@ public class UsageUIFactory {
 	public static Node create(UsageUIType usageUIType, double usage, double baseline) {
 		switch (usageUIType) {
 		case NUMERIC:
-			return new Label(usage + "%");
+			return new UsageTextUI(usage, baseline);
 		case GRAPHIC_BAR:
 			return new UsageBarUI(usage, baseline);
 		case GRAPHIC_PIE:

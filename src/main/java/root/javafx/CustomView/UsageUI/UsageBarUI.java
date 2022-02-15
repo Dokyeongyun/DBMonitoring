@@ -9,7 +9,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.AnchorPane;
 import root.core.domain.enums.UsageStatus;
 
-public class UsageBarUI extends AnchorPane {
+public class UsageBarUI extends AnchorPane implements UsageUI {
 
 	@FXML
 	ProgressBar usageUI;
@@ -39,15 +39,18 @@ public class UsageBarUI extends AnchorPane {
 		setColor();
 	}
 
-	private void setUsageText() {
+	@Override
+	public void setUsageText() {
 		usageLB.setText(usage == -1 ? "ERROR" : usage + "%");
 	}
 
-	private void setUsage() {
+	@Override
+	public void setUsage() {
 		usageUI.setProgress(usage == -1 ? ProgressBar.INDETERMINATE_PROGRESS : usage / 100.0);
 	}
 
-	private void setColor() {
+	@Override
+	public void setColor() {
 		UsageStatus type = usage >= baseline ? UsageStatus.DANGEROUS : UsageStatus.NORMAL;
 		usageUI.setStyle("-fx-accent2:" + type.getColor());
 	}

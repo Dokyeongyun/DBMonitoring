@@ -5,14 +5,10 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.AnchorPane;
 import root.core.domain.enums.UsageStatus;
 
-public class UsageCircleUI extends HBox implements UsageUI {
-
-	@FXML
-	ProgressIndicator usageUI;
+public class UsageTextUI extends AnchorPane implements UsageUI {
 
 	@FXML
 	Label usageLB;
@@ -21,12 +17,12 @@ public class UsageCircleUI extends HBox implements UsageUI {
 
 	private double baseline;
 
-	public UsageCircleUI(double usage, double baseline) {
+	public UsageTextUI(double usage, double baseline) {
 		this.usage = usage;
 		this.baseline = baseline;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/usageUI/UsageCircleUI.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/usageUI/UsageTextUI.fxml"));
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
@@ -46,12 +42,12 @@ public class UsageCircleUI extends HBox implements UsageUI {
 
 	@Override
 	public void setUsage() {
-		usageUI.setProgress(usage == -1 ? 0 : usage / 100.0);
+		usageLB.setText(usage == -1 ? "ERROR" : usage + "%");
 	}
 
 	@Override
 	public void setColor() {
-		String color = usage >= baseline ? UsageStatus.DANGEROUS.getColor() : UsageStatus.NORMAL.getColor();
-		usageUI.setStyle("-fx-progress-color: " + color);
+		UsageStatus type = usage >= baseline ? UsageStatus.DANGEROUS : UsageStatus.NORMAL;
+		usageLB.setStyle("-fx-text-fill:" + (type == UsageStatus.NORMAL ? "black" : type.getColor()));
 	}
 }
