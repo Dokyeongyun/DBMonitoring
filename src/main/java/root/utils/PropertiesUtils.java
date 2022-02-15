@@ -12,7 +12,6 @@ import java.util.Map;
 
 import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
-import org.apache.commons.configuration2.PropertiesConfiguration.PropertiesWriter;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
 import org.apache.commons.configuration2.builder.CopyObjectDefaultHandler;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
@@ -54,6 +53,7 @@ public class PropertiesUtils {
 		XMLBuilderParameters definitionParams = params.xml().setFile(new File("./config/config_definition.xml"));
 		CombinedBuilderParameters combinedParameters = params.combined()
 			    .setDefinitionBuilderParameters(definitionParams)
+			    .setThrowExceptionOnMissing(false)
 			    .setListDelimiterHandler(new DefaultListDelimiterHandler(','))
 			    .registerChildDefaultsHandler(XMLBuilderProperties.class, new CopyObjectDefaultHandler(xmlParams));
 		builder.configure(combinedParameters);

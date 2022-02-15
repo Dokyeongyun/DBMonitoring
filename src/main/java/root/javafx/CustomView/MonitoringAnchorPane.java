@@ -12,24 +12,28 @@ import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXComboBox;
 
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
-import root.javafx.Model.TypeAndFieldName;
+import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
@@ -141,8 +145,8 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		if (tableDataMap.get(id) == null) {
 			return;
 		}
-		monitoringResultTV.getItems().clear();
-		monitoringResultTV.getItems().setAll(tableDataMap.get(id));
+		monitoringResultTV.setItems(null);
+		monitoringResultTV.setItems(FXCollections.observableList(tableDataMap.get(id)));
 		aliasComboBox.getSelectionModel().select(id);
 	}
 	
@@ -157,19 +161,6 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 		monitoringResultTV.getColumns().add(new TableColumn<T, E>(tcHeaderText));
 	}
 
-	/**
-	 * TableView의 TableColumn에 Property를 설정한다.
-	 * 
-	 * @param <E>
-	 * @param index
-	 * @param t
-	 */
-	@SuppressWarnings("unchecked")
-	public <E> void setTableColumnProperty(int index, TypeAndFieldName t) {
-		TableColumn<T, E> tc = (TableColumn<T, E>) this.monitoringResultTV.getColumns().get(index);
-		((TableColumn<ArchiveUsage, E>) tc).setCellValueFactory(new PropertyValueFactory<>(t.getFieldName()));
-	}
-
 	/*
 	 * TableView에 TableColumn을 추가하고 Property를 설정한다.
 	 * 
@@ -177,30 +168,28 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 * @param t
 	 * @param tcHeaderText
 	 */
-	public <E> void addAndSetPropertyTableColumn(TypeAndFieldName t, String tcHeaderText) {
-		TableColumn<T, E> tc = new TableColumn<T, E>(tcHeaderText);
-		tc.setCellValueFactory(new PropertyValueFactory<>(t.getFieldName()));
-		monitoringResultTV.getColumns().add(tc);
-	}
-
-	/**
-	 * TableView에 추가된 TableColumn을 얻는다.
-	 * 
-	 * @param index
-	 * @return
-	 */
 	@SuppressWarnings("unchecked")
-	public TableColumn<T, ?> getTableColumn(int index) {
-		TableColumn<T, ?> tc = this.monitoringResultTV.getColumns().get(index);
-		if (tc.getUserData() instanceof String) {
-			return (TableColumn<T, String>) tc;
-		} else if (tc.getUserData() instanceof Integer) {
-			return (TableColumn<T, Integer>) tc;
-		} else if (tc.getUserData() instanceof Double) {
-			return (TableColumn<T, Double>) tc;
+	public <E> void addAndSetPropertyTableColumn(Class<E> fieldType, String fieldName, String tcHeaderText) {
+		TableColumn<T, E> tc = new TableColumn<T, E>(tcHeaderText);
+		tc.setCellValueFactory(new PropertyValueFactory<>(fieldName));
+
+		// TODO Usage UI Type별로 구체화되는 TableCellFactory 만들기
+		UsageUIType usageUIType = UsageUIType.find(propertyRepo.getCommonResource("usage-ui-type"));
+		if (fieldName.equals("usedPercent")) {
+			tc.setCellFactory(col -> {
+				TableCell<T, Double> cell = new TableCell<>();
+				cell.itemProperty().addListener((observableValue, o, newValue) -> {
+					if (newValue != null) {
+						Node usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
+						cell.graphicProperty()
+								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usageUI));
+					}
+				});
+				return (TableCell<T, E>) cell;
+			});
 		}
 
-		return tc;
+		monitoringResultTV.getColumns().add(tc);
 	}
 
 	/**

@@ -152,7 +152,11 @@ public class CsvUtils {
 					if (fieldType == int.class) {
 						fieldValue = Integer.valueOf(row.get(header));
 					} else if (fieldType == double.class) {
-						fieldValue = Double.valueOf(row.get(header));
+						try {
+							fieldValue = Double.valueOf(row.get(header));
+						} catch (Exception e) {
+							fieldValue = -1;
+						}
 					} else {
 						fieldValue = row.get(header);
 					}

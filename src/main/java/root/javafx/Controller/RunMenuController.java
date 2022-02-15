@@ -201,8 +201,9 @@ public class RunMenuController implements Initializable {
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
 		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox 좌측 Lebel Text 설정
 		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items 설정
-		for(String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
-			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key), key);
+		for (String key : tableColumns.keySet()) { // TableView에 출력할 Column 설정
+			monitoringAP.addAndSetPropertyTableColumn(tableColumns.get(key).getClazz(),
+					tableColumns.get(key).getFieldName(), key);
 		}
 		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
 	}

@@ -1,0 +1,14 @@
+/* Progress-Bar */
+.progress-bar .bar {
+	-fx-accent: -fx-accent2;
+	-fx-background-color: linear-gradient(to right, derive(-fx-accent2, 70%) 0%, -fx-accent 100%);
+}
+
+/* Progress-Indicator */
+.progress-indicator  {
+    -fx-padding: 0 0 -16 0;
+}
+
+.progress-indicator .percentage {
+    -fx-fill:null;
+}
