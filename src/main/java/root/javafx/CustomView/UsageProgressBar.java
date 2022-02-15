@@ -6,7 +6,7 @@ import lombok.Getter;
 public class UsageProgressBar extends ProgressBar {
 
 	@Getter
-	public enum ProgressBarStatus {
+	private enum ProgressBarStatus {
 		NORMAL("cornflowerblue"), DANGEROUS("#ff4141");
 
 		private String color;

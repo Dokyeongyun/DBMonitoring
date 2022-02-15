@@ -26,7 +26,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -180,19 +179,9 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
-
-						// TODO Change using Factory method pattern
-						Node usage = null;
-						if (usageUIType == UsageUIType.GRAPHIC_BAR) {
-							usage = new ProgressIndicatorBar(newValue, 90);
-						} else if (usageUIType == UsageUIType.GRAPHIC_PIE) {
-							usage = new ProgressIndicatorPie(newValue);
-						} else if (usageUIType == UsageUIType.NUMERIC) {
-							usage = new Text(newValue + "%");
-						}
-						
+						Node usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
 						cell.graphicProperty()
-								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usage));
+								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usageUI));
 					}
 				});
 				return (TableCell<T, E>) cell;
