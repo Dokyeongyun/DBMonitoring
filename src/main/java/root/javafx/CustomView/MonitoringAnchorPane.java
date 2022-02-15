@@ -33,6 +33,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
+import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 

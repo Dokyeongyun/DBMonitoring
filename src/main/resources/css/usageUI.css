@@ -7,7 +7,6 @@
 /* Progress-Indicator */
 .progress-indicator  {
     -fx-padding: 0 0 -16 0;
-    -fx-progress-color: red;
 }
 
 .progress-indicator .percentage {
