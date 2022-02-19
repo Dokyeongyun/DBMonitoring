@@ -1,6 +1,5 @@
 package root.javafx.CustomView.UsageUI;
 
-import javafx.scene.Node;
 import root.core.domain.enums.UsageUIType;
 
 public class UsageUIFactory {
@@ -8,7 +7,7 @@ public class UsageUIFactory {
 	private UsageUIFactory() {
 	}
 
-	public static Node create(UsageUIType usageUIType, double usage, double baseline) {
+	public static UsageUI create(UsageUIType usageUIType, double usage, double baseline) {
 		switch (usageUIType) {
 		case NUMERIC:
 			return new UsageTextUI(usage, baseline);

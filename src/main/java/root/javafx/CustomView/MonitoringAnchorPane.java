@@ -17,7 +17,6 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -33,6 +32,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
+import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
@@ -180,9 +180,9 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
-						Node usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
+						UsageUI usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
 						cell.graphicProperty()
-								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usageUI));
+								.bind(Bindings.when(cell.emptyProperty()).then((UsageUI) null).otherwise(usageUI));
 					}
 				});
 				return (TableCell<T, E>) cell;
