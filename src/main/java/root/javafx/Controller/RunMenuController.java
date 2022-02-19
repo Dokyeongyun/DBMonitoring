@@ -46,7 +46,6 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.DisableAfterTodayDateCell;
-import root.javafx.CustomView.MonitoringAnchorPane;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
 
@@ -73,10 +72,10 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP;
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP;
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP;
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP;
+	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
+	MonitoringAPController<TableSpaceUsage> tableSpaceUsageMAP;
+	MonitoringAPController<ASMDiskUsage> asmDiskUsageMAP;
+	MonitoringAPController<OSDiskUsage> osDiskUsageMAP;
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 	
 	/* Common Data */
@@ -88,10 +87,10 @@ public class RunMenuController implements Initializable {
 	List<String> presetList = null;
 	
 	public RunMenuController() {
-		archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
-		tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
-		asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
-		osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
+		archiveUsageMAP = new MonitoringAPController<>(ArchiveUsage.class);
+		tableSpaceUsageMAP = new MonitoringAPController<>(TableSpaceUsage.class);
+		asmDiskUsageMAP = new MonitoringAPController<>(ASMDiskUsage.class);
+		osDiskUsageMAP = new MonitoringAPController<>(OSDiskUsage.class);
 		alertLogMonitoringResultMap = new HashMap<>();
 	}
 	
@@ -196,7 +195,7 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP,
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, Map<String, TypeAndFieldName> tableColumns) {
 
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint ¼³Á¤

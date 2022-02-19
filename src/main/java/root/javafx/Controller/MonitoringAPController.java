@@ -1,4 +1,4 @@
-package root.javafx.CustomView;
+package root.javafx.Controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -37,7 +37,7 @@ import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
-public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
+public class MonitoringAPController<T extends MonitoringResult> extends AnchorPane {
 
 	private ReportUsecase reportUsecase;
 	
@@ -65,12 +65,12 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	
 	private Map<String, List<T>> tableDataMap = new HashMap<>();
 
-	public MonitoringAnchorPane(Class<T> clazz) {
+	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
 		
 		try {
 			this.clazz = clazz;
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAnchorPane.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAP.fxml"));
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
