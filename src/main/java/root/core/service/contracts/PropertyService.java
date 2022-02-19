@@ -3,21 +3,13 @@ package root.core.service.contracts;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.configuration2.ex.ConfigurationException;
-
-import root.core.domain.exceptions.PropertyNotLoadedException;
-
 public interface PropertyService {
 
-	void loadAppConfiguration(String filePath) throws ConfigurationException;
+	Map<String, String> getMonitoringPresetMap();
 
-	boolean isLoaded(String configName);
+	List<String> getMonitoringPresetFilePathList();
 
-	Map<String, String> getMonitoringPresetMap() throws PropertyNotLoadedException;
+	List<String> getMonitoringPresetNameList();
 
-	List<String> getMonitoringPresetFilePathList() throws PropertyNotLoadedException;
-
-	List<String> getMonitoringPresetNameList() throws PropertyNotLoadedException;
-
-	String getMonitoringPresetFilePath(String presetName) throws PropertyNotLoadedException;
+	String getMonitoringPresetFilePath(String presetName);
 }

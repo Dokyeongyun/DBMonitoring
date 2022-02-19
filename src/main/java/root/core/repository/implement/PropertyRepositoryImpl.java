@@ -45,6 +45,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 업애버림 => 안정적인 Singletone 관리방법
 	private PropertyRepositoryImpl() {
+		loadCombinedConfiguration();
 	}
 
 	// propertyService Field에 접근할 수 있는 유일한 방법 (Static Factory Pattern)
@@ -81,8 +82,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * 주어진 경로에 PropertyConfiguration에 설정된 Key-Value를 저장한다. TODO PropertiesUtils
-	 * 클래스쪽의 메서드 제거 후 여기에서 구현하기 (일원화)
+	 * 주어진 경로에 PropertyConfiguration에 설정된 Key-Value를 저장한다.
 	 */
 	@Override
 	public void save(String filePath, PropertiesConfiguration config) {
@@ -570,16 +570,18 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 				alertLogDateFormatRegex);
 		return alc;
 	}
-	
+
 	/**
 	 * Properties 파일에서 모니터링할 서버명을 읽어온 후, 각 서버별 AlertLogCommand 객체를 생성한다.
+	 * 
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
 	@Override
 	public Map<String, AlertLogCommand> getAlertLogCommandMap() {
 		String[] serverNames = connInfoConfig.getStringArray("servernames");
 		Map<String, AlertLogCommand> alcMap = new HashMap<>();
-		for(String serverName : serverNames) alcMap.put(serverName, getAlertLogCommand(serverName));
+		for (String serverName : serverNames)
+			alcMap.put(serverName, getAlertLogCommand(serverName));
 		return alcMap;
 	}
 }
