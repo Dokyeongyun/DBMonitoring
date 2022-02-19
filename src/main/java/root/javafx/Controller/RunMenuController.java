@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.configuration2.PropertiesConfiguration;
+
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 
@@ -47,12 +49,11 @@ import root.javafx.CustomView.DisableAfterTodayDateCell;
 import root.javafx.CustomView.MonitoringAnchorPane;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
-import root.utils.PropertiesUtils;
 
 public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
-	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
+	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
 	ReportRepository reportRepository = ReportFileRepo.getInstance();
 
 	/* View Binding */
@@ -109,14 +110,14 @@ public class RunMenuController implements Initializable {
 		 * 	3-2. 없으면 첫 번째 파일을 Load한다. 
 		 */
 		// 접속정보 설정 프로퍼티 파일 
-		connInfoFiles = propertyRepository.getConnectionInfoFileNames();
+		connInfoFiles = propRepo.getConnectionInfoFileNames();
 		if(connInfoFiles != null && connInfoFiles.length != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
 			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			lastUseConnInfoFilePath = propertyRepository.getLastUseConnInfoFilePath();
-			if(propertyRepository.isFileExist(lastUseConnInfoFilePath)) {
+			lastUseConnInfoFilePath = propRepo.getLastUseConnInfoFilePath();
+			if(propRepo.isFileExist(lastUseConnInfoFilePath)) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
 				loadConnectionInfoProperties(lastUseConnInfoFilePath);
 			}
@@ -257,13 +258,13 @@ public class RunMenuController implements Initializable {
 	 */
 	private void loadConnectionInfoProperties(String connInfoConfigFilePath) {
 		// 접속정보 프로퍼티 파일 Load
-		propertyRepository.loadConnectionInfoConfig(connInfoConfigFilePath);
+		propRepo.loadConnectionInfoConfig(connInfoConfigFilePath);
 		// 모니터링여부 설정 Preset
-		presetList = propertyRepository.getMonitoringPresetNameList();
-		lastUseMonitoringPresetName = propertyRepository.getLastUseMonitoringPresetName();
+		presetList = propRepo.getMonitoringPresetNameList();
+		lastUseMonitoringPresetName = propRepo.getLastUseMonitoringPresetName();
 		// DB/Server Names
-		dbNames = propertyRepository.getMonitoringDBNames();
-		serverNames = propertyRepository.getMonitoringServerNames();
+		dbNames = propRepo.getMonitoringDBNames();
+		serverNames = propRepo.getMonitoringServerNames();
 		// Monitoring Preset ComboBox 
 		runMonitoringPresetComboBox.getItems().clear();
 		runMonitoringPresetComboBox.getItems().addAll(presetList);
@@ -281,7 +282,7 @@ public class RunMenuController implements Initializable {
 		if(!validateInput()) return;
 
 		// DB Usage Check   		
-		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
+		List<JdbcConnectionInfo> jdbcConnectionList = propRepo.getJdbcConnectionMap();
 		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			JdbcDatabase db = new JdbcDatabase(jdbc);
@@ -296,7 +297,7 @@ public class RunMenuController implements Initializable {
 		
 		String alertLogStartDay = alertLogStartDayDP.getValue().toString();
 		String alertLogEndDay = alertLogEndDayDP.getValue().toString();
-		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
+		List<JschConnectionInfo> jschConnectionList = propRepo.getJschConnectionMap();
 		for(JschConnectionInfo jsch : jschConnectionList) {
 			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
@@ -304,10 +305,11 @@ public class RunMenuController implements Initializable {
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
 			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
 			
-			String alertLogFilePath = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-			String alertLogReadLine = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-			String alertLogDateFormat = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
-			String alertLogDateFormatRegex = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
+			PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
+			String alertLogFilePath =  config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+			String alertLogReadLine = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+			String alertLogDateFormat = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
+			String alertLogDateFormatRegex = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 

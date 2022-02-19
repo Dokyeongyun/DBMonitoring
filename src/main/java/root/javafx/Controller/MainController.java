@@ -22,7 +22,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import root.utils.PropertiesUtils;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
 
 public class MainController implements Initializable {
 	
@@ -42,12 +43,14 @@ public class MainController implements Initializable {
 	@FXML HBox osDiskUsageBelowHBox;
 	@FXML HBox alertLogBelowHBox;
 	
+	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setToggleDefaultValue();
 		
-		String[] dbNames = PropertiesUtils.propConfig.getString("dbnames").split("/");
-		String[] serverNames = PropertiesUtils.propConfig.getString("servernames").split("/");
+		String[] dbNames = propRepo.getMonitoringDBNames();
+		String[] serverNames = propRepo.getMonitoringServerNames();
 
 		HBox[] dbHBoxs = new HBox[] {archiveUsageBelowHBox, tableSpaceUsageBelowHBox, asmDiskUsageBelowHBox};
 		HBox[] serverHBoxs = new HBox[] {osDiskUsageBelowHBox, alertLogBelowHBox};
