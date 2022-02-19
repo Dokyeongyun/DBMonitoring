@@ -3,8 +3,6 @@ package root.javafx.Controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,7 +66,8 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	private Class<T> clazz;
 	
-	private Map<String, List<T>> tableDataMap = new HashMap<>();
+	// Map<Alias, Map<MonitoringDateTime, MonitoringResults>>
+	private Map<String, Map<String, List<T>>> tableDataMap = new HashMap<>();
 
 	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
@@ -82,10 +81,11 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 			// Add comoboBox click listner
 			this.aliasComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
-				monitoringResultTV.getItems().clear();
-				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
-					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
-				}
+//				monitoringResultTV.getItems().clear();
+//				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
+				System.out.println("changed: " + oldVlaue + "->" + newValue);
+				syncTableData(newValue);
+//				} 
 			});
 
 			// Setting inquiry datepicker initial value
@@ -98,6 +98,9 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			this.roundComboBox.getItems().addAll(List.of(1, 2, 3, 4, 5));
 			int defaultRoundingDigits = propertyRepo.getIntegerCommonResource("unit.rounding");
 			this.roundComboBox.getSelectionModel().select(Integer.valueOf(defaultRoundingDigits));
+			
+			// Set pagination count
+			this.pagination.setPageCount(1);
 		} catch (IOException e) {
 		}
 	}
@@ -119,11 +122,16 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param id
 	 * @param data
 	 */
-	public void addTableData(String id, T data) {
+	public void addTableData(String id, List<T> data) {
+		Map<String, List<T>> map = data
+				.stream()
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+						Collectors.mapping(m -> m, Collectors.toList())));
+		
 		if (tableDataMap.get(id) == null) {
-			tableDataMap.put(id, new ArrayList<>(Arrays.asList(data)));
+			tableDataMap.put(id, map);
 		} else {
-			tableDataMap.get(id).add(data);
+			tableDataMap.get(id).putAll(map);
 		}
 	}
 
@@ -133,11 +141,11 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param id
 	 * @param dataList
 	 */
-	public void addTableDataSet(String id, List<T> dataList) {
+	public void addTableDataSet(String id, Map<String, List<T>> dataList) {
 		if (tableDataMap.get(id) == null) {
 			tableDataMap.put(id, dataList);
 		} else {
-			tableDataMap.get(id).addAll(dataList);
+			tableDataMap.get(id).putAll(dataList);
 		}
 	}
 
@@ -147,12 +155,33 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param id
 	 */
 	public void syncTableData(String id) {
-		if (tableDataMap.get(id) == null) {
+		// Set Alias comboBox
+		aliasComboBox.getSelectionModel().select(id);
+		
+		// Clear tableView items
+		monitoringResultTV.setItems(null);
+				
+		if(tableDataMap.get(id) == null) {
+			pagination.setPageCount(getTableDataCount(id));
 			return;
 		}
-		monitoringResultTV.setItems(null);
-		monitoringResultTV.setItems(FXCollections.observableList(tableDataMap.get(id)));
-		aliasComboBox.getSelectionModel().select(id);
+		
+		// Set pagination
+		pagination.setPageCount(getTableDataCount(id));
+		
+		// Add tableView items
+		Map<String, List<T>> data = tableDataMap.get(id);
+		monitoringResultTV.setItems(FXCollections.observableList(data.values().stream().findFirst().get()));
+	}
+	
+	/**
+	 * tableData에 세팅된 데이터의 Row수를 반환한다. 
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private int getTableDataCount(String id) {
+		return tableDataMap.get(id) == null ? 1 : tableDataMap.get(id).size();
 	}
 	
 	/**
@@ -230,25 +259,16 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		// Clear data
 		clearTableData(selected);
 
-		// Acquire data
-		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, selectedUnit, selectedRoundUnit);
-		if (allDataList == null) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
-					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
-			return;
-		}
-		
-		// Find data on inquiry date
-		List<T> tableDataList = allDataList.stream()
-				.filter(data -> data.getMonitoringDate().equals(inquiryDate))
-				.collect(Collectors.toList());
-
-		if (tableDataList.size() == 0) {
+		// Acquire data on inquiry date
+		Map<String, List<T>> allDataList = reportUsecase.getMonitoringReportDataByTime(this.clazz, selected,
+				selectedUnit, selectedRoundUnit, inquiryDate);
+		if (allDataList == null || allDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			return;
 		}
 
 		// Add and Sync data
-		addTableDataSet(selected, tableDataList);
+		addTableDataSet(selected, allDataList);
 		syncTableData(selected);
 	}
 

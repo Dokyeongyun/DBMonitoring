@@ -1,6 +1,8 @@
 package root.core.usecase.implement;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.MonitoringResult;
@@ -21,6 +23,7 @@ public class ReportUsecaseImpl implements ReportUsecase {
 	@Override
 	public <T extends MonitoringResult> List<T> getMonitoringReportData(Class<T> clazz, String alias, FileSize unit,
 			int round) {
+
 		List<T> result = null;
 
 		try {
@@ -37,4 +40,16 @@ public class ReportUsecaseImpl implements ReportUsecase {
 
 		return result;
 	}
+
+	@Override
+	public <T extends MonitoringResult> Map<String, List<T>> getMonitoringReportDataByTime(Class<T> clazz, String alias,
+			FileSize unit, int round, String inquiryDate) {
+
+		return getMonitoringReportData(clazz, alias, unit, round)
+				.stream()
+				.filter(m -> inquiryDate.equals(m.getMonitoringDate()))
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+						Collectors.mapping(m -> m, Collectors.toList())));
+	}
+
 }
