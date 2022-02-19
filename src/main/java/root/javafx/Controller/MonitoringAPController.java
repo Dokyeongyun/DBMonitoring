@@ -20,11 +20,13 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -37,7 +39,7 @@ import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
-public class MonitoringAPController<T extends MonitoringResult> extends AnchorPane {
+public class MonitoringAPController<T extends MonitoringResult> extends BorderPane {
 
 	private ReportUsecase reportUsecase;
 	
@@ -60,6 +62,9 @@ public class MonitoringAPController<T extends MonitoringResult> extends AnchorPa
 
 	@FXML
 	DatePicker inquiryDatePicker;
+	
+	@FXML
+	Pagination pagination;
 
 	private Class<T> clazz;
 	

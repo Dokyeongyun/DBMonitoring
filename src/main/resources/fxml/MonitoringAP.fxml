@@ -7,14 +7,31 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
 
-<fx:root style="-fx-background-color: white;" stylesheets="@../css/javaFx.css" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+
+<fx:root stylesheets="@../css/javaFx.css" type="BorderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <AnchorPane style="-fx-background-color: white;" stylesheets="@../css/javaFx.css">
+         <children>
+            <TableView fx:id="monitoringResultTV" layoutX="10.0" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+         </children>
+         <padding>
+            <Insets left="10.0" right="10.0" />
+         </padding>
+      </AnchorPane>
+   </center>
+   <top>
+      <AnchorPane BorderPane.alignment="CENTER">
          <children>
             <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                <items>
@@ -37,15 +54,18 @@
                   <JFXButton fx:id="refreshBtn" minHeight="20.0" onAction="#refresh" styleClass="basic-font" text="새로고침">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="REFRESH" size="18" />
-                     </graphic></JFXButton>
+                     </graphic>
+                  </JFXButton>
                   <JFXButton fx:id="excelDownBtn" minHeight="20.0" styleClass="basic-font" text="엑셀다운로드">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="FILE_TEXT_ALT" size="18" />
-                     </graphic></JFXButton>
+                     </graphic>
+                  </JFXButton>
                   <JFXButton fx:id="showGraphBtn" minHeight="20.0" styleClass="basic-font" text="그래프보기">
                      <graphic>
                         <FontAwesomeIconView fill="#3342cf" glyphName="BAR_CHART_ALT" size="18" />
-                     </graphic></JFXButton>
+                     </graphic>
+                  </JFXButton>
                   <FontAwesomeIconView fill="#3342cf" glyphName="SAVE" size="18" />
                   <JFXComboBox fx:id="unitComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="단위설정">
                      <opaqueInsets>
@@ -64,14 +84,16 @@
             </ToolBar>
             <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
+         <padding>
+            <Insets left="10.0" right="10.0" />
+         </padding>
       </AnchorPane>
-      <TableView fx:id="monitoringResultTV" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
-         <columnResizePolicy>
-            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-         </columnResizePolicy>
-      </TableView>
-   </children>
-   <padding>
-      <Insets bottom="10.0" left="10.0" right="10.0" />
-   </padding>
+   </top>
+   <bottom>
+      <AnchorPane BorderPane.alignment="CENTER">
+         <children>
+            <Pagination fx:id="pagination" maxPageIndicatorCount="5" stylesheets="@../css/pagination.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </bottom>
 </fx:root>
