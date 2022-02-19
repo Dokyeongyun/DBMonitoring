@@ -1,76 +1,135 @@
 package root.core.repository.implement;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.configuration2.CombinedConfiguration;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration.PropertiesWriter;
 import org.apache.commons.configuration2.PropertiesConfigurationLayout;
+import org.apache.commons.configuration2.builder.CopyObjectDefaultHandler;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.XMLBuilderProperties;
+import org.apache.commons.configuration2.builder.combined.CombinedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.CombinedBuilderParameters;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParameters;
+import org.apache.commons.configuration2.builder.fluent.XMLBuilderParameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+
+import com.mchange.v2.io.FileUtils;
 
 import lombok.extern.slf4j.Slf4j;
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.utils.PropertiesUtils;
 
 @Slf4j
 public class PropertyRepositoryImpl implements PropertyRepository {
-	
+
 	// Private 필드로 선언 후 Singletone으로 관리
-	private static PropertyRepository propertyService = new PropertyRepositoryImpl();
-	
+	private static PropertyRepository propRepo = new PropertyRepositoryImpl();
+
 	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 업애버림 => 안정적인 Singletone 관리방법
-	private PropertyRepositoryImpl() {}
-	
+	private PropertyRepositoryImpl() {
+		loadCombinedConfiguration();
+	}
+
 	// propertyService Field에 접근할 수 있는 유일한 방법 (Static Factory Pattern)
 	public static PropertyRepository getInstance() {
-		return propertyService;
+		return propRepo;
 	}
-	
+
+	private PropertiesConfiguration connInfoConfig; // 접속정보 설정 Configuration
+	private PropertiesConfiguration monitoringConfig; // 모니터링여부 Configuration
+	private CombinedConfiguration combinedConfig; // 공통 Configuration
+
 	private static Pattern dbPropPattern = Pattern.compile("(.*).jdbc.(.*)");
 	private static Pattern serverPropPattern = Pattern.compile("(.*).server.(.*)");
 
 	/****************************************************************************/
-	
+
 	@Override
 	public boolean isFileExist(String filePath) {
 		return new File(filePath).exists();
 	}
 
 	/**
-	 * Configuration 객체를 반환한다.
-	 * TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와 의존성 제거목적으로 일단 이렇게 함..
+	 * Configuration 객체를 반환한다. TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와
+	 * 의존성 제거목적으로 일단 이렇게 함..
 	 */
 	@Override
 	public PropertiesConfiguration getConfiguration(String name) {
-		return (PropertiesConfiguration) PropertiesUtils.getConfig(name);
+		if (name.equals("connInfoConfig")) {
+			return connInfoConfig;
+		} else if (name.equals("monitoringConfig")) {
+			return monitoringConfig;
+		}
+		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
 	}
-	
+
 	/**
 	 * 주어진 경로에 PropertyConfiguration에 설정된 Key-Value를 저장한다.
-	 * TODO PropertiesUtils 클래스쪽의 메서드 제거 후 여기에서 구현하기 (일원화)
 	 */
 	@Override
 	public void save(String filePath, PropertiesConfiguration config) {
-		PropertiesUtils.save(filePath, config);
+		PropertiesConfigurationLayout layout = config.getLayout();
+		try {
+			final PropertiesConfiguration.PropertiesWriter writer = config.getIOFactory()
+					.createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
+
+			// Write Header Comment;
+			writer.writeln(layout.getHeaderComment());
+
+			for (final String key : layout.getKeys()) {
+				// Output blank lines before property
+				for (int i = 0; i < layout.getBlancLinesBefore(key); i++) {
+					writer.writeln(null);
+				}
+
+				// Output the comment
+				if (layout.getComment(key) != null) {
+					writer.writeln(layout.getComment(key));
+				}
+
+				// Output the property and its value
+				final boolean singleLine = layout.isForceSingleLine() || layout.isSingleLine(key);
+				writer.setCurrentSeparator(layout.getSeparator(key));
+				writer.writeProperty(key, config.getProperty(key), singleLine);
+			}
+
+			writer.writeln(layout.getCanonicalFooterCooment(true));
+			writer.flush();
+
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.info("[" + filePath + "] 파일 저장에 실패했습니다.");
+		}
 	}
-	
+
 	@Override
 	public void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> dbConfig) {
-		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+		PropertiesConfiguration config = connInfoConfig;
 
-		// TODO dbnames property.. 
+		// TODO dbnames property..
 		String dbNames = "";
-		for(String dbName : dbConfig.keySet()) {
+		for (String dbName : dbConfig.keySet()) {
 			dbNames += dbName + ",";
-			
+
 			JdbcConnectionInfo jdbc = dbConfig.get(dbName);
 			config.setProperty(dbName + ".jdbc.alias", jdbc.getJdbcDBName());
 			config.setProperty(dbName + ".jdbc.id", jdbc.getJdbcId());
@@ -80,26 +139,26 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
 			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
 		}
-		
-		config.setProperty("dbnames", dbNames.substring(0, dbNames.length()-1));
+
+		config.setProperty("dbnames", dbNames.substring(0, dbNames.length() - 1));
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
-			PropertiesWriter writer = config.getIOFactory()
-					.createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
-			
+			PropertiesWriter writer = config.getIOFactory().createPropertiesWriter(new FileWriter(filePath, false),
+					config.getListDelimiterHandler());
+
 			// Write Header Comment
 			writer.writeln(layout.getHeaderComment());
-			
+
 			for (final String key : layout.getKeys()) {
 				Matcher m = dbPropPattern.matcher(key);
 				if (m.matches()) {
 					String dbName = m.group(1);
-					if(!dbConfig.containsKey(dbName)) {
+					if (!dbConfig.containsKey(dbName)) {
 						continue;
-					} 
+					}
 				}
-				
+
 				// Output blank lines before property
 				for (int i = 0; i < layout.getBlancLinesBefore(key); i++) {
 					writer.writeln(null);
@@ -120,23 +179,23 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
 		}
 	}
-	
+
 	@Override
 	public void saveServerConnectionInfo(String filePath, Map<String, JschConnectionInfo> serverConfig) {
-		PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+		PropertiesConfiguration config = connInfoConfig;
 
-		// TODO servernames property.. 
+		// TODO servernames property..
 		String serverNames = "";
-		for(String serverName : serverConfig.keySet()) {
+		for (String serverName : serverConfig.keySet()) {
 			serverNames += serverName + ",";
-			
+
 			JschConnectionInfo jsch = serverConfig.get(serverName);
 			config.setProperty(serverName + ".server.servername", jsch.getServerName());
 			config.setProperty(serverName + ".server.host", jsch.getHost());
 			config.setProperty(serverName + ".server.port", jsch.getPort());
 			config.setProperty(serverName + ".server.username", jsch.getUserName());
 			config.setProperty(serverName + ".server.password", jsch.getPassword());
-			
+
 			String dateFormat = jsch.getAlc().getDateFormat();
 			String dateFormatRegex = "";
 
@@ -151,26 +210,26 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
 			config.setProperty(serverName + ".server.alertlog.readLine", 500);
 		}
-		
-		config.setProperty("servernames", serverNames.substring(0, serverNames.length()-1));
+
+		config.setProperty("servernames", serverNames.substring(0, serverNames.length() - 1));
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
-			PropertiesWriter writer = config.getIOFactory()
-					.createPropertiesWriter(new FileWriter(filePath, false), config.getListDelimiterHandler());
-			
+			PropertiesWriter writer = config.getIOFactory().createPropertiesWriter(new FileWriter(filePath, false),
+					config.getListDelimiterHandler());
+
 			// Write Header Comment
 			writer.writeln(layout.getHeaderComment());
-			
+
 			for (final String key : layout.getKeys()) {
 				Matcher m = serverPropPattern.matcher(key);
 				if (m.matches()) {
 					String serverName = m.group(1);
-					if(!serverConfig.containsKey(serverName)) {
+					if (!serverConfig.containsKey(serverName)) {
 						continue;
-					} 
+					}
 				}
-				
+
 				// Output blank lines before property
 				for (int i = 0; i < layout.getBlancLinesBefore(key); i++) {
 					writer.writeln(null);
@@ -194,108 +253,138 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	@Override
 	public void saveCommonConfig(Map<String, Object> values) {
-		PropertiesConfiguration config = PropertiesUtils.getConfig("commonConfig");
+		PropertiesConfiguration config = getConfiguration("commonConfig");
 		for (String key : values.keySet()) {
 			config.setProperty(key, values.get(key));
 		}
-		PropertiesUtils.save("./config/common.properties", config);
+		save("./config/common.properties", config);
 	}
-	
+
+	private static PropertiesConfiguration load(String filePath) {
+		Parameters param = new Parameters();
+		PropertiesBuilderParameters propertyParameters = param.properties()
+				.setListDelimiterHandler(new DefaultListDelimiterHandler(',')).setThrowExceptionOnMissing(false)
+				.setFile(new File(filePath));
+
+		FileBasedConfigurationBuilder<PropertiesConfiguration> builder = new FileBasedConfigurationBuilder<>(
+				PropertiesConfiguration.class);
+		builder.configure(propertyParameters);
+
+		try {
+			return builder.getConfiguration();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/**
-	 * 접속정보 프로퍼티 파일을 Load한다.
+	 * [/config/config_definition.xml] 파일을 읽어 CombinedConfiguration 객체를 초기화한다.
+	 * 
+	 * @param path
+	 * @throws Exception
 	 */
 	@Override
-	public boolean loadConnectionInfoConfig(String filePath) {
-		boolean isSuccess = true;
+	public void loadCombinedConfiguration() {
+		Parameters params = new Parameters();
+
+		CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
+		XMLBuilderParameters xmlParams = params.xml().setListDelimiterHandler(new DefaultListDelimiterHandler(','));
+		XMLBuilderParameters definitionParams = params.xml().setFile(new File("./config/config_definition.xml"));
+		CombinedBuilderParameters combinedParameters = params.combined()
+				.setDefinitionBuilderParameters(definitionParams).setThrowExceptionOnMissing(false)
+				.setListDelimiterHandler(new DefaultListDelimiterHandler(','))
+				.registerChildDefaultsHandler(XMLBuilderProperties.class, new CopyObjectDefaultHandler(xmlParams));
+		builder.configure(combinedParameters);
 		try {
-			PropertiesUtils.loadAppConfiguration(filePath, "connInfoConfig");
-		} catch (Exception e) {
-			isSuccess = false;
+			combinedConfig = builder.getConfiguration();
+		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
-		return isSuccess;
 	}
-	
+
+	/**
+	 * 접속정보 프로퍼티 파일을 Load한다.
+	 * 
+	 * @throws ConfigurationException
+	 */
+	@Override
+	public void loadConnectionInfoConfig(String filePath) {
+		connInfoConfig = load(filePath);
+	}
+
 	/**
 	 * 모니터링여부 프로퍼티 파일을 Load한다.
 	 */
 	@Override
-	public boolean loadMonitoringInfoConfig(String filePath) {
-		boolean isSuccess = true;
-		try {
-			PropertiesUtils.loadAppConfiguration(filePath, "monitoringConfig");
-		} catch (Exception e) {
-			isSuccess = false;
-			e.printStackTrace();
-		}
-		return isSuccess;
+	public void loadMonitoringInfoConfig(String filePath) {
+		monitoringConfig = load(filePath);
 	}
-	
-	
+
 	@Override
 	public String[] getConnectionInfoFileNames() {
 		String connInfoDirPath = "./config/connectioninfo";
 		String[] connInfoFileList = new File(connInfoDirPath).list();
-		for(int i=0; i<connInfoFileList.length; i++) {
-			connInfoFileList[i] = connInfoDirPath + "/"+connInfoFileList[i];
+		for (int i = 0; i < connInfoFileList.length; i++) {
+			connInfoFileList[i] = connInfoDirPath + "/" + connInfoFileList[i];
 		}
 		return connInfoFileList;
 	}
-	
+
 	/**
 	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String getCommonResource(String key) {
-		return PropertiesUtils.combinedConfig.getString(key);
+		return combinedConfig.getString(key);
 	}
-	
+
 	/**
 	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public int getIntegerCommonResource(String key) {
-		return PropertiesUtils.combinedConfig.getInt(key);
+		return combinedConfig.getInt(key);
 	}
-	
+
 	/**
 	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String[] getCommonResources(String key) {
-		return PropertiesUtils.combinedConfig.getStringArray(key);
+		return combinedConfig.getStringArray(key);
 	}
-	
+
 	/**
 	 * DB에 연결하여 모니터링할 내용을 반환한다.
 	 */
 	@Override
 	public String[] getDBMonitoringContents() {
-		return PropertiesUtils.combinedConfig.getStringArray("db.monitoring.contents");
+		return combinedConfig.getStringArray("db.monitoring.contents");
 	}
-	
+
 	/**
 	 * Server에 연결하여 모니터링할 내용을 반환한다.
 	 */
 	@Override
 	public String[] getServerMonitoringContents() {
-		return PropertiesUtils.combinedConfig.getStringArray("server.monitoring.contents");
+		return combinedConfig.getStringArray("server.monitoring.contents");
 	}
-	
+
 	/**
 	 * Oracle Driver ComboBox의 값을 반환한다.
 	 */
 	@Override
 	public String[] getOracleDrivers() {
-		return PropertiesUtils.combinedConfig.getStringArray("db.setting.oracle.driver.combo");
+		return combinedConfig.getStringArray("db.setting.oracle.driver.combo");
 	}
-	
+
 	/**
 	 * 최근 사용한 접속정보 파일명을 반환한다.
 	 */
 	@Override
 	public String getLastUseConnInfoFilePath() {
-		return PropertiesUtils.combinedConfig.getString("filepath.config.lastuse");
+		return combinedConfig.getString("filepath.config.lastuse");
 	}
 
 	/**
@@ -304,59 +393,195 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public List<String> getMonitoringPresetNameList() {
 		List<String> presetList = new ArrayList<>();
-		Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
+		Configuration monitoringConfig = connInfoConfig.subset("monitoring.setting.preset");
 		monitoringConfig.getKeys().forEachRemaining(s -> {
-			if(!s.startsWith("lastuse")) {
+			if (!s.startsWith("lastuse")) {
 				presetList.add(s.substring(0, s.indexOf(".")));
 			}
 		});
 		return presetList;
 	}
-	
+
 	/**
 	 * ConnectionInfo Property 파일에 작성된 Monitoring Preset리스트를 반환한다.
 	 */
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
 		Map<String, String> presetMap = new LinkedHashMap<>();
-		Configuration monitoringConfig = PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset");
+		Configuration monitoringConfig = connInfoConfig.subset("monitoring.setting.preset");
 		monitoringConfig.getKeys().forEachRemaining(s -> {
-			if(!s.startsWith("lastuse")) {
-				presetMap.put(s.substring(0, s.indexOf(".")), monitoringConfig.getString(s));	
+			if (!s.startsWith("lastuse")) {
+				presetMap.put(s.substring(0, s.indexOf(".")), monitoringConfig.getString(s));
 			}
 		});
 		return presetMap;
 	}
-	
+
 	/**
-	 * 최근 사용한 Monitoring Preset 이름을 반환한다.
-	 * 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
+	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
+	 * 
 	 * @return
 	 */
 	@Override
 	public String getLastUseMonitoringPresetName() {
-		return PropertiesUtils.connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
+		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
 	}
-	
+
 	/**
 	 * 모니터링할 DB명 배열을 반환한다.
 	 */
 	@Override
 	public String[] getMonitoringDBNames() {
-		return PropertiesUtils.connInfoConfig.getStringArray("dbnames");
+		return connInfoConfig.getStringArray("dbnames");
 	}
-	
+
 	/**
 	 * 모니터링할 Server명 배열을 반환한다.
 	 */
 	@Override
 	public String[] getMonitoringServerNames() {
-		return PropertiesUtils.connInfoConfig.getStringArray("servernames");
+		return connInfoConfig.getStringArray("servernames");
 	}
-	
+
 	@Override
 	public boolean isMonitoringContent(String toggleId) {
-		return PropertiesUtils.monitoringConfig.containsKey(toggleId) == false ? true 
-				: PropertiesUtils.monitoringConfig.getBoolean(toggleId);
+		return monitoringConfig.containsKey(toggleId) == false ? true : monitoringConfig.getBoolean(toggleId);
+	}
+
+	/**
+	 * 지정된 경로에 새로운 파일을 생성한다.
+	 * 
+	 * @param filePath
+	 */
+	public void createNewPropertiesFile(String filePath, String type) {
+		try {
+			File newFile = new File(filePath);
+
+			// 파일 및 디렉터리 생성
+			new File(newFile.getParent()).mkdirs();
+			FileUtils.touch(newFile);
+
+			if (type.equals("ConnectionInfo")) {
+				String connInfoConfigFileName = newFile.getName().substring(0,
+						newFile.getName().indexOf(".properties"));
+
+				BufferedWriter bw = new BufferedWriter(new FileWriter(newFile));
+
+				// Default properties
+				bw.append("monitoring.setting.preset.lastuse=").append("default").append("\n");
+				bw.append("monitoring.setting.preset.default.filepath=").append("./config/monitoring/")
+						.append(connInfoConfigFileName).append("/default.properties").append("\n");
+
+				bw.append("dbnames=").append("\n");
+				bw.append("servernames=").append("\n");
+
+				bw.flush();
+				bw.close();
+
+			} else if (type.equals("Monitoring")) {
+
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Properties 파일에서 모니터링할 DB명을 읽어온 후, 각 DB별 JDBC Connection 정보 가지는 객체 생성
+	 * 
+	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
+	 */
+	@Override
+	public List<JdbcConnectionInfo> getJdbcConnectionMap() {
+		String[] dbNames = connInfoConfig.getStringArray("dbnames");
+		if (dbNames == null || dbNames.length == 0) {
+			return new ArrayList<>();
+		}
+		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
+		for (String dbName : dbNames)
+			jdbcList.add(getJdbcConnectionInfo(dbName));
+		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ? -1 : 1);
+		return jdbcList;
+	}
+
+	/**
+	 * Properties 파일에서 DB별 JdbcConnectionInfo를 읽어와 객체를 생성
+	 * 
+	 * @param dbName
+	 * @return
+	 */
+	private JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
+		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
+		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
+		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");
+		String jdbcId = connInfoConfig.getString(dbName + ".jdbc.id");
+		String jdbcPw = connInfoConfig.getString(dbName + ".jdbc.pw");
+		String jdbcValidation = connInfoConfig.getString(dbName + ".jdbc.validation");
+		int jdbcConnections = connInfoConfig.getInt(dbName + ".jdbc.connections");
+		return new JdbcConnectionInfo(jdbcAlias, jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidation, jdbcConnections);
+	}
+
+	/**
+	 * Properties 파일에서 모니터링할 Server명을 읽어온 후, 각 DB별 JSchConnection 정보 가지는 객체 생성
+	 * 
+	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
+	 */
+	@Override
+	public List<JschConnectionInfo> getJschConnectionMap() {
+		String[] serverNames = connInfoConfig.getStringArray("servernames");
+		if (serverNames == null || serverNames.length == 0) {
+			return new ArrayList<>();
+		}
+		List<JschConnectionInfo> jschList = new ArrayList<>();
+		for (String serverName : serverNames)
+			jschList.add(getJschConnectionInfo(serverName));
+		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ? -1 : 1);
+		return jschList;
+	}
+
+	/**
+	 * Properties 파일에서 Server별 JschConnectionInfo를 읽어와 객체를 생성
+	 * 
+	 * @param serverName
+	 * @return
+	 */
+	private JschConnectionInfo getJschConnectionInfo(String serverName) {
+		String serverHost = connInfoConfig.getString(serverName + ".server.host");
+		String serverPort = connInfoConfig.getString(serverName + ".server.port");
+		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
+		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
+		AlertLogCommand alc = getAlertLogCommand(serverName);
+		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword,
+				alc);
+	}
+
+	/**
+	 * 서버별 AlertLog 파일에 대한 정보를 반환한다.
+	 * 
+	 * @param serverName
+	 * @return
+	 */
+	private AlertLogCommand getAlertLogCommand(String serverName) {
+		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
+		String alertLogReadLine = connInfoConfig.getString(serverName + ".server.alertlog.readline");
+		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
+		String alertLogDateFormatRegex = connInfoConfig.getString(serverName + ".server.alertlog.dateformatregex");
+		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat,
+				alertLogDateFormatRegex);
+		return alc;
+	}
+
+	/**
+	 * Properties 파일에서 모니터링할 서버명을 읽어온 후, 각 서버별 AlertLogCommand 객체를 생성한다.
+	 * 
+	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
+	 */
+	@Override
+	public Map<String, AlertLogCommand> getAlertLogCommandMap() {
+		String[] serverNames = connInfoConfig.getStringArray("servernames");
+		Map<String, AlertLogCommand> alcMap = new HashMap<>();
+		for (String serverName : serverNames)
+			alcMap.put(serverName, getAlertLogCommand(serverName));
+		return alcMap;
 	}
 }

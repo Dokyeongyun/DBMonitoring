@@ -8,7 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import root.core.domain.exceptions.PropertyNotLoadedException;
+import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.utils.PatternUtils;
@@ -25,7 +26,7 @@ public class ConsoleApp {
 
 	private static PropertyService propService;
 
-	public static void main(String[] args) throws IOException, PropertyNotLoadedException {
+	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
 		// STEP1: 접속정보 설정파일 선택
@@ -64,7 +65,9 @@ public class ConsoleApp {
 		// STEP2: 선택된 접속정보 설정파일 Load
 		String propertiesFilePath = DEFAULT_CONFIG_DIR + "/" + selectedFile;
 		try {
-			propService = new FilePropertyService(propertiesFilePath);
+			PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
+			propRepo.loadConnectionInfoConfig(propertiesFilePath);
+			propService = new FilePropertyService(propRepo);
 		} catch (Exception e) {
 			System.out.println("configuration loading error\n" + e + "\n");
 			return;

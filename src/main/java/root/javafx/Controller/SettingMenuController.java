@@ -52,7 +52,6 @@ import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.ServerConnInfoControl;
 import root.utils.AlertUtils;
-import root.utils.PropertiesUtils;
 import root.utils.UnitUtils.FileSize;
 
 public class SettingMenuController implements Initializable {
@@ -65,7 +64,7 @@ public class SettingMenuController implements Initializable {
 	 */
 
 	/* Dependency Injection */
-	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
+	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
 
 	/* View Binding */
 	@FXML
@@ -115,9 +114,9 @@ public class SettingMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-		String lastUsePropertiesFile = propertyRepository.getLastUseConnInfoFilePath();
+		String lastUsePropertiesFile = propRepo.getLastUseConnInfoFilePath();
 		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
-		if (propertyRepository.isFileExist(lastUsePropertiesFile)) {
+		if (propRepo.isFileExist(lastUsePropertiesFile)) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
@@ -131,27 +130,27 @@ public class SettingMenuController implements Initializable {
 		}
 		
 		this.fileSizeCB.getItems().addAll(FileSize.values());
-		FileSize fileSize = FileSize.valueOf(propertyRepository.getCommonResource("unit.filesize"));
+		FileSize fileSize = FileSize.valueOf(propRepo.getCommonResource("unit.filesize"));
 		this.fileSizeCB.getSelectionModel().select(fileSize);
 		
 		fileSizeCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.filesize", newValue);
-			propertyRepository.saveCommonConfig(map);
+			propRepo.saveCommonConfig(map);
 		});
 		
 		this.roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
-		int roundingDigits = propertyRepository.getIntegerCommonResource("unit.rounding");
+		int roundingDigits = propRepo.getIntegerCommonResource("unit.rounding");
 		this.roundingDigitsCB.getSelectionModel().select(Integer.valueOf(roundingDigits));
 		
 		roundingDigitsCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.rounding", newValue);
-			propertyRepository.saveCommonConfig(map);
+			propRepo.saveCommonConfig(map);
 		});
 
 		// Set usage UI type comboBox items and Set setting value; 
-		String usageUICode = propertyRepository.getCommonResource("usage-ui-type");
+		String usageUICode = propRepo.getCommonResource("usage-ui-type");
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
 			public String toString(UsageUIType uiType) {
@@ -168,7 +167,7 @@ public class SettingMenuController implements Initializable {
 		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 	 		map.put("usage-ui-type", newValue.getCode());
-			propertyRepository.saveCommonConfig(map);
+			propRepo.saveCommonConfig(map);
 		});
 	}
 
@@ -207,12 +206,12 @@ public class SettingMenuController implements Initializable {
 			String connInfoFileName = connInfoFile.getName().substring(0,
 					connInfoFile.getName().indexOf(".properties"));
 			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
-			PropertiesUtils.createNewPropertiesFile(filePath, "Monitoring");
+			propRepo.createNewPropertiesFile(filePath, "Monitoring");
 
 			// 2. 접속정보설정파일에 Preset 추가
-			PropertiesConfiguration config = PropertiesUtils.connInfoConfig;
+			PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
 			config.addProperty("monitoring.setting.preset." + input + ".filepath", filePath);
-			PropertiesUtils.save(fileChooserText.getText(), config);
+			propRepo.save(fileChooserText.getText(), config);
 
 			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
 			reloadingMonitoringSetting(input);
@@ -273,15 +272,15 @@ public class SettingMenuController implements Initializable {
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
 
 			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
-			propertyRepository.loadConnectionInfoConfig(filePath);
+			propRepo.loadConnectionInfoConfig(filePath);
 
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
 			// 4. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
-			PropertiesConfiguration rememberConfig = propertyRepository.getConfiguration("rememberConfig");
+			PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
-			propertyRepository.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
+			propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
 			// 5. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);
@@ -315,13 +314,13 @@ public class SettingMenuController implements Initializable {
 	 */
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
-		dbMonitorings = propertyRepository.getDBMonitoringContents();
-		serverMonitorings = propertyRepository.getServerMonitoringContents();
+		dbMonitorings = propRepo.getDBMonitoringContents();
+		serverMonitorings = propRepo.getServerMonitoringContents();
 
-		propertyRepository.loadMonitoringInfoConfig(filePath);
+		propRepo.loadMonitoringInfoConfig(filePath);
 
-		dbNames = propertyRepository.getMonitoringDBNames();
-		serverNames = propertyRepository.getMonitoringServerNames();
+		dbNames = propRepo.getMonitoringDBNames();
+		serverNames = propRepo.getMonitoringServerNames();
 
 		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
 		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
@@ -364,7 +363,7 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
-		PropertiesConfiguration config = PropertiesUtils.monitoringConfig;
+		PropertiesConfiguration config = propRepo.getConfiguration("monitoringConfig");
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
 
@@ -373,7 +372,7 @@ public class SettingMenuController implements Initializable {
 				JFXToggleButton thisToggle = (JFXToggleButton) n;
 				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
 			}
-			propertyRepository.save(monitoringFilePath, config);
+			propRepo.save(monitoringFilePath, config);
 			loadMonitoringConfigFile(monitoringFilePath);
 
 			Alert failAlert = new Alert(AlertType.INFORMATION);
@@ -418,7 +417,7 @@ public class SettingMenuController implements Initializable {
 			headerToggleBtn.setToggleColor(Paint.valueOf("#0132ac"));
 			headerToggleBtn.setToggleLineColor(Paint.valueOf("#6e93ea"));
 			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(propertyRepository.isMonitoringContent(headerToggleId));
+			headerToggleBtn.setSelected(propRepo.isMonitoringContent(headerToggleId));
 			headerToggleBtn.setOnAction((ActionEvent e) -> {
 				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 				for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
@@ -452,7 +451,7 @@ public class SettingMenuController implements Initializable {
 				contentToggleBtn.setMaxWidth(40);
 				contentToggleBtn.setPrefHeight(40);
 				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(propertyRepository.isMonitoringContent(contentToggleId));
+				contentToggleBtn.setSelected(propRepo.isMonitoringContent(contentToggleId));
 				contentToggleBtn.setOnAction((ActionEvent e) -> {
 					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
 
@@ -520,9 +519,9 @@ public class SettingMenuController implements Initializable {
 	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
 
-		jdbcConnInfoList = PropertiesUtils.getJdbcConnectionMap();
-		jschConnInfoList = PropertiesUtils.getJschConnectionMap();
-		alcMap = PropertiesUtils.getAlertLogCommandMap();
+		jdbcConnInfoList = propRepo.getJdbcConnectionMap();
+		jschConnInfoList = propRepo.getJschConnectionMap();
+		alcMap = propRepo.getAlertLogCommandMap();
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = null;
 		if (connInfoVBox.lookup("#dbConnVBox") != null) {
@@ -572,8 +571,8 @@ public class SettingMenuController implements Initializable {
 		monitoringPresetComboBox.getItems().clear();
 
 		// 모니터링여부 설정 Preset Map 값 초기화
-		monitoringPresetMap = propertyRepository.getMonitoringPresetMap();
-		String lastUsePresetName = propertyRepository.getLastUseMonitoringPresetName();
+		monitoringPresetMap = propRepo.getMonitoringPresetMap();
+		String lastUsePresetName = propRepo.getLastUseMonitoringPresetName();
 
 		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
 		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
@@ -651,12 +650,12 @@ public class SettingMenuController implements Initializable {
 
 			// 1. 접속정보 설정파일 생성 (./config/connectioninfo/{접속정보설정파일명}.properties
 			String filePath = "./config/connectioninfo/" + input + ".properties";
-			PropertiesUtils.createNewPropertiesFile(filePath, "ConnectionInfo");
+			propRepo.createNewPropertiesFile(filePath, "ConnectionInfo");
 
 			// 2. 모니터링여부 Preset 설정파일 생성
 			// (./config/monitoring/{접속정보설정파일명}/{default}.properties
 			String presetConfigPath = "./config/monitoring/" + input + "/default.properties";
-			PropertiesUtils.createNewPropertiesFile(presetConfigPath, "Monitoring");
+			propRepo.createNewPropertiesFile(presetConfigPath, "Monitoring");
 
 			// 3. Set Node Visible
 			setVisible(noConnInfoConfigAP, false);
