@@ -12,4 +12,7 @@ public interface ReportUsecase {
 
 	<T extends MonitoringResult> Map<String, List<T>> getMonitoringReportDataByTime(Class<T> clazz, String alias,
 			FileSize unit, int round, String inquiryDate);
+
+	<T extends MonitoringResult> Map<Integer, Long> getMonitoringReportCountByTime(Class<T> clazz, String alias,
+			FileSize unit, int round, String inquiryDate);
 }
