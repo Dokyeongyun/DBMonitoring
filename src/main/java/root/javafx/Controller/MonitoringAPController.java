@@ -1,31 +1,39 @@
-package root.javafx.CustomView;
+package root.javafx.Controller;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.util.Callback;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -33,11 +41,14 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
+import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
+import root.javafx.CustomView.prequencyUI.PrequencyButton;
 import root.utils.AlertUtils;
+import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
 
-public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane {
+public class MonitoringAPController<T extends MonitoringResult> extends BorderPane {
 
 	private ReportUsecase reportUsecase;
 	
@@ -60,27 +71,41 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 
 	@FXML
 	DatePicker inquiryDatePicker;
+	
+	@FXML
+	Pagination pagination;
+	
+	@FXML
+	HBox prequencyHBox;
+	
+	@FXML
+	Button prequencyTimeDivBtn;
 
 	private Class<T> clazz;
 	
-	private Map<String, List<T>> tableDataMap = new HashMap<>();
+	// Map<Alias, Map<MonitoringDateTime, MonitoringResults>>
+	private Map<String, Map<String, List<T>>> tableDataMap = new HashMap<>();
+	
+	private static Map<Integer, List<String>> countByTime = new HashMap<>();
+	static {
+		for (int i = 0; i < 24; i++) {
+			countByTime.put(i, new ArrayList<>());
+		}
+	}
 
-	public MonitoringAnchorPane(Class<T> clazz) {
+	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
 		
 		try {
 			this.clazz = clazz;
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAnchorPane.fxml"));
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAP.fxml"));
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
 
 			// Add comoboBox click listner
 			this.aliasComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
-				monitoringResultTV.getItems().clear();
-				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
-					monitoringResultTV.getItems().addAll(tableDataMap.get(newValue));
-				}
+				syncTableData(newValue, 0);
 			});
 
 			// Setting inquiry datepicker initial value
@@ -93,7 +118,19 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 			this.roundComboBox.getItems().addAll(List.of(1, 2, 3, 4, 5));
 			int defaultRoundingDigits = propertyRepo.getIntegerCommonResource("unit.rounding");
 			this.roundComboBox.getSelectionModel().select(Integer.valueOf(defaultRoundingDigits));
+			
+			// Set pagination property
+			this.pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+				String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+				syncTableData(selected, newValue.intValue());
+			});
+			
+			// Set prequency div initial value
+			String amOrPm = Integer.valueOf(DateUtils.getToday("HH")) < 12 ? "AM" : "PM";
+			prequencyTimeDivBtn.setText(amOrPm);
+			
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -114,11 +151,16 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 * @param id
 	 * @param data
 	 */
-	public void addTableData(String id, T data) {
+	public void addTableData(String id, List<T> data) {
+		Map<String, List<T>> map = data
+				.stream()
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+						Collectors.mapping(m -> m, Collectors.toList())));
+		
 		if (tableDataMap.get(id) == null) {
-			tableDataMap.put(id, new ArrayList<>(Arrays.asList(data)));
+			tableDataMap.put(id, map);
 		} else {
-			tableDataMap.get(id).add(data);
+			tableDataMap.get(id).putAll(map);
 		}
 	}
 
@@ -128,11 +170,11 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 * @param id
 	 * @param dataList
 	 */
-	public void addTableDataSet(String id, List<T> dataList) {
+	public void addTableDataSet(String id, Map<String, List<T>> dataList) {
 		if (tableDataMap.get(id) == null) {
 			tableDataMap.put(id, dataList);
 		} else {
-			tableDataMap.get(id).addAll(dataList);
+			tableDataMap.get(id).putAll(dataList);
 		}
 	}
 
@@ -141,13 +183,46 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 * 
 	 * @param id
 	 */
-	public void syncTableData(String id) {
-		if (tableDataMap.get(id) == null) {
+	public void syncTableData(String id, int index) {
+		// Set Alias comboBox
+		aliasComboBox.getSelectionModel().select(id);
+		
+		// Clear tableView items
+		monitoringResultTV.setItems(null);
+				
+		if(tableDataMap.get(id) == null) {
+			pagination.setPageCount(getTableDataCount(id));
 			return;
 		}
-		monitoringResultTV.setItems(null);
-		monitoringResultTV.setItems(FXCollections.observableList(tableDataMap.get(id)));
-		aliasComboBox.getSelectionModel().select(id);
+		
+		// Set pagination
+		pagination.setPageCount(getTableDataCount(id));
+		
+		// Add tableView items
+		Map<String, List<T>> data = tableDataMap.get(id);
+		List<String> times = new ArrayList<>(data.keySet());
+		Collections.sort(times);
+
+		ObservableList<T> tableData = null;
+		if (times.size() > index) {
+			tableData = FXCollections.observableList(data.get(times.get(index)));
+		}
+
+		monitoringResultTV.setItems(tableData);
+		monitoringResultTV.refresh();
+
+		// Sync monitoring prequency UI
+		syncPrequency(prequencyTimeDivBtn.getText());
+	}
+
+	/**
+	 * tableData에 세팅된 데이터의 Row수를 반환한다. 
+	 * 
+	 * @param id
+	 * @return
+	 */
+	private int getTableDataCount(String id) {
+		return tableDataMap.get(id) == null ? 1 : tableDataMap.get(id).size();
 	}
 	
 	/**
@@ -180,12 +255,25 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 				TableCell<T, Double> cell = new TableCell<>();
 				cell.itemProperty().addListener((observableValue, o, newValue) -> {
 					if (newValue != null) {
-						Node usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
+						UsageUI usageUI = UsageUIFactory.create(usageUIType, newValue, 90);
 						cell.graphicProperty()
-								.bind(Bindings.when(cell.emptyProperty()).then((Node) null).otherwise(usageUI));
+								.bind(Bindings.when(cell.emptyProperty()).then((UsageUI) null).otherwise(usageUI));
 					}
 				});
 				return (TableCell<T, E>) cell;
+			});
+		}
+
+		if(fieldName.equals("monitoringDateTime")) {
+			tc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, E>, ObservableValue<E>>() {
+				@Override
+				public ObservableValue<E> call(TableColumn.CellDataFeatures<T, E> cell) {
+					SimpleStringProperty property = new SimpleStringProperty();
+					String value = DateUtils.convertDateFormat("yyyyMMddHHmmss", "yyyy/MM/dd HH:mm:ss",
+							cell.getValue().getMonitoringDateTime(), Locale.KOREA);
+					property.setValue(value);
+					return (ObservableValue<E>) property;
+				}
 			});
 		}
 
@@ -213,7 +301,24 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		
+		// Clear data
+		clearTableData(selected);
+		syncTableData(selected, 0);
+		
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory();
+		if (allDataList == null || allDataList.size() == 0) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			return;
+		}
+		
+		// Add and Sync data
+		addTableDataSet(selected, allDataList);
+		syncTableData(selected, 0);
+	}
 
+	private Map<String, List<T>> inquiryMonitoringHistory() {
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
@@ -222,29 +327,21 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 
 		// TODO Show Progress UI
 
-		// Clear data
-		clearTableData(selected);
+		// Acquire data on inquiry date
+		return reportUsecase.getMonitoringReportDataByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
+				inquiryDate);
+	}
+	
+	private Map<Integer, List<String>> inquiryMonitoringHistoryTimesByTime() {
+		// Get selected inquiry condition
+		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		FileSize selectedUnit = unitComboBox.getSelectionModel().getSelectedItem();
+		int selectedRoundUnit = roundComboBox.getSelectionModel().getSelectedItem();
 
-		// Acquire data
-		List<T> allDataList = reportUsecase.getMonitoringReportData(this.clazz, selected, selectedUnit, selectedRoundUnit);
-		if (allDataList == null) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음",
-					String.format("%s 의 모니터링 기록이 없습니다.\n데이터를 확인해주세요.", selected));
-			return;
-		}
-		
-		// Find data on inquiry date
-		List<T> tableDataList = allDataList.stream()
-				.filter(data -> data.getMonitoringDate().equals(inquiryDate))
-				.collect(Collectors.toList());
-
-		if (tableDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
-		}
-
-		// Add and Sync data
-		addTableDataSet(selected, tableDataList);
-		syncTableData(selected);
+		// Acquire data on inquiry date
+		return reportUsecase.getMonitoringReportTimesByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
+				inquiryDate);
 	}
 
 	/**
@@ -263,6 +360,36 @@ public class MonitoringAnchorPane<T extends MonitoringResult> extends AnchorPane
 	 */
 	public void excelDownload(ActionEvent e) {
 
+	}
+
+	/**
+	 * 모니터링 기록 빈도를 나타내는 UI바의 AM/PM 구분을 변경한다.
+	 * 
+	 * @param e
+	 */
+	public void prequencyTimeDivToggle(ActionEvent e) {
+		String text = prequencyTimeDivBtn.getText();
+		prequencyTimeDivBtn.setText(text.equals("AM") ? "PM" : "AM");
+		syncPrequency(prequencyTimeDivBtn.getText());
+	}
+
+	/**
+	 * 모니터링 기록 빈도 데이터와 UI의 Sync를 맞춘다.
+	 * 
+	 * @param timeDiv
+	 */
+	private void syncPrequency(String timeDiv) {
+		countByTime.putAll(inquiryMonitoringHistoryTimesByTime());
+
+		prequencyHBox.getChildren().clear();
+		List<Integer> keys = new ArrayList<>(countByTime.keySet());
+		Collections.sort(keys);
+
+		int startIdx = timeDiv.equals("AM") ? 0 : 12;
+		int endIdx = timeDiv.equals("AM") ? 12 : 24;
+		for (int i = startIdx; i < endIdx; i++) {
+			prequencyHBox.getChildren().add(new PrequencyButton(countByTime.get(i)));
+		}
 	}
 	
 	/*==========================================================================================*/

@@ -71,7 +71,7 @@
                   </AnchorPane>
                </top>
                <center>
-                  <SplitPane dividerPositions="0.8" BorderPane.alignment="CENTER">
+                  <SplitPane BorderPane.alignment="CENTER">
                      <items>
                         <AnchorPane minWidth="550.0" style="-fx-background-color: white;">
                            <children>
@@ -236,7 +236,6 @@
                               </TabPane>
                            </children>
                         </AnchorPane>
-                        <AnchorPane prefHeight="200.0" prefWidth="29.0" style="-fx-background-color: #eee;" />
                      </items>
                   </SplitPane>
                </center>

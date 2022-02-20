@@ -5,10 +5,9 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import root.core.domain.enums.UsageStatus;
 
-public class UsageTextUI extends AnchorPane implements UsageUI {
+public class UsageTextUI extends UsageUI {
 
 	@FXML
 	Label usageLB;

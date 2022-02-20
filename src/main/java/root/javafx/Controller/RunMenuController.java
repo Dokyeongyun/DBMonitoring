@@ -46,7 +46,6 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.DisableAfterTodayDateCell;
-import root.javafx.CustomView.MonitoringAnchorPane;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
 
@@ -73,10 +72,10 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP;
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP;
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP;
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP;
+	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
+	MonitoringAPController<TableSpaceUsage> tableSpaceUsageMAP;
+	MonitoringAPController<ASMDiskUsage> asmDiskUsageMAP;
+	MonitoringAPController<OSDiskUsage> osDiskUsageMAP;
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 	
 	/* Common Data */
@@ -88,10 +87,10 @@ public class RunMenuController implements Initializable {
 	List<String> presetList = null;
 	
 	public RunMenuController() {
-		archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
-		tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
-		asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
-		osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
+		archiveUsageMAP = new MonitoringAPController<>(ArchiveUsage.class);
+		tableSpaceUsageMAP = new MonitoringAPController<>(TableSpaceUsage.class);
+		asmDiskUsageMAP = new MonitoringAPController<>(ASMDiskUsage.class);
+		osDiskUsageMAP = new MonitoringAPController<>(OSDiskUsage.class);
 		alertLogMonitoringResultMap = new HashMap<>();
 	}
 	
@@ -144,7 +143,7 @@ public class RunMenuController implements Initializable {
 		archiveUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "reclaimableSpace"));
 		archiveUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		archiveUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "dnt"));
+		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
@@ -154,7 +153,7 @@ public class RunMenuController implements Initializable {
 		tableSpaceUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		tableSpaceUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		tableSpaceUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
@@ -166,7 +165,7 @@ public class RunMenuController implements Initializable {
 		asmDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		asmDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		asmDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
@@ -177,7 +176,7 @@ public class RunMenuController implements Initializable {
 		osDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		osDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		osDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
@@ -196,7 +195,7 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP,
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, Map<String, TypeAndFieldName> tableColumns) {
 
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
@@ -289,9 +288,9 @@ public class RunMenuController implements Initializable {
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, reportRepository);
-			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
-			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
-			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
+			archiveUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
+			tableSpaceUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
+			asmDiskUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
 			db.uninit();
 		} 
 		
@@ -313,14 +312,14 @@ public class RunMenuController implements Initializable {
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 
-			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage());
+			osDiskUsageMAP.addTableData(server.getServerName(), usecase.getCurrentOSDiskUsage());
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
 		}
 		
-		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem());
-		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem());
-		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem());
-		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem());
+		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	
