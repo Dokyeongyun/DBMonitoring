@@ -6,10 +6,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.AnchorPane;
 import root.core.domain.enums.UsageStatus;
 
-public class UsageBarUI extends AnchorPane implements UsageUI {
+public class UsageBarUI extends UsageUI {
 
 	@FXML
 	ProgressBar usageUI;

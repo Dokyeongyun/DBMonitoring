@@ -3,15 +3,21 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<fx:root alignment="CENTER_LEFT" stylesheets="@../../css/usageUI.css" type="HBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+
+<fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ProgressIndicator fx:id="usageUI" progress="0.21" />
-      <Label fx:id="usageLB" text="-">
-         <HBox.margin>
-            <Insets left="5.0" />
-         </HBox.margin>
-      </Label>
+      <HBox alignment="CENTER_LEFT" stylesheets="@../../css/usageUI.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ProgressIndicator fx:id="usageUI" progress="0.21" />
+            <Label fx:id="usageLB" text="-">
+               <HBox.margin>
+                  <Insets left="5.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
    </children>
 </fx:root>

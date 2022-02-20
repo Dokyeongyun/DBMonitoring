@@ -21,6 +21,10 @@ public abstract class MonitoringResult {
 		this.monitoringDate = DateUtils.format(date, "yyyyMMdd");
 		this.monitoringTime = DateUtils.format(date, "HHmmss");
 	}
+
+	public String getMonitoringDateTime() {
+		return this.monitoringDate + this.monitoringTime;
+	}
 	
 	public abstract void convertUnit(FileSize fromUnit, FileSize toUnit, int round);
 }

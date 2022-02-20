@@ -1,10 +1,12 @@
 package root.javafx.CustomView.UsageUI;
 
-public interface UsageUI {
-	
-	public void setUsageText();
+import javafx.scene.layout.AnchorPane;
 
-	public void setUsage();
+public abstract class UsageUI extends AnchorPane {
 
-	public void setColor();
+	abstract void setUsageText();
+
+	abstract void setUsage();
+
+	abstract void setColor();
 }

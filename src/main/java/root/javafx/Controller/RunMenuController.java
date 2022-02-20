@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.configuration2.PropertiesConfiguration;
+
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 
@@ -44,15 +46,13 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.DisableAfterTodayDateCell;
-import root.javafx.CustomView.MonitoringAnchorPane;
 import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
-import root.utils.PropertiesUtils;
 
 public class RunMenuController implements Initializable {
 	
 	/* Dependency Injection */
-	PropertyRepository propertyRepository = PropertyRepositoryImpl.getInstance();
+	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
 	ReportRepository reportRepository = ReportFileRepo.getInstance();
 
 	/* View Binding */
@@ -72,10 +72,10 @@ public class RunMenuController implements Initializable {
 	@FXML JFXListView<Log> alertLogLV;
 	
 	/* Custom View */
-	MonitoringAnchorPane<ArchiveUsage> archiveUsageMAP;
-	MonitoringAnchorPane<TableSpaceUsage> tableSpaceUsageMAP;
-	MonitoringAnchorPane<ASMDiskUsage> asmDiskUsageMAP;
-	MonitoringAnchorPane<OSDiskUsage> osDiskUsageMAP;
+	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
+	MonitoringAPController<TableSpaceUsage> tableSpaceUsageMAP;
+	MonitoringAPController<ASMDiskUsage> asmDiskUsageMAP;
+	MonitoringAPController<OSDiskUsage> osDiskUsageMAP;
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 	
 	/* Common Data */
@@ -87,10 +87,10 @@ public class RunMenuController implements Initializable {
 	List<String> presetList = null;
 	
 	public RunMenuController() {
-		archiveUsageMAP = new MonitoringAnchorPane<>(ArchiveUsage.class);
-		tableSpaceUsageMAP = new MonitoringAnchorPane<>(TableSpaceUsage.class);
-		asmDiskUsageMAP = new MonitoringAnchorPane<>(ASMDiskUsage.class);
-		osDiskUsageMAP = new MonitoringAnchorPane<>(OSDiskUsage.class);
+		archiveUsageMAP = new MonitoringAPController<>(ArchiveUsage.class);
+		tableSpaceUsageMAP = new MonitoringAPController<>(TableSpaceUsage.class);
+		asmDiskUsageMAP = new MonitoringAPController<>(ASMDiskUsage.class);
+		osDiskUsageMAP = new MonitoringAPController<>(OSDiskUsage.class);
 		alertLogMonitoringResultMap = new HashMap<>();
 	}
 	
@@ -109,14 +109,14 @@ public class RunMenuController implements Initializable {
 		 * 	3-2. 없으면 첫 번째 파일을 Load한다. 
 		 */
 		// 접속정보 설정 프로퍼티 파일 
-		connInfoFiles = propertyRepository.getConnectionInfoFileNames();
+		connInfoFiles = propRepo.getConnectionInfoFileNames();
 		if(connInfoFiles != null && connInfoFiles.length != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();			
 			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			lastUseConnInfoFilePath = propertyRepository.getLastUseConnInfoFilePath();
-			if(propertyRepository.isFileExist(lastUseConnInfoFilePath)) {
+			lastUseConnInfoFilePath = propRepo.getLastUseConnInfoFilePath();
+			if(propRepo.isFileExist(lastUseConnInfoFilePath)) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);			
 				loadConnectionInfoProperties(lastUseConnInfoFilePath);
 			}
@@ -143,7 +143,7 @@ public class RunMenuController implements Initializable {
 		archiveUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "reclaimableSpace"));
 		archiveUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		archiveUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "dnt"));
+		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
@@ -153,7 +153,7 @@ public class RunMenuController implements Initializable {
 		tableSpaceUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		tableSpaceUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		tableSpaceUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
@@ -165,7 +165,7 @@ public class RunMenuController implements Initializable {
 		asmDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		asmDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		asmDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
@@ -176,7 +176,7 @@ public class RunMenuController implements Initializable {
 		osDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		osDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		osDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기
@@ -195,7 +195,7 @@ public class RunMenuController implements Initializable {
 	 * @param comboBoxItems
 	 * @param tableColumns
 	 */
-	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAnchorPane<T> monitoringAP,
+	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, String[] comboBoxItems, Map<String, TypeAndFieldName> tableColumns) {
 
 		monitoringAP.setAnchor(0, 0, 0, 0); // Anchor Constraint 설정
@@ -257,13 +257,13 @@ public class RunMenuController implements Initializable {
 	 */
 	private void loadConnectionInfoProperties(String connInfoConfigFilePath) {
 		// 접속정보 프로퍼티 파일 Load
-		propertyRepository.loadConnectionInfoConfig(connInfoConfigFilePath);
+		propRepo.loadConnectionInfoConfig(connInfoConfigFilePath);
 		// 모니터링여부 설정 Preset
-		presetList = propertyRepository.getMonitoringPresetNameList();
-		lastUseMonitoringPresetName = propertyRepository.getLastUseMonitoringPresetName();
+		presetList = propRepo.getMonitoringPresetNameList();
+		lastUseMonitoringPresetName = propRepo.getLastUseMonitoringPresetName();
 		// DB/Server Names
-		dbNames = propertyRepository.getMonitoringDBNames();
-		serverNames = propertyRepository.getMonitoringServerNames();
+		dbNames = propRepo.getMonitoringDBNames();
+		serverNames = propRepo.getMonitoringServerNames();
 		// Monitoring Preset ComboBox 
 		runMonitoringPresetComboBox.getItems().clear();
 		runMonitoringPresetComboBox.getItems().addAll(presetList);
@@ -281,22 +281,22 @@ public class RunMenuController implements Initializable {
 		if(!validateInput()) return;
 
 		// DB Usage Check   		
-		List<JdbcConnectionInfo> jdbcConnectionList = PropertiesUtils.getJdbcConnectionMap();
+		List<JdbcConnectionInfo> jdbcConnectionList = propRepo.getJdbcConnectionMap();
 		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			JdbcDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
 			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, reportRepository);
-			archiveUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
-			tableSpaceUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
-			asmDiskUsageMAP.addTableDataSet(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
+			archiveUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentArchiveUsage());
+			tableSpaceUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
+			asmDiskUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
 			db.uninit();
 		} 
 		
 		String alertLogStartDay = alertLogStartDayDP.getValue().toString();
 		String alertLogEndDay = alertLogEndDayDP.getValue().toString();
-		List<JschConnectionInfo> jschConnectionList = PropertiesUtils.getJschConnectionMap();
+		List<JschConnectionInfo> jschConnectionList = propRepo.getJschConnectionMap();
 		for(JschConnectionInfo jsch : jschConnectionList) {
 			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
@@ -304,21 +304,22 @@ public class RunMenuController implements Initializable {
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
 			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
 			
-			String alertLogFilePath = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
-			String alertLogReadLine = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
-			String alertLogDateFormat = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
-			String alertLogDateFormatRegex = PropertiesUtils.connInfoConfig.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
+			PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
+			String alertLogFilePath =  config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");
+			String alertLogReadLine = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.readline");
+			String alertLogDateFormat = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformat");
+			String alertLogDateFormatRegex = config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.dateformatregex");
 			AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat, alertLogDateFormatRegex);
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(alc, alertLogStartDay, alertLogEndDay);
 
-			osDiskUsageMAP.addTableDataSet(server.getServerName(), usecase.getCurrentOSDiskUsage());
+			osDiskUsageMAP.addTableData(server.getServerName(), usecase.getCurrentOSDiskUsage());
 			alertLogMonitoringResultMap.put(server.getServerName(), usecase.getAlertLogDuringPeriod(alcp));
 		}
 		
-		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem());
-		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem());
-		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem());
-		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem());
+		archiveUsageMAP.syncTableData(archiveUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
+		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}
 	

@@ -24,10 +24,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<SplitPane fx:id="rootSplitPane" dividerPositions="0.25" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.SettingMenuController">
+<SplitPane fx:id="rootSplitPane" dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.SettingMenuController">
   <items>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="250.0" minHeight="-Infinity" minWidth="200.0" style="-fx-background-color: #f7f7f7;">
+      <AnchorPane maxWidth="200.0" minWidth="150.0" style="-fx-background-color: white;">
          <children>
             <fx:include source="LeftMenu.fxml" />
          </children>
@@ -369,15 +370,13 @@
                                     <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
                                  </graphic>
                               </Button>
-                              <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" stylesheets="@../css/javaFx.css" text="설정" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
-                                 <styleClass>
-                                    <String fx:value="basic-font" />
-                                    <String fx:value="bold" />
-                                    <String fx:value="font-black" />
-                                 </styleClass>
+                              <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" text="설정" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
                                  <graphic>
-                                    <FontAwesomeIconView fill="#2b0081" glyphName="COG" size="30" />
+                                    <FontAwesomeIconView fill="#003b8e" glyphName="COG" size="30" />
                                  </graphic>
+                                 <font>
+                                    <Font name="Noto Sans Korean Medium" size="13.0" />
+                                 </font>
                               </Label>
                               <TextField fx:id="fileChooserText" editable="false" layoutX="128.29998779296875" layoutY="12.199999809265137" maxHeight="300.0" minWidth="300.0" promptText="please open .properties file" stylesheets="@../css/javaFx.css" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="150.0" AnchorPane.rightAnchor="80.0" AnchorPane.topAnchor="5.0">
                                  <styleClass>
