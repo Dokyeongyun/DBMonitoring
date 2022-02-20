@@ -22,6 +22,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
@@ -31,6 +32,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
@@ -39,6 +41,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
+import root.javafx.CustomView.PrequencyButton;
 import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
@@ -71,11 +74,24 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	
 	@FXML
 	Pagination pagination;
+	
+	@FXML
+	HBox prequencyHBox;
+	
+	@FXML
+	Button prequencyTimeDivBtn;
 
 	private Class<T> clazz;
 	
 	// Map<Alias, Map<MonitoringDateTime, MonitoringResults>>
 	private Map<String, Map<String, List<T>>> tableDataMap = new HashMap<>();
+	
+	private static Map<Integer, Long> countByTime = new HashMap<>();
+	static {
+		for (int i = 0; i < 24; i++) {
+			countByTime.put(i, 0L);
+		}
+	}
 
 	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
@@ -108,8 +124,13 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 				String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 				syncTableData(selected, newValue.intValue());
 			});
-
+			
+			// Set prequency div initial value
+			String amOrPm = Integer.valueOf(DateUtils.getToday("HH")) < 12 ? "AM" : "PM";
+			prequencyTimeDivBtn.setText(amOrPm);
+			
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -183,12 +204,15 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		Collections.sort(times);
 
 		ObservableList<T> tableData = null;
-		if(times.size() > index) {
+		if (times.size() > index) {
 			tableData = FXCollections.observableList(data.get(times.get(index)));
 		}
 
 		monitoringResultTV.setItems(tableData);
 		monitoringResultTV.refresh();
+
+		// Sync monitoring prequency UI
+		syncPrequency(prequencyTimeDivBtn.getText());
 	}
 
 	/**
@@ -288,7 +312,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
 			return;
 		}
-
+		
 		// Add and Sync data
 		addTableDataSet(selected, allDataList);
 		syncTableData(selected, 0);
@@ -305,6 +329,18 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		// Acquire data on inquiry date
 		return reportUsecase.getMonitoringReportDataByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
+				inquiryDate);
+	}
+	
+	private Map<Integer, Long> inquiryMonitoringHistoryCountByTime() {
+		// Get selected inquiry condition
+		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		FileSize selectedUnit = unitComboBox.getSelectionModel().getSelectedItem();
+		int selectedRoundUnit = roundComboBox.getSelectionModel().getSelectedItem();
+
+		// Acquire data on inquiry date
+		return reportUsecase.getMonitoringReportCountByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
 				inquiryDate);
 	}
 
@@ -324,6 +360,36 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 */
 	public void excelDownload(ActionEvent e) {
 
+	}
+
+	/**
+	 * 모니터링 기록 빈도를 나타내는 UI바의 AM/PM 구분을 변경한다.
+	 * 
+	 * @param e
+	 */
+	public void prequencyTimeDivToggle(ActionEvent e) {
+		String text = prequencyTimeDivBtn.getText();
+		prequencyTimeDivBtn.setText(text.equals("AM") ? "PM" : "AM");
+		syncPrequency(prequencyTimeDivBtn.getText());
+	}
+
+	/**
+	 * 모니터링 기록 빈도 데이터와 UI의 Sync를 맞춘다.
+	 * 
+	 * @param timeDiv
+	 */
+	private void syncPrequency(String timeDiv) {
+		countByTime.putAll(inquiryMonitoringHistoryCountByTime());
+
+		prequencyHBox.getChildren().clear();
+		List<Integer> keys = new ArrayList<>(countByTime.keySet());
+		Collections.sort(keys);
+
+		int startIdx = timeDiv.equals("AM") ? 0 : 12;
+		int endIdx = timeDiv.equals("AM") ? 12 : 24;
+		for (int i = startIdx; i < endIdx; i++) {
+			prequencyHBox.getChildren().add(new PrequencyButton(countByTime.get(i)));
+		}
 	}
 	
 	/*==========================================================================================*/
