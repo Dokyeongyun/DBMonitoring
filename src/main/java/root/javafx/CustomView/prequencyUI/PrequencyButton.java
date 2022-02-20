@@ -1,12 +1,16 @@
-package root.javafx.CustomView;
+package root.javafx.CustomView.prequencyUI;
+
+import java.util.List;
 
 import javafx.scene.control.Button;
 
 public class PrequencyButton extends Button {
 
-	public PrequencyButton(long prequency) {
+	public PrequencyButton(List<String> monitoringTimeList) {
+		
+		int prequency = monitoringTimeList.size();
 
-		String backgroundColor = prequency == 0L ? "white" : "#789bff94";
+		String backgroundColor = prequency == 0 ? "white" : "#789bff94";
 		setStyle(String.format(
 				"-fx-background-color: %s; "
 				+ "-fx-background-radius:0px; "
@@ -26,6 +30,8 @@ public class PrequencyButton extends Button {
 		setMaxHeight(USE_PREF_SIZE);
 		setPrefHeight(25);
 
-		setText(prequency == 0L ? "-" : String.valueOf(prequency));
+		setText(prequency == 0 ? "-" : String.valueOf(prequency));
+
+		setTooltip(new PrequencyTooltip(monitoringTimeList));
 	}
 }

@@ -41,9 +41,9 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
-import root.javafx.CustomView.PrequencyButton;
 import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
+import root.javafx.CustomView.prequencyUI.PrequencyButton;
 import root.utils.AlertUtils;
 import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
@@ -86,10 +86,10 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	// Map<Alias, Map<MonitoringDateTime, MonitoringResults>>
 	private Map<String, Map<String, List<T>>> tableDataMap = new HashMap<>();
 	
-	private static Map<Integer, Long> countByTime = new HashMap<>();
+	private static Map<Integer, List<String>> countByTime = new HashMap<>();
 	static {
 		for (int i = 0; i < 24; i++) {
-			countByTime.put(i, 0L);
+			countByTime.put(i, new ArrayList<>());
 		}
 	}
 
@@ -332,7 +332,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 				inquiryDate);
 	}
 	
-	private Map<Integer, Long> inquiryMonitoringHistoryCountByTime() {
+	private Map<Integer, List<String>> inquiryMonitoringHistoryTimesByTime() {
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
@@ -340,7 +340,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		int selectedRoundUnit = roundComboBox.getSelectionModel().getSelectedItem();
 
 		// Acquire data on inquiry date
-		return reportUsecase.getMonitoringReportCountByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
+		return reportUsecase.getMonitoringReportTimesByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
 				inquiryDate);
 	}
 
@@ -379,7 +379,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param timeDiv
 	 */
 	private void syncPrequency(String timeDiv) {
-		countByTime.putAll(inquiryMonitoringHistoryCountByTime());
+		countByTime.putAll(inquiryMonitoringHistoryTimesByTime());
 
 		prequencyHBox.getChildren().clear();
 		List<Integer> keys = new ArrayList<>(countByTime.keySet());

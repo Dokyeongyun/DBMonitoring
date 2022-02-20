@@ -13,11 +13,11 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-
 
 <fx:root stylesheets="@../css/javaFx.css" type="BorderPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <center>
@@ -39,7 +39,11 @@
                            <children>
                               <HBox fx:id="prequencyHBox" alignment="CENTER">
                                  <children>
-                                    <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: white; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 10px;" text="-" />
+                                    <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: white; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 10px;" text="-">
+                                       <tooltip>
+                                          <Tooltip style="-fx-text-fill: blue;" text="Empty Tooltip" />
+                                       </tooltip>
+                                    </Button>
                                     <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: white; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 10px;" text="-" />
                                     <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: white; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 10px;" text="-" />
                                     <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="25.0" prefWidth="25.0" style="-fx-background-color: white; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 10px;" text="-" />
@@ -71,7 +75,14 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <FontAwesomeIconView glyphName="QUESTION_CIRCLE" size="12" />
+                        <Label>
+                           <graphic>
+                              <FontAwesomeIconView glyphName="QUESTION_CIRCLE" size="12" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip style="-fx-font-family: NanumGothic; -fx-font-size: 10px;" text="시간대별 모니터링 빈도입니다." />
+                           </tooltip>
+                        </Label>
                      </children>
                   </HBox>
                </children>

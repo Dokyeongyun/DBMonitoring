@@ -1,5 +1,6 @@
 package root.core.usecase.implement;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -68,6 +69,26 @@ public class ReportUsecaseImpl implements ReportUsecase {
 		for (int i = 0; i < 24; i++) {
 			if (!result.containsKey(i)) {
 				result.put(i, 0L);
+			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public <T extends MonitoringResult> Map<Integer, List<String>> getMonitoringReportTimesByTime(Class<T> clazz,
+			String alias, FileSize unit, int round, String inquiryDate) {
+		
+		Map<Integer, List<String>> result = getMonitoringReportDataByTime(clazz, alias, unit, round, inquiryDate)
+				.keySet()
+				.stream()
+				.collect(Collectors.groupingBy(
+						m -> Integer.parseInt(DateUtils.convertDateFormat("yyyyMMddHHmmss", "HH", m, Locale.KOREA)),
+						Collectors.mapping(m -> m, Collectors.toList())));
+
+		for (int i = 0; i < 24; i++) {
+			if (!result.containsKey(i)) {
+				result.put(i, new ArrayList<>());
 			}
 		}
 
