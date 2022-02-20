@@ -3,6 +3,8 @@ package root.javafx.Controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,11 +83,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 			// Add comoboBox click listner
 			this.aliasComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldVlaue, newValue) -> {
-//				monitoringResultTV.getItems().clear();
-//				if (tableDataMap != null && tableDataMap.get(newValue) != null) {
-				System.out.println("changed: " + oldVlaue + "->" + newValue);
-				syncTableData(newValue);
-//				} 
+				syncTableData(newValue, 0);
 			});
 
 			// Setting inquiry datepicker initial value
@@ -99,8 +97,12 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			int defaultRoundingDigits = propertyRepo.getIntegerCommonResource("unit.rounding");
 			this.roundComboBox.getSelectionModel().select(Integer.valueOf(defaultRoundingDigits));
 			
-			// Set pagination count
-			this.pagination.setPageCount(1);
+			// Set pagination property
+			this.pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
+				String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+				syncTableData(selected, newValue.intValue());
+			});
+
 		} catch (IOException e) {
 		}
 	}
@@ -154,7 +156,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * 
 	 * @param id
 	 */
-	public void syncTableData(String id) {
+	public void syncTableData(String id, int index) {
 		// Set Alias comboBox
 		aliasComboBox.getSelectionModel().select(id);
 		
@@ -171,9 +173,11 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		
 		// Add tableView items
 		Map<String, List<T>> data = tableDataMap.get(id);
-		monitoringResultTV.setItems(FXCollections.observableList(data.values().stream().findFirst().get()));
+		List<String> times = new ArrayList<>(data.keySet());
+		Collections.sort(times);
+		monitoringResultTV.setItems(FXCollections.observableList(data.get(times.get(index))));
 	}
-	
+
 	/**
 	 * tableData에 세팅된 데이터의 Row수를 반환한다. 
 	 * 
@@ -247,7 +251,23 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
+		
+		// Clear data
+		clearTableData(selected);
+		
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory();
+		if (allDataList == null || allDataList.size() == 0) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			return;
+		}
+		
+		// Add and Sync data
+		addTableDataSet(selected, allDataList);
+		syncTableData(selected, 0);
+	}
 
+	private Map<String, List<T>> inquiryMonitoringHistory() {
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
@@ -256,20 +276,9 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		// TODO Show Progress UI
 
-		// Clear data
-		clearTableData(selected);
-
 		// Acquire data on inquiry date
-		Map<String, List<T>> allDataList = reportUsecase.getMonitoringReportDataByTime(this.clazz, selected,
-				selectedUnit, selectedRoundUnit, inquiryDate);
-		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
-			return;
-		}
-
-		// Add and Sync data
-		addTableDataSet(selected, allDataList);
-		syncTableData(selected);
+		return reportUsecase.getMonitoringReportDataByTime(this.clazz, selected, selectedUnit, selectedRoundUnit,
+				inquiryDate);
 	}
 
 	/**
