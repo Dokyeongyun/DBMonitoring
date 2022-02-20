@@ -143,7 +143,7 @@ public class RunMenuController implements Initializable {
 		archiveUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "reclaimableSpace"));
 		archiveUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		archiveUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "dnt"));
+		archiveUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems, archiveUsageTCM);
 
 		// TableSpace Usage TableView Setting
@@ -153,7 +153,7 @@ public class RunMenuController implements Initializable {
 		tableSpaceUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		tableSpaceUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		tableSpaceUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		tableSpaceUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(tableSpaceUsageMAP, tableSpaceUsageTabAP, dbComboBoxLabel, dbComboBoxItems, tableSpaceUsageTCM);
 
 		// ASM Disk USage TableView Setting
@@ -165,7 +165,7 @@ public class RunMenuController implements Initializable {
 		asmDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		asmDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		asmDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		asmDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(asmDiskUsageMAP, asmDiskUsageTabAP, dbComboBoxLabel, dbComboBoxItems, asmDiskUsageTCM);
 
 		// OS Disk Usage TableView Setting
@@ -176,7 +176,7 @@ public class RunMenuController implements Initializable {
 		osDiskUsageTCM.put("가용 공간", new TypeAndFieldName(Double.class, "freeSpace"));
 		osDiskUsageTCM.put("사용중인 공간", new TypeAndFieldName(Double.class, "usedSpace"));
 		osDiskUsageTCM.put("사용량(%)", new TypeAndFieldName(Double.class, "usedPercent"));
-		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDate"));
+		osDiskUsageTCM.put("모니터링일시", new TypeAndFieldName(String.class, "monitoringDateTime"));
 		initAndAddMonitoringAnchorPane(osDiskUsageMAP, osDiskUsageTabAP, serverComboBoxLabel, serverComboBoxItems, osDiskUsageTCM);
 
 		// TODO TableColumn 속성을 설정하는 메서드를 따로 구분해보자. 객체를 생성해서 전달하는 방법도 고려하기

@@ -7,13 +7,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +31,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.util.Callback;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -37,6 +42,7 @@ import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.utils.AlertUtils;
+import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
 
 public class MonitoringAPController<T extends MonitoringResult> extends BorderPane {
@@ -175,7 +181,14 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		Map<String, List<T>> data = tableDataMap.get(id);
 		List<String> times = new ArrayList<>(data.keySet());
 		Collections.sort(times);
-		monitoringResultTV.setItems(FXCollections.observableList(data.get(times.get(index))));
+
+		ObservableList<T> tableData = null;
+		if(times.size() > index) {
+			tableData = FXCollections.observableList(data.get(times.get(index)));
+		}
+
+		monitoringResultTV.setItems(tableData);
+		monitoringResultTV.refresh();
 	}
 
 	/**
@@ -227,6 +240,19 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			});
 		}
 
+		if(fieldName.equals("monitoringDateTime")) {
+			tc.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<T, E>, ObservableValue<E>>() {
+				@Override
+				public ObservableValue<E> call(TableColumn.CellDataFeatures<T, E> cell) {
+					SimpleStringProperty property = new SimpleStringProperty();
+					String value = DateUtils.convertDateFormat("yyyyMMddHHmmss", "yyyy/MM/dd HH:mm:ss",
+							cell.getValue().getMonitoringDateTime(), Locale.KOREA);
+					property.setValue(value);
+					return (ObservableValue<E>) property;
+				}
+			});
+		}
+
 		monitoringResultTV.getColumns().add(tc);
 	}
 
@@ -255,13 +281,14 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		
 		// Clear data
 		clearTableData(selected);
+		syncTableData(selected, 0);
 		
 		Map<String, List<T>> allDataList = inquiryMonitoringHistory();
 		if (allDataList == null || allDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
 			return;
 		}
-		
+
 		// Add and Sync data
 		addTableDataSet(selected, allDataList);
 		syncTableData(selected, 0);
