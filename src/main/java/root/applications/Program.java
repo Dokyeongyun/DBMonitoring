@@ -1,5 +1,7 @@
 package root.applications;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -22,10 +24,10 @@ public class Program extends Application {
 		// fxml load
 		System.setProperty("prism.lcdtext", "false"); // 救萍举府绢教 (Font 何靛反霸)
 
-		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothic.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicBold.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicLight.ttf"), 10);
-		Font.loadFont(getClass().getResourceAsStream("/font/NanumGothicUltraLight.ttf"), 10);
+		String[] fontFiles = new File("./src/main/resources/font").list();
+		for(String font : fontFiles) {
+			Font.loadFont(getClass().getResourceAsStream("./src/main/resources/font/" + font), 10);
+		}
 
 		FXMLLoader homeloader = new FXMLLoader();
 		homeloader.setLocation(getClass().getResource("/fxml/Home.fxml"));

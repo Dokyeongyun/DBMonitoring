@@ -23,7 +23,7 @@
    <center>
       <AnchorPane style="-fx-background-color: white;" stylesheets="@../css/javaFx.css">
          <children>
-            <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="5.0">
+            <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                <children>
                   <HBox alignment="CENTER" layoutX="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
@@ -87,7 +87,7 @@
                   </HBox>
                </children>
             </AnchorPane>
-            <TableView fx:id="monitoringResultTV" layoutX="10.0" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/javaFx.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+            <TableView fx:id="monitoringResultTV" layoutX="10.0" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/tableview.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
@@ -116,7 +116,7 @@
                   <DatePicker fx:id="inquiryDatePicker" maxHeight="25.0" maxWidth="120.0" minHeight="20.0" prefHeight="25.0" styleClass="basic-font" />
                   <JFXButton fx:id="runBtn" ellipsisString="" minHeight="20.0" onAction="#run" styleClass="basic-font" text="실행">
                      <graphic>
-                        <FontAwesomeIconView fill="#3342cf" glyphName="PLAY_CIRCLE" size="18">
+                        <FontAwesomeIconView fill="#01077dc7" glyphName="PLAY_CIRCLE" size="18">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -125,20 +125,20 @@
                   </JFXButton>
                   <JFXButton fx:id="refreshBtn" minHeight="20.0" onAction="#refresh" styleClass="basic-font" text="새로고침">
                      <graphic>
-                        <FontAwesomeIconView fill="#3342cf" glyphName="REFRESH" size="18" />
+                        <FontAwesomeIconView fill="#01077dc7" glyphName="REFRESH" size="18" />
                      </graphic>
                   </JFXButton>
                   <JFXButton fx:id="excelDownBtn" minHeight="20.0" styleClass="basic-font" text="엑셀다운로드">
                      <graphic>
-                        <FontAwesomeIconView fill="#3342cf" glyphName="FILE_TEXT_ALT" size="18" />
+                        <FontAwesomeIconView fill="#01077dc7" glyphName="FILE_TEXT_ALT" size="18" />
                      </graphic>
                   </JFXButton>
                   <JFXButton fx:id="showGraphBtn" minHeight="20.0" styleClass="basic-font" text="그래프보기">
                      <graphic>
-                        <FontAwesomeIconView fill="#3342cf" glyphName="BAR_CHART_ALT" size="18" />
+                        <FontAwesomeIconView fill="#01077dc7" glyphName="BAR_CHART_ALT" size="18" />
                      </graphic>
                   </JFXButton>
-                  <FontAwesomeIconView fill="#3342cf" glyphName="SAVE" size="18" />
+                  <FontAwesomeIconView fill="#01077dc7" glyphName="SAVE" size="18" />
                   <JFXComboBox fx:id="unitComboBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" promptText="단위설정">
                      <opaqueInsets>
                         <Insets />
