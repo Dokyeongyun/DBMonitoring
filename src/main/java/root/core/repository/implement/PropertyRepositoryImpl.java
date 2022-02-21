@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -487,25 +485,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties 파일에서 모니터링할 DB명을 읽어온 후, 각 DB별 JDBC Connection 정보 가지는 객체 생성
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
-	 */
-	@Deprecated
-	@Override
-	public List<JdbcConnectionInfo> getJdbcConnectionMap() {
-		String[] dbNames = connInfoConfig.getStringArray("dbnames");
-		if (dbNames == null || dbNames.length == 0) {
-			return new ArrayList<>();
-		}
-		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
-		for (String dbName : dbNames)
-			jdbcList.add(getJdbcConnectionInfo(dbName));
-		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ? -1 : 1);
-		return jdbcList;
-	}
-
-	/**
 	 * Properties 파일에서 DB별 JdbcConnectionInfo를 읽어와 객체를 생성
 	 * 
 	 * @param dbName
@@ -521,25 +500,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		String jdbcValidation = connInfoConfig.getString(dbName + ".jdbc.validation");
 		int jdbcConnections = connInfoConfig.getInt(dbName + ".jdbc.connections");
 		return new JdbcConnectionInfo(jdbcAlias, jdbcDriver, jdbcUrl, jdbcId, jdbcPw, jdbcValidation, jdbcConnections);
-	}
-
-	/**
-	 * Properties 파일에서 모니터링할 Server명을 읽어온 후, 각 DB별 JSchConnection 정보 가지는 객체 생성
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
-	 */
-	@Deprecated
-	@Override
-	public List<JschConnectionInfo> getJschConnectionMap() {
-		String[] serverNames = connInfoConfig.getStringArray("servernames");
-		if (serverNames == null || serverNames.length == 0) {
-			return new ArrayList<>();
-		}
-		List<JschConnectionInfo> jschList = new ArrayList<>();
-		for (String serverName : serverNames)
-			jschList.add(getJschConnectionInfo(serverName));
-		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ? -1 : 1);
-		return jschList;
 	}
 
 	/**
@@ -574,20 +534,5 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat,
 				alertLogDateFormatRegex);
 		return alc;
-	}
-
-	/**
-	 * Properties 파일에서 모니터링할 서버명을 읽어온 후, 각 서버별 AlertLogCommand 객체를 생성한다.
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
-	 */
-	@Deprecated
-	@Override
-	public Map<String, AlertLogCommand> getAlertLogCommandMap() {
-		String[] serverNames = connInfoConfig.getStringArray("servernames");
-		Map<String, AlertLogCommand> alcMap = new HashMap<>();
-		for (String serverName : serverNames)
-			alcMap.put(serverName, getAlertLogCommand(serverName));
-		return alcMap;
 	}
 }

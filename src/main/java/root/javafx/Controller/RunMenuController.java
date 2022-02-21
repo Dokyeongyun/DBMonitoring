@@ -40,6 +40,8 @@ import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
 import root.core.repository.implement.ServerCheckRepositoryImpl;
+import root.core.service.contracts.PropertyService;
+import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerCheckUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
@@ -50,10 +52,12 @@ import root.javafx.Model.TypeAndFieldName;
 import root.utils.AlertUtils;
 
 public class RunMenuController implements Initializable {
-	
+
+
 	/* Dependency Injection */
 	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
 	ReportRepository reportRepository = ReportFileRepo.getInstance();
+	PropertyService propService = new FilePropertyService(propRepo);
 
 	/* View Binding */
 	@FXML JFXComboBox<String> runConnInfoFileComboBox;
@@ -280,9 +284,10 @@ public class RunMenuController implements Initializable {
 	public void runMonitoring(ActionEvent e) {
 		if(!validateInput()) return;
 
-		// DB Usage Check   		
-		List<JdbcConnectionInfo> jdbcConnectionList = propRepo.getJdbcConnectionMap();
-		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
+		// DB Usage Check
+		List<JdbcConnectionInfo> jdbcConnectionList = propService
+				.getJdbcConnInfoList(propService.getMonitoringDBNameList());
+		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("бс [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			JdbcDatabase db = new JdbcDatabase(jdbc);
 			db.init();
@@ -292,12 +297,13 @@ public class RunMenuController implements Initializable {
 			tableSpaceUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentTableSpaceUsage());
 			asmDiskUsageMAP.addTableData(jdbc.getJdbcDBName(), usecase.getCurrentASMDiskUsage());
 			db.uninit();
-		} 
-		
+		}
+
 		String alertLogStartDay = alertLogStartDayDP.getValue().toString();
 		String alertLogEndDay = alertLogEndDayDP.getValue().toString();
-		List<JschConnectionInfo> jschConnectionList = propRepo.getJschConnectionMap();
-		for(JschConnectionInfo jsch : jschConnectionList) {
+		List<JschConnectionInfo> jschConnectionList = propService
+				.getJschConnInfoList(propService.getMonitoringServerNameList());
+		for (JschConnectionInfo jsch : jschConnectionList) {
 			System.out.println("бс [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
 			server.init();

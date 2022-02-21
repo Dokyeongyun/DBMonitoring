@@ -64,13 +64,4 @@ public interface PropertyRepository {
 	JschConnectionInfo getJschConnectionInfo(String serverName);
 	
 	AlertLogCommand getAlertLogCommand(String serverName);
-	
-	@Deprecated
-	List<JdbcConnectionInfo> getJdbcConnectionMap();
-
-	@Deprecated
-	List<JschConnectionInfo> getJschConnectionMap();
-
-	@Deprecated
-	Map<String, AlertLogCommand> getAlertLogCommandMap();
 }
