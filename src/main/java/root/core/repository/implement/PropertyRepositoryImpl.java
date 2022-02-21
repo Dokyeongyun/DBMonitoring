@@ -511,6 +511,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @param dbName
 	 * @return
 	 */
+	@Override
 	public JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
 		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
 		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
@@ -527,6 +528,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
 	 */
+	@Deprecated
 	@Override
 	public List<JschConnectionInfo> getJschConnectionMap() {
 		String[] serverNames = connInfoConfig.getStringArray("servernames");
@@ -546,7 +548,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @param serverName
 	 * @return
 	 */
-	private JschConnectionInfo getJschConnectionInfo(String serverName) {
+	@Override
+	public JschConnectionInfo getJschConnectionInfo(String serverName) {
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
 		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
@@ -562,7 +565,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @param serverName
 	 * @return
 	 */
-	private AlertLogCommand getAlertLogCommand(String serverName) {
+	@Override
+	public AlertLogCommand getAlertLogCommand(String serverName) {
 		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
 		String alertLogReadLine = connInfoConfig.getString(serverName + ".server.alertlog.readline");
 		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
@@ -577,6 +581,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
+	@Deprecated
 	@Override
 	public Map<String, AlertLogCommand> getAlertLogCommandMap() {
 		String[] serverNames = connInfoConfig.getStringArray("servernames");
