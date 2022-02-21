@@ -491,6 +491,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 
 	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
 	 */
+	@Deprecated
 	@Override
 	public List<JdbcConnectionInfo> getJdbcConnectionMap() {
 		String[] dbNames = connInfoConfig.getStringArray("dbnames");
@@ -510,7 +511,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @param dbName
 	 * @return
 	 */
-	private JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
+	public JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
 		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
 		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
 		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");

@@ -59,9 +59,14 @@ public interface PropertyRepository {
 
 	void createNewPropertiesFile(String filePath, String type);
 
+	JdbcConnectionInfo getJdbcConnectionInfo(String dbName);
+	
+	@Deprecated
 	List<JdbcConnectionInfo> getJdbcConnectionMap();
 
+	@Deprecated
 	List<JschConnectionInfo> getJschConnectionMap();
 
+	@Deprecated
 	Map<String, AlertLogCommand> getAlertLogCommandMap();
 }

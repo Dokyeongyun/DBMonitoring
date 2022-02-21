@@ -8,10 +8,19 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcDatabase;
+import root.core.batch.DBCheckBatch;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
+import root.core.usecase.constracts.DBCheckUsecase;
+import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.utils.PatternUtils;
 
 /**
@@ -104,5 +113,21 @@ public class ConsoleApp {
 			break;
 		}
 		System.out.println(String.format("선택된 파일은 [%s] 입니다.", selectedPreset));
+		
+		// STEP4: 설정파일의 접속정보를 읽어 DB,Server 객체 생성
+		List<String> dbNames = propService.getDBNameList();
+		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
+		for(JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			AbstractDatabase db = new JdbcDatabase(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
+			dbBatch.startBatchArchiveUsageCheck();
+			dbBatch.startBatchTableSpaceUsageCheck();
+			dbBatch.startBatchASMDiskUsageCheck();
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
+		}
 	}
 }
