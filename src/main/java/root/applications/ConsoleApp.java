@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dnl.utils.text.table.TextTable;
+import dnl.utils.text.table.csv.CsvTableModel;
 import root.common.database.contracts.AbstractDatabase;
 import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschServer;
@@ -29,6 +31,7 @@ import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerCheckUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.utils.CsvUtils;
 import root.utils.DateUtils;
 import root.utils.PatternUtils;
 
@@ -123,9 +126,25 @@ public class ConsoleApp {
 		}
 		System.out.println(String.format("선택된 파일은 [%s] 입니다.", selectedPreset));
 
-		// STEP4: 설정파일의 접속정보를 읽어 DB,Server 객체 생성
+		// STEP4: 설정파일의 접속정보를 읽어 DB,Server 객체 생성 및 출력
 		List<String> dbNames = propService.getMonitoringDBNameList();
 		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
+		System.out.println("저장된 DB접속정보는 다음과 같습니다.");
+		TextTable dbTable = new TextTable(
+				new CsvTableModel(CsvUtils.toCsvString(jdbcConnectionList, JdbcConnectionInfo.class)));
+		dbTable.printTable(System.out, 2);
+
+		List<String> serverNames = propService.getMonitoringServerNameList();
+		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
+		System.out.println("저장된 Server접속정보는 다음과 같습니다.");
+		TextTable serverTable = new TextTable(
+				new CsvTableModel(CsvUtils.toCsvString(jschConnectionList, JschConnectionInfo.class)));
+		serverTable.printTable(System.out, 2);
+		
+		// TODO STEP5: 모니터링여부 설정 읽기
+
+		// STEP6: 모니터링 수행
+		System.out.println("DB 모니터링을 수행합니다.");
 		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			AbstractDatabase db = new JdbcDatabase(jdbc);
@@ -139,8 +158,7 @@ public class ConsoleApp {
 			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
 		}
 
-		List<String> serverNames = propService.getMonitoringServerNameList();
-		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
+		System.out.println("Server 모니터링을 수행합니다.");
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
