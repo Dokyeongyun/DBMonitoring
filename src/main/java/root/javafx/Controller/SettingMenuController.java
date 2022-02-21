@@ -42,12 +42,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.service.contracts.PropertyService;
+import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.ServerConnInfoControl;
@@ -65,6 +66,7 @@ public class SettingMenuController implements Initializable {
 
 	/* Dependency Injection */
 	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
+	PropertyService propService = new FilePropertyService(propRepo);
 
 	/* View Binding */
 	@FXML
@@ -106,7 +108,6 @@ public class SettingMenuController implements Initializable {
 
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
-	Map<String, AlertLogCommand> alcMap;
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
 
@@ -519,9 +520,8 @@ public class SettingMenuController implements Initializable {
 	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
 
-		jdbcConnInfoList = propRepo.getJdbcConnectionMap();
-		jschConnInfoList = propRepo.getJschConnectionMap();
-		alcMap = propRepo.getAlertLogCommandMap();
+		jdbcConnInfoList = propService.getJdbcConnInfoList(propService.getMonitoringDBNameList());
+		jschConnInfoList = propService.getJschConnInfoList(propService.getMonitoringServerNameList());
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = null;
 		if (connInfoVBox.lookup("#dbConnVBox") != null) {

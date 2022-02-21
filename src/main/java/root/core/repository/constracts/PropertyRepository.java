@@ -59,9 +59,9 @@ public interface PropertyRepository {
 
 	void createNewPropertiesFile(String filePath, String type);
 
-	List<JdbcConnectionInfo> getJdbcConnectionMap();
+	JdbcConnectionInfo getJdbcConnectionInfo(String dbName);
 
-	List<JschConnectionInfo> getJschConnectionMap();
-
-	Map<String, AlertLogCommand> getAlertLogCommandMap();
+	JschConnectionInfo getJschConnectionInfo(String serverName);
+	
+	AlertLogCommand getAlertLogCommand(String serverName);
 }
