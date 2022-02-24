@@ -26,8 +26,8 @@ public class DependencyInjection {
 	}
 
 	public static FXMLLoader getLoader(String location) {
-		return new FXMLLoader(DependencyInjection.class.getResource(location), bundle, new JavaFXBuilderFactory(),
-				controllerClass -> constructController(controllerClass));
+		return new FXMLLoader(DependencyInjection.class.getResource(System.getProperty("resourceBaseDir") + location),
+				bundle, new JavaFXBuilderFactory(), controllerClass -> constructController(controllerClass));
 	}
 
 	public static void setBundle(ResourceBundle bundle) {
