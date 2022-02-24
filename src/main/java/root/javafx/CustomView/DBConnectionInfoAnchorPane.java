@@ -19,6 +19,7 @@ import javafx.scene.control.TextField;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.javafx.DI.DependencyInjection;
 
 public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 
@@ -51,7 +52,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	public DBConnectionInfoAnchorPane() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/DBConnectionInfoAnchorPane.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/DBConnectionInfoAnchorPane.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import root.core.domain.enums.UsageStatus;
+import root.javafx.DI.DependencyInjection;
 
 public class UsageTextUI extends UsageUI {
 
@@ -21,7 +22,7 @@ public class UsageTextUI extends UsageUI {
 		this.baseline = baseline;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/usageUI/UsageTextUI.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/usageUI/UsageTextUI.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

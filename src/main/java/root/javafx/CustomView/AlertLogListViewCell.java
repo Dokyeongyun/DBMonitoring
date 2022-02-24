@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
 import root.core.domain.Log;
+import root.javafx.DI.DependencyInjection;
 
 public class AlertLogListViewCell extends ListCell<Log> {
 	private FXMLLoader loader;
@@ -27,14 +28,13 @@ public class AlertLogListViewCell extends ListCell<Log> {
             setGraphic(null);
         } else {
             if (loader == null) {
-    			loader = new FXMLLoader(getClass().getResource("/fxml/AlertLogListViewCell.fxml"));
-            	loader.setController(this);
-
-                try {
-                	loader.load();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+    			FXMLLoader loader = DependencyInjection.getLoader("/fxml/AlertLogListViewCell.fxml");
+				loader.setController(this);
+            	try {
+					loader.load();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
             }
             
             logTimeLabel.setText(log.getLogTimeStamp());

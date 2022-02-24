@@ -183,12 +183,13 @@ public class SettingMenuController implements Initializable {
 		// ICON
 		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
 		// CSS
-		presetInputDialog.getDialogPane().getStylesheets()
-				.add(getClass().getResource("/css/dialog.css").toExternalForm());
+		presetInputDialog.getDialogPane().getStylesheets().add(
+				getClass().getResource(System.getProperty("resourceBaseDir") + "/css/dialog.css").toExternalForm());
 		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
 		// Dialog ICON
 		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
+		stage.getIcons().add(new Image(
+				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
 		// Button Custom
 		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
 		presetInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
@@ -624,12 +625,13 @@ public class SettingMenuController implements Initializable {
 		// ICON
 		configInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
 		// CSS
-		configInputDialog.getDialogPane().getStylesheets()
-				.add(getClass().getResource("/css/dialog.css").toExternalForm());
+		configInputDialog.getDialogPane().getStylesheets().add(
+				getClass().getResource(System.getProperty("resourceBaseDir") + "/css/dialog.css").toExternalForm());
 		configInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
 		// Dialog ICON
 		Stage stage = (Stage) configInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
+		stage.getIcons().add(new Image(
+				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
 		// Button Custom
 		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
 		configInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
