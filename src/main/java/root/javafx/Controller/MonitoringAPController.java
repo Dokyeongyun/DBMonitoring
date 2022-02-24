@@ -44,6 +44,7 @@ import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
 import root.javafx.CustomView.prequencyUI.PrequencyButton;
+import root.javafx.DI.DependencyInjection;
 import root.utils.AlertUtils;
 import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
@@ -98,7 +99,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		
 		try {
 			this.clazz = clazz;
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MonitoringAP.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/MonitoringAP.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

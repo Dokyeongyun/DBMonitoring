@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import root.core.domain.enums.UsageStatus;
+import root.javafx.DI.DependencyInjection;
 
 public class UsageCircleUI extends UsageUI {
 
@@ -25,7 +26,7 @@ public class UsageCircleUI extends UsageUI {
 		this.baseline = baseline;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/usageUI/UsageCircleUI.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/usageUI/UsageCircleUI.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

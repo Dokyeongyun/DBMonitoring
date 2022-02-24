@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import root.core.domain.enums.UsageStatus;
+import root.javafx.DI.DependencyInjection;
 
 public class UsageBarUI extends UsageUI {
 
@@ -25,7 +26,7 @@ public class UsageBarUI extends UsageUI {
 		this.baseline = baseline;
 
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/usageUI/UsageBarUI.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/usageUI/UsageBarUI.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

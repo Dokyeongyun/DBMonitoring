@@ -25,8 +25,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import root.javafx.DI.DependencyInjection;
 import root.javafx.Service.ConnectionTestService;
 import root.utils.AlertUtils;
+import root.utils.SceneUtils;
 
 public class ConnectionInfoVBox<T> extends VBox {
 
@@ -65,12 +67,12 @@ public class ConnectionInfoVBox<T> extends VBox {
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
 	
 	private long connInfoIdx = -1;
-
+	
 	public ConnectionInfoVBox(ConnInfoControl<T> connInfoControl) {
 		this.connInfoControl = connInfoControl;
 		
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ConnectionInfoVBox.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/ConnectionInfoVBox.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();
