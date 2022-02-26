@@ -1,0 +1,77 @@
+.treeView{
+    -fx-border-color:lightgray;
+    -fx-border-width: 0.8px;
+    -fx-background-insets:0.0;
+    -fx-font-family: "NanumGothic";
+    -fx-font-size : 10.0;
+}
+.tree-cell{
+    -fx-background-color:transparent;
+}
+.tree-cell > .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-cell:expanded > .tree-disclosure-node,
+.tree-table-row-cell:expanded > .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-cell:filled:selected,
+.tree-cell:filled:hover,
+.tree-cell:filled:armed{
+    -fx-background-color:#4189DE;
+    -fx-text-fill:white;
+}
+.tree-cell .image-view{
+    -fx-background-color:red;
+}
+.tree-cell:filled:hover:expanded > .tree-disclosure-node,
+.tree-table-row-cell:filled:hover:expanded > .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-cell:filled:hover > .tree-disclosure-node,
+.tree-table-row-cell:filled:hover> .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-cell:filled:selected:expanded > .tree-disclosure-node,
+.tree-table-row-cell:filled:selected:expanded > .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-cell:filled:selected > .tree-disclosure-node,
+.tree-table-row-cell:filled:selected > .tree-disclosure-node{
+    -fx-background-repeat:no-repeat;
+    -fx-background-position:center;
+}
+.tree-view > .virtual-flow > .scroll-bar:vertical{
+    -fx-min-width:14.0;
+    -fx-background-insets:0.0;
+    -fx-background-color:transparent;
+}
+.tree-view > .virtual-flow > .scroll-bar:horizontal{
+    -fx-min-height:14.0;
+    -fx-background-insets:0.0;
+    -fx-background-color: transparent;
+}
+.tree-view > .virtual-flow > .scroll-bar:vertical .thumb{
+    -fx-background-color:#B4B9BF;
+    -fx-background-radius: 11.0em;
+    -fx-background-insets:0.0 3.5 0.0 3.5;
+}
+
+.tree-view > .virtual-flow > .scroll-bar:horizontal .thumb{
+    -fx-background-color:#B4B9BF;
+    -fx-background-radius: 11.0em;
+    -fx-background-insets:3.5 0.0 3.5 0.0;
+}
+.tree-view > .virtual-flow > .scroll-bar > .increment-button > .increment-arrow,
+.tree-view > .virtual-flow > .scroll-bar > .decrement-button > .decrement-arrow{
+    -fx-background-color: transparent;
+}
+.tree-view > .virtual-flow > .scroll-bar > .increment-button,
+.tree-view > .virtual-flow > .scroll-bar > .decrement-button{
+    -fx-background-color: transparent;
+}
