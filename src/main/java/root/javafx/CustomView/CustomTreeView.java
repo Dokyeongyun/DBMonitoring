@@ -18,13 +18,14 @@ public class CustomTreeView extends TreeView<String> {
 	private static final String LEAF_ICON_COLOR = "black";
 	private static final int LEAF_ICON_SIZE = 3;
 
-	public CustomTreeView() {
+	public CustomTreeView(String rootTitle, FontAwesomeIcon rootIcon, boolean isShowRoot) {
 		getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/treeView.css");
 		getStyleClass().add("treeView");
 
-		rootItem = new TreeItem<>("접속정보 리스트", getIconView(FontAwesomeIcon.LIST));
+		rootItem = new TreeItem<>(rootTitle, getIconView(rootIcon));
 		rootItem.setExpanded(true);
 		setRoot(rootItem);
+		setShowRoot(isShowRoot);
 
 		// this.setCellFactory(treeView -> new MyTreeCell());
 	}
