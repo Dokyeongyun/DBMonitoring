@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
@@ -106,6 +108,11 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </AnchorPane>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                       </children>
+                                    </HBox>
                                     <AnchorPane>
                                        <children>
                                           <AnchorPane fx:id="presetSettingAP" layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
@@ -149,12 +156,74 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </AnchorPane>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                       </children>
+                                    </HBox>
                                     <AnchorPane>
                                        <children>
                                           <AnchorPane layoutX="10.0" layoutY="30.0" minWidth="200.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                              <padding>
                                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                              </padding>
+                                             <children>
+                                                <Label text="조회결과 단위 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                   </graphic>
+                                                   <padding>
+                                                      <Insets left="5.0" right="5.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXComboBox layoutY="46.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                                <Label text="반올림 자릿수 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                   </graphic>
+                                                   <padding>
+                                                      <Insets left="5.0" right="5.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXComboBox minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                                                <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                   </graphic>
+                                                   <padding>
+                                                      <Insets left="5.0" right="5.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXToggleButton alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Bold Bold" size="10.0" />
+                                                   </font>
+                                                </JFXToggleButton>
+                                                <JFXButton alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+                                                   <graphic>
+                                                      <FontAwesomeIconView fill="#438661" glyphName="PLAY_CIRCLE" size="30">
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Bold Bold" size="12.0" />
+                                                         </font>
+                                                      </FontAwesomeIconView>
+                                                   </graphic>
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Bold Bold" size="12.0" />
+                                                   </font>
+                                                   <cursor>
+                                                      <Cursor fx:constant="HAND" />
+                                                   </cursor>
+                                                </JFXButton>
+                                             </children>
                                           </AnchorPane>
                                           <Label alignment="CENTER" layoutX="111.0" layoutY="42.0" text="3. 기타 설정 및 실행" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                              <font>
