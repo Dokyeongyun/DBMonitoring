@@ -5,8 +5,10 @@ import java.util.List;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeSortMode;
 import javafx.scene.control.TreeTableCell;
@@ -47,14 +49,15 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 
 	private void addMonitoringInstanceColumn(String title, String fieldName) {
 		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
-		ttc.setPrefWidth(100);
 		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
+		ttc.setCellFactory(param -> {
+			return new MonitoringInstanceCell();
+		});
 		getColumns().add(ttc);
 	}
 
 	private void addMonitoringYNTableColumn(String title, String fieldName) {
 		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
-		ttc.setPrefWidth(70);
 		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
 		ttc.setCellFactory(param -> {
 			return new MonitoringYNCell();
@@ -63,23 +66,70 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 	}
 
 	public void addTreeTableItem(String title, List<MonitoringYN> items, FontAwesomeIcon icon) {
-		TreeItem<MonitoringYN> newTreeItem = new TreeItem<>(new MonitoringYN(title), getIconView(icon));
+		TreeItem<MonitoringYN> newTreeItem = new TreeItem<>(new MonitoringYN(title));
 		for (MonitoringYN item : items) {
-			newTreeItem.getChildren()
-					.add(new TreeItem<>(item, getIconView(FontAwesomeIcon.CIRCLE, LEAF_ICON_SIZE, LEAF_ICON_COLOR)));
+			newTreeItem.getChildren().add(new TreeItem<>(item));
 			newTreeItem.setExpanded(true);
 		}
 		rootItem.getChildren().add(newTreeItem);
 	}
 
-	private FontAwesomeIconView getIconView(FontAwesomeIcon icon, int size, String color) {
+	private static FontAwesomeIconView getIconView(FontAwesomeIcon icon, int size, String color) {
 		FontAwesomeIconView result = new FontAwesomeIconView(icon, String.valueOf(size));
 		result.setFill(Paint.valueOf(color));
 		return result;
 	}
 
-	private FontAwesomeIconView getIconView(FontAwesomeIcon icon) {
+	private static FontAwesomeIconView getIconView(FontAwesomeIcon icon) {
 		return getIconView(icon, DEFAULT_ICON_SIZE, DEFAULT_ICON_COLOR);
+	}
+
+	/**
+	 * 
+	 * @author DKY
+	 *
+	 */
+	private static class MonitoringInstanceCell extends TreeTableCell<MonitoringYN, String> {
+
+		public MonitoringInstanceCell() {
+			setAlignment(Pos.CENTER_LEFT);
+			itemProperty().addListener((observableValue, oldValue, newValue) -> {
+				if (newValue != null) {
+					Label label = getMonitoringInstanceLabel(newValue);
+					graphicProperty().bind(Bindings.when(emptyProperty()).then(label).otherwise(label));
+				}
+			});
+		}
+
+		@Override
+		protected void updateItem(String item, boolean empty) {
+			super.updateItem(item, empty);
+			if (empty || item == null) {
+				setText(null);
+				setStyle(null);
+				graphicProperty().bind(Bindings.when(emptyProperty()).then((Node) null).otherwise((Node) null));
+			} else {
+				Label label = getMonitoringInstanceLabel(item);
+				graphicProperty().bind(Bindings.when(emptyProperty()).then(label).otherwise(label));
+			}
+		}
+
+		private Label getMonitoringInstanceLabel(String item) {
+			Label label = new Label(item);
+			FontAwesomeIconView icon;
+			if (item.equals("DB")) {
+				icon = getIconView(FontAwesomeIcon.DATABASE);
+				label.setPadding(new Insets(0,0,0,15));
+			} else if (item.equals("Server")) {
+				icon = getIconView(FontAwesomeIcon.SERVER);
+				label.setPadding(new Insets(0,0,0,15));
+			} else {
+				icon = getIconView(FontAwesomeIcon.CIRCLE, LEAF_ICON_SIZE, LEAF_ICON_COLOR);
+				label.setPadding(new Insets(0,0,0,20));
+			}
+			label.setGraphic(icon);
+			return label;
+		}
 	}
 
 	/**
