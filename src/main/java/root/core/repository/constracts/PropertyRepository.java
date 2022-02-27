@@ -51,6 +51,8 @@ public interface PropertyRepository {
 
 	String getLastUseMonitoringPresetName();
 
+	String getLastUseMonitoringPresetName(String filePath);
+
 	String[] getMonitoringDBNames();
 
 	String[] getMonitoringServerNames();
@@ -64,4 +66,6 @@ public interface PropertyRepository {
 	JschConnectionInfo getJschConnectionInfo(String serverName);
 	
 	AlertLogCommand getAlertLogCommand(String serverName);
+	
+	String getMonitoringConfigResource(String key);
 }
