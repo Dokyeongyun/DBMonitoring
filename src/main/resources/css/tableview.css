@@ -1,6 +1,7 @@
 /* TableView */
 .table-view {
 	-fx-font-family: "Noto Sans Korean Regular";
+	-fx-background-color: white;
 }
 
 .table-view:focused {

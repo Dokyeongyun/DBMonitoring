@@ -236,6 +236,103 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </AnchorPane>
+                                    <HBox alignment="CENTER">
+                                       <children>
+                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                       </children>
+                                    </HBox>
+                                    <AnchorPane>
+                                       <children>
+                                          <Label fx:id="step4Label" alignment="CENTER" layoutX="111.0" layoutY="42.0" text="4. 실행결과" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                                             <font>
+                                                <Font name="Noto Sans Korean Bold Bold" size="13.0" />
+                                             </font>
+                                          </Label>
+                                          <Separator layoutX="-50.0" layoutY="37.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
+                                          <AnchorPane layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                             <padding>
+                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                             </padding>
+                                             <children>
+                                                <SplitPane fx:id="wrapperSplitPane" dividerPositions="0.5" orientation="VERTICAL" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                  <items>
+                                                      <SplitPane fx:id="upperSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
+                                                         <items>
+                                                            <AnchorPane fx:id="archiveAP" minHeight="0.0">
+                                                               <children>
+                                                                  <Label text="Archive 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                                     </graphic>
+                                                                     <padding>
+                                                                        <Insets left="5.0" right="5.0" />
+                                                                     </padding>
+                                                                     <font>
+                                                                        <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </AnchorPane>
+                                                            <AnchorPane fx:id="tableSpaceAP" minHeight="0.0">
+                                                               <children>
+                                                                  <Label text="TableSpace 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                                     </graphic>
+                                                                     <padding>
+                                                                        <Insets left="5.0" right="5.0" />
+                                                                     </padding>
+                                                                     <font>
+                                                                        <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </items>
+                                                      </SplitPane>
+                                                      <SplitPane fx:id="lowerSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
+                                                        <items>
+                                                          <AnchorPane fx:id="asmDiskAP" minHeight="0.0">
+                                                               <children>
+                                                                  <Label text="ASM Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                                     </graphic>
+                                                                     <padding>
+                                                                        <Insets left="5.0" right="5.0" />
+                                                                     </padding>
+                                                                     <font>
+                                                                        <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </AnchorPane>
+                                                          <AnchorPane fx:id="osDiskAP" minHeight="0.0">
+                                                               <children>
+                                                                  <Label text="OS Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                                     </graphic>
+                                                                     <padding>
+                                                                        <Insets left="5.0" right="5.0" />
+                                                                     </padding>
+                                                                     <font>
+                                                                        <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                                     </font>
+                                                                  </Label>
+                                                               </children>
+                                                            </AnchorPane>
+                                                        </items>
+                                                      </SplitPane>
+                                                  </items>
+                                                </SplitPane>
+                                             </children>
+                                          </AnchorPane>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </AnchorPane>
                                  </children>
                               </HBox>
                            </children>
