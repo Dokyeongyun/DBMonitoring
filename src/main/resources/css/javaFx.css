@@ -1,5 +1,5 @@
 .whiteLabelText{
-    -fx-font-family: "NanumGothic";
+	-fx-font-family: "Noto Sans Korean Regular";
     -fx-text-fill: WHITE;
 }
 
@@ -14,7 +14,7 @@
 
 /* Basic Font */
 .basic-font {
-	-fx-font-family: NanumGothic, Roboto, NotoSansKR;
+	-fx-font-family: "Noto Sans Korean Regular"
 }
 
 .font-black {

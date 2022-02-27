@@ -2,30 +2,52 @@
     -fx-border-color:lightgray;
     -fx-border-width: 0.8px;
     -fx-background-insets:0.0;
-    -fx-font-family: "NanumGothic";
-    -fx-font-size : 10.0;
+    -fx-font-family: "Noto Sans Korean Regular";
+    -fx-font-size : 11.0;
 }
+
+.tree-table-view .column-header { 
+ 	-fx-background-color: #ddd;
+    -fx-font-size : 11.0;
+    -fx-font-family: "Noto Sans Korean Bold";
+} 	
+
+.tree-table-cell,
 .tree-cell{
     -fx-background-color:transparent;
 }
+
+.tree-table-cell > .tree-disclosure-node,
 .tree-cell > .tree-disclosure-node{
     -fx-background-repeat:no-repeat;
     -fx-background-position:center;
 }
+
+.tree-table-cell:expanded > .tree-disclosure-node,
 .tree-cell:expanded > .tree-disclosure-node,
 .tree-table-row-cell:expanded > .tree-disclosure-node{
     -fx-background-repeat:no-repeat;
     -fx-background-position:center;
 }
+
+.tree-table-row-cell:filled:selected,
+.tree-table-row-cell:filled:hover,
+.tree-table-row-cell:filled:armed,
+.tree-table-cell:filled:selected,
+.tree-table-cell:filled:hover,
+.tree-table-cell:filled:armed,
 .tree-cell:filled:selected,
 .tree-cell:filled:hover,
 .tree-cell:filled:armed{
     -fx-background-color:#4189DE;
     -fx-text-fill:white;
 }
+
+.tree-table-cell .image-view,
 .tree-cell .image-view{
     -fx-background-color:red;
 }
+
 .tree-cell:filled:hover:expanded > .tree-disclosure-node,
 .tree-table-row-cell:filled:hover:expanded > .tree-disclosure-node{
     -fx-background-repeat:no-repeat;
@@ -46,31 +68,44 @@
     -fx-background-repeat:no-repeat;
     -fx-background-position:center;
 }
+
+.tree-table-view > .virtual-flow > .scroll-bar:vertical,
 .tree-view > .virtual-flow > .scroll-bar:vertical{
     -fx-min-width:14.0;
     -fx-background-insets:0.0;
     -fx-background-color:transparent;
 }
+
+.tree-table-view > .virtual-flow > .scroll-bar:horizontal,
 .tree-view > .virtual-flow > .scroll-bar:horizontal{
     -fx-min-height:14.0;
     -fx-background-insets:0.0;
     -fx-background-color: transparent;
 }
+
+.tree-table-view > .virtual-flow > .scroll-bar:vertical .thumb,
 .tree-view > .virtual-flow > .scroll-bar:vertical .thumb{
     -fx-background-color:#B4B9BF;
     -fx-background-radius: 11.0em;
     -fx-background-insets:0.0 3.5 0.0 3.5;
 }
 
+.tree-table-view > .virtual-flow > .scroll-bar:horizontal .thumb,
 .tree-view > .virtual-flow > .scroll-bar:horizontal .thumb{
     -fx-background-color:#B4B9BF;
     -fx-background-radius: 11.0em;
     -fx-background-insets:3.5 0.0 3.5 0.0;
 }
+
+.tree-table-view > .virtual-flow > .scroll-bar > .increment-button > .increment-arrow,
+.tree-table-view > .virtual-flow > .scroll-bar > .decrement-button > .decrement-arrow,
 .tree-view > .virtual-flow > .scroll-bar > .increment-button > .increment-arrow,
 .tree-view > .virtual-flow > .scroll-bar > .decrement-button > .decrement-arrow{
     -fx-background-color: transparent;
 }
+
+.tree-table-view > .virtual-flow > .scroll-bar > .increment-button,
+.tree-table-view > .virtual-flow > .scroll-bar > .decrement-button,
 .tree-view > .virtual-flow > .scroll-bar > .increment-button,
 .tree-view > .virtual-flow > .scroll-bar > .decrement-button{
     -fx-background-color: transparent;

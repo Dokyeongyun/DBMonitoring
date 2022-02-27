@@ -1,4 +1,8 @@
 /* TableView */
+.table-view {
+	-fx-font-family: "Noto Sans Korean Regular";
+}
+
 .table-view:focused {
 	-fx-focus-color: transparent;
 	-fx-faint-focus-color: transparent;
