@@ -18,9 +18,9 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.paint.Paint;
 import root.javafx.Model.MonitoringYN;
 
-public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
+public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T> {
 
-	private static TreeItem<MonitoringYN> rootItem;
+	private TreeItem<T> rootItem;
 
 	private static final String DEFAULT_ICON_COLOR = "#003b8e";
 	private static final int DEFAULT_ICON_SIZE = 17;
@@ -32,14 +32,7 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 		getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/treeView.css");
 		getStyleClass().add("treeView");
 
-		rootItem = new TreeItem<>(new MonitoringYN());
-
-		// TODO TableColumn을 View 외부에서 주입받을 수 있도록 수정해야 함
-		addMonitoringInstanceColumn("Instance", "alias");
-		addMonitoringYNTableColumn("Archive", "archiveUsageYN");
-		addMonitoringYNTableColumn("Table Space", "tableSpaceUsageYN");
-		addMonitoringYNTableColumn("ASM Disk", "asmDiskUsageYN");
-		addMonitoringYNTableColumn("OS Disk", "osDiskUsageYN");
+		rootItem = new TreeItem<>();
 
 		setSortMode(TreeSortMode.ONLY_FIRST_LEVEL);
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
@@ -47,27 +40,30 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 		setShowRoot(false);
 	}
 
-	private void addMonitoringInstanceColumn(String title, String fieldName) {
-		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
+	public void addMonitoringInstanceColumn(String title, String fieldName) {
+		TreeTableColumn<T, String> ttc = new TreeTableColumn<>(title);
 		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
 		ttc.setCellFactory(param -> {
-			return new MonitoringInstanceCell();
+			return new MonitoringInstanceCell<>();
+		});
+		ttc.setPrefWidth(90);
+		ttc.setMinWidth(90);
+		ttc.setMaxWidth(90);
+		getColumns().add(ttc);
+	}
+
+	public void addMonitoringYNTableColumn(String title, String fieldName) {
+		TreeTableColumn<T, String> ttc = new TreeTableColumn<>(title);
+		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
+		ttc.setCellFactory(param -> {
+			return new MonitoringYNCell<>();
 		});
 		getColumns().add(ttc);
 	}
 
-	private void addMonitoringYNTableColumn(String title, String fieldName) {
-		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
-		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
-		ttc.setCellFactory(param -> {
-			return new MonitoringYNCell();
-		});
-		getColumns().add(ttc);
-	}
-
-	public void addTreeTableItem(String title, List<MonitoringYN> items, FontAwesomeIcon icon) {
-		TreeItem<MonitoringYN> newTreeItem = new TreeItem<>(new MonitoringYN(title));
-		for (MonitoringYN item : items) {
+	public void addTreeTableItem(T title, List<T> items, FontAwesomeIcon icon) {
+		TreeItem<T> newTreeItem = new TreeItem<>(title);
+		for (T item : items) {
 			newTreeItem.getChildren().add(new TreeItem<>(item));
 			newTreeItem.setExpanded(true);
 		}
@@ -89,7 +85,7 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 	 * @author DKY
 	 *
 	 */
-	private static class MonitoringInstanceCell extends TreeTableCell<MonitoringYN, String> {
+	private static class MonitoringInstanceCell<T> extends TreeTableCell<T, String> {
 
 		public MonitoringInstanceCell() {
 			setAlignment(Pos.CENTER_LEFT);
@@ -119,13 +115,13 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 			FontAwesomeIconView icon;
 			if (item.equals("DB")) {
 				icon = getIconView(FontAwesomeIcon.DATABASE);
-				label.setPadding(new Insets(0,0,0,15));
+				label.setPadding(new Insets(0, 0, 0, 15));
 			} else if (item.equals("Server")) {
 				icon = getIconView(FontAwesomeIcon.SERVER);
-				label.setPadding(new Insets(0,0,0,15));
+				label.setPadding(new Insets(0, 0, 0, 15));
 			} else {
 				icon = getIconView(FontAwesomeIcon.CIRCLE, LEAF_ICON_SIZE, LEAF_ICON_COLOR);
-				label.setPadding(new Insets(0,0,0,20));
+				label.setPadding(new Insets(0, 0, 0, 20));
 			}
 			label.setGraphic(icon);
 			return label;
@@ -137,7 +133,7 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 	 * @author DKY
 	 *
 	 */
-	private static class MonitoringYNCell extends TreeTableCell<MonitoringYN, String> {
+	private static class MonitoringYNCell<T> extends TreeTableCell<T, String> {
 
 		public MonitoringYNCell() {
 			setAlignment(Pos.CENTER);

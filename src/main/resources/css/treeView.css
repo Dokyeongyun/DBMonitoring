@@ -9,7 +9,7 @@
 .tree-table-view .column-header { 
  	-fx-background-color: #ddd;
     -fx-font-size : 11.0;
-    -fx-font-family: "Noto Sans Korean Bold";
+    -fx-font-family: "Noto Sans Korean Medium";
 } 	
 
 .tree-table-cell,

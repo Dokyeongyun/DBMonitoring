@@ -23,7 +23,8 @@ import root.core.domain.TableSpaceUsage;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
-import root.javafx.Model.MonitoringYN;
+import root.javafx.Model.DBMonitoringYN;
+import root.javafx.Model.ServerMonitoringYN;
 
 public class RunMenuController implements Initializable {
 
@@ -32,6 +33,12 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane presetSettingAP;
+
+	@FXML
+	AnchorPane dbPresetAP;
+
+	@FXML
+	AnchorPane serverPresetAP;
 
 	@FXML
 	ScrollPane mainScrollPane;
@@ -56,7 +63,7 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane osDiskAP;
-	
+
 	@FXML
 	Label step4Label;
 
@@ -72,36 +79,49 @@ public class RunMenuController implements Initializable {
 		connInfoSettingAP.getChildren().add(connInfoCtv);
 
 		// 모니터링 여부 리스트 TreeTableView
-		List<MonitoringYN> list1 = new ArrayList<>();
-		list1.add(new MonitoringYN("DB1", "N", "N", "N", "N"));
-		list1.add(new MonitoringYN("DB2", "N", "N", "N", "N"));
-		list1.add(new MonitoringYN("DB3", "N", "N", "N", "N"));
-		List<MonitoringYN> list2 = new ArrayList<>();
-		list2.add(new MonitoringYN("Server1", "Y", "Y", "Y", "Y"));
-		list2.add(new MonitoringYN("Server2", "Y", "Y", "Y", "Y"));
-		list2.add(new MonitoringYN("Server3", "Y", "Y", "Y", "Y"));
-		list2.add(new MonitoringYN("Server4", "Y", "Y", "Y", "Y"));
-		CustomTreeTableView presetCtv = new CustomTreeTableView("모니터링 여부 리스트", FontAwesomeIcon.LIST);
-		presetCtv.addTreeTableItem("DB", list1, FontAwesomeIcon.DATABASE);
-		presetCtv.addTreeTableItem("Server", list2, FontAwesomeIcon.SERVER);
-		setAnchorPaneAnchor(presetCtv, 80, 0, 0, 0);
-		presetSettingAP.getChildren().add(presetCtv);
+		List<DBMonitoringYN> list1 = new ArrayList<>();
+		list1.add(new DBMonitoringYN("DB1", "N", "N", "N"));
+		list1.add(new DBMonitoringYN("DB2", "N", "N", "N"));
+		list1.add(new DBMonitoringYN("DB3", "N", "N", "N"));
+
+		CustomTreeTableView<DBMonitoringYN> presetCtv1 = new CustomTreeTableView<>("모니터링 여부 리스트", FontAwesomeIcon.LIST);
+		presetCtv1.addMonitoringInstanceColumn("Instance", "alias");
+		presetCtv1.addMonitoringYNTableColumn("Archive", "archiveUsageYN");
+		presetCtv1.addMonitoringYNTableColumn("Table Space", "tableSpaceUsageYN");
+		presetCtv1.addMonitoringYNTableColumn("ASM Disk", "asmDiskUsageYN");
+		presetCtv1.addTreeTableItem(new DBMonitoringYN("DB"), list1, FontAwesomeIcon.DATABASE);
+		setAnchorPaneAnchor(presetCtv1, 0, 0, 0, 0);
+		dbPresetAP.getChildren().add(presetCtv1);
+
+		List<ServerMonitoringYN> list2 = new ArrayList<>();
+		list2.add(new ServerMonitoringYN("Server1", "Y"));
+		list2.add(new ServerMonitoringYN("Server2", "Y"));
+		list2.add(new ServerMonitoringYN("Server3", "Y"));
+		list2.add(new ServerMonitoringYN("Server4", "Y"));
+
+		CustomTreeTableView<ServerMonitoringYN> presetCtv2 = new CustomTreeTableView<>("모니터링 여부 리스트",
+				FontAwesomeIcon.LIST);
+		presetCtv2.addMonitoringInstanceColumn("Instance", "alias");
+		presetCtv2.addMonitoringYNTableColumn("OS Disk", "osDiskUsageYN");
+		presetCtv2.addTreeTableItem(new ServerMonitoringYN("Server"), list2, FontAwesomeIcon.SERVER);
+		setAnchorPaneAnchor(presetCtv2, 0, 0, 0, 0);
+		serverPresetAP.getChildren().add(presetCtv2);
 
 		// 실행결과 TableView 생성 및 Column 추가
 		MonitoringTableView<ArchiveUsage> archiveTable = addMonitoringTableView(archiveAP, ArchiveUsage.class);
 		archiveTable.addColumn("Archive", "archiveName");
 		archiveTable.addColumn("사용량(%)", "usedPercent");
-		
+
 		MonitoringTableView<TableSpaceUsage> tableSpaceTable = addMonitoringTableView(tableSpaceAP,
 				TableSpaceUsage.class);
 		tableSpaceTable.addColumn("테이블스페이스", "tableSpaceName");
 		tableSpaceTable.addColumn("사용량(%)", "usedPercent");
-		
+
 		MonitoringTableView<ASMDiskUsage> asmDiskTable = addMonitoringTableView(asmDiskAP, ASMDiskUsage.class);
 		asmDiskTable.addColumn("디스크 그룹", "asmDiskGroupName");
-		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");	
+		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");
 		asmDiskTable.addColumn("사용량(%)", "usedPercent");
-		
+
 		MonitoringTableView<OSDiskUsage> osDiskTable = addMonitoringTableView(osDiskAP, OSDiskUsage.class);
 		osDiskTable.addColumn("파일 시스템", "fileSystem");
 		osDiskTable.addColumn("마운트 위치", "mountedOn");
