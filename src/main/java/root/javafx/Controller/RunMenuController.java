@@ -9,6 +9,8 @@ import java.util.ResourceBundle;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
@@ -18,25 +20,30 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane connInfoSettingAP;
-	
+
 	@FXML
 	AnchorPane presetSettingAP;
+
+	@FXML
+	ScrollPane mainScrollPane;
+
+	@FXML
+	AnchorPane scrollAP;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// 접속정보 리스트 TreeView
 		CustomTreeView connInfoCtv = new CustomTreeView("접속정보 리스트", FontAwesomeIcon.LIST, true);
-		connInfoCtv.addTreeItem("DB", new ArrayList<>(Arrays.asList("DB1", "DB2", "DB3")),
-				FontAwesomeIcon.DATABASE);
-		connInfoCtv.addTreeItem("Server",
-				new ArrayList<>(Arrays.asList("Server1", "Server2", "Server3", "Server4")), FontAwesomeIcon.SERVER);
+		connInfoCtv.addTreeItem("DB", new ArrayList<>(Arrays.asList("DB1", "DB2", "DB3")), FontAwesomeIcon.DATABASE);
+		connInfoCtv.addTreeItem("Server", new ArrayList<>(Arrays.asList("Server1", "Server2", "Server3", "Server4")),
+				FontAwesomeIcon.SERVER);
 		AnchorPane.setTopAnchor(connInfoCtv, 80.0);
 		AnchorPane.setBottomAnchor(connInfoCtv, 0.0);
 		AnchorPane.setLeftAnchor(connInfoCtv, 0.0);
 		AnchorPane.setRightAnchor(connInfoCtv, 0.0);
 		connInfoSettingAP.getChildren().add(connInfoCtv);
-		
+
 		// 모니터링 여부 리스트 TreeTableView
 		List<MonitoringYN> list1 = new ArrayList<>();
 		list1.add(new MonitoringYN("DB1", "N", "N", "N", "N"));
@@ -55,5 +62,19 @@ public class RunMenuController implements Initializable {
 		AnchorPane.setLeftAnchor(presetCtv, 0.0);
 		AnchorPane.setRightAnchor(presetCtv, 0.0);
 		presetSettingAP.getChildren().add(presetCtv);
+	}
+
+	/**
+	 * 실행메뉴 ScrollPane scroll event
+	 * 
+	 * @param e
+	 */
+	public void scroll(ScrollEvent e) {
+		if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
+			double deltaY = e.getDeltaY() * 3;
+			double width = mainScrollPane.getWidth();
+			double vvalue = mainScrollPane.getHvalue();
+			mainScrollPane.setHvalue(vvalue - deltaY / width);
+		}
 	}
 }

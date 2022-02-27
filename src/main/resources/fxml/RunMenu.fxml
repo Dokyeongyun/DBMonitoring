@@ -59,9 +59,9 @@
                   </AnchorPane>
                </top>
                <center>
-                  <ScrollPane fitToHeight="true">
+                  <ScrollPane fx:id="mainScrollPane" fitToHeight="true" onScroll="#scroll" pannable="true">
                     <content>
-                      <AnchorPane>
+                      <AnchorPane fx:id="scrollAP" onScroll="#scroll">
                            <children>
                               <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <children>
