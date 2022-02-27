@@ -32,7 +32,7 @@ public class LeftMenuController {
 	public void goSettingMenu(ActionEvent e) throws IOException {
 		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
 	}
-	
+
 	/**
 	 * 실행 메뉴로 이동한다.
 	 * 
@@ -41,6 +41,17 @@ public class LeftMenuController {
 	 */
 	public void goRunMenu(ActionEvent e) throws IOException {
 		SceneUtils.movePage(DependencyInjection.load("/fxml/RunMenu.fxml"));
+	}
+	
+
+	/**
+	 * 모니터링 기록 조회 메뉴로 이동한다.
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goHistoryMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/HistoryMenu.fxml"));
 	}
 	
 	public void goMenu2(ActionEvent e) {

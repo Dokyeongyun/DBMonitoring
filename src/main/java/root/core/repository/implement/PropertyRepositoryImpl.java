@@ -424,6 +424,17 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	public String getLastUseMonitoringPresetName() {
 		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
 	}
+	
+	/**
+	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getLastUseMonitoringPresetName(String filePath) {
+		load(filePath);
+		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
+	}
 
 	/**
 	 * 모니터링할 DB명 배열을 반환한다.
@@ -534,5 +545,10 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		AlertLogCommand alc = new AlertLogCommand("tail", alertLogReadLine, alertLogFilePath, alertLogDateFormat,
 				alertLogDateFormatRegex);
 		return alc;
+	}
+
+	@Override
+	public String getMonitoringConfigResource(String key) {
+		return monitoringConfig.getString(key);
 	}
 }

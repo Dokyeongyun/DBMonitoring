@@ -27,6 +27,43 @@ public class FilePropertyService implements PropertyService {
 		this.propRepo = propRepo;
 	}
 
+	/**
+	 * 접속정보 설정파일을 Load 한다.
+	 */
+	@Override
+	public void loadConnectionInfoConfig(String filePath) {
+		propRepo.loadConnectionInfoConfig(filePath);
+	}
+
+	/**
+	 * ./config/connectioninfo/ 디렉터리 하위에 있는 접속정보 설정파일 리스트를 반환한다.
+	 */
+	@Override
+	public List<String> getConnectionInfoList() {
+		return new ArrayList<>(Arrays.asList(propRepo.getConnectionInfoFileNames()));
+	}
+
+	/**
+	 * 최근 사용된 접속정보 설정파일 경로를 반환한다.
+	 */
+	@Override
+	public String getLastUseConnectionInfoFilePath() {
+		return propRepo.getLastUseConnInfoFilePath();
+	}
+
+	/**
+	 * 모니터링 여부 설정파일을 Load 한다.
+	 */
+	@Override
+	public void loadMonitoringInfoConfig(String filePath) {
+		propRepo.loadMonitoringInfoConfig(filePath);
+	}
+
+	@Override
+	public String getLastUsePresetFileName(String filePath) {
+		return propRepo.getLastUseMonitoringPresetName(filePath);
+	}
+
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
 		return StreamSupport
@@ -35,7 +72,7 @@ public class FilePropertyService implements PropertyService {
 				.filter(key -> key.matches(MONITORING_PRESET_KEY)).collect(Collectors.toUnmodifiableMap(key -> {
 					Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
 					return m.matches() ? m.group(1) : null;
-				}, key -> key));
+				}, key -> propRepo.getMonitoringConfigResource(key)));
 	}
 
 	@Override
@@ -74,4 +111,5 @@ public class FilePropertyService implements PropertyService {
 		return serverNames.stream().sorted().collect(
 				Collectors.mapping(serverName -> propRepo.getJschConnectionInfo(serverName), Collectors.toList()));
 	}
+
 }
