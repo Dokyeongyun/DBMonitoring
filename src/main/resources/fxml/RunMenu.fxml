@@ -80,7 +80,10 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox minWidth="200.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                                <JFXComboBox fx:id="connInfoFileListComboBox" minHeight="22.0" promptText="모니터링 접속정보 설정파일을 선택해주세요." styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding></JFXComboBox>
                                                 <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
                                                    <graphic>
                                                       <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
@@ -134,7 +137,10 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox minWidth="200.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                                <JFXComboBox minHeight="22.0" minWidth="200.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding></JFXComboBox>
                                                 <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
                                                    <graphic>
                                                       <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
@@ -185,7 +191,10 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox layoutY="46.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+                                                <JFXComboBox layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding></JFXComboBox>
                                                 <Label text="반올림 자릿수 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
                                                    <graphic>
                                                       <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
@@ -197,7 +206,10 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
+                                                <JFXComboBox minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding></JFXComboBox>
                                                 <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
                                                    <graphic>
                                                       <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />

@@ -61,7 +61,7 @@
     -fx-alignment: CENTER;
     -fx-text-fill: #2381E9;
     -fx-font-weight: bold;
-    -fx-font-family: NanumGothic;
+    -fx-font-family: "Noto Sans Korean Regular";
 }
 
 .tab-pane > .tab-header-area > .tab-header-background {
@@ -77,7 +77,7 @@
     -fx-background-color: -fx-text-box-border, white ;
     -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
     -fx-background-radius: 0 ;
-    -fx-font-family: NanumGothic;
+    -fx-font-family: "Noto Sans Korean Regular";
 }
 .text-field:focused {
     -fx-background-color: #039ED3, -fx-background;
@@ -85,7 +85,7 @@
 
 /* Label */
 .gridTitleLabel {
-    -fx-font-family: NanumGothic;
+    -fx-font-family: "Noto Sans Korean Regular";
     -fx-font-size: 11px;
     -fx-line-spacing: 0;
 }
@@ -95,7 +95,8 @@
     -fx-background-color: -fx-text-box-border, white ;
     -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
     -fx-background-radius: 0 ;
-    -fx-font-family: NanumGothic;
+    -fx-font-family: "Noto Sans Korean Regular";
+    -fx-font-size: 10px;
 }
 
 .jfx-combo-box:focused {

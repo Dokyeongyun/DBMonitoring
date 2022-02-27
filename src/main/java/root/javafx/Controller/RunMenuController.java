@@ -1,12 +1,19 @@
 package root.javafx.Controller;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+
+import com.jfoenix.controls.JFXComboBox;
+
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -20,6 +27,9 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
+import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.service.contracts.PropertyService;
+import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
@@ -28,8 +38,14 @@ import root.javafx.Model.ServerMonitoringYN;
 
 public class RunMenuController implements Initializable {
 
+	/* Dependency Injection */
+	PropertyService propService = new FilePropertyService(PropertyRepositoryImpl.getInstance());
+
 	@FXML
 	AnchorPane connInfoSettingAP;
+
+	@FXML
+	JFXComboBox<String> connInfoFileListComboBox;
 
 	@FXML
 	AnchorPane presetSettingAP;
@@ -70,13 +86,32 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// 접속정보 리스트 TreeView
-		CustomTreeView connInfoCtv = new CustomTreeView("접속정보 리스트", FontAwesomeIcon.LIST, true);
-		connInfoCtv.addTreeItem("DB", new ArrayList<>(Arrays.asList("DB1", "DB2", "DB3")), FontAwesomeIcon.DATABASE);
-		connInfoCtv.addTreeItem("Server", new ArrayList<>(Arrays.asList("Server1", "Server2", "Server3", "Server4")),
-				FontAwesomeIcon.SERVER);
-		setAnchorPaneAnchor(connInfoCtv, 80, 0, 0, 0);
-		connInfoSettingAP.getChildren().add(connInfoCtv);
+		/* 1. 모니터링 접속정보 설정 */
+		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
+		List<String> connInfoFileList = propService.getConnectionInfoList();
+		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
+			// TODO 접속정보 설정파일이 없는 경우
+			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
+		} else {
+			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
+		}
+		
+		// 1-2. 모니터링 접속정보 설정파일 콤보박스 아이템 변경 리스너 설정
+		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+			propService.loadConnectionInfoConfig(newValue);
+			List<String> dbNames = propService.getMonitoringDBNameList();
+			List<String> serverNames = propService.getMonitoringServerNameList();
+			addMonitoringConnInfoPreview(dbNames, serverNames);
+		});
+
+		// 1-3. 모니터링 접속정보 설정파일 콤보박스 초기값 설정
+		String lastUseConnInfoFile = propService.getLastUseConnectionInfo();
+		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
+			// 최근 사용된 접속정보 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
+			connInfoFileListComboBox.getSelectionModel().selectFirst();
+		} else {
+			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
+		}
 
 		// 모니터링 여부 리스트 TreeTableView
 		List<DBMonitoringYN> list1 = new ArrayList<>();
@@ -173,5 +208,20 @@ public class RunMenuController implements Initializable {
 		setAnchorPaneAnchor(tableView, 20, 0, 0, 0);
 		parent.getChildren().add(tableView);
 		return tableView;
+	}
+
+	/**
+	 * 모니터링 접속정보를 보여주는 TreeView를 생성 및 추가한다.
+	 * 
+	 * @param dbNameList
+	 * @param serverNameList
+	 */
+	private void addMonitoringConnInfoPreview(List<String> dbNameList, List<String> serverNameList) {
+		// 접속정보 리스트 TreeView
+		CustomTreeView connInfoCtv = new CustomTreeView("접속정보 리스트", FontAwesomeIcon.LIST, true);
+		connInfoCtv.addTreeItem("DB", dbNameList, FontAwesomeIcon.DATABASE);
+		connInfoCtv.addTreeItem("Server", serverNameList, FontAwesomeIcon.SERVER);
+		setAnchorPaneAnchor(connInfoCtv, 80, 0, 0, 0);
+		connInfoSettingAP.getChildren().add(connInfoCtv);
 	}
 }

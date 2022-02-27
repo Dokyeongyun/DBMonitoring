@@ -27,6 +27,30 @@ public class FilePropertyService implements PropertyService {
 		this.propRepo = propRepo;
 	}
 
+	/**
+	 * ./config/connectioninfo/ 디렉터리 하위에 있는 접속정보 설정파일 리스트를 반환한다.
+	 */
+	@Override
+	public List<String> getConnectionInfoList() {
+		return new ArrayList<>(Arrays.asList(propRepo.getConnectionInfoFileNames()));
+	}
+	
+	/**
+	 * 최근 사용된 접속정보 설정파일 경로를 반환한다.
+	 */
+	@Override
+	public String getLastUseConnectionInfo() {
+		return propRepo.getLastUseConnInfoFilePath();
+	}
+
+	/**
+	 * 접속정보 설정파일을 Load 한다.
+	 */
+	@Override
+	public void loadConnectionInfoConfig(String filePath) {
+		propRepo.loadConnectionInfoConfig(filePath);
+	}
+
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
 		return StreamSupport
@@ -74,4 +98,5 @@ public class FilePropertyService implements PropertyService {
 		return serverNames.stream().sorted().collect(
 				Collectors.mapping(serverName -> propRepo.getJschConnectionInfo(serverName), Collectors.toList()));
 	}
+
 }
