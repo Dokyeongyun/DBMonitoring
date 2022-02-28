@@ -53,6 +53,7 @@ import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.ServerConnInfoControl;
+import root.javafx.CustomView.dialogUI.CustomTextInputDialog;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
@@ -208,35 +209,23 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void showMonitoringPresetPopup(ActionEvent e) {
-		// TextInputDialog 생성
-		TextInputDialog presetInputDialog = new TextInputDialog();
-		// ICON
-		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
-		// CSS
-		presetInputDialog.getDialogPane().getStylesheets().add(
-				getClass().getResource(System.getProperty("resourceBaseDir") + "/css/dialog.css").toExternalForm());
-		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
-		// Dialog ICON
-		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(
-				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
-		// Button Custom
-		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
-		presetInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
-		presetInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
-		// Content
-		presetInputDialog.setTitle("Preset 생성");
-		presetInputDialog.setHeaderText("새로운 Monitoring Preset 이름을 입력해주세요.");
-		presetInputDialog.setContentText("Preset 이름: ");
-		// Result
+
+		// Create input dialog
+		String dialogTitle = "Preset 생성";
+		String dialogHeaderText = "새로운 Monitoring Preset 이름을 입력해주세요.";
+		String dialogContentText = "Preset 이름: ";
+		CustomTextInputDialog presetInputDialog = new CustomTextInputDialog(dialogTitle, dialogHeaderText,
+				dialogContentText);
+
+		// Process input result
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
-			logger.debug("Monitoring Preset 생성 Input: " + input);
+			// TODO validate input value
 
+			// TODO move this logic to propertyService
 			// 1. Preset명 이용하여 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{preset명}.properties
-			File connInfoFile = new File(fileChooserText.getText());
-			String connInfoFileName = connInfoFile.getName().substring(0,
-					connInfoFile.getName().indexOf(".properties"));
+			String connInfoFilePath = fileChooserText.getText();
+			String connInfoFileName = connInfoFilePath.substring(0, connInfoFilePath.indexOf(".properties"));
 			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
 			propRepo.createNewPropertiesFile(filePath, "Monitoring");
 
@@ -249,11 +238,9 @@ public class SettingMenuController implements Initializable {
 			reloadingMonitoringSetting(input);
 
 			// 4. 성공 Alert 띄우기
-			Alert successAlert = new Alert(AlertType.INFORMATION);
-			successAlert.setHeaderText("Preset 생성");
-			successAlert.setContentText("모니터링여부 설정 Preset이 생성되었습니다.");
-			successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-			successAlert.show();
+			String successTitle = "Preset 생성";
+			String successContent = "모니터링여부 설정 Preset이 생성되었습니다.";
+			AlertUtils.showAlert(AlertType.INFORMATION, successTitle, successContent);
 		});
 	}
 
@@ -468,7 +455,7 @@ public class SettingMenuController implements Initializable {
 
 			for (String s : elementContents) {
 				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
-				
+
 				HBox contentHBox = new HBox();
 				Label contentLabel = new Label();
 				contentLabel.setText(s);
