@@ -89,13 +89,13 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
-	
+
 	@FXML
 	JFXComboBox<FileSize> fileSizeCB;
 
 	@FXML
 	JFXComboBox<Integer> roundingDigitsCB;
-	
+
 	@FXML
 	JFXComboBox<UsageUIType> usageUICB;
 
@@ -121,36 +121,46 @@ public class SettingMenuController implements Initializable {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
-			monitoringPresetComboBox.getSelectionModel().selectedItemProperty()
-					.addListener((options, oldValue, newValue) -> {
-						loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
-					});
+			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
+				loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+			});
 		} else {
 			setVisible(noConnInfoConfigAP, true);
 			setVisible(noMonitoringConfigAP, true);
 		}
+
+		/* 실행 설정 탭 - 조회결과 단위 설정 콤보박스 */
+		// 조회결과 단위 설정 콤보박스 아이템 설정
+		fileSizeCB.getItems().addAll(FileSize.values());
 		
-		this.fileSizeCB.getItems().addAll(FileSize.values());
-		FileSize fileSize = FileSize.valueOf(propRepo.getCommonResource("unit.filesize"));
-		this.fileSizeCB.getSelectionModel().select(fileSize);
-		
-		fileSizeCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+		// 아이템 변경 리스너
+		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.filesize", newValue);
 			propRepo.saveCommonConfig(map);
 		});
-		
-		this.roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
-		int roundingDigits = propRepo.getIntegerCommonResource("unit.rounding");
-		this.roundingDigitsCB.getSelectionModel().select(Integer.valueOf(roundingDigits));
-		
-		roundingDigitsCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+
+		// 초기값 - 설정된 값 없다면 기본값 GB
+		FileSize fileSize = FileSize.of(propRepo.getCommonResource("unit.filesize"));
+		fileSizeCB.getSelectionModel().select(fileSize == null ? FileSize.GB : fileSize);
+
+		/* 실행 설정 탭 - 반올림 자릿수 설정 콤보박스 */
+		// 반올림 자릿수 설정 콤보박스 아이템 설정
+		roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
+
+		// 아이템 변경 리스너
+		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.rounding", newValue);
 			propRepo.saveCommonConfig(map);
 		});
 
-		// Set usage UI type comboBox items and Set setting value; 
+		// 초기값 - 설정된 값 없다면 기본값 2
+		String roundingDigits = propRepo.getCommonResource("unit.rounding");
+		roundingDigitsCB.getSelectionModel().select(roundingDigits == null ? 2 : Integer.valueOf(roundingDigits));
+
+
+		// Set usage UI type comboBox items and Set setting value;
 		String usageUICode = propRepo.getCommonResource("usage-ui-type");
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
@@ -167,7 +177,7 @@ public class SettingMenuController implements Initializable {
 		this.usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
 		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
-	 		map.put("usage-ui-type", newValue.getCode());
+			map.put("usage-ui-type", newValue.getCode());
 			propRepo.saveCommonConfig(map);
 		});
 	}
@@ -341,7 +351,7 @@ public class SettingMenuController implements Initializable {
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox
 				.lookup("#dbConnVBox");
-		
+
 		boolean isDBSaveSucceed = dbConnVBox.saveConnInfoSettings(configFilePath);
 		if (!isDBSaveSucceed) {
 			return;
@@ -349,7 +359,7 @@ public class SettingMenuController implements Initializable {
 
 		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox
 				.lookup("#serverConnVBox");
-		
+
 		boolean isServerSaveSucceed = serverConnVBox.saveConnInfoSettings(configFilePath);
 		if (!isServerSaveSucceed) {
 			return;
@@ -394,6 +404,7 @@ public class SettingMenuController implements Initializable {
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
 		for (String mName : monitoringElements) {
+//			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
 			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
 
 			// Header
@@ -410,8 +421,9 @@ public class SettingMenuController implements Initializable {
 			headerLabel.setAlignment(Pos.CENTER_LEFT);
 			headerLabel.setPrefWidth(200);
 			headerLabel.setPrefHeight(40);
-			headerLabel.setStyle(
-					"-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 14px;");
+			headerLabel.getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/javaFx.css");
+			headerLabel.getStyleClass().add("basic-font");
+			headerLabel.setStyle("-fx-font-size: 13px");
 
 			JFXToggleButton headerToggleBtn = new JFXToggleButton();
 			headerToggleBtn.setId(headerToggleId);
@@ -436,6 +448,7 @@ public class SettingMenuController implements Initializable {
 
 			for (String s : elementContents) {
 				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
+				
 				HBox contentHBox = new HBox();
 				Label contentLabel = new Label();
 				contentLabel.setText(s);
@@ -444,7 +457,8 @@ public class SettingMenuController implements Initializable {
 				contentLabel.setMinWidth(80);
 				contentLabel.setMaxWidth(80);
 				contentLabel.setPrefHeight(40);
-				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-size: 12px;");
+				contentLabel.getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/javaFx.css");
+				contentLabel.getStyleClass().add("basic-font");
 
 				JFXToggleButton contentToggleBtn = new JFXToggleButton();
 				contentToggleBtn.setId(contentToggleId);

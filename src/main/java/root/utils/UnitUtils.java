@@ -1,5 +1,10 @@
 package root.utils;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import lombok.Getter;
 
 public class UnitUtils {
@@ -11,9 +16,20 @@ public class UnitUtils {
 		private String unit;
 		private int order;
 
+		private static final Map<String, String> FILESIZE_MAP = Collections
+				.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(FileSize::getUnit, FileSize::name)));
+
 		FileSize(String unit, int order) {
 			this.unit = unit;
 			this.order = order;
+		}
+
+		public static FileSize of(final String unit) {
+			try {
+				return FileSize.valueOf(FILESIZE_MAP.get(unit));
+			} catch (NullPointerException e) {
+				return null;
+			}
 		}
 	}
 
@@ -40,6 +56,6 @@ public class UnitUtils {
 	 */
 	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value, int round) {
 		double convertValue = UnitUtils.convertFileUnit(beforeUnit, afterUnit, value);
-		return Double.valueOf(String.format("%."+round+"f", convertValue)); 
+		return Double.valueOf(String.format("%." + round + "f", convertValue));
 	}
 }
