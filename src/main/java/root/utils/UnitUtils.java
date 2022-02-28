@@ -2,6 +2,8 @@ package root.utils;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -16,20 +18,16 @@ public class UnitUtils {
 		private String unit;
 		private int order;
 
-		private static final Map<String, String> FILESIZE_MAP = Collections
-				.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(FileSize::getUnit, FileSize::name)));
+		private static final Map<String, FileSize> fileSizeMap = Collections
+				.unmodifiableMap(Stream.of(values()).collect(Collectors.toMap(FileSize::getUnit, Function.identity())));
 
 		FileSize(String unit, int order) {
 			this.unit = unit;
 			this.order = order;
 		}
 
-		public static FileSize of(final String unit) {
-			try {
-				return FileSize.valueOf(FILESIZE_MAP.get(unit));
-			} catch (NullPointerException e) {
-				return null;
-			}
+		public static FileSize find(final String unit) {
+			return Optional.ofNullable(fileSizeMap.get(unit)).orElse(GB);
 		}
 	}
 

@@ -290,7 +290,7 @@
                                                                               <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
                                                                           </rowConstraints>
                                                                            <children>
-                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="조회결과 단위 설정">
+                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="조회결과 단위">
                                                                                  <graphic>
                                                                                     <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_RIGHT" size="13" />
                                                                                  </graphic>
@@ -302,7 +302,7 @@
                                                                                     <String fx:value="bold" />
                                                                                  </styleClass>
                                                                               </Label>
-                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="반올림 자릿수 설정" GridPane.columnIndex="2">
+                                                                              <Label style="-fx-font-size: 13px;" stylesheets="@../css/javaFx.css" text="반올림 자릿수" GridPane.columnIndex="2">
                                                                                  <graphic>
                                                                                     <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_RIGHT" size="13" />
                                                                                  </graphic>

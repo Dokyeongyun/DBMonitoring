@@ -44,6 +44,7 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
@@ -94,7 +95,7 @@ public class SettingMenuController implements Initializable {
 	JFXComboBox<FileSize> fileSizeCB;
 
 	@FXML
-	JFXComboBox<Integer> roundingDigitsCB;
+	JFXComboBox<RoundingDigits> roundingDigitsCB;
 
 	@FXML
 	JFXComboBox<UsageUIType> usageUICB;
@@ -129,10 +130,10 @@ public class SettingMenuController implements Initializable {
 			setVisible(noMonitoringConfigAP, true);
 		}
 
-		/* 실행 설정 탭 - 조회결과 단위 설정 콤보박스 */
-		// 조회결과 단위 설정 콤보박스 아이템 설정
+		/* 실행 설정 탭 - 조회결과 단위 콤보박스 */
+		// 조회결과 단위 콤보박스 아이템 설정
 		fileSizeCB.getItems().addAll(FileSize.values());
-		
+
 		// 아이템 변경 리스너
 		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
@@ -141,27 +142,49 @@ public class SettingMenuController implements Initializable {
 		});
 
 		// 초기값 - 설정된 값 없다면 기본값 GB
-		FileSize fileSize = FileSize.of(propRepo.getCommonResource("unit.filesize"));
-		fileSizeCB.getSelectionModel().select(fileSize == null ? FileSize.GB : fileSize);
+		FileSize fileSize = FileSize.find(propRepo.getCommonResource("unit.filesize"));
+		fileSizeCB.getSelectionModel().select(fileSize);
 
-		/* 실행 설정 탭 - 반올림 자릿수 설정 콤보박스 */
-		// 반올림 자릿수 설정 콤보박스 아이템 설정
-		roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
+		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
+		// 반올림 자릿수 콤보박스 아이템 설정
+		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 
 		// 아이템 변경 리스너
 		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
-			map.put("unit.rounding", newValue);
+			map.put("unit.rounding", newValue.getDigits());
 			propRepo.saveCommonConfig(map);
 		});
 
+		// Converter
+		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
+			@Override
+			public String toString(RoundingDigits digits) {
+				return String.valueOf(digits.getDigits());
+			}
+
+			@Override
+			public RoundingDigits fromString(String digits) {
+				return RoundingDigits.find(digits);
+			}
+		});
+
 		// 초기값 - 설정된 값 없다면 기본값 2
-		String roundingDigits = propRepo.getCommonResource("unit.rounding");
-		roundingDigitsCB.getSelectionModel().select(roundingDigits == null ? 2 : Integer.valueOf(roundingDigits));
+		RoundingDigits roundingDigits = RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
+		roundingDigitsCB.getSelectionModel().select(roundingDigits);
 
+		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
+		// 사용량 표시방법 콤보박스 아이템 설정
+		usageUICB.getItems().addAll(UsageUIType.values());
 
-		// Set usage UI type comboBox items and Set setting value;
-		String usageUICode = propRepo.getCommonResource("usage-ui-type");
+		// 아이템 변경 리스너
+		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("usage-ui-type", newValue.getCode());
+			propRepo.saveCommonConfig(map);
+		});
+
+		// Converter
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
 			public String toString(UsageUIType uiType) {
@@ -170,16 +193,13 @@ public class SettingMenuController implements Initializable {
 
 			@Override
 			public UsageUIType fromString(String string) {
-				return usageUICB.getItems().stream().filter(ui -> ui.getName().equals(string)).findFirst().orElse(null);
+				return UsageUIType.find(string);
 			}
 		});
-		this.usageUICB.getItems().addAll(UsageUIType.values());
-		this.usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
-		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("usage-ui-type", newValue.getCode());
-			propRepo.saveCommonConfig(map);
-		});
+
+		// 초기값 - 설정된 값 없다면 기본값 GRAPHIC_BAR
+		String usageUICode = propRepo.getCommonResource("usage-ui-type");
+		usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
 	}
 
 	/**
