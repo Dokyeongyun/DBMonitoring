@@ -24,7 +24,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -35,8 +34,13 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import root.core.domain.ASMDiskUsage;
+import root.core.domain.AlertLog;
+import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.OSDiskUsage;
+import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -96,11 +100,15 @@ public class SettingMenuController implements Initializable {
 	JFXComboBox<UsageUIType> usageUICB;
 
 	/* Common Data */
-	String[] dbMonitorings;
-	String[] serverMonitorings;
-
-	String[] dbNames;
-	String[] serverNames;
+	private static final Map<Class<?>, String> DB_MONITORING_CONTENTS = new HashMap<>();
+	private static final Map<Class<?>, String> SERVER_MONITORING_CONTENTS = new HashMap<>();
+	static {
+		DB_MONITORING_CONTENTS.put(ArchiveUsage.class, "Archive Usage");
+		DB_MONITORING_CONTENTS.put(TableSpaceUsage.class, "TableSpace Usage");
+		DB_MONITORING_CONTENTS.put(ASMDiskUsage.class, "ASM Disk Usage");
+		SERVER_MONITORING_CONTENTS.put(OSDiskUsage.class, "OS Disk Usage");
+		SERVER_MONITORING_CONTENTS.put(AlertLog.class, "Alert Log");
+	}
 
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
@@ -311,16 +319,13 @@ public class SettingMenuController implements Initializable {
 	 */
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
-		dbMonitorings = propRepo.getDBMonitoringContents();
-		serverMonitorings = propRepo.getServerMonitoringContents();
 
 		propRepo.loadMonitoringInfoConfig(filePath);
 
-		dbNames = propRepo.getMonitoringDBNames();
-		serverNames = propRepo.getMonitoringServerNames();
+		String[] dbNames = propRepo.getMonitoringDBNames();
+		String[] serverNames = propRepo.getMonitoringServerNames();
 
-		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
-		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+		createMonitoringElements(monitoringElementsVBox, dbNames, serverNames);
 	}
 
 	/**
@@ -387,23 +392,27 @@ public class SettingMenuController implements Initializable {
 	 * @param monitoringElements
 	 * @param monitoringAlias
 	 */
-	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] monitoringAlias) {
+	private void createMonitoringElements(VBox rootVBox, String[] dbAlias, String[] serverAlias) {
 
-		for (String monitoringElement : monitoringElements) {
+		MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
-			MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
-			// TODO 초기값 설정
-			monitoringYNVBox.addParentToggle(monitoringElement, 6, false);
-
-			for (String alias : monitoringAlias) {
+		for (Class<?> monitoringType : DB_MONITORING_CONTENTS.keySet()) {
+			monitoringYNVBox.addParentToggle(monitoringType, DB_MONITORING_CONTENTS.get(monitoringType));
+			for (String alias : dbAlias) {
 				// TODO 초기값 설정
-				monitoringYNVBox.addChildToggle(alias, 4, false);
+				monitoringYNVBox.addChildToggle(monitoringType, alias, true);
 			}
-
-			rootVBox.getChildren().addAll(monitoringYNVBox);
 		}
 
-		rootVBox.getChildren().add(new Separator());
+		for (Class<?> monitoringType : SERVER_MONITORING_CONTENTS.keySet()) {
+
+			monitoringYNVBox.addParentToggle(monitoringType, SERVER_MONITORING_CONTENTS.get(monitoringType));
+			for (String alias : serverAlias) {
+				// TODO 초기값 설정
+				monitoringYNVBox.addChildToggle(monitoringType, alias, false);
+			}
+		}
+		rootVBox.getChildren().add(monitoringYNVBox);
 	}
 
 	/**
