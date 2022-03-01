@@ -20,24 +20,17 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -52,6 +45,7 @@ import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
+import root.javafx.CustomView.MonitoringYNVBox;
 import root.javafx.CustomView.ServerConnInfoControl;
 import root.javafx.CustomView.dialogUI.CustomTextInputDialog;
 import root.utils.AlertUtils;
@@ -263,9 +257,7 @@ public class SettingMenuController implements Initializable {
 		// 파일 선택창 열고, 선택된 파일 반환받음
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
 
-		if (selectedFile == null) {
-			// NOTHING
-		} else {
+		if (selectedFile != null) {
 			if (selectedFile.isFile() && selectedFile.exists()) {
 				// 올바른 파일
 				String filePath = selectedFile.getAbsolutePath();
@@ -283,8 +275,6 @@ public class SettingMenuController implements Initializable {
 	 * @param filePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
-		boolean loadResult = false;
-
 		try {
 			// 1. 절대경로를 상대경로로 변환한다.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
@@ -296,6 +286,7 @@ public class SettingMenuController implements Initializable {
 			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
+			// TODO move this logic to PropertyService
 			// 4. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
@@ -304,25 +295,12 @@ public class SettingMenuController implements Initializable {
 			// 5. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);
 
-			loadResult = true;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		} finally {
-
-			// 6. 파일 load가 완료되었다는 메시지를 띄운다.
-			if (loadResult) {
-				Alert successAlert = new Alert(AlertType.INFORMATION);
-				successAlert.setHeaderText("설정파일 불러오기");
-				successAlert.setContentText("설정파일을 정상적으로 불러왔습니다.");
-				successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-				successAlert.show();
-			} else {
-				Alert failAlert = new Alert(AlertType.ERROR);
-				failAlert.setHeaderText("설정파일 불러오기");
-				failAlert.setContentText("설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.");
-				failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-				failAlert.show();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 6. 파일 load가 실패 시, Alert 메시지를 띄운다.
+			String headerText = "설정파일 불러오기";
+			String contentText = "설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.";
+			AlertUtils.showAlert(AlertType.ERROR, headerText, contentText);
 		}
 	}
 
@@ -382,6 +360,7 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
+		// TODO move this logic to PropertyService
 		PropertiesConfiguration config = propRepo.getConfiguration("monitoringConfig");
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
@@ -392,13 +371,12 @@ public class SettingMenuController implements Initializable {
 				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
 			}
 			propRepo.save(monitoringFilePath, config);
+
 			loadMonitoringConfigFile(monitoringFilePath);
 
-			Alert failAlert = new Alert(AlertType.INFORMATION);
-			failAlert.setHeaderText("설정 저장");
-			failAlert.setContentText("모니터링여부 설정이 저장되었습니다.");
-			failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-			failAlert.show();
+			String headerText = "설정 저장";
+			String contentText = "모니터링여부 설정이 저장되었습니다.";
+			AlertUtils.showAlert(AlertType.INFORMATION, headerText, contentText);
 		}
 	}
 
@@ -407,130 +385,22 @@ public class SettingMenuController implements Initializable {
 	 * 
 	 * @param rootVBox
 	 * @param monitoringElements
-	 * @param elementContents
+	 * @param monitoringAlias
 	 */
-	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
-		for (String mName : monitoringElements) {
-//			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
-			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
+	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] monitoringAlias) {
 
-			// Header
-			VBox eachWrapVBox = new VBox();
-			eachWrapVBox.setFillWidth(true);
+		for (String monitoringElement : monitoringElements) {
 
-			HBox headerHBox = new HBox();
-			headerHBox.setFillHeight(true);
-			headerHBox.setPrefHeight(40);
+			MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
+			// TODO 초기값 설정
+			monitoringYNVBox.addParentToggle(monitoringElement, 6, false);
 
-			Label headerLabel = new Label();
-			headerLabel.setText(mName);
-			headerLabel.setTextAlignment(TextAlignment.LEFT);
-			headerLabel.setAlignment(Pos.CENTER_LEFT);
-			headerLabel.setPrefWidth(200);
-			headerLabel.setPrefHeight(40);
-			headerLabel.getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/javaFx.css");
-			headerLabel.getStyleClass().add("basic-font");
-			headerLabel.setStyle("-fx-font-size: 13px");
-
-			JFXToggleButton headerToggleBtn = new JFXToggleButton();
-			headerToggleBtn.setId(headerToggleId);
-			headerToggleBtn.setSize(6);
-			headerToggleBtn.setToggleColor(Paint.valueOf("#0132ac"));
-			headerToggleBtn.setToggleLineColor(Paint.valueOf("#6e93ea"));
-			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(propRepo.isMonitoringContent(headerToggleId));
-			headerToggleBtn.setOnAction((ActionEvent e) -> {
-				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-				for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-					((JFXToggleButton) n).setSelected(isSelected);
-				}
-			});
-
-			headerHBox.getChildren().addAll(headerToggleBtn, headerLabel);
-
-			// Content
-			FlowPane contentFlowPane = new FlowPane();
-			contentFlowPane.prefWidthProperty().bind(rootVBox.widthProperty());
-			contentFlowPane.minWidthProperty().bind(rootVBox.minWidthProperty());
-
-			for (String s : elementContents) {
-				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
-
-				HBox contentHBox = new HBox();
-				Label contentLabel = new Label();
-				contentLabel.setText(s);
-				contentLabel.setTextAlignment(TextAlignment.LEFT);
-				contentLabel.setAlignment(Pos.CENTER_LEFT);
-				contentLabel.setMinWidth(80);
-				contentLabel.setMaxWidth(80);
-				contentLabel.setPrefHeight(40);
-				contentLabel.getStylesheets().add(System.getProperty("resourceBaseDir") + "/css/javaFx.css");
-				contentLabel.getStyleClass().add("basic-font");
-
-				JFXToggleButton contentToggleBtn = new JFXToggleButton();
-				contentToggleBtn.setId(contentToggleId);
-				contentToggleBtn.setSize(4);
-				contentToggleBtn.setMinWidth(40);
-				contentToggleBtn.setMaxWidth(40);
-				contentToggleBtn.setPrefHeight(40);
-				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(propRepo.isMonitoringContent(contentToggleId));
-				contentToggleBtn.setOnAction((ActionEvent e) -> {
-					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-
-					/*
-					 * 1. 하위요소가 선택되었을 때, 1.1. 부모요소가 선택되었는지 확인 1.1.1. 선택됨 - break; 1.1.2. 선택안됨 -
-					 * isSelected = true 2. 하위요소가 선택되지 않았을 때, 2.1. 부모요소가 선택되었는지 확인 2.1.1. 선택안됨 -
-					 * break; 2.1.2. 선택됨 2.1.2.1. 모든 하위요소 선택여부 확인 2.1.2.1.1. 모든 하위요소 선택되지않음 - 부모요소
-					 * isSelected = false;
-					 */
-					if (isSelected == true) {
-						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
-								if (thisToggle.isSelected() == false) {
-									thisToggle.setSelected(true);
-									break;
-								}
-							}
-						}
-					} else {
-						boolean isNotAllSelected = false;
-						boolean isParentSelected = true;
-						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if (thisToggle.getId().equals(headerToggleId) == false) { // 자식 Toggle
-								if (thisToggle.isSelected() == true) {
-									isNotAllSelected = true;
-									break;
-								}
-							} else {
-								if (thisToggle.isSelected() == false) {
-									isParentSelected = false;
-									break;
-								}
-							}
-						}
-
-						if (isNotAllSelected == false && isParentSelected == true) {
-							for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-								JFXToggleButton thisToggle = (JFXToggleButton) n;
-								if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
-									thisToggle.setSelected(false);
-									break;
-								}
-							}
-						}
-					}
-				});
-
-				contentHBox.getChildren().addAll(contentToggleBtn, contentLabel);
-				contentFlowPane.getChildren().addAll(contentHBox);
+			for (String alias : monitoringAlias) {
+				// TODO 초기값 설정
+				monitoringYNVBox.addChildToggle(alias, 4, false);
 			}
 
-			eachWrapVBox.getChildren().addAll(headerHBox, contentFlowPane);
-
-			rootVBox.getChildren().addAll(eachWrapVBox);
+			rootVBox.getChildren().addAll(monitoringYNVBox);
 		}
 
 		rootVBox.getChildren().add(new Separator());
