@@ -4,14 +4,12 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
+import root.javafx.DI.DependencyInjection;
+import root.utils.SceneUtils;
 
 public class LeftMenuController {
+	
 	// Left SplitPane Region
 	@FXML Button homeBtn;
 	@FXML Button settingMenuBtn;
@@ -23,11 +21,7 @@ public class LeftMenuController {
 	 * @throws IOException
 	 */
 	public void goHomeStage(ActionEvent e) throws IOException {
-		Scene originalScene = homeBtn.getScene();
-		Parent home = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
-        Scene homeScene = new Scene(home, originalScene.getWidth(), originalScene.getHeight());
-        Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
-        primaryStage.setScene(homeScene);
+		SceneUtils.movePage(DependencyInjection.load("/fxml/Home.fxml"));
 	}
 	
 	/**
@@ -36,24 +30,28 @@ public class LeftMenuController {
 	 * @throws IOException
 	 */
 	public void goSettingMenu(ActionEvent e) throws IOException {
-		Scene originalScene = homeBtn.getScene();
-		Parent parent = FXMLLoader.load(getClass().getResource("/fxml/SettingMenu.fxml"));
-        Scene newScene = new Scene(parent, originalScene.getWidth(), originalScene.getHeight());
-        Stage primaryStage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        primaryStage.setScene(newScene);
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
 	}
-	
+
 	/**
 	 * 실행 메뉴로 이동한다.
+	 * 
 	 * @param e
 	 * @throws IOException
 	 */
 	public void goRunMenu(ActionEvent e) throws IOException {
-		Scene originalScene = homeBtn.getScene();
-		Parent parent = FXMLLoader.load(getClass().getResource("/fxml/RunMenu.fxml"));
-        Scene newScene = new Scene(parent, originalScene.getWidth(), originalScene.getHeight());
-        Stage primaryStage = (Stage)((Node) e.getSource()).getScene().getWindow();
-        primaryStage.setScene(newScene);
+		SceneUtils.movePage(DependencyInjection.load("/fxml/RunMenu.fxml"));
+	}
+	
+
+	/**
+	 * 모니터링 기록 조회 메뉴로 이동한다.
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goHistoryMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/HistoryMenu.fxml"));
 	}
 	
 	public void goMenu2(ActionEvent e) {

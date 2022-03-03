@@ -8,10 +8,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import dnl.utils.text.table.TextTable;
+import dnl.utils.text.table.csv.CsvTableModel;
+import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschServer;
+import root.core.batch.DBCheckBatch;
+import root.core.batch.ServerCheckBatch;
+import root.core.domain.AlertLogCommandPeriod;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
+import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.PropertyRepository;
+import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
+import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
+import root.core.usecase.constracts.DBCheckUsecase;
+import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.implement.DBCheckUsecaseImpl;
+import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.utils.CsvUtils;
+import root.utils.DateUtils;
 import root.utils.PatternUtils;
 
 /**
@@ -77,17 +98,17 @@ public class ConsoleApp {
 		String selectedPreset = "";
 		while (true) {
 			System.out.println(String.format("사용하실 모니터링여부 설정을 선택해주세요."));
-			
+
 			List<String> presetNames = propService.getMonitoringPresetNameList();
 			if (presetNames.size() == 0) {
 				System.out.println("모니터링여부 설정파일이 존재하지 않습니다. 프로그램을 종료합니다.");
 				return;
 			}
-			
+
 			for (int i = 0; i < presetNames.size(); i++) {
 				System.out.println(String.format("[%d] %s", (i + 1), presetNames.get(i)));
 			}
-			
+
 			String input = br.readLine().trim();
 			if (!PatternUtils.isOnlyNumber(input)) {
 				System.out.println("잘못 입력하셨습니다. 모니터링여부 설정파일을 다시 선택해주세요.");
@@ -104,5 +125,53 @@ public class ConsoleApp {
 			break;
 		}
 		System.out.println(String.format("선택된 파일은 [%s] 입니다.", selectedPreset));
+
+		// STEP4: 설정파일의 접속정보를 읽어 DB,Server 객체 생성 및 출력
+		List<String> dbNames = propService.getMonitoringDBNameList();
+		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
+		System.out.println("저장된 DB접속정보는 다음과 같습니다.");
+		TextTable dbTable = new TextTable(
+				new CsvTableModel(CsvUtils.toCsvString(jdbcConnectionList, JdbcConnectionInfo.class)));
+		dbTable.printTable(System.out, 2);
+
+		List<String> serverNames = propService.getMonitoringServerNameList();
+		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
+		System.out.println("저장된 Server접속정보는 다음과 같습니다.");
+		TextTable serverTable = new TextTable(
+				new CsvTableModel(CsvUtils.toCsvString(jschConnectionList, JschConnectionInfo.class)));
+		serverTable.printTable(System.out, 2);
+		
+		// TODO STEP5: 모니터링여부 설정 읽기
+
+		// STEP6: 모니터링 수행
+		System.out.println("DB 모니터링을 수행합니다.");
+		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			AbstractDatabase db = new JdbcDatabase(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+			DBCheckBatch dbBatch = new DBCheckBatch(usecase);
+			dbBatch.startBatchArchiveUsageCheck();
+			dbBatch.startBatchTableSpaceUsageCheck();
+			dbBatch.startBatchASMDiskUsageCheck();
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
+		}
+
+		System.out.println("Server 모니터링을 수행합니다.");
+		for (JschConnectionInfo jsch : jschConnectionList) {
+			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
+			JschServer server = new JschServer(jsch);
+			server.init();
+			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
+
+			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
+					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
+			serverBatch.startBatchOSDiskUsageCheck();
+			System.out.println("■ [ " + jsch.getServerName() + " Monitoring End ]\n\n");
+		}
 	}
 }

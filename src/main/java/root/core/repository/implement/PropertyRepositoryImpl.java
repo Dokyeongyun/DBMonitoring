@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -426,6 +424,17 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	public String getLastUseMonitoringPresetName() {
 		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
 	}
+	
+	/**
+	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String getLastUseMonitoringPresetName(String filePath) {
+		load(filePath);
+		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
+	}
 
 	/**
 	 * 모니터링할 DB명 배열을 반환한다.
@@ -487,30 +496,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties 파일에서 모니터링할 DB명을 읽어온 후, 각 DB별 JDBC Connection 정보 가지는 객체 생성
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
-	 */
-	@Override
-	public List<JdbcConnectionInfo> getJdbcConnectionMap() {
-		String[] dbNames = connInfoConfig.getStringArray("dbnames");
-		if (dbNames == null || dbNames.length == 0) {
-			return new ArrayList<>();
-		}
-		List<JdbcConnectionInfo> jdbcList = new ArrayList<>();
-		for (String dbName : dbNames)
-			jdbcList.add(getJdbcConnectionInfo(dbName));
-		Collections.sort(jdbcList, (o1, o2) -> o1.getJdbcDBName().compareTo(o2.getJdbcDBName()) < 0 ? -1 : 1);
-		return jdbcList;
-	}
-
-	/**
 	 * Properties 파일에서 DB별 JdbcConnectionInfo를 읽어와 객체를 생성
 	 * 
 	 * @param dbName
 	 * @return
 	 */
-	private JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
+	@Override
+	public JdbcConnectionInfo getJdbcConnectionInfo(String dbName) {
 		String jdbcAlias = connInfoConfig.getString(dbName + ".jdbc.alias");
 		String jdbcDriver = connInfoConfig.getString(dbName + ".jdbc.driver");
 		String jdbcUrl = connInfoConfig.getString(dbName + ".jdbc.url");
@@ -522,30 +514,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties 파일에서 모니터링할 Server명을 읽어온 후, 각 DB별 JSchConnection 정보 가지는 객체 생성
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 Server Name 순으로 정렬한 리스트
-	 */
-	@Override
-	public List<JschConnectionInfo> getJschConnectionMap() {
-		String[] serverNames = connInfoConfig.getStringArray("servernames");
-		if (serverNames == null || serverNames.length == 0) {
-			return new ArrayList<>();
-		}
-		List<JschConnectionInfo> jschList = new ArrayList<>();
-		for (String serverName : serverNames)
-			jschList.add(getJschConnectionInfo(serverName));
-		Collections.sort(jschList, (o1, o2) -> o1.getServerName().compareTo(o2.getServerName()) < 0 ? -1 : 1);
-		return jschList;
-	}
-
-	/**
 	 * Properties 파일에서 Server별 JschConnectionInfo를 읽어와 객체를 생성
 	 * 
 	 * @param serverName
 	 * @return
 	 */
-	private JschConnectionInfo getJschConnectionInfo(String serverName) {
+	@Override
+	public JschConnectionInfo getJschConnectionInfo(String serverName) {
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
 		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
@@ -561,7 +536,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @param serverName
 	 * @return
 	 */
-	private AlertLogCommand getAlertLogCommand(String serverName) {
+	@Override
+	public AlertLogCommand getAlertLogCommand(String serverName) {
 		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
 		String alertLogReadLine = connInfoConfig.getString(serverName + ".server.alertlog.readline");
 		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
@@ -571,17 +547,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		return alc;
 	}
 
-	/**
-	 * Properties 파일에서 모니터링할 서버명을 읽어온 후, 각 서버별 AlertLogCommand 객체를 생성한다.
-	 * 
-	 * @return 각 DB별 JdbcConnectionInfo 객체를 담은 후 DB Name 순으로 정렬한 리스트
-	 */
 	@Override
-	public Map<String, AlertLogCommand> getAlertLogCommandMap() {
-		String[] serverNames = connInfoConfig.getStringArray("servernames");
-		Map<String, AlertLogCommand> alcMap = new HashMap<>();
-		for (String serverName : serverNames)
-			alcMap.put(serverName, getAlertLogCommand(serverName));
-		return alcMap;
+	public String getMonitoringConfigResource(String key) {
+		return monitoringConfig.getString(key);
 	}
 }

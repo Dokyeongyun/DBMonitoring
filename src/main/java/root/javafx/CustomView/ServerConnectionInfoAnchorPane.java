@@ -16,6 +16,7 @@ import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.javafx.DI.DependencyInjection;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
@@ -47,7 +48,7 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	public ServerConnectionInfoAnchorPane() {
 		try {
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ServerConnectionInfoAnchorPane.fxml"));
+			FXMLLoader loader = DependencyInjection.getLoader("/fxml/ServerConnectionInfoAnchorPane.fxml");
 			loader.setController(this);
 			loader.setRoot(this);
 			loader.load();

@@ -8,11 +8,8 @@ import com.jfoenix.controls.JFXToggleButton;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
@@ -21,9 +18,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.javafx.DI.DependencyInjection;
+import root.utils.SceneUtils;
 
 public class MainController implements Initializable {
 	
@@ -60,10 +58,7 @@ public class MainController implements Initializable {
 	}
 	
 	public void goHomeStage(ActionEvent e) throws IOException {
-		Parent root = FXMLLoader.load(getClass().getResource("/fxml/Home.fxml"));
-        Scene scene = new Scene(root);
-        Stage primaryStage = (Stage) homeBtn.getScene().getWindow();
-        primaryStage.setScene(scene);
+		SceneUtils.movePage(DependencyInjection.load("/fxml/Home.fxml"));
 	}
 	
 	public void setToggleDefaultValue() {
