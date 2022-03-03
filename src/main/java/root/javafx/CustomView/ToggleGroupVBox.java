@@ -3,8 +3,6 @@ package root.javafx.CustomView;
 import java.util.ArrayList;
 import java.util.List;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -26,12 +24,9 @@ public class ToggleGroupVBox extends VBox {
 
 	public ToggleGroupVBox() {
 
-		parentToggleHBox.setToggleAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				for (ToggleHBox t : childToggleList) {
-					t.setToggleSelected(parentToggleHBox.isToggleSelected());
-				}
+		parentToggleHBox.setToggleChangeListener((ob, oldValue, newValue) -> {
+			for (ToggleHBox t : childToggleList) {
+				t.setToggleSelected(parentToggleHBox.isToggleSelected());
 			}
 		});
 
@@ -51,30 +46,33 @@ public class ToggleGroupVBox extends VBox {
 	/**
 	 * Group의 자식 토글 버튼을 추가한다.
 	 * 
-	 * @param text       토글 우측 라벨 텍스트
-	 * @param isSelected 선택 여부
+	 * @param text 토글 우측 라벨 텍스트
 	 */
-	public void addChildToggle(String text, boolean isSelected) {
+	public void addChildToggle(String text) {
 		ToggleHBox childToggleHBox = new ToggleHBox();
 		childToggleHBox.setLabelText(text);
 		childToggleHBox.setToggle(CHILD_TOGGLE_SIZE, CHILD_TOGGLE_COLOR, CHILD_TOGGLE_LINE_COLOR);
-		childToggleHBox.setToggleSelected(isSelected);
-		childToggleHBox.setToggleAction(new EventHandler<ActionEvent>() {
-
-			@Override
-			public void handle(ActionEvent e) {
-				if (childToggleHBox.isToggleSelected()) {
-					parentToggleHBox.setToggleSelected(true);
-				} else {
-					parentToggleHBox.setToggleSelected(!isAllNotSelected());
-				}
+		childToggleHBox.setToggleChangeListener((ob, oldValue, newValue) -> {
+			if (childToggleHBox.isToggleSelected()) {
+				parentToggleHBox.setToggleSelected(true);
+			} else {
+				parentToggleHBox.setToggleSelected(!isAllNotSelected());
 			}
 		});
 
-		parentToggleHBox.setToggleSelected(!isAllNotSelected());
-
 		childToggleList.add(childToggleHBox);
 		childFlowPane.getChildren().add(childToggleHBox);
+	}
+
+	/**
+	 * Group의 자식 토글 버튼의 선택여부를 변경한다.
+	 * 
+	 * @param alias      변경하고자 하는 토글 버튼 우측의 Label Text
+	 * @param isSelected 선택여부
+	 */
+	public void setSelected(String alias, boolean isSelected) {
+		childToggleList.stream().filter(child -> child.getLabelText().equals(alias))
+				.forEach(child -> child.setToggleSelected(isSelected));
 	}
 
 	/**

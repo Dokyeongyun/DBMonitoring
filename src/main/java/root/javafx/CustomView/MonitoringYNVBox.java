@@ -2,10 +2,13 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.VBox;
+import root.core.domain.MonitoringYN;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.javafx.DI.DependencyInjection;
 
@@ -32,13 +35,12 @@ public class MonitoringYNVBox extends VBox {
 	 */
 	public void addParentToggle(MonitoringType type, String text) {
 		if (!toggleGroupVBoxs.containsKey(type)) {
-			toggleGroupVBoxs.put(type, new ToggleGroupVBox());
+			ToggleGroupVBox toggleGroupVBox = new ToggleGroupVBox();
+			toggleGroupVBox.setParentToggle(text);
+			
+			toggleGroupVBoxs.put(type, toggleGroupVBox);
+			getChildren().add(toggleGroupVBox);
 		}
-
-		ToggleGroupVBox parentToggle = toggleGroupVBoxs.get(type);
-		parentToggle.setParentToggle(text);
-
-		getChildren().add(parentToggle);
 	}
 
 	/**
@@ -48,7 +50,40 @@ public class MonitoringYNVBox extends VBox {
 	 * @param text       토글 우측 라벨 텍스트
 	 * @param isSelected 토글 선택 여부
 	 */
-	public void addChildToggle(MonitoringType type, String text, boolean isSelected) {
-		toggleGroupVBoxs.get(type).addChildToggle(text, isSelected);
+	public void addChildToggle(MonitoringType type, String text) {
+		toggleGroupVBoxs.get(type).addChildToggle(text);
+	}
+
+	/**
+	 * 자식 토글의 선택여부를 초기화한다.
+	 * 
+	 * @param monitoringYn
+	 */
+	public void initSelection(MonitoringYN monitoringYn) {
+		String alias = monitoringYn.getMonitoringAlias();
+
+		for (MonitoringTypeAndYN typeAndYn : monitoringYn.getMonitoringTypeList()) {
+			ToggleGroupVBox toggleGroupVBox = toggleGroupVBoxs.get(typeAndYn.getMonitoringType());
+			if (toggleGroupVBox != null) {
+				toggleGroupVBoxs.get(typeAndYn.getMonitoringType()).setSelected(alias, typeAndYn.isMonitoring());
+			}
+		}
+	}
+
+	/**
+	 * 자식 토글의 선택여부를 초기화한다.
+	 * 
+	 * @param list
+	 */
+	public void initSelection(List<MonitoringYN> list) {
+		for (MonitoringYN yn : list) {
+			String alias = yn.getMonitoringAlias();
+
+			for (MonitoringTypeAndYN typeAndYn : yn.getMonitoringTypeList()) {
+				if (toggleGroupVBoxs.get(typeAndYn.getMonitoringType()) != null) {
+					toggleGroupVBoxs.get(typeAndYn.getMonitoringType()).setSelected(alias, typeAndYn.isMonitoring());
+				}
+			}
+		}
 	}
 }

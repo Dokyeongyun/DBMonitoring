@@ -4,7 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,9 +44,9 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
@@ -332,7 +332,7 @@ public class SettingMenuController implements Initializable {
 		String[] dbNames = propRepo.getMonitoringDBNames();
 		String[] serverNames = propRepo.getMonitoringServerNames();
 
-		createMonitoringElements(monitoringElementsVBox, dbNames, serverNames);
+		createMonitoringElements(monitoringElementsVBox);
 	}
 
 	/**
@@ -399,48 +399,42 @@ public class SettingMenuController implements Initializable {
 	 * @param monitoringElements
 	 * @param monitoringAlias
 	 */
-	private void createMonitoringElements(VBox rootVBox, String[] dbAlias, String[] serverAlias) {
+	private void createMonitoringElements(VBox rootVBox) {
 
-		
 		List<MonitoringYN> dbYnList = new ArrayList<>();
 		List<MonitoringTypeAndYN> childList = new ArrayList<>();
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, true));
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, false));
 		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, true));
-		dbYnList.add(new MonitoringYN("DB1", childList));
-		
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, false));
+		dbYnList.add(new MonitoringYN("ERP", childList));
+		dbYnList.add(new MonitoringYN("ERP2", childList));
+		dbYnList.add(new MonitoringYN("ERP3", childList));
+
 		List<MonitoringYN> serverYnList = new ArrayList<>();
 		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, false));
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, false));
-		serverYnList.add(new MonitoringYN("SERVER1", childList2));
-		
-		Set<MonitoringType> dbMonitoringTypeList = new HashSet<>();
-		dbYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
-				.forEach(type -> dbMonitoringTypeList.addAll(type));
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, true));
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, true));
+		serverYnList.add(new MonitoringYN("DBERP1", childList2));
 
-		Set<MonitoringType> serverMonitoringTypeList = new HashSet<>();
-		serverYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
-				.forEach(type -> serverMonitoringTypeList.addAll(type));
-		
 		MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
-
-		for (MonitoringType monitoringType : dbMonitoringTypeList) {
-			monitoringYNVBox.addParentToggle(monitoringType, monitoringType.getName());
-			for (String alias : dbAlias) {
-				// TODO 초기값 설정
-				monitoringYNVBox.addChildToggle(monitoringType, alias, true);
+		for (MonitoringYN dbYn : dbYnList) {
+			for (MonitoringTypeAndYN typeAndYn : dbYn.getMonitoringTypeList()) {
+				MonitoringType type = typeAndYn.getMonitoringType();
+				monitoringYNVBox.addParentToggle(type, type.getName());
+				monitoringYNVBox.addChildToggle(type, dbYn.getMonitoringAlias());
 			}
 		}
-
-		for (MonitoringType monitoringType : serverMonitoringTypeList) {
-
-			monitoringYNVBox.addParentToggle(monitoringType, monitoringType.getName());
-			for (String alias : serverAlias) {
-				// TODO 초기값 설정
-				monitoringYNVBox.addChildToggle(monitoringType, alias, false);
+		monitoringYNVBox.initSelection(dbYnList);
+	
+		for (MonitoringYN serverYn : serverYnList) {
+			for (MonitoringTypeAndYN typeAndYn : serverYn.getMonitoringTypeList()) {
+				MonitoringType type = typeAndYn.getMonitoringType();
+				monitoringYNVBox.addParentToggle(type, type.getName());
+				monitoringYNVBox.addChildToggle(type, serverYn.getMonitoringAlias());
 			}
 		}
+		monitoringYNVBox.initSelection(serverYnList);
+
 		rootVBox.getChildren().add(monitoringYNVBox);
 	}
 

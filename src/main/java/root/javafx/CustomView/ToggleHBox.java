@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import com.jfoenix.controls.JFXToggleButton;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -39,6 +38,15 @@ public class ToggleHBox extends HBox {
 	 */
 	public void setLabelText(String text) {
 		label.setText(text);
+	}
+
+	/**
+	 * Toggle 버튼 우측 Label의 텍스트를 반환한다.
+	 * 
+	 * @return
+	 */
+	public String getLabelText() {
+		return label.getText();
 	}
 
 	/**
@@ -77,7 +85,7 @@ public class ToggleHBox extends HBox {
 	 * 
 	 * @param e
 	 */
-	public void setToggleAction(EventHandler<ActionEvent> e) {
-		toggleBtn.setOnAction(e);
+	public void setToggleChangeListener(ChangeListener<? super Boolean> listener) {
+		toggleBtn.selectedProperty().addListener(listener);
 	}
 }
