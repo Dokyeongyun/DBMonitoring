@@ -143,10 +143,10 @@ public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 		private Label getMonitoringInstanceLabel(String item) {
 			Label label = new Label(item);
 			FontAwesomeIconView icon;
-			if (item.equals("DB")) {
+			if (item.equals("DB ")) {
 				icon = getIconView(FontAwesomeIcon.DATABASE);
 				label.setPadding(new Insets(0, 0, 0, 15));
-			} else if (item.equals("Server")) {
+			} else if (item.equals("Server ")) {
 				icon = getIconView(FontAwesomeIcon.SERVER);
 				label.setPadding(new Insets(0, 0, 0, 15));
 			} else {

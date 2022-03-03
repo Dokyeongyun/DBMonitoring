@@ -2,11 +2,15 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -39,8 +43,11 @@ import root.core.domain.AlertLog;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
+import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
@@ -394,19 +401,41 @@ public class SettingMenuController implements Initializable {
 	 */
 	private void createMonitoringElements(VBox rootVBox, String[] dbAlias, String[] serverAlias) {
 
+		
+		List<MonitoringYN> dbYnList = new ArrayList<>();
+		List<MonitoringTypeAndYN> childList = new ArrayList<>();
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, true));
+		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, true));
+		dbYnList.add(new MonitoringYN("DB1", childList));
+		
+		List<MonitoringYN> serverYnList = new ArrayList<>();
+		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, false));
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, false));
+		serverYnList.add(new MonitoringYN("SERVER1", childList2));
+		
+		Set<MonitoringType> dbMonitoringTypeList = new HashSet<>();
+		dbYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
+				.forEach(type -> dbMonitoringTypeList.addAll(type));
+
+		Set<MonitoringType> serverMonitoringTypeList = new HashSet<>();
+		serverYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
+				.forEach(type -> serverMonitoringTypeList.addAll(type));
+		
 		MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
-		for (Class<?> monitoringType : DB_MONITORING_CONTENTS.keySet()) {
-			monitoringYNVBox.addParentToggle(monitoringType, DB_MONITORING_CONTENTS.get(monitoringType));
+		for (MonitoringType monitoringType : dbMonitoringTypeList) {
+			monitoringYNVBox.addParentToggle(monitoringType, monitoringType.getName());
 			for (String alias : dbAlias) {
 				// TODO 초기값 설정
 				monitoringYNVBox.addChildToggle(monitoringType, alias, true);
 			}
 		}
 
-		for (Class<?> monitoringType : SERVER_MONITORING_CONTENTS.keySet()) {
+		for (MonitoringType monitoringType : serverMonitoringTypeList) {
 
-			monitoringYNVBox.addParentToggle(monitoringType, SERVER_MONITORING_CONTENTS.get(monitoringType));
+			monitoringYNVBox.addParentToggle(monitoringType, monitoringType.getName());
 			for (String alias : serverAlias) {
 				// TODO 초기값 설정
 				monitoringYNVBox.addChildToggle(monitoringType, alias, false);

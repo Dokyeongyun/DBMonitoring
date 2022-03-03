@@ -263,7 +263,7 @@ public class RunMenuController implements Initializable {
 		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		dbCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		dbMonitoringTypeList.forEach(type -> dbCtv.addMonitoringYNTableColumn(type.getName(), type));
-		dbCtv.addTreeTableItem(new MonitoringYN("DB"), dbYnList, FontAwesomeIcon.DATABASE);
+		dbCtv.addTreeTableItem(new MonitoringYN("DB "), dbYnList, FontAwesomeIcon.DATABASE);
 		setAnchorPaneAnchor(dbCtv, 0, 0, 0, 0);
 		dbPresetAP.getChildren().add(dbCtv);
 
@@ -271,7 +271,7 @@ public class RunMenuController implements Initializable {
 		CustomTreeTableView serverCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		serverCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		serverMonitoringTypeList.forEach(type -> serverCtv.addMonitoringYNTableColumn(type.getName(), type));
-		serverCtv.addTreeTableItem(new MonitoringYN("Server"), serverYnList, FontAwesomeIcon.SERVER);
+		serverCtv.addTreeTableItem(new MonitoringYN("Server "), serverYnList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(serverCtv, 0, 0, 0, 0);
 		serverPresetAP.getChildren().add(serverCtv);
 	}

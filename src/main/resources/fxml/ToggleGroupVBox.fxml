@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="VBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <fx:include fx:id="parentHBox" source="ToggleHBox.fxml" />
+      <FlowPane fx:id="childFlowPane" alignment="CENTER_LEFT" columnHalignment="CENTER" />
+   </children>
+</fx:root>
