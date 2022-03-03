@@ -2,8 +2,11 @@ package root.javafx.Controller;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -22,16 +25,17 @@ import javafx.scene.layout.AnchorPane;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
+import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
+import root.core.domain.enums.MonitoringType;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
-import root.javafx.Model.DBMonitoringYN;
-import root.javafx.Model.ServerMonitoringYN;
 
 public class RunMenuController implements Initializable {
 
@@ -113,6 +117,20 @@ public class RunMenuController implements Initializable {
 			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
 		}
 
+		List<MonitoringYN> list = new ArrayList<>();
+		List<MonitoringTypeAndYN> childList = new ArrayList<>();
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, true));
+		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
+		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, true));
+		list.add(new MonitoringYN("DB1", childList));
+		
+		List<MonitoringYN> list2 = new ArrayList<>();
+		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, false));
+		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, false));
+		list2.add(new MonitoringYN("SERVER1", childList2));
+		addMonitoringPresetPreview(list, list2);
+
 		/* 2. 모니터링 여부 설정 */
 		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
@@ -120,7 +138,7 @@ public class RunMenuController implements Initializable {
 		List<String> presetFileList = propService.getMonitoringPresetNameList();
 		if (presetFileList == null || presetFileList.size() == 0) {
 			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
-//			addMonitoringPresetPreview();
+			addMonitoringPresetPreview(list, list2);
 		} else {
 			presetFileListComboBox.getItems().addAll(presetFileList);
 		}	
@@ -229,27 +247,31 @@ public class RunMenuController implements Initializable {
 	/**
 	 * 설정된 모니터링 여부 Preset을 보여주는 TreeTableView를 생성 및 추가한다.
 	 * 
-	 * @param dbPresetList
-	 * @param serverPresetList
+	 * @param monitoringYNList
 	 */
-	private void addMonitoringPresetPreview(List<DBMonitoringYN> dbPresetList,
-			List<ServerMonitoringYN> serverPresetList) {
+	private void addMonitoringPresetPreview(List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
+
+		Set<MonitoringType> dbMonitoringTypeList = new HashSet<>();
+		dbYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
+				.forEach(type -> dbMonitoringTypeList.addAll(type));
+
+		Set<MonitoringType> serverMonitoringTypeList = new HashSet<>();
+		serverYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
+				.forEach(type -> serverMonitoringTypeList.addAll(type));
 
 		// 모니터링 여부 리스트 TreeTableView - DB
-		CustomTreeTableView<DBMonitoringYN> dbCtv = new CustomTreeTableView<>("", FontAwesomeIcon.LIST);
-		dbCtv.addMonitoringInstanceColumn("Instance", "alias");
-		dbCtv.addMonitoringYNTableColumn("Archive", "archiveUsageYN");
-		dbCtv.addMonitoringYNTableColumn("Table Space", "tableSpaceUsageYN");
-		dbCtv.addMonitoringYNTableColumn("ASM Disk", "asmDiskUsageYN");
-		dbCtv.addTreeTableItem(new DBMonitoringYN("DB"), dbPresetList, FontAwesomeIcon.DATABASE);
+		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
+		dbCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
+		dbMonitoringTypeList.forEach(type -> dbCtv.addMonitoringYNTableColumn(type.getName(), type));
+		dbCtv.addTreeTableItem(new MonitoringYN("DB "), dbYnList, FontAwesomeIcon.DATABASE);
 		setAnchorPaneAnchor(dbCtv, 0, 0, 0, 0);
 		dbPresetAP.getChildren().add(dbCtv);
 
 		// 모니터링 여부 리스트 TreeTableView - Server
-		CustomTreeTableView<ServerMonitoringYN> serverCtv = new CustomTreeTableView<>("", FontAwesomeIcon.LIST);
-		serverCtv.addMonitoringInstanceColumn("Instance", "alias");
-		serverCtv.addMonitoringYNTableColumn("OS Disk", "osDiskUsageYN");
-		serverCtv.addTreeTableItem(new ServerMonitoringYN("Server"), serverPresetList, FontAwesomeIcon.SERVER);
+		CustomTreeTableView serverCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
+		serverCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
+		serverMonitoringTypeList.forEach(type -> serverCtv.addMonitoringYNTableColumn(type.getName(), type));
+		serverCtv.addTreeTableItem(new MonitoringYN("Server "), serverYnList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(serverCtv, 0, 0, 0, 0);
 		serverPresetAP.getChildren().add(serverCtv);
 	}

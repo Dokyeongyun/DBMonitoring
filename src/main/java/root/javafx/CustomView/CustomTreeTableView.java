@@ -5,6 +5,8 @@ import java.util.List;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,14 +15,17 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeSortMode;
 import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.paint.Paint;
-import root.javafx.Model.MonitoringYN;
+import javafx.util.Callback;
+import root.core.domain.MonitoringYN;
+import root.core.domain.enums.MonitoringType;
 
-public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T> {
+public class CustomTreeTableView extends TreeTableView<MonitoringYN> {
 
-	private TreeItem<T> rootItem;
+	private TreeItem<MonitoringYN> rootItem;
 
 	private static final String DEFAULT_ICON_COLOR = "#003b8e";
 	private static final int DEFAULT_ICON_SIZE = 17;
@@ -41,7 +46,7 @@ public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T
 	}
 
 	public void addMonitoringInstanceColumn(String title, String fieldName) {
-		TreeTableColumn<T, String> ttc = new TreeTableColumn<>(title);
+		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
 		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
 		ttc.setCellFactory(param -> {
 			return new MonitoringInstanceCell<>();
@@ -52,8 +57,33 @@ public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T
 		getColumns().add(ttc);
 	}
 
+	public void addMonitoringYNTableColumn(String title, MonitoringType type) {
+		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
+		ttc.setCellValueFactory(
+				new Callback<TreeTableColumn.CellDataFeatures<MonitoringYN, String>, ObservableValue<String>>() {
+
+					@Override
+					public ObservableValue<String> call(CellDataFeatures<MonitoringYN, String> param) {
+
+						try {
+							boolean isMonitoring = param.getValue().getValue().getMonitoringTypeList().stream()
+									.filter(t -> t.getMonitoringType() == type).findFirst().map(t -> t.isMonitoring())
+									.orElse(null);
+
+							return new ReadOnlyStringWrapper(isMonitoring ? "Y" : "N");
+						} catch (Exception e) {
+							return new ReadOnlyStringWrapper("");
+						}
+					}
+				});
+		ttc.setCellFactory(param -> {
+			return new MonitoringYNCell<>();
+		});
+		getColumns().add(ttc);
+	}
+
 	public void addMonitoringYNTableColumn(String title, String fieldName) {
-		TreeTableColumn<T, String> ttc = new TreeTableColumn<>(title);
+		TreeTableColumn<MonitoringYN, String> ttc = new TreeTableColumn<>(title);
 		ttc.setCellValueFactory(new TreeItemPropertyValueFactory<>(fieldName));
 		ttc.setCellFactory(param -> {
 			return new MonitoringYNCell<>();
@@ -61,9 +91,9 @@ public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T
 		getColumns().add(ttc);
 	}
 
-	public void addTreeTableItem(T title, List<T> items, FontAwesomeIcon icon) {
-		TreeItem<T> newTreeItem = new TreeItem<>(title);
-		for (T item : items) {
+	public void addTreeTableItem(MonitoringYN title, List<MonitoringYN> items, FontAwesomeIcon icon) {
+		TreeItem<MonitoringYN> newTreeItem = new TreeItem<>(title);
+		for (MonitoringYN item : items) {
 			newTreeItem.getChildren().add(new TreeItem<>(item));
 			newTreeItem.setExpanded(true);
 		}
@@ -113,10 +143,10 @@ public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T
 		private Label getMonitoringInstanceLabel(String item) {
 			Label label = new Label(item);
 			FontAwesomeIconView icon;
-			if (item.equals("DB")) {
+			if (item.equals("DB ")) {
 				icon = getIconView(FontAwesomeIcon.DATABASE);
 				label.setPadding(new Insets(0, 0, 0, 15));
-			} else if (item.equals("Server")) {
+			} else if (item.equals("Server ")) {
 				icon = getIconView(FontAwesomeIcon.SERVER);
 				label.setPadding(new Insets(0, 0, 0, 15));
 			} else {
@@ -159,6 +189,10 @@ public class CustomTreeTableView<T extends MonitoringYN> extends TreeTableView<T
 		}
 
 		private FontAwesomeIconView getMonitoringYNIcon(String item) {
+			if (item.equals("")) {
+				return null;
+			}
+
 			FontAwesomeIconView icon = new FontAwesomeIconView(
 					item.equals("Y") ? FontAwesomeIcon.CHECK : FontAwesomeIcon.TIMES);
 			icon.setFill(Paint.valueOf(item.equals("Y") ? "#49a157" : "#c40a0a"));

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+
+
+<fx:root alignment="CENTER_LEFT" type="HBox" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXToggleButton fx:id="toggleBtn" selected="true" size="6.0" toggleColor="#0132ac" toggleLineColor="#6e93ea" />
+      <Label fx:id="label" prefHeight="40.0" style="-fx-font-size: 13px;" text="Label" />
+   </children>
+</fx:root>
