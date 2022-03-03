@@ -5,6 +5,7 @@ import java.util.Map;
 
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.MonitoringYN;
 
 public interface PropertyService {
 
@@ -42,6 +43,22 @@ public interface PropertyService {
 	 * @return
 	 */
 	String getLastUsePresetFileName(String filePath);
+
+	/**
+	 * 모니터링여부 Preset 설정파일을 읽어 DB 모니터링 여부 리스트를 반환한다.
+	 * 
+	 * @param presetConfigFileName
+	 * @return
+	 */
+	List<MonitoringYN> getDBMonitoringYnList(String presetConfigFileName);
+	
+	/**
+	 * 모니터링여부 Preset 설정파일을 읽어 Server 모니터링 여부 리스트를 반환한다.
+	 * 
+	 * @param presetConfigFileName
+	 * @return
+	 */
+	List<MonitoringYN> getServerMonitoringYnList(String presetConfigFileName);
 
 	Map<String, String> getMonitoringPresetMap();
 

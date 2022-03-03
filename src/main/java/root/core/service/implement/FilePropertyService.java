@@ -11,8 +11,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.lang3.StringUtils;
+
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.MonitoringYN;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
+import root.core.domain.enums.MonitoringType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
 
@@ -59,9 +64,63 @@ public class FilePropertyService implements PropertyService {
 		propRepo.loadMonitoringInfoConfig(filePath);
 	}
 
+	/**
+	 * 최근 사용된 모니터링 여부 Preset 설정파일명을 반환한다.
+	 */
 	@Override
 	public String getLastUsePresetFileName(String filePath) {
 		return propRepo.getLastUseMonitoringPresetName(filePath);
+	}
+
+	@Override
+	public List<MonitoringYN> getDBMonitoringYnList(String presetConfigFileName) {
+		String presetConfigFilePath = propRepo.getMonitoringPresetMap().get(presetConfigFileName);
+
+		// Load
+		loadMonitoringInfoConfig(presetConfigFilePath);
+
+		List<String> dbAliasList = Arrays.asList(propRepo.getMonitoringDBNames());
+		List<MonitoringType> monitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(t -> t.getCategory().equals("DB")).collect(Collectors.toList());
+
+		return getMonitoringYNList(dbAliasList, monitoringTypeList);
+	}
+
+	@Override
+	public List<MonitoringYN> getServerMonitoringYnList(String presetConfigFileName) {
+		String presetConfigFilePath = propRepo.getMonitoringPresetMap().get(presetConfigFileName);
+
+		// Load
+		loadMonitoringInfoConfig(presetConfigFilePath);
+
+		List<String> serverAliasList = Arrays.asList(propRepo.getMonitoringServerNames());
+		List<MonitoringType> monitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(t -> t.getCategory().equals("SERVER")).collect(Collectors.toList());
+
+		return getMonitoringYNList(serverAliasList, monitoringTypeList);
+	}
+
+	private List<MonitoringYN> getMonitoringYNList(List<String> aliasList, List<MonitoringType> monitoringTypeList) {
+		System.out.println(aliasList);
+		System.out.println(monitoringTypeList);
+
+		List<MonitoringYN> result = new ArrayList<>();
+		for (String serverAlias : aliasList) {
+			MonitoringYN monitoringYn = new MonitoringYN(serverAlias);
+			List<MonitoringTypeAndYN> list = new ArrayList<>();
+			for (MonitoringType monitoringType : monitoringTypeList) {
+				String yn = propRepo.getMonitoringConfigResource(serverAlias + "." + monitoringType.getName());
+				if (!StringUtils.isEmpty(yn)) {
+					list.add(new MonitoringTypeAndYN(monitoringType, yn.equals("Y") ? true : false));
+				} else {
+					list.add(new MonitoringTypeAndYN(monitoringType, false));
+				}
+			}
+			monitoringYn.setMonitoringTypeList(list);
+			result.add(monitoringYn);
+		}
+
+		return result;
 	}
 
 	@Override
@@ -71,7 +130,7 @@ public class FilePropertyService implements PropertyService {
 						Spliterator.ORDERED), false)
 				.filter(key -> key.matches(MONITORING_PRESET_KEY)).collect(Collectors.toUnmodifiableMap(key -> {
 					Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
-					return m.matches() ? m.group(1) : null;
+					return m.matches() ? m.group(1) : "";
 				}, key -> propRepo.getMonitoringConfigResource(key)));
 	}
 
