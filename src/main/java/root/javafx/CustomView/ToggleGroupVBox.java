@@ -1,7 +1,9 @@
 package root.javafx.CustomView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,12 +29,12 @@ public class ToggleGroupVBox extends VBox {
 	public ToggleGroupVBox() {
 
 		parentToggleHBox.setToggleAction(new EventHandler<ActionEvent>() {
-			
+
 			@Override
 			public void handle(ActionEvent event) {
 				for (ToggleHBox t : childToggleList) {
 					t.setToggleSelected(parentToggleHBox.isToggleSelected());
-				}	
+				}
 			}
 		});
 
@@ -100,5 +102,27 @@ public class ToggleGroupVBox extends VBox {
 			}
 		}
 		return isAllNotSelected;
+	}
+
+	/**
+	 * Group의 부모 토글 버튼의 우측 라벨 텍스트를 반환한다.
+	 * 
+	 * @return
+	 */
+	public String getParentLabelText() {
+		return parentToggleHBox.getLabelText();
+	}
+
+	/**
+	 * Group의 자식 토글 버튼의 선택여부를 반환한다.
+	 * 
+	 * @return
+	 */
+	public Map<String, Boolean> getChildSelection() {
+		Map<String, Boolean> result = new HashMap<>();
+		for (ToggleHBox child : childToggleList) {
+			result.put(child.getLabelText(), child.isToggleSelected());
+		}
+		return result;
 	}
 }

@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -102,6 +101,8 @@ public class SettingMenuController implements Initializable {
 	List<JschConnectionInfo> jschConnInfoList;
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
+
+	MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -354,14 +355,20 @@ public class SettingMenuController implements Initializable {
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
 		// TODO move this logic to PropertyService
-		PropertiesConfiguration config = propRepo.getConfiguration("monitoringConfig");
+		PropertiesConfiguration config = new PropertiesConfiguration();
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
 
 		if (!monitoringFilePath.isEmpty()) {
-			for (Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
-				JFXToggleButton thisToggle = (JFXToggleButton) n;
-				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
+
+			Map<MonitoringType, Map<String, Boolean>> selection = monitoringYNVBox.getToggleSelection();
+
+			for (MonitoringType type : selection.keySet()) {
+				Map<String, Boolean> aliasMap = selection.get(type);
+				for (String alias : aliasMap.keySet()) {
+					String key = StringUtils.join(type.getName().replace(" ", "_"), ".", alias);
+					config.setProperty(key, aliasMap.get(alias) ? "Y" : "N");
+				}
 			}
 			propRepo.save(monitoringFilePath, config);
 
@@ -381,8 +388,8 @@ public class SettingMenuController implements Initializable {
 	 * @param serverYnList
 	 */
 	private void createMonitoringElements(VBox rootVBox, List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
+		monitoringYNVBox = new MonitoringYNVBox();
 
-		MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 		for (MonitoringYN dbYn : dbYnList) {
 			for (MonitoringTypeAndYN typeAndYn : dbYn.getMonitoringTypeList()) {
 				MonitoringType type = typeAndYn.getMonitoringType();

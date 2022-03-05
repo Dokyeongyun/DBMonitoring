@@ -101,15 +101,14 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	private List<MonitoringYN> getMonitoringYNList(List<String> aliasList, List<MonitoringType> monitoringTypeList) {
-		System.out.println(aliasList);
-		System.out.println(monitoringTypeList);
 
 		List<MonitoringYN> result = new ArrayList<>();
 		for (String serverAlias : aliasList) {
 			MonitoringYN monitoringYn = new MonitoringYN(serverAlias);
 			List<MonitoringTypeAndYN> list = new ArrayList<>();
 			for (MonitoringType monitoringType : monitoringTypeList) {
-				String yn = propRepo.getMonitoringConfigResource(serverAlias + "." + monitoringType.getName());
+				String yn = propRepo
+						.getMonitoringConfigResource(monitoringType.getName().replace(" ", "_") + "." + serverAlias);
 				if (!StringUtils.isEmpty(yn)) {
 					list.add(new MonitoringTypeAndYN(monitoringType, yn.equals("Y") ? true : false));
 				} else {
