@@ -18,8 +18,10 @@ import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
+import root.core.domain.enums.RoundingDigits;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
+import root.utils.UnitUtils.FileSize;
 
 public class FilePropertyService implements PropertyService {
 
@@ -170,4 +172,19 @@ public class FilePropertyService implements PropertyService {
 				Collectors.mapping(serverName -> propRepo.getJschConnectionInfo(serverName), Collectors.toList()));
 	}
 
+	/**
+	 * 기본값으로 설정된 FileSize 단위를 반환한다.
+	 */
+	@Override
+	public FileSize getDefaultFileSizeUnit() {
+		return FileSize.find(propRepo.getCommonResource("unit.filesize"));
+	}
+
+	/**
+	 * 기본값으로 설정된 반올림 자릿수를 반환한다.
+	 */
+	@Override
+	public RoundingDigits getDefaultRoundingDigits() {
+		return RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
+	}
 }

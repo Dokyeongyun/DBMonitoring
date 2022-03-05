@@ -12,8 +12,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -22,20 +24,22 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.StringConverter;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
+import root.core.domain.enums.RoundingDigits;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
+import root.utils.UnitUtils.FileSize;
 
 public class RunMenuController implements Initializable {
 
@@ -59,6 +63,15 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane serverPresetAP;
+
+	@FXML
+	JFXComboBox<FileSize> fileSizeCB;
+
+	@FXML
+	JFXComboBox<RoundingDigits> roundingDigitsCB;
+
+	@FXML
+	JFXToggleButton resultSaveToggleBtn;
 
 	@FXML
 	ScrollPane mainScrollPane;
@@ -117,20 +130,6 @@ public class RunMenuController implements Initializable {
 			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
 		}
 
-		List<MonitoringYN> list = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList = new ArrayList<>();
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, true));
-		list.add(new MonitoringYN("DB1", childList));
-		
-		List<MonitoringYN> list2 = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, false));
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, false));
-		list2.add(new MonitoringYN("SERVER1", childList2));
-		addMonitoringPresetPreview(list, list2);
-
 		/* 2. 모니터링 여부 설정 */
 		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
@@ -138,18 +137,16 @@ public class RunMenuController implements Initializable {
 		List<String> presetFileList = propService.getMonitoringPresetNameList();
 		if (presetFileList == null || presetFileList.size() == 0) {
 			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
-			addMonitoringPresetPreview(list, list2);
+			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			presetFileListComboBox.getItems().addAll(presetFileList);
-		}	
+		}
 
 		// 2-2. 모니터링 여부 Preset 콤보박스 아이템 변경 리스너 설정
 		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			System.out.println(newValue);
-			System.out.println(propService.getMonitoringPresetFilePath(newValue));
-//			List<DBMonitoringYN> dbPresets = propService.getMonitoringDBNameList();
-//			List<ServerMonitoringYN> serverPresets = propService.getMonitoringServerNameList();
-//			addMonitoringPresetPreview(dbPresets, serverPresets);
+			List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(newValue);
+			List<MonitoringYN> serverYnList = propService.getServerMonitoringYnList(newValue);
+			addMonitoringPresetPreview(dbYnList, serverYnList);
 		});
 
 		// 2-3. 모니터링 여부 Preset 콤보박스 초기값 설정
@@ -160,6 +157,30 @@ public class RunMenuController implements Initializable {
 		} else {
 			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
 		}
+
+		/* 3. 기타 설정 및 실행 */
+		// 3-1. 조회결과 단위 콤보박스
+		// 조회결과 단위 콤보박스 아이템 설정
+		fileSizeCB.getItems().addAll(FileSize.values());
+		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
+
+		// 3-2. 반올림 자릿수 콤보박스
+		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
+		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
+			@Override
+			public String toString(RoundingDigits digits) {
+				return String.valueOf(digits.getDigits());
+			}
+
+			@Override
+			public RoundingDigits fromString(String digits) {
+				return RoundingDigits.find(digits);
+			}
+		});
+
+		// 3-3. 모니터링 결과 저장 여부
+		resultSaveToggleBtn.selectedProperty().set(true);
 
 		// 실행결과 TableView 생성 및 Column 추가
 		MonitoringTableView<ArchiveUsage> archiveTable = addMonitoringTableView(archiveAP, ArchiveUsage.class);
@@ -274,5 +295,22 @@ public class RunMenuController implements Initializable {
 		serverCtv.addTreeTableItem(new MonitoringYN("Server "), serverYnList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(serverCtv, 0, 0, 0, 0);
 		serverPresetAP.getChildren().add(serverCtv);
+	}
+
+	/**
+	 * 모니터링 실행
+	 * 
+	 * @param e
+	 */
+	public void monitoringRunBtn(ActionEvent e) {
+		// TODO 선택된 접속정보 설정 파일, 모니터링 여부 설정파일, 기타 설정을 모두 읽어와 모니터링을 실행한다.
+
+	}
+
+	/**
+	 * 모니터링 결과를 TableView에 렌더링한다.
+	 */
+	public void showMonitoringResult() {
+		// TODO 모니터링 결과를 매개변수로 전달받아 TableView에 렌더링한다.
 	}
 }

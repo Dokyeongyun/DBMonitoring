@@ -191,7 +191,7 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                <JFXComboBox fx:id="fileSizeCB" layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                                                    <padding>
                                                       <Insets left="5.0" />
                                                    </padding></JFXComboBox>
@@ -206,7 +206,7 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                                <JFXComboBox fx:id="roundingDigitsCB" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
                                                    <padding>
                                                       <Insets left="5.0" />
                                                    </padding></JFXComboBox>
@@ -221,12 +221,12 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXToggleButton alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
+                                                <JFXToggleButton fx:id="resultSaveToggleBtn" alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
                                                    <font>
                                                       <Font name="Noto Sans Korean Bold Bold" size="10.0" />
                                                    </font>
                                                 </JFXToggleButton>
-                                                <JFXButton alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+                                                <JFXButton fx:id="monitoringRunBtn" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" onAction="#runMonitoring" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
                                                    <graphic>
                                                       <FontAwesomeIconView fill="#438661" glyphName="PLAY_CIRCLE" size="30">
                                                          <font>
