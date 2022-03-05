@@ -2,15 +2,14 @@ package root.core.service.implement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
 import root.core.domain.JdbcConnectionInfo;
@@ -126,13 +125,20 @@ public class FilePropertyService implements PropertyService {
 
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
-		return StreamSupport
-				.stream(Spliterators.spliteratorUnknownSize(propRepo.getConfiguration("connInfoConfig").getKeys(),
-						Spliterator.ORDERED), false)
-				.filter(key -> key.matches(MONITORING_PRESET_KEY)).collect(Collectors.toUnmodifiableMap(key -> {
-					Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
-					return m.matches() ? m.group(1) : "";
-				}, key -> propRepo.getMonitoringConfigResource(key)));
+		Map<String, String> result = new HashMap<>();
+
+		PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
+
+		config.getKeys().forEachRemaining(key -> {
+			if (key.matches(MONITORING_PRESET_KEY)) {
+				Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
+				if (m.matches()) {
+					String presetName = m.group(1);
+					result.put(presetName, config.getString(key));
+				}
+			}
+		});
+		return result;
 	}
 
 	@Override
