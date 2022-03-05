@@ -25,17 +25,31 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.util.StringConverter;
+import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringResult;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
+import root.core.repository.constracts.DBCheckRepository;
+import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
+import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
+import root.core.usecase.constracts.DBCheckUsecase;
+import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.implement.DBCheckUsecaseImpl;
+import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
@@ -216,7 +230,58 @@ public class RunMenuController implements Initializable {
 	 * @param e
 	 */
 	public void runMonitoring(ActionEvent e) {
-		// TODO 선택된 접속정보 설정 파일, 모니터링 여부 설정파일, 기타 설정을 모두 읽어와 모니터링을 실행한다.
+		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
+		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
+		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
+		propService.loadMonitoringInfoConfig(presetConfigFilePath);
+
+		boolean isSave = resultSaveToggleBtn.isSelected();
+
+		List<String> dbNames = propService.getMonitoringDBNameList();
+		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
+		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			AbstractDatabase db = new JdbcDatabase(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+
+			if (isSave) {
+				usecase.writeCsvArchiveUsage();
+				usecase.writeCsvTableSpaceUsage();
+				usecase.writeCsvASMDiskUsage();
+			}
+
+			List<ArchiveUsage> archiveUsageList = usecase.getCurrentArchiveUsage();
+			List<TableSpaceUsage> tableSpaceUsageList = usecase.getCurrentTableSpaceUsage();
+			List<ASMDiskUsage> asmDiskUsageList = usecase.getCurrentASMDiskUsage();
+			setMonitoringResult(archiveTable, archiveUsageList);
+			setMonitoringResult(tableSpaceTable, tableSpaceUsageList);
+			setMonitoringResult(asmDiskTable, asmDiskUsageList);
+		}
+
+		List<String> serverNames = propService.getMonitoringServerNameList();
+		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
+		for (JschConnectionInfo jsch : jschConnectionList) {
+			JschServer server = new JschServer(jsch);
+			server.init();
+			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+
+			if (isSave) {
+				try {
+					usecase.writeCsvOSDiskUsage();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			List<OSDiskUsage> osDiskUsageList = usecase.getCurrentOSDiskUsage();
+			setMonitoringResult(osDiskTable, osDiskUsageList);
+
+//			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
+//					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+		}
 	}
 
 	/**
