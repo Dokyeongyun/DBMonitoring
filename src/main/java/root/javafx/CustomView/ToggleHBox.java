@@ -5,6 +5,8 @@ import java.io.IOException;
 import com.jfoenix.controls.JFXToggleButton;
 
 import javafx.beans.value.ChangeListener;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
@@ -87,5 +89,14 @@ public class ToggleHBox extends HBox {
 	 */
 	public void setToggleChangeListener(ChangeListener<? super Boolean> listener) {
 		toggleBtn.selectedProperty().addListener(listener);
+	}
+	
+	/**
+	 * Toggle 버튼 클릭 이벤트를 설정한다.
+	 * 
+	 * @param e
+	 */
+	public void setToggleAction(EventHandler<ActionEvent> e) {
+		toggleBtn.setOnAction(e);
 	}
 }

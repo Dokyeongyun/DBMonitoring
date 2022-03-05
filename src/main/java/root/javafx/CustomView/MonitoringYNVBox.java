@@ -37,7 +37,7 @@ public class MonitoringYNVBox extends VBox {
 		if (!toggleGroupVBoxs.containsKey(type)) {
 			ToggleGroupVBox toggleGroupVBox = new ToggleGroupVBox();
 			toggleGroupVBox.setParentToggle(text);
-			
+
 			toggleGroupVBoxs.put(type, toggleGroupVBox);
 			getChildren().add(toggleGroupVBox);
 		}
@@ -85,5 +85,16 @@ public class MonitoringYNVBox extends VBox {
 				}
 			}
 		}
+	}
+
+	public Map<MonitoringType, Map<String, Boolean>> getToggleSelection() {
+		Map<MonitoringType, Map<String, Boolean>> result = new HashMap<>();
+
+		for (MonitoringType type : toggleGroupVBoxs.keySet()) {
+			ToggleGroupVBox toggleGroup = toggleGroupVBoxs.get(type);
+			result.put(type, toggleGroup.getChildSelection());
+		}
+
+		return result;
 	}
 }
