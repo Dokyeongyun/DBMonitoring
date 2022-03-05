@@ -19,11 +19,13 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import root.common.database.contracts.AbstractDatabase;
 import root.common.database.implement.JdbcDatabase;
@@ -110,9 +112,15 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane osDiskAP;
+	
+	@FXML
+	AnchorPane step4AP;
 
 	@FXML
 	Label step4Label;
+	
+	@FXML
+	HBox step3ToStep4Arrow;
 
 	private MonitoringTableView<ArchiveUsage> archiveTable;
 	private MonitoringTableView<TableSpaceUsage> tableSpaceTable;
@@ -129,7 +137,7 @@ public class RunMenuController implements Initializable {
 		initRunStep3();
 
 		/* 4. 실행결과 */
-		initRunStep4();
+		// initRunStep4();
 	}
 
 	/**
@@ -230,6 +238,8 @@ public class RunMenuController implements Initializable {
 	 * @param e
 	 */
 	public void runMonitoring(ActionEvent e) {
+		initRunStep4();
+
 		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
@@ -399,6 +409,15 @@ public class RunMenuController implements Initializable {
 	 * 4. 실행결과 영역의 View를 초기화한다.
 	 */
 	private void initRunStep4() {
+		step4AP.setVisible(true);
+		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
+		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);
+		step4AP.setPrefWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setVisible(true);
+		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
+
 		// 4-1. 실행결과 TableView 생성 및 Column 추가
 		archiveTable = addMonitoringTableView(archiveAP, ArchiveUsage.class);
 		archiveTable.addColumn("Archive", "archiveName");
