@@ -276,7 +276,7 @@
                                                   <items>
                                                       <SplitPane fx:id="upperSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
                                                          <items>
-                                                            <AnchorPane fx:id="archiveAP" minHeight="0.0">
+                                                            <AnchorPane fx:id="archiveAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="Archive 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -291,7 +291,7 @@
                                                                   </Label>
                                                                </children>
                                                             </AnchorPane>
-                                                            <AnchorPane fx:id="tableSpaceAP" minHeight="0.0">
+                                                            <AnchorPane fx:id="tableSpaceAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="TableSpace 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -310,7 +310,7 @@
                                                       </SplitPane>
                                                       <SplitPane fx:id="lowerSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
                                                         <items>
-                                                          <AnchorPane fx:id="asmDiskAP" minHeight="0.0">
+                                                          <AnchorPane fx:id="asmDiskAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="ASM Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -325,7 +325,7 @@
                                                                   </Label>
                                                                </children>
                                                             </AnchorPane>
-                                                          <AnchorPane fx:id="osDiskAP" minHeight="0.0">
+                                                          <AnchorPane fx:id="osDiskAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="OS Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
