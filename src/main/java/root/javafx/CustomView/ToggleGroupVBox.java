@@ -3,6 +3,8 @@ package root.javafx.CustomView;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
@@ -24,9 +26,13 @@ public class ToggleGroupVBox extends VBox {
 
 	public ToggleGroupVBox() {
 
-		parentToggleHBox.setToggleChangeListener((ob, oldValue, newValue) -> {
-			for (ToggleHBox t : childToggleList) {
-				t.setToggleSelected(parentToggleHBox.isToggleSelected());
+		parentToggleHBox.setToggleAction(new EventHandler<ActionEvent>() {
+			
+			@Override
+			public void handle(ActionEvent event) {
+				for (ToggleHBox t : childToggleList) {
+					t.setToggleSelected(parentToggleHBox.isToggleSelected());
+				}	
 			}
 		});
 
@@ -52,11 +58,15 @@ public class ToggleGroupVBox extends VBox {
 		ToggleHBox childToggleHBox = new ToggleHBox();
 		childToggleHBox.setLabelText(text);
 		childToggleHBox.setToggle(CHILD_TOGGLE_SIZE, CHILD_TOGGLE_COLOR, CHILD_TOGGLE_LINE_COLOR);
-		childToggleHBox.setToggleChangeListener((ob, oldValue, newValue) -> {
-			if (childToggleHBox.isToggleSelected()) {
-				parentToggleHBox.setToggleSelected(true);
-			} else {
-				parentToggleHBox.setToggleSelected(!isAllNotSelected());
+		childToggleHBox.setToggleAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				if (childToggleHBox.isToggleSelected()) {
+					parentToggleHBox.setToggleSelected(true);
+				} else {
+					parentToggleHBox.setToggleSelected(!isAllNotSelected());
+				}
 			}
 		});
 
@@ -73,6 +83,7 @@ public class ToggleGroupVBox extends VBox {
 	public void setSelected(String alias, boolean isSelected) {
 		childToggleList.stream().filter(child -> child.getLabelText().equals(alias))
 				.forEach(child -> child.setToggleSelected(isSelected));
+		parentToggleHBox.setToggleSelected(!isAllNotSelected());
 	}
 
 	/**
