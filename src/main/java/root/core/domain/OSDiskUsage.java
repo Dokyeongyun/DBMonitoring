@@ -1,15 +1,19 @@
 package root.core.domain;
 
+import java.util.Date;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
 import root.utils.UnitUtils;
 import root.utils.UnitUtils.FileSize;
 
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Data
 public class OSDiskUsage extends MonitoringResult {
+
+	public OSDiskUsage() {
+		super(new Date());
+	}
 
 	public OSDiskUsage(String monitoringDate, String monitoringTime, String fileSystem, String mountedOn,
 			double totalSpace, double freeSpace, double usedSpace, double usedPercent) {
@@ -41,4 +45,10 @@ public class OSDiskUsage extends MonitoringResult {
 		this.usedSpace = UnitUtils.convertFileUnit(fromUnit, toUnit, usedSpace, round);
 	}
 
+	@Override
+	public String toString() {
+		return "OSDiskUsage [fileSystem=" + fileSystem + ", mountedOn=" + mountedOn + ", totalSpace=" + totalSpace
+				+ ", freeSpace=" + freeSpace + ", usedSpace=" + usedSpace + ", usedPercent=" + usedPercent + "]"
+				+ super.getMonitoringDate() + " " + super.getMonitoringTime();
+	}
 }

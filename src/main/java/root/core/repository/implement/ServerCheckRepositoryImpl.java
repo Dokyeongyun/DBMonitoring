@@ -246,7 +246,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 				case "Filesystem":
 					row.setFileSystem(next);
 					break;
-				case "Size":
+				case "1024-blocks":
 					row.setTotalSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
 							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
@@ -254,11 +254,11 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 					row.setUsedSpace(NumberUnitUtils.toByteValue(Unit.KiloByte, 
 							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
-				case "Avail":
+				case "Available":
 					row.setFreeSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
 							Double.valueOf(next.substring(0, next.indexOf("K")))));
 					break;
-				case "Use%":
+				case "Capacity":
 					row.setUsedPercent(Double.valueOf(next.substring(0, next.indexOf("%"))));
 					break;
 				case "Mounted on":
