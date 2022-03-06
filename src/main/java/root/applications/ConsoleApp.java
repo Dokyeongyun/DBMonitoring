@@ -140,7 +140,7 @@ public class ConsoleApp {
 		TextTable serverTable = new TextTable(
 				new CsvTableModel(CsvUtils.toCsvString(jschConnectionList, JschConnectionInfo.class)));
 		serverTable.printTable(System.out, 2);
-		
+
 		// TODO STEP5: 모니터링여부 설정 읽기
 
 		// STEP6: 모니터링 수행
@@ -164,7 +164,7 @@ public class ConsoleApp {
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
 			ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
 
 			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),

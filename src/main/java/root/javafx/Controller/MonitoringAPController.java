@@ -110,7 +110,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			});
 
 			// Setting inquiry datepicker initial value
-			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(1));
+			this.inquiryDatePicker.setValue(LocalDate.now().minusDays(0));
 
 			this.unitComboBox.getItems().addAll(FileSize.values());
 			FileSize defaultFileSizeUnit = FileSize.valueOf(propertyRepo.getCommonResource("unit.filesize"));

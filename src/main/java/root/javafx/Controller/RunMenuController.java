@@ -281,7 +281,7 @@ public class RunMenuController implements Initializable {
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 			if (isSave) {
 				try {
