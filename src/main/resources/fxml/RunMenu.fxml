@@ -191,7 +191,7 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                <JFXComboBox fx:id="fileSizeCB" layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
                                                    <padding>
                                                       <Insets left="5.0" />
                                                    </padding></JFXComboBox>
@@ -206,11 +206,11 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                                <JFXComboBox fx:id="roundingDigitsCB" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
                                                    <padding>
                                                       <Insets left="5.0" />
                                                    </padding></JFXComboBox>
-                                                <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
+                                                <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
                                                    <graphic>
                                                       <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
                                                    </graphic>
@@ -221,12 +221,12 @@
                                                       <Font name="Noto Sans Korean Regular" size="12.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXToggleButton alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
+                                                <JFXToggleButton fx:id="resultSaveToggleBtn" alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
                                                    <font>
                                                       <Font name="Noto Sans Korean Bold Bold" size="10.0" />
                                                    </font>
                                                 </JFXToggleButton>
-                                                <JFXButton alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+                                                <JFXButton fx:id="monitoringRunBtn" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" onAction="#runMonitoring" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="260.0">
                                                    <graphic>
                                                       <FontAwesomeIconView fill="#438661" glyphName="PLAY_CIRCLE" size="30">
                                                          <font>
@@ -241,6 +241,22 @@
                                                       <Cursor fx:constant="HAND" />
                                                    </cursor>
                                                 </JFXButton>
+                                                <Label layoutX="10.0" layoutY="10.0" text="사용량 컬럼 UI 타입" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
+                                                   <graphic>
+                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                   </graphic>
+                                                   <padding>
+                                                      <Insets left="5.0" right="5.0" />
+                                                   </padding>
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                   </font>
+                                                </Label>
+                                                <JFXComboBox fx:id="usageUITypeCB" layoutX="10.0" layoutY="10.0" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
+                                                   <padding>
+                                                      <Insets left="5.0" />
+                                                   </padding>
+                                                </JFXComboBox>
                                              </children>
                                           </AnchorPane>
                                           <Label alignment="CENTER" layoutX="111.0" layoutY="42.0" text="3. 기타 설정 및 실행" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
@@ -254,12 +270,12 @@
                                           <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </AnchorPane>
-                                    <HBox alignment="CENTER">
+                                    <HBox fx:id="step3ToStep4Arrow" alignment="CENTER" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
                                        <children>
                                           <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
                                        </children>
                                     </HBox>
-                                    <AnchorPane>
+                                    <AnchorPane fx:id="step4AP" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
                                        <children>
                                           <Label fx:id="step4Label" alignment="CENTER" layoutX="111.0" layoutY="42.0" text="4. 실행결과" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                              <font>
@@ -276,7 +292,7 @@
                                                   <items>
                                                       <SplitPane fx:id="upperSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
                                                          <items>
-                                                            <AnchorPane fx:id="archiveAP" minHeight="0.0">
+                                                            <AnchorPane fx:id="archiveAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="Archive 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -291,7 +307,7 @@
                                                                   </Label>
                                                                </children>
                                                             </AnchorPane>
-                                                            <AnchorPane fx:id="tableSpaceAP" minHeight="0.0">
+                                                            <AnchorPane fx:id="tableSpaceAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="TableSpace 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -310,7 +326,7 @@
                                                       </SplitPane>
                                                       <SplitPane fx:id="lowerSplitPane" dividerPositions="0.5" style="-fx-background-color: white;" SplitPane.resizableWithParent="false">
                                                         <items>
-                                                          <AnchorPane fx:id="asmDiskAP" minHeight="0.0">
+                                                          <AnchorPane fx:id="asmDiskAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="ASM Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>
@@ -325,7 +341,7 @@
                                                                   </Label>
                                                                </children>
                                                             </AnchorPane>
-                                                          <AnchorPane fx:id="osDiskAP" minHeight="0.0">
+                                                          <AnchorPane fx:id="osDiskAP" minHeight="0.0" minWidth="350.0">
                                                                <children>
                                                                   <Label text="OS Disk 사용량" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                                      <graphic>

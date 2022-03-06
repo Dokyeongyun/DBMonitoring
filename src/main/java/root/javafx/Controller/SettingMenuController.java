@@ -134,8 +134,7 @@ public class SettingMenuController implements Initializable {
 		});
 
 		// 초기값 - 설정된 값 없다면 기본값 GB
-		FileSize fileSize = FileSize.find(propRepo.getCommonResource("unit.filesize"));
-		fileSizeCB.getSelectionModel().select(fileSize);
+		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 
 		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
 		// 반올림 자릿수 콤보박스 아이템 설정
@@ -162,8 +161,7 @@ public class SettingMenuController implements Initializable {
 		});
 
 		// 초기값 - 설정된 값 없다면 기본값 2
-		RoundingDigits roundingDigits = RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
-		roundingDigitsCB.getSelectionModel().select(roundingDigits);
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 
 		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
 		// 사용량 표시방법 콤보박스 아이템 설정
