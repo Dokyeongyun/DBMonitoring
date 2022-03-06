@@ -308,7 +308,7 @@ public class RunMenuController implements Initializable {
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, reportRepository);
 			
 			PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
 			String alertLogFilePath =  config.getString(jsch.getServerName().toLowerCase() + ".server.alertlog.filepath");

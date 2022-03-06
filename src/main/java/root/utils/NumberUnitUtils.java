@@ -19,6 +19,6 @@ public class NumberUnitUtils {
 	}
 
 	public static double toByteValue(Unit orgUnit, double value) {
-		return value * 1024 * orgUnit.sizeOrder;
+		return value * 1024 * (orgUnit.sizeOrder - Unit.Byte.sizeOrder);
 	}
 }
