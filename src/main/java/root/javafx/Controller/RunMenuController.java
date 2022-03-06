@@ -3,9 +3,7 @@ package root.javafx.Controller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -88,7 +86,7 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<RoundingDigits> roundingDigitsCB;
-	
+
 	@FXML
 	JFXComboBox<UsageUIType> usageUITypeCB;
 
@@ -118,13 +116,13 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane osDiskAP;
-	
+
 	@FXML
 	AnchorPane step4AP;
 
 	@FXML
 	Label step4Label;
-	
+
 	@FXML
 	HBox step3ToStep4Arrow;
 
@@ -180,14 +178,12 @@ public class RunMenuController implements Initializable {
 	/**
 	 * 모니터링 실행 결과 TableView를 부모 AnchorPane에 추가한다.
 	 * 
-	 * @param <T>            모니터링 타입
-	 * @param parent         부모 AnchorPane
-	 * @param monitoringType 모니터링 타입 클래스
+	 * @param <T>    모니터링 타입
+	 * @param parent 부모 AnchorPane
 	 * @return 생성된 TableView
 	 */
-	private <T> MonitoringTableView<T> addMonitoringTableView(AnchorPane parent,
-			Class<? extends MonitoringResult> monitoringType) {
-		MonitoringTableView<T> tableView = new MonitoringTableView<>(monitoringType);
+	private <T extends MonitoringResult> MonitoringTableView<T> addMonitoringTableView(AnchorPane parent) {
+		MonitoringTableView<T> tableView = new MonitoringTableView<>();
 		setAnchorPaneAnchor(tableView, 20, 0, 0, 0);
 		parent.getChildren().add(tableView);
 		return tableView;
@@ -252,6 +248,9 @@ public class RunMenuController implements Initializable {
 		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
 		propService.loadMonitoringInfoConfig(presetConfigFilePath);
 
+		UsageUIType usageUIType = usageUITypeCB.getSelectionModel().getSelectedItem();
+		setUsageColumnUIType(usageUIType);
+
 		boolean isSave = resultSaveToggleBtn.isSelected();
 
 		List<String> dbNames = propService.getMonitoringDBNameList();
@@ -303,7 +302,7 @@ public class RunMenuController implements Initializable {
 	/**
 	 * 모니터링 결과를 TableView에 렌더링한다.
 	 */
-	public <T> void setMonitoringResult(MonitoringTableView<T> tableView, List<T> result) {
+	public <T extends MonitoringResult> void setMonitoringResult(MonitoringTableView<T> tableView, List<T> result) {
 		tableView.setItems(FXCollections.observableArrayList(result));
 	}
 
@@ -406,7 +405,7 @@ public class RunMenuController implements Initializable {
 				return RoundingDigits.find(digits);
 			}
 		});
-		
+
 		// 3-3. 사용량 컬럼 UI 타입
 		// 사용량 표시방법 콤보박스 아이템 설정
 		usageUITypeCB.getItems().addAll(UsageUIType.values());
@@ -441,22 +440,29 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
 
 		// 4-1. 실행결과 TableView 생성 및 Column 추가
-		archiveTable = addMonitoringTableView(archiveAP, ArchiveUsage.class);
+		archiveTable = addMonitoringTableView(archiveAP);
 		archiveTable.addColumn("Archive", "archiveName");
 		archiveTable.addColumn("사용량(%)", "usedPercent");
 
-		tableSpaceTable = addMonitoringTableView(tableSpaceAP, TableSpaceUsage.class);
+		tableSpaceTable = addMonitoringTableView(tableSpaceAP);
 		tableSpaceTable.addColumn("테이블스페이스", "tableSpaceName");
 		tableSpaceTable.addColumn("사용량(%)", "usedPercent");
 
-		asmDiskTable = addMonitoringTableView(asmDiskAP, ASMDiskUsage.class);
+		asmDiskTable = addMonitoringTableView(asmDiskAP);
 		asmDiskTable.addColumn("디스크 그룹", "asmDiskGroupName");
 		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");
 		asmDiskTable.addColumn("사용량(%)", "usedPercent");
 
-		osDiskTable = addMonitoringTableView(osDiskAP, OSDiskUsage.class);
+		osDiskTable = addMonitoringTableView(osDiskAP);
 		osDiskTable.addColumn("파일 시스템", "fileSystem");
 		osDiskTable.addColumn("마운트 위치", "mountedOn");
 		osDiskTable.addColumn("사용량(%)", "usedPercent");
+	}
+
+	private void setUsageColumnUIType(UsageUIType usageUIType) {
+		archiveTable.setUsageUIType(usageUIType);
+		tableSpaceTable.setUsageUIType(usageUIType);
+		asmDiskTable.setUsageUIType(usageUIType);
+		osDiskTable.setUsageUIType(usageUIType);
 	}
 }
