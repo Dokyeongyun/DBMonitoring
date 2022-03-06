@@ -13,37 +13,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.MonitoringYN;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
+import root.core.domain.enums.MonitoringType;
+import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
@@ -51,7 +46,9 @@ import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
+import root.javafx.CustomView.MonitoringYNVBox;
 import root.javafx.CustomView.ServerConnInfoControl;
+import root.javafx.CustomView.dialogUI.CustomTextInputDialog;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
@@ -89,27 +86,23 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
-	
+
 	@FXML
 	JFXComboBox<FileSize> fileSizeCB;
 
 	@FXML
-	JFXComboBox<Integer> roundingDigitsCB;
-	
+	JFXComboBox<RoundingDigits> roundingDigitsCB;
+
 	@FXML
 	JFXComboBox<UsageUIType> usageUICB;
 
 	/* Common Data */
-	String[] dbMonitorings;
-	String[] serverMonitorings;
-
-	String[] dbNames;
-	String[] serverNames;
-
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
+
+	MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -121,37 +114,67 @@ public class SettingMenuController implements Initializable {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
-			monitoringPresetComboBox.getSelectionModel().selectedItemProperty()
-					.addListener((options, oldValue, newValue) -> {
-						loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
-					});
+			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
+				loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+			});
 		} else {
 			setVisible(noConnInfoConfigAP, true);
 			setVisible(noMonitoringConfigAP, true);
 		}
-		
-		this.fileSizeCB.getItems().addAll(FileSize.values());
-		FileSize fileSize = FileSize.valueOf(propRepo.getCommonResource("unit.filesize"));
-		this.fileSizeCB.getSelectionModel().select(fileSize);
-		
-		fileSizeCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+
+		/* 실행 설정 탭 - 조회결과 단위 콤보박스 */
+		// 조회결과 단위 콤보박스 아이템 설정
+		fileSizeCB.getItems().addAll(FileSize.values());
+
+		// 아이템 변경 리스너
+		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
 			map.put("unit.filesize", newValue);
 			propRepo.saveCommonConfig(map);
 		});
-		
-		this.roundingDigitsCB.getItems().addAll(List.of(1, 2, 3, 4, 5));
-		int roundingDigits = propRepo.getIntegerCommonResource("unit.rounding");
-		this.roundingDigitsCB.getSelectionModel().select(Integer.valueOf(roundingDigits));
-		
-		roundingDigitsCB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+
+		// 초기값 - 설정된 값 없다면 기본값 GB
+		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
+
+		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
+		// 반올림 자릿수 콤보박스 아이템 설정
+		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
+
+		// 아이템 변경 리스너
+		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			Map<String, Object> map = new HashMap<>();
-			map.put("unit.rounding", newValue);
+			map.put("unit.rounding", newValue.getDigits());
 			propRepo.saveCommonConfig(map);
 		});
 
-		// Set usage UI type comboBox items and Set setting value; 
-		String usageUICode = propRepo.getCommonResource("usage-ui-type");
+		// Converter
+		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
+			@Override
+			public String toString(RoundingDigits digits) {
+				return String.valueOf(digits.getDigits());
+			}
+
+			@Override
+			public RoundingDigits fromString(String digits) {
+				return RoundingDigits.find(digits);
+			}
+		});
+
+		// 초기값 - 설정된 값 없다면 기본값 2
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
+
+		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
+		// 사용량 표시방법 콤보박스 아이템 설정
+		usageUICB.getItems().addAll(UsageUIType.values());
+
+		// 아이템 변경 리스너
+		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
+			Map<String, Object> map = new HashMap<>();
+			map.put("usage-ui-type", newValue.getCode());
+			propRepo.saveCommonConfig(map);
+		});
+
+		// Converter
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
 			public String toString(UsageUIType uiType) {
@@ -160,16 +183,13 @@ public class SettingMenuController implements Initializable {
 
 			@Override
 			public UsageUIType fromString(String string) {
-				return usageUICB.getItems().stream().filter(ui -> ui.getName().equals(string)).findFirst().orElse(null);
+				return UsageUIType.find(string);
 			}
 		});
-		this.usageUICB.getItems().addAll(UsageUIType.values());
-		this.usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
-		usageUICB.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-			Map<String, Object> map = new HashMap<>();
-	 		map.put("usage-ui-type", newValue.getCode());
-			propRepo.saveCommonConfig(map);
-		});
+
+		// 초기값 - 설정된 값 없다면 기본값 GRAPHIC_BAR
+		String usageUICode = propRepo.getCommonResource("usage-ui-type");
+		usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
 	}
 
 	/**
@@ -178,34 +198,23 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void showMonitoringPresetPopup(ActionEvent e) {
-		// TextInputDialog 생성
-		TextInputDialog presetInputDialog = new TextInputDialog();
-		// ICON
-		presetInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
-		// CSS
-		presetInputDialog.getDialogPane().getStylesheets()
-				.add(getClass().getResource("/css/dialog.css").toExternalForm());
-		presetInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
-		// Dialog ICON
-		Stage stage = (Stage) presetInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
-		// Button Custom
-		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
-		presetInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
-		presetInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
-		// Content
-		presetInputDialog.setTitle("Preset 생성");
-		presetInputDialog.setHeaderText("새로운 Monitoring Preset 이름을 입력해주세요.");
-		presetInputDialog.setContentText("Preset 이름: ");
-		// Result
+
+		// Create input dialog
+		String dialogTitle = "Preset 생성";
+		String dialogHeaderText = "새로운 Monitoring Preset 이름을 입력해주세요.";
+		String dialogContentText = "Preset 이름: ";
+		CustomTextInputDialog presetInputDialog = new CustomTextInputDialog(dialogTitle, dialogHeaderText,
+				dialogContentText);
+
+		// Process input result
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
-			logger.debug("Monitoring Preset 생성 Input: " + input);
+			// TODO validate input value
 
+			// TODO move this logic to propertyService
 			// 1. Preset명 이용하여 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{preset명}.properties
-			File connInfoFile = new File(fileChooserText.getText());
-			String connInfoFileName = connInfoFile.getName().substring(0,
-					connInfoFile.getName().indexOf(".properties"));
+			String connInfoFilePath = fileChooserText.getText();
+			String connInfoFileName = connInfoFilePath.substring(0, connInfoFilePath.indexOf(".properties"));
 			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
 			propRepo.createNewPropertiesFile(filePath, "Monitoring");
 
@@ -218,11 +227,9 @@ public class SettingMenuController implements Initializable {
 			reloadingMonitoringSetting(input);
 
 			// 4. 성공 Alert 띄우기
-			Alert successAlert = new Alert(AlertType.INFORMATION);
-			successAlert.setHeaderText("Preset 생성");
-			successAlert.setContentText("모니터링여부 설정 Preset이 생성되었습니다.");
-			successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-			successAlert.show();
+			String successTitle = "Preset 생성";
+			String successContent = "모니터링여부 설정 Preset이 생성되었습니다.";
+			AlertUtils.showAlert(AlertType.INFORMATION, successTitle, successContent);
 		});
 	}
 
@@ -245,9 +252,7 @@ public class SettingMenuController implements Initializable {
 		// 파일 선택창 열고, 선택된 파일 반환받음
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
 
-		if (selectedFile == null) {
-			// NOTHING
-		} else {
+		if (selectedFile != null) {
 			if (selectedFile.isFile() && selectedFile.exists()) {
 				// 올바른 파일
 				String filePath = selectedFile.getAbsolutePath();
@@ -265,46 +270,32 @@ public class SettingMenuController implements Initializable {
 	 * @param filePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
-		boolean loadResult = false;
-
 		try {
 			// 1. 절대경로를 상대경로로 변환한다.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
 
-			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
+			// 2. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+			fileChooserText.setText(filePath);
+
+			// 3. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
 			propRepo.loadConnectionInfoConfig(filePath);
 
-			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
+			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// 4. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
+			// TODO move this logic to PropertyService
+			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 			propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 
-			// 5. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
-			fileChooserText.setText(filePath);
-
-			loadResult = true;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		} finally {
-
-			// 6. 파일 load가 완료되었다는 메시지를 띄운다.
-			if (loadResult) {
-				Alert successAlert = new Alert(AlertType.INFORMATION);
-				successAlert.setHeaderText("설정파일 불러오기");
-				successAlert.setContentText("설정파일을 정상적으로 불러왔습니다.");
-				successAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-				successAlert.show();
-			} else {
-				Alert failAlert = new Alert(AlertType.ERROR);
-				failAlert.setHeaderText("설정파일 불러오기");
-				failAlert.setContentText("설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.");
-				failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-				failAlert.show();
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// 6. 파일 load가 실패 시, Alert 메시지를 띄운다.
+			String headerText = "설정파일 불러오기";
+			String contentText = "설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.";
+			AlertUtils.showAlert(AlertType.ERROR, headerText, contentText);
 		}
 	}
 
@@ -315,16 +306,13 @@ public class SettingMenuController implements Initializable {
 	 */
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
-		dbMonitorings = propRepo.getDBMonitoringContents();
-		serverMonitorings = propRepo.getServerMonitoringContents();
 
-		propRepo.loadMonitoringInfoConfig(filePath);
+		String presetConfigFileName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 
-		dbNames = propRepo.getMonitoringDBNames();
-		serverNames = propRepo.getMonitoringServerNames();
+		List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(presetConfigFileName);
+		List<MonitoringYN> serverYnList = propService.getServerMonitoringYnList(presetConfigFileName);
 
-		createMonitoringElements(monitoringElementsVBox, dbMonitorings, dbNames);
-		createMonitoringElements(monitoringElementsVBox, serverMonitorings, serverNames);
+		createMonitoringElements(monitoringElementsVBox, dbYnList, serverYnList);
 	}
 
 	/**
@@ -340,7 +328,7 @@ public class SettingMenuController implements Initializable {
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox
 				.lookup("#dbConnVBox");
-		
+
 		boolean isDBSaveSucceed = dbConnVBox.saveConnInfoSettings(configFilePath);
 		if (!isDBSaveSucceed) {
 			return;
@@ -348,7 +336,7 @@ public class SettingMenuController implements Initializable {
 
 		ConnectionInfoVBox<JschConnectionInfo> serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox
 				.lookup("#serverConnVBox");
-		
+
 		boolean isServerSaveSucceed = serverConnVBox.saveConnInfoSettings(configFilePath);
 		if (!isServerSaveSucceed) {
 			return;
@@ -364,23 +352,29 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
-		PropertiesConfiguration config = propRepo.getConfiguration("monitoringConfig");
+		// TODO move this logic to PropertyService
+		PropertiesConfiguration config = new PropertiesConfiguration();
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
 
 		if (!monitoringFilePath.isEmpty()) {
-			for (Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
-				JFXToggleButton thisToggle = (JFXToggleButton) n;
-				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
+
+			Map<MonitoringType, Map<String, Boolean>> selection = monitoringYNVBox.getToggleSelection();
+
+			for (MonitoringType type : selection.keySet()) {
+				Map<String, Boolean> aliasMap = selection.get(type);
+				for (String alias : aliasMap.keySet()) {
+					String key = StringUtils.join(type.getName().replace(" ", "_"), ".", alias);
+					config.setProperty(key, aliasMap.get(alias) ? "Y" : "N");
+				}
 			}
 			propRepo.save(monitoringFilePath, config);
+
 			loadMonitoringConfigFile(monitoringFilePath);
 
-			Alert failAlert = new Alert(AlertType.INFORMATION);
-			failAlert.setHeaderText("설정 저장");
-			failAlert.setContentText("모니터링여부 설정이 저장되었습니다.");
-			failAlert.getDialogPane().setStyle("-fx-font-family: NanumGothic;");
-			failAlert.show();
+			String headerText = "설정 저장";
+			String contentText = "모니터링여부 설정이 저장되었습니다.";
+			AlertUtils.showAlert(AlertType.INFORMATION, headerText, contentText);
 		}
 	}
 
@@ -388,130 +382,31 @@ public class SettingMenuController implements Initializable {
 	 * 모니터링 여부 설정할 요소들 동적 생성
 	 * 
 	 * @param rootVBox
-	 * @param monitoringElements
-	 * @param elementContents
+	 * @param dbYnList
+	 * @param serverYnList
 	 */
-	private void createMonitoringElements(VBox rootVBox, String[] monitoringElements, String[] elementContents) {
-		for (String mName : monitoringElements) {
-			String headerToggleId = mName.replaceAll("\\s", "") + "TotalToggleBtn";
+	private void createMonitoringElements(VBox rootVBox, List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
+		monitoringYNVBox = new MonitoringYNVBox();
 
-			// Header
-			VBox eachWrapVBox = new VBox();
-			eachWrapVBox.setFillWidth(true);
-
-			HBox headerHBox = new HBox();
-			headerHBox.setFillHeight(true);
-			headerHBox.setPrefHeight(40);
-
-			Label headerLabel = new Label();
-			headerLabel.setText(mName);
-			headerLabel.setTextAlignment(TextAlignment.LEFT);
-			headerLabel.setAlignment(Pos.CENTER_LEFT);
-			headerLabel.setPrefWidth(200);
-			headerLabel.setPrefHeight(40);
-			headerLabel.setStyle(
-					"-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-weight: bold; -fx-font-size: 14px;");
-
-			JFXToggleButton headerToggleBtn = new JFXToggleButton();
-			headerToggleBtn.setId(headerToggleId);
-			headerToggleBtn.setSize(6);
-			headerToggleBtn.setToggleColor(Paint.valueOf("#0132ac"));
-			headerToggleBtn.setToggleLineColor(Paint.valueOf("#6e93ea"));
-			headerToggleBtn.setAlignment(Pos.CENTER);
-			headerToggleBtn.setSelected(propRepo.isMonitoringContent(headerToggleId));
-			headerToggleBtn.setOnAction((ActionEvent e) -> {
-				boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-				for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-					((JFXToggleButton) n).setSelected(isSelected);
-				}
-			});
-
-			headerHBox.getChildren().addAll(headerToggleBtn, headerLabel);
-
-			// Content
-			FlowPane contentFlowPane = new FlowPane();
-			contentFlowPane.prefWidthProperty().bind(rootVBox.widthProperty());
-			contentFlowPane.minWidthProperty().bind(rootVBox.minWidthProperty());
-
-			for (String s : elementContents) {
-				String contentToggleId = mName.replaceAll("\\s", "") + s + "ToggleBtn";
-				HBox contentHBox = new HBox();
-				Label contentLabel = new Label();
-				contentLabel.setText(s);
-				contentLabel.setTextAlignment(TextAlignment.LEFT);
-				contentLabel.setAlignment(Pos.CENTER_LEFT);
-				contentLabel.setMinWidth(80);
-				contentLabel.setMaxWidth(80);
-				contentLabel.setPrefHeight(40);
-				contentLabel.setStyle("-fx-font-family: NanumGothic; -fx-text-fill: BLACK; -fx-font-size: 12px;");
-
-				JFXToggleButton contentToggleBtn = new JFXToggleButton();
-				contentToggleBtn.setId(contentToggleId);
-				contentToggleBtn.setSize(4);
-				contentToggleBtn.setMinWidth(40);
-				contentToggleBtn.setMaxWidth(40);
-				contentToggleBtn.setPrefHeight(40);
-				contentToggleBtn.setAlignment(Pos.CENTER);
-				contentToggleBtn.setSelected(propRepo.isMonitoringContent(contentToggleId));
-				contentToggleBtn.setOnAction((ActionEvent e) -> {
-					boolean isSelected = ((JFXToggleButton) e.getSource()).isSelected();
-
-					/*
-					 * 1. 하위요소가 선택되었을 때, 1.1. 부모요소가 선택되었는지 확인 1.1.1. 선택됨 - break; 1.1.2. 선택안됨 -
-					 * isSelected = true 2. 하위요소가 선택되지 않았을 때, 2.1. 부모요소가 선택되었는지 확인 2.1.1. 선택안됨 -
-					 * break; 2.1.2. 선택됨 2.1.2.1. 모든 하위요소 선택여부 확인 2.1.2.1.1. 모든 하위요소 선택되지않음 - 부모요소
-					 * isSelected = false;
-					 */
-					if (isSelected == true) {
-						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
-								if (thisToggle.isSelected() == false) {
-									thisToggle.setSelected(true);
-									break;
-								}
-							}
-						}
-					} else {
-						boolean isNotAllSelected = false;
-						boolean isParentSelected = true;
-						for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-							JFXToggleButton thisToggle = (JFXToggleButton) n;
-							if (thisToggle.getId().equals(headerToggleId) == false) { // 자식 Toggle
-								if (thisToggle.isSelected() == true) {
-									isNotAllSelected = true;
-									break;
-								}
-							} else {
-								if (thisToggle.isSelected() == false) {
-									isParentSelected = false;
-									break;
-								}
-							}
-						}
-
-						if (isNotAllSelected == false && isParentSelected == true) {
-							for (Node n : eachWrapVBox.lookupAll("JFXToggleButton")) {
-								JFXToggleButton thisToggle = (JFXToggleButton) n;
-								if (thisToggle.getId().equals(headerToggleId)) { // 부모 Toggle
-									thisToggle.setSelected(false);
-									break;
-								}
-							}
-						}
-					}
-				});
-
-				contentHBox.getChildren().addAll(contentToggleBtn, contentLabel);
-				contentFlowPane.getChildren().addAll(contentHBox);
+		for (MonitoringYN dbYn : dbYnList) {
+			for (MonitoringTypeAndYN typeAndYn : dbYn.getMonitoringTypeList()) {
+				MonitoringType type = typeAndYn.getMonitoringType();
+				monitoringYNVBox.addParentToggle(type, type.getName());
+				monitoringYNVBox.addChildToggle(type, dbYn.getMonitoringAlias());
 			}
-
-			eachWrapVBox.getChildren().addAll(headerHBox, contentFlowPane);
-
-			rootVBox.getChildren().addAll(eachWrapVBox);
 		}
+		monitoringYNVBox.initSelection(dbYnList);
 
-		rootVBox.getChildren().add(new Separator());
+		for (MonitoringYN serverYn : serverYnList) {
+			for (MonitoringTypeAndYN typeAndYn : serverYn.getMonitoringTypeList()) {
+				MonitoringType type = typeAndYn.getMonitoringType();
+				monitoringYNVBox.addParentToggle(type, type.getName());
+				monitoringYNVBox.addChildToggle(type, serverYn.getMonitoringAlias());
+			}
+		}
+		monitoringYNVBox.initSelection(serverYnList);
+
+		rootVBox.getChildren().add(monitoringYNVBox);
 	}
 
 	/**
@@ -624,12 +519,13 @@ public class SettingMenuController implements Initializable {
 		// ICON
 		configInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
 		// CSS
-		configInputDialog.getDialogPane().getStylesheets()
-				.add(getClass().getResource("/css/dialog.css").toExternalForm());
+		configInputDialog.getDialogPane().getStylesheets().add(
+				getClass().getResource(System.getProperty("resourceBaseDir") + "/css/dialog.css").toExternalForm());
 		configInputDialog.getDialogPane().getStyleClass().add("textInputDialog");
 		// Dialog ICON
 		Stage stage = (Stage) configInputDialog.getDialogPane().getScene().getWindow();
-		stage.getIcons().add(new Image(this.getClass().getResource("/image/add_icon.png").toString()));
+		stage.getIcons().add(new Image(
+				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
 		// Button Custom
 		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
 		configInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
