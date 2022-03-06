@@ -7,6 +7,7 @@ import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.enums.RoundingDigits;
+import root.core.domain.enums.UsageUIType;
 import root.utils.UnitUtils.FileSize;
 
 public interface PropertyService {
@@ -91,4 +92,11 @@ public interface PropertyService {
 	 * @return
 	 */
 	RoundingDigits getDefaultRoundingDigits();
+
+	/**
+	 * 기본값으로 설정된 사용량 컬럼 UI 타입을 반환한다.
+	 * 
+	 * @return
+	 */
+	UsageUIType getDefaultUsageUIType();
 }

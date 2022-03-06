@@ -3,7 +3,9 @@ package root.javafx.Controller;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerCheckRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
@@ -85,6 +88,9 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<RoundingDigits> roundingDigitsCB;
+	
+	@FXML
+	JFXComboBox<UsageUIType> usageUITypeCB;
 
 	@FXML
 	JFXToggleButton resultSaveToggleBtn;
@@ -400,8 +406,24 @@ public class RunMenuController implements Initializable {
 				return RoundingDigits.find(digits);
 			}
 		});
+		
+		// 3-3. 사용량 컬럼 UI 타입
+		// 사용량 표시방법 콤보박스 아이템 설정
+		usageUITypeCB.getItems().addAll(UsageUIType.values());
+		usageUITypeCB.getSelectionModel().select(propService.getDefaultUsageUIType());
+		usageUITypeCB.setConverter(new StringConverter<UsageUIType>() {
+			@Override
+			public String toString(UsageUIType uiType) {
+				return uiType.getName();
+			}
 
-		// 3-3. 모니터링 결과 저장 여부
+			@Override
+			public UsageUIType fromString(String string) {
+				return UsageUIType.find(string);
+			}
+		});
+
+		// 3-4. 모니터링 결과 저장 여부
 		resultSaveToggleBtn.selectedProperty().set(true);
 	}
 

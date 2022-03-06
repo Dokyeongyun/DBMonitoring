@@ -18,6 +18,7 @@ import root.core.domain.MonitoringYN;
 import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
 import root.utils.UnitUtils.FileSize;
@@ -192,5 +193,13 @@ public class FilePropertyService implements PropertyService {
 	@Override
 	public RoundingDigits getDefaultRoundingDigits() {
 		return RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
+	}
+
+	/**
+	 * 기본값으로 설정된 사용량 컬럼 UI 타입을 반환한다.
+	 */
+	@Override
+	public UsageUIType getDefaultUsageUIType() {
+		return UsageUIType.find(propRepo.getCommonResource("usage-ui-type"));
 	}
 }
