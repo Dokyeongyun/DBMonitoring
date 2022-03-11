@@ -2,19 +2,26 @@ package root.core.service.implement;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Spliterator;
-import java.util.Spliterators;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.lang3.StringUtils;
 
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.MonitoringYN;
+import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
+import root.core.domain.enums.MonitoringType;
+import root.core.domain.enums.RoundingDigits;
+import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
+import root.utils.UnitUtils.FileSize;
 
 public class FilePropertyService implements PropertyService {
 
@@ -59,20 +66,80 @@ public class FilePropertyService implements PropertyService {
 		propRepo.loadMonitoringInfoConfig(filePath);
 	}
 
+	/**
+	 * 최근 사용된 모니터링 여부 Preset 설정파일명을 반환한다.
+	 */
 	@Override
 	public String getLastUsePresetFileName(String filePath) {
 		return propRepo.getLastUseMonitoringPresetName(filePath);
 	}
 
 	@Override
+	public List<MonitoringYN> getDBMonitoringYnList(String presetConfigFileName) {
+		String presetConfigFilePath = propRepo.getMonitoringPresetMap().get(presetConfigFileName);
+
+		// Load
+		loadMonitoringInfoConfig(presetConfigFilePath);
+
+		List<String> dbAliasList = Arrays.asList(propRepo.getMonitoringDBNames());
+		List<MonitoringType> monitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(t -> t.getCategory().equals("DB")).collect(Collectors.toList());
+
+		return getMonitoringYNList(dbAliasList, monitoringTypeList);
+	}
+
+	@Override
+	public List<MonitoringYN> getServerMonitoringYnList(String presetConfigFileName) {
+		String presetConfigFilePath = propRepo.getMonitoringPresetMap().get(presetConfigFileName);
+
+		// Load
+		loadMonitoringInfoConfig(presetConfigFilePath);
+
+		List<String> serverAliasList = Arrays.asList(propRepo.getMonitoringServerNames());
+		List<MonitoringType> monitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(t -> t.getCategory().equals("SERVER")).collect(Collectors.toList());
+
+		return getMonitoringYNList(serverAliasList, monitoringTypeList);
+	}
+
+	private List<MonitoringYN> getMonitoringYNList(List<String> aliasList, List<MonitoringType> monitoringTypeList) {
+
+		List<MonitoringYN> result = new ArrayList<>();
+		for (String serverAlias : aliasList) {
+			MonitoringYN monitoringYn = new MonitoringYN(serverAlias);
+			List<MonitoringTypeAndYN> list = new ArrayList<>();
+			for (MonitoringType monitoringType : monitoringTypeList) {
+				String yn = propRepo
+						.getMonitoringConfigResource(monitoringType.getName().replace(" ", "_") + "." + serverAlias);
+				if (!StringUtils.isEmpty(yn)) {
+					list.add(new MonitoringTypeAndYN(monitoringType, yn.equals("Y") ? true : false));
+				} else {
+					list.add(new MonitoringTypeAndYN(monitoringType, false));
+				}
+			}
+			monitoringYn.setMonitoringTypeList(list);
+			result.add(monitoringYn);
+		}
+
+		return result;
+	}
+
+	@Override
 	public Map<String, String> getMonitoringPresetMap() {
-		return StreamSupport
-				.stream(Spliterators.spliteratorUnknownSize(propRepo.getConfiguration("connInfoConfig").getKeys(),
-						Spliterator.ORDERED), false)
-				.filter(key -> key.matches(MONITORING_PRESET_KEY)).collect(Collectors.toUnmodifiableMap(key -> {
-					Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
-					return m.matches() ? m.group(1) : null;
-				}, key -> propRepo.getMonitoringConfigResource(key)));
+		Map<String, String> result = new HashMap<>();
+
+		PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
+
+		config.getKeys().forEachRemaining(key -> {
+			if (key.matches(MONITORING_PRESET_KEY)) {
+				Matcher m = MONITORING_PRESET_KEY_PATTERN.matcher(key);
+				if (m.matches()) {
+					String presetName = m.group(1);
+					result.put(presetName, config.getString(key));
+				}
+			}
+		});
+		return result;
 	}
 
 	@Override
@@ -112,4 +179,27 @@ public class FilePropertyService implements PropertyService {
 				Collectors.mapping(serverName -> propRepo.getJschConnectionInfo(serverName), Collectors.toList()));
 	}
 
+	/**
+	 * 기본값으로 설정된 FileSize 단위를 반환한다.
+	 */
+	@Override
+	public FileSize getDefaultFileSizeUnit() {
+		return FileSize.find(propRepo.getCommonResource("unit.filesize"));
+	}
+
+	/**
+	 * 기본값으로 설정된 반올림 자릿수를 반환한다.
+	 */
+	@Override
+	public RoundingDigits getDefaultRoundingDigits() {
+		return RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
+	}
+
+	/**
+	 * 기본값으로 설정된 사용량 컬럼 UI 타입을 반환한다.
+	 */
+	@Override
+	public UsageUIType getDefaultUsageUIType() {
+		return UsageUIType.find(propRepo.getCommonResource("usage-ui-type"));
+	}
 }

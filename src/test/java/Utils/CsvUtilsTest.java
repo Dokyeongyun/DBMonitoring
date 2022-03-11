@@ -1,11 +1,15 @@
 package Utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +20,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import root.core.domain.ArchiveUsage;
+import root.core.domain.OSDiskUsage;
 import root.core.repository.implement.ReportRepositoryImplTest;
+import root.utils.CsvUtils;
+import root.utils.DateUtils;
 
 public class CsvUtilsTest {
 
@@ -222,5 +229,53 @@ public class CsvUtilsTest {
 		}
 
 		return fields;
+	}
+	
+	@Test
+	public void OSDisk() {
+		List<OSDiskUsage> list = new ArrayList<>();
+		String monitoringDate = DateUtils.format(new Date(), "yyyyMMdd");
+		String monitoringTime = DateUtils.format(new Date(), "HHmmss");
+		
+		OSDiskUsage os1 = new OSDiskUsage(monitoringDate, monitoringTime, "/dev/mapper/VolGroupSys-LogVolRoot", "/",
+				3.1572619264E10, 1.5605579776E10, 1.4356426752E10, 48.0);
+
+		list.add(os1);
+		
+		Class<?> clazz = OSDiskUsage.class;
+
+		File file = new File("./report" + "/" + "OSDiskUsage" + "/" + "erp1" + ".txt");
+		String content = null;
+		try {
+
+			boolean isNewFile = false;
+			if (!file.exists()) {
+				file.getParentFile().mkdirs();
+				isNewFile = file.createNewFile();
+			}
+
+			if(isNewFile) {
+				content = CsvUtils.createCsvHeader(clazz);	
+			}
+
+			for (Object t : list) {
+				String row = CsvUtils.createCsvRow(t, t.getClass());
+				content = StringUtils.joinWith(System.lineSeparator(), content, row);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (content == null) {
+			return;
+		}
+
+		try (BufferedWriter bw = new BufferedWriter(new FileWriter(file, true))) {
+			bw.append(content);
+			bw.flush();
+			bw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

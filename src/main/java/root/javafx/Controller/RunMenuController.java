@@ -2,40 +2,61 @@ package root.javafx.Controller;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
 import com.jfoenix.controls.JFXComboBox;
+import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.util.StringConverter;
+import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
+import root.core.domain.JdbcConnectionInfo;
+import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringResult;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
+import root.core.domain.enums.RoundingDigits;
+import root.core.domain.enums.UsageUIType;
+import root.core.repository.constracts.DBCheckRepository;
+import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.implement.DBCheckRepositoryImpl;
 import root.core.repository.implement.PropertyRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
+import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
+import root.core.usecase.constracts.DBCheckUsecase;
+import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.implement.DBCheckUsecaseImpl;
+import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.CustomView.MonitoringTableView;
+import root.utils.UnitUtils.FileSize;
 
 public class RunMenuController implements Initializable {
 
@@ -59,6 +80,18 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	AnchorPane serverPresetAP;
+
+	@FXML
+	JFXComboBox<FileSize> fileSizeCB;
+
+	@FXML
+	JFXComboBox<RoundingDigits> roundingDigitsCB;
+
+	@FXML
+	JFXComboBox<UsageUIType> usageUITypeCB;
+
+	@FXML
+	JFXToggleButton resultSaveToggleBtn;
 
 	@FXML
 	ScrollPane mainScrollPane;
@@ -85,101 +118,30 @@ public class RunMenuController implements Initializable {
 	AnchorPane osDiskAP;
 
 	@FXML
+	AnchorPane step4AP;
+
+	@FXML
 	Label step4Label;
+
+	@FXML
+	HBox step3ToStep4Arrow;
+
+	private MonitoringTableView<ArchiveUsage> archiveTable;
+	private MonitoringTableView<TableSpaceUsage> tableSpaceTable;
+	private MonitoringTableView<ASMDiskUsage> asmDiskTable;
+	private MonitoringTableView<OSDiskUsage> osDiskTable;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. 모니터링 접속정보 설정 */
-		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
-		List<String> connInfoFileList = propService.getConnectionInfoList();
-		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO 접속정보 설정파일이 없는 경우
-			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
-		} else {
-			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
-		}
+		/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
+		initRunStep1();
 
-		// 1-2. 모니터링 접속정보 설정파일 콤보박스 아이템 변경 리스너 설정
-		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			propService.loadConnectionInfoConfig(newValue);
-			List<String> dbNames = propService.getMonitoringDBNameList();
-			List<String> serverNames = propService.getMonitoringServerNameList();
-			addMonitoringConnInfoPreview(dbNames, serverNames);
-		});
+		/* 3. 기타 설정 및 실행 */
+		initRunStep3();
 
-		// 1-3. 모니터링 접속정보 설정파일 콤보박스 초기값 설정
-		String lastUseConnInfoFile = propService.getLastUseConnectionInfoFilePath();
-		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
-			// 최근 사용된 접속정보 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
-			connInfoFileListComboBox.getSelectionModel().selectFirst();
-		} else {
-			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
-		}
-
-		List<MonitoringYN> list = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList = new ArrayList<>();
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, true));
-		list.add(new MonitoringYN("DB1", childList));
-		
-		List<MonitoringYN> list2 = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, false));
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, false));
-		list2.add(new MonitoringYN("SERVER1", childList2));
-		addMonitoringPresetPreview(list, list2);
-
-		/* 2. 모니터링 여부 설정 */
-		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
-		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
-		propService.loadMonitoringInfoConfig(curConnInfoFile);
-		List<String> presetFileList = propService.getMonitoringPresetNameList();
-		if (presetFileList == null || presetFileList.size() == 0) {
-			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
-			addMonitoringPresetPreview(list, list2);
-		} else {
-			presetFileListComboBox.getItems().addAll(presetFileList);
-		}	
-
-		// 2-2. 모니터링 여부 Preset 콤보박스 아이템 변경 리스너 설정
-		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-			System.out.println(newValue);
-			System.out.println(propService.getMonitoringPresetFilePath(newValue));
-//			List<DBMonitoringYN> dbPresets = propService.getMonitoringDBNameList();
-//			List<ServerMonitoringYN> serverPresets = propService.getMonitoringServerNameList();
-//			addMonitoringPresetPreview(dbPresets, serverPresets);
-		});
-
-		// 2-3. 모니터링 여부 Preset 콤보박스 초기값 설정
-		String lastUsePresetFileName = propService.getLastUsePresetFileName(curConnInfoFile);
-		if (StringUtils.isEmpty(lastUsePresetFileName) || !presetFileList.contains(lastUsePresetFileName)) {
-			// 최근 사용된 모니터링 여부 Preset 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
-			presetFileListComboBox.getSelectionModel().selectFirst();
-		} else {
-			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
-		}
-
-		// 실행결과 TableView 생성 및 Column 추가
-		MonitoringTableView<ArchiveUsage> archiveTable = addMonitoringTableView(archiveAP, ArchiveUsage.class);
-		archiveTable.addColumn("Archive", "archiveName");
-		archiveTable.addColumn("사용량(%)", "usedPercent");
-
-		MonitoringTableView<TableSpaceUsage> tableSpaceTable = addMonitoringTableView(tableSpaceAP,
-				TableSpaceUsage.class);
-		tableSpaceTable.addColumn("테이블스페이스", "tableSpaceName");
-		tableSpaceTable.addColumn("사용량(%)", "usedPercent");
-
-		MonitoringTableView<ASMDiskUsage> asmDiskTable = addMonitoringTableView(asmDiskAP, ASMDiskUsage.class);
-		asmDiskTable.addColumn("디스크 그룹", "asmDiskGroupName");
-		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");
-		asmDiskTable.addColumn("사용량(%)", "usedPercent");
-
-		MonitoringTableView<OSDiskUsage> osDiskTable = addMonitoringTableView(osDiskAP, OSDiskUsage.class);
-		osDiskTable.addColumn("파일 시스템", "fileSystem");
-		osDiskTable.addColumn("마운트 위치", "mountedOn");
-		osDiskTable.addColumn("사용량(%)", "usedPercent");
+		/* 4. 실행결과 */
+		// initRunStep4();
 	}
 
 	/**
@@ -216,14 +178,12 @@ public class RunMenuController implements Initializable {
 	/**
 	 * 모니터링 실행 결과 TableView를 부모 AnchorPane에 추가한다.
 	 * 
-	 * @param <T>            모니터링 타입
-	 * @param parent         부모 AnchorPane
-	 * @param monitoringType 모니터링 타입 클래스
+	 * @param <T>    모니터링 타입
+	 * @param parent 부모 AnchorPane
 	 * @return 생성된 TableView
 	 */
-	private <T> MonitoringTableView<T> addMonitoringTableView(AnchorPane parent,
-			Class<? extends MonitoringResult> monitoringType) {
-		MonitoringTableView<T> tableView = new MonitoringTableView<>(monitoringType);
+	private <T extends MonitoringResult> MonitoringTableView<T> addMonitoringTableView(AnchorPane parent) {
+		MonitoringTableView<T> tableView = new MonitoringTableView<>();
 		setAnchorPaneAnchor(tableView, 20, 0, 0, 0);
 		parent.getChildren().add(tableView);
 		return tableView;
@@ -251,13 +211,11 @@ public class RunMenuController implements Initializable {
 	 */
 	private void addMonitoringPresetPreview(List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
 
-		Set<MonitoringType> dbMonitoringTypeList = new HashSet<>();
-		dbYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
-				.forEach(type -> dbMonitoringTypeList.addAll(type));
+		List<MonitoringType> dbMonitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(m -> m.getCategory().equals("DB")).collect(Collectors.toList());
 
-		Set<MonitoringType> serverMonitoringTypeList = new HashSet<>();
-		serverYnList.stream().map(m -> m.getDistinctMonitoringTypes()).collect(Collectors.toList())
-				.forEach(type -> serverMonitoringTypeList.addAll(type));
+		List<MonitoringType> serverMonitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
+				.filter(m -> m.getCategory().equals("SERVER")).collect(Collectors.toList());
 
 		// 모니터링 여부 리스트 TreeTableView - DB
 		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
@@ -274,5 +232,237 @@ public class RunMenuController implements Initializable {
 		serverCtv.addTreeTableItem(new MonitoringYN("Server "), serverYnList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(serverCtv, 0, 0, 0, 0);
 		serverPresetAP.getChildren().add(serverCtv);
+	}
+
+	/**
+	 * 모니터링 실행
+	 * 
+	 * @param e
+	 */
+	public void runMonitoring(ActionEvent e) {
+		initRunStep4();
+
+		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
+		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
+		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
+		propService.loadMonitoringInfoConfig(presetConfigFilePath);
+
+		UsageUIType usageUIType = usageUITypeCB.getSelectionModel().getSelectedItem();
+		setUsageColumnUIType(usageUIType);
+
+		boolean isSave = resultSaveToggleBtn.isSelected();
+
+		List<String> dbNames = propService.getMonitoringDBNameList();
+		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
+		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
+			AbstractDatabase db = new JdbcDatabase(jdbc);
+			db.init();
+			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
+			DBCheckUsecase usecase = new DBCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+
+			if (isSave) {
+				usecase.writeCsvArchiveUsage();
+				usecase.writeCsvTableSpaceUsage();
+				usecase.writeCsvASMDiskUsage();
+			}
+
+			List<ArchiveUsage> archiveUsageList = usecase.getCurrentArchiveUsage();
+			List<TableSpaceUsage> tableSpaceUsageList = usecase.getCurrentTableSpaceUsage();
+			List<ASMDiskUsage> asmDiskUsageList = usecase.getCurrentASMDiskUsage();
+			setMonitoringResult(archiveTable, archiveUsageList);
+			setMonitoringResult(tableSpaceTable, tableSpaceUsageList);
+			setMonitoringResult(asmDiskTable, asmDiskUsageList);
+		}
+
+		List<String> serverNames = propService.getMonitoringServerNameList();
+		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
+		for (JschConnectionInfo jsch : jschConnectionList) {
+			JschServer server = new JschServer(jsch);
+			server.init();
+			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+
+			if (isSave) {
+				try {
+					usecase.writeCsvOSDiskUsage();
+				} catch (Exception e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			List<OSDiskUsage> osDiskUsageList = usecase.getCurrentOSDiskUsage();
+			setMonitoringResult(osDiskTable, osDiskUsageList);
+
+//			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
+//					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+		}
+	}
+
+	/**
+	 * 모니터링 결과를 TableView에 렌더링한다.
+	 */
+	public <T extends MonitoringResult> void setMonitoringResult(MonitoringTableView<T> tableView, List<T> result) {
+		tableView.setItems(FXCollections.observableArrayList(result));
+	}
+
+	/**
+	 * 1. 모니터링 접속정보 설정 영역의 View를 초기화한다.
+	 */
+	private void initRunStep1() {
+		// 1-0. Clear
+		if (connInfoFileListComboBox.getItems().size() != 0) {
+			connInfoFileListComboBox.getItems().clear();
+		}
+
+		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
+		List<String> connInfoFileList = propService.getConnectionInfoList();
+		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
+			// TODO 접속정보 설정파일이 없는 경우
+			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
+		} else {
+			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
+		}
+
+		// 1-2. 모니터링 접속정보 설정파일 콤보박스 아이템 변경 리스너 설정
+		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+			propService.loadConnectionInfoConfig(newValue);
+			List<String> dbNames = propService.getMonitoringDBNameList();
+			List<String> serverNames = propService.getMonitoringServerNameList();
+			addMonitoringConnInfoPreview(dbNames, serverNames);
+			initRunStep2();
+		});
+
+		// 1-3. 모니터링 접속정보 설정파일 콤보박스 초기값 설정
+		String lastUseConnInfoFile = propService.getLastUseConnectionInfoFilePath();
+		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
+			// 최근 사용된 접속정보 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
+			connInfoFileListComboBox.getSelectionModel().selectFirst();
+		} else {
+			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
+		}
+	}
+
+	/**
+	 * 2. 모니터링 여부 설정 영역의 View를 초기화한다.
+	 */
+	private void initRunStep2() {
+		// 2-0. Clear
+		if (presetFileListComboBox.getItems().size() != 0) {
+			presetFileListComboBox.getItems().clear();
+		}
+
+		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
+		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
+		propService.loadMonitoringInfoConfig(curConnInfoFile);
+		List<String> presetFileList = propService.getMonitoringPresetNameList();
+		if (presetFileList == null || presetFileList.size() == 0) {
+			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
+			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
+		} else {
+			presetFileListComboBox.getItems().addAll(presetFileList);
+		}
+
+		// 2-2. 모니터링 여부 Preset 콤보박스 아이템 변경 리스너 설정
+		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+			if (newValue != null) {
+				List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(newValue);
+				List<MonitoringYN> serverYnList = propService.getServerMonitoringYnList(newValue);
+				addMonitoringPresetPreview(dbYnList, serverYnList);
+			}
+		});
+
+		// 2-3. 모니터링 여부 Preset 콤보박스 초기값 설정
+		String lastUsePresetFileName = propService.getLastUsePresetFileName(curConnInfoFile);
+		if (StringUtils.isEmpty(lastUsePresetFileName) || !presetFileList.contains(lastUsePresetFileName)) {
+			// 최근 사용된 모니터링 여부 Preset 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
+			presetFileListComboBox.getSelectionModel().selectFirst();
+		} else {
+			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
+		}
+	}
+
+	/**
+	 * 3. 기타 설정 및 실행 영역의 View를 초기화한다.
+	 */
+	private void initRunStep3() {
+		// 3-1. 조회결과 단위 콤보박스
+		// 조회결과 단위 콤보박스 아이템 설정
+		fileSizeCB.getItems().addAll(FileSize.values());
+		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
+
+		// 3-2. 반올림 자릿수 콤보박스
+		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
+		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
+			@Override
+			public String toString(RoundingDigits digits) {
+				return String.valueOf(digits.getDigits());
+			}
+
+			@Override
+			public RoundingDigits fromString(String digits) {
+				return RoundingDigits.find(digits);
+			}
+		});
+
+		// 3-3. 사용량 컬럼 UI 타입
+		// 사용량 표시방법 콤보박스 아이템 설정
+		usageUITypeCB.getItems().addAll(UsageUIType.values());
+		usageUITypeCB.getSelectionModel().select(propService.getDefaultUsageUIType());
+		usageUITypeCB.setConverter(new StringConverter<UsageUIType>() {
+			@Override
+			public String toString(UsageUIType uiType) {
+				return uiType.getName();
+			}
+
+			@Override
+			public UsageUIType fromString(String string) {
+				return UsageUIType.find(string);
+			}
+		});
+
+		// 3-4. 모니터링 결과 저장 여부
+		resultSaveToggleBtn.selectedProperty().set(true);
+	}
+
+	/**
+	 * 4. 실행결과 영역의 View를 초기화한다.
+	 */
+	private void initRunStep4() {
+		step4AP.setVisible(true);
+		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
+		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);
+		step4AP.setPrefWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setVisible(true);
+		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
+		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
+
+		// 4-1. 실행결과 TableView 생성 및 Column 추가
+		archiveTable = addMonitoringTableView(archiveAP);
+		archiveTable.addColumn("Archive", "archiveName");
+		archiveTable.addColumn("사용량(%)", "usedPercent");
+
+		tableSpaceTable = addMonitoringTableView(tableSpaceAP);
+		tableSpaceTable.addColumn("테이블스페이스", "tableSpaceName");
+		tableSpaceTable.addColumn("사용량(%)", "usedPercent");
+
+		asmDiskTable = addMonitoringTableView(asmDiskAP);
+		asmDiskTable.addColumn("디스크 그룹", "asmDiskGroupName");
+		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");
+		asmDiskTable.addColumn("사용량(%)", "usedPercent");
+
+		osDiskTable = addMonitoringTableView(osDiskAP);
+		osDiskTable.addColumn("파일 시스템", "fileSystem");
+		osDiskTable.addColumn("마운트 위치", "mountedOn");
+		osDiskTable.addColumn("사용량(%)", "usedPercent");
+	}
+
+	private void setUsageColumnUIType(UsageUIType usageUIType) {
+		archiveTable.setUsageUIType(usageUIType);
+		tableSpaceTable.setUsageUIType(usageUIType);
+		asmDiskTable.setUsageUIType(usageUIType);
+		osDiskTable.setUsageUIType(usageUIType);
 	}
 }

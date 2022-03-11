@@ -2,22 +2,17 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXComboBox;
-import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -38,15 +33,10 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import root.core.domain.ASMDiskUsage;
-import root.core.domain.AlertLog;
-import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
-import root.core.domain.OSDiskUsage;
-import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
@@ -107,20 +97,12 @@ public class SettingMenuController implements Initializable {
 	JFXComboBox<UsageUIType> usageUICB;
 
 	/* Common Data */
-	private static final Map<Class<?>, String> DB_MONITORING_CONTENTS = new HashMap<>();
-	private static final Map<Class<?>, String> SERVER_MONITORING_CONTENTS = new HashMap<>();
-	static {
-		DB_MONITORING_CONTENTS.put(ArchiveUsage.class, "Archive Usage");
-		DB_MONITORING_CONTENTS.put(TableSpaceUsage.class, "TableSpace Usage");
-		DB_MONITORING_CONTENTS.put(ASMDiskUsage.class, "ASM Disk Usage");
-		SERVER_MONITORING_CONTENTS.put(OSDiskUsage.class, "OS Disk Usage");
-		SERVER_MONITORING_CONTENTS.put(AlertLog.class, "Alert Log");
-	}
-
 	List<JdbcConnectionInfo> jdbcConnInfoList;
 	List<JschConnectionInfo> jschConnInfoList;
 
 	Map<String, String> monitoringPresetMap = new HashMap<>();
+
+	MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -152,8 +134,7 @@ public class SettingMenuController implements Initializable {
 		});
 
 		// 초기값 - 설정된 값 없다면 기본값 GB
-		FileSize fileSize = FileSize.find(propRepo.getCommonResource("unit.filesize"));
-		fileSizeCB.getSelectionModel().select(fileSize);
+		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 
 		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
 		// 반올림 자릿수 콤보박스 아이템 설정
@@ -180,8 +161,7 @@ public class SettingMenuController implements Initializable {
 		});
 
 		// 초기값 - 설정된 값 없다면 기본값 2
-		RoundingDigits roundingDigits = RoundingDigits.find(propRepo.getCommonResource("unit.rounding"));
-		roundingDigitsCB.getSelectionModel().select(roundingDigits);
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 
 		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
 		// 사용량 표시방법 콤보박스 아이템 설정
@@ -295,20 +275,20 @@ public class SettingMenuController implements Initializable {
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
 
-			// 2. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
+			// 2. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
+			fileChooserText.setText(filePath);
+
+			// 3. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
 			propRepo.loadConnectionInfoConfig(filePath);
 
-			// 3. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
+			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
 			// TODO move this logic to PropertyService
-			// 4. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
+			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
 			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 			propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
-
-			// 5. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
-			fileChooserText.setText(filePath);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -327,12 +307,12 @@ public class SettingMenuController implements Initializable {
 	private void loadMonitoringConfigFile(String filePath) {
 		monitoringElementsVBox.getChildren().clear();
 
-		propRepo.loadMonitoringInfoConfig(filePath);
+		String presetConfigFileName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 
-		String[] dbNames = propRepo.getMonitoringDBNames();
-		String[] serverNames = propRepo.getMonitoringServerNames();
+		List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(presetConfigFileName);
+		List<MonitoringYN> serverYnList = propService.getServerMonitoringYnList(presetConfigFileName);
 
-		createMonitoringElements(monitoringElementsVBox);
+		createMonitoringElements(monitoringElementsVBox, dbYnList, serverYnList);
 	}
 
 	/**
@@ -373,14 +353,20 @@ public class SettingMenuController implements Initializable {
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
 		// TODO move this logic to PropertyService
-		PropertiesConfiguration config = propRepo.getConfiguration("monitoringConfig");
+		PropertiesConfiguration config = new PropertiesConfiguration();
 		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 		String monitoringFilePath = monitoringPresetMap.get(presetName);
 
 		if (!monitoringFilePath.isEmpty()) {
-			for (Node n : monitoringElementsVBox.lookupAll("JFXToggleButton")) {
-				JFXToggleButton thisToggle = (JFXToggleButton) n;
-				config.setProperty(thisToggle.getId(), thisToggle.isSelected());
+
+			Map<MonitoringType, Map<String, Boolean>> selection = monitoringYNVBox.getToggleSelection();
+
+			for (MonitoringType type : selection.keySet()) {
+				Map<String, Boolean> aliasMap = selection.get(type);
+				for (String alias : aliasMap.keySet()) {
+					String key = StringUtils.join(type.getName().replace(" ", "_"), ".", alias);
+					config.setProperty(key, aliasMap.get(alias) ? "Y" : "N");
+				}
 			}
 			propRepo.save(monitoringFilePath, config);
 
@@ -396,27 +382,12 @@ public class SettingMenuController implements Initializable {
 	 * 모니터링 여부 설정할 요소들 동적 생성
 	 * 
 	 * @param rootVBox
-	 * @param monitoringElements
-	 * @param monitoringAlias
+	 * @param dbYnList
+	 * @param serverYnList
 	 */
-	private void createMonitoringElements(VBox rootVBox) {
+	private void createMonitoringElements(VBox rootVBox, List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
+		monitoringYNVBox = new MonitoringYNVBox();
 
-		List<MonitoringYN> dbYnList = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList = new ArrayList<>();
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ARCHIVE, false));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.TABLE_SPACE, true));
-		childList.add(new MonitoringTypeAndYN(MonitoringType.ASM_DISK, false));
-		dbYnList.add(new MonitoringYN("ERP", childList));
-		dbYnList.add(new MonitoringYN("ERP2", childList));
-		dbYnList.add(new MonitoringYN("ERP3", childList));
-
-		List<MonitoringYN> serverYnList = new ArrayList<>();
-		List<MonitoringTypeAndYN> childList2 = new ArrayList<>();
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.OS_DISK, true));
-		childList2.add(new MonitoringTypeAndYN(MonitoringType.ALERT_LOG, true));
-		serverYnList.add(new MonitoringYN("DBERP1", childList2));
-
-		MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 		for (MonitoringYN dbYn : dbYnList) {
 			for (MonitoringTypeAndYN typeAndYn : dbYn.getMonitoringTypeList()) {
 				MonitoringType type = typeAndYn.getMonitoringType();
@@ -425,7 +396,7 @@ public class SettingMenuController implements Initializable {
 			}
 		}
 		monitoringYNVBox.initSelection(dbYnList);
-	
+
 		for (MonitoringYN serverYn : serverYnList) {
 			for (MonitoringTypeAndYN typeAndYn : serverYn.getMonitoringTypeList()) {
 				MonitoringType type = typeAndYn.getMonitoringType();
