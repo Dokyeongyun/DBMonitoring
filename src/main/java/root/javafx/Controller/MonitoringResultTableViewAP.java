@@ -16,9 +16,14 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
+import root.core.domain.ASMDiskUsage;
+import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
-import root.core.domain.enums.MonitoringType;
+import root.core.domain.OSDiskUsage;
+import root.core.domain.TableSpaceUsage;
+import root.core.domain.enums.UsageUIType;
 import root.javafx.CustomView.MonitoringTableView;
+import root.javafx.CustomView.MonitoringTableViewFactory;
 import root.javafx.DI.DependencyInjection;
 
 public class MonitoringResultTableViewAP extends AnchorPane {
@@ -35,17 +40,17 @@ public class MonitoringResultTableViewAP extends AnchorPane {
 	@FXML
 	private HBox tableViewHBox;
 
-	private static final Map<MonitoringType, String> titleMap = new HashMap<>();
+	private static final Map<Class<? extends MonitoringResult>, String> titleMap = new HashMap<>();
 	static {
-		titleMap.put(MonitoringType.ARCHIVE, "Archive 사용량");
-		titleMap.put(MonitoringType.TABLE_SPACE, "TableSpace 사용량");
-		titleMap.put(MonitoringType.ASM_DISK, "ASM Disk 사용량");
-		titleMap.put(MonitoringType.OS_DISK, "OS Disk 사용량");
+		titleMap.put(ArchiveUsage.class, "Archive 사용량");
+		titleMap.put(TableSpaceUsage.class, "TableSpace 사용량");
+		titleMap.put(ASMDiskUsage.class, "ASM Disk 사용량");
+		titleMap.put(OSDiskUsage.class, "OS Disk 사용량");
 	}
 
-	private Map<MonitoringType, MonitoringTableView<? extends MonitoringResult>> tableViewMap = new HashMap<>();
+	private Map<Class<? extends MonitoringResult>, MonitoringTableView<? extends MonitoringResult>> tableViewMap = new HashMap<>();
 
-	private Map<MonitoringType, List<Object>> tableDataListMap = new HashMap<>();
+	private Map<Class<? extends MonitoringResult>, List<Object>> tableDataListMap = new HashMap<>();
 
 	public MonitoringResultTableViewAP() {
 		try {
@@ -63,7 +68,7 @@ public class MonitoringResultTableViewAP extends AnchorPane {
 	 * 
 	 * @param type
 	 */
-	private void addMonitoringTableView(MonitoringType type) {
+	private void addMonitoringTableView(Class<? extends MonitoringResult> type, UsageUIType usageUIType) {
 		AnchorPane tableViewWrapper = new AnchorPane();
 		tableViewWrapper.setMinWidth(350);
 
@@ -78,7 +83,7 @@ public class MonitoringResultTableViewAP extends AnchorPane {
 		AnchorPane.setLeftAnchor(titleLabel, 0.0);
 		AnchorPane.setRightAnchor(titleLabel, 0.0);
 
-		MonitoringTableView<? extends MonitoringResult> tableView = new MonitoringTableView<>();
+		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type, usageUIType);
 		AnchorPane.setTopAnchor(tableView, 20.0);
 		AnchorPane.setLeftAnchor(tableView, 0.0);
 		AnchorPane.setRightAnchor(tableView, 0.0);
@@ -89,28 +94,20 @@ public class MonitoringResultTableViewAP extends AnchorPane {
 		tableViewHBox.getChildren().add(tableViewWrapper);
 	}
 
-	/**
-	 * TableView 컬럼을 추가한다.
-	 * 
-	 * @param type
-	 * @param title
-	 * @param fieldName
-	 */
-	public void addTableViewColumn(MonitoringType type, String title, String fieldName) {
-		if (tableViewMap.get(type) == null) {
-			addMonitoringTableView(type);
-		}
-		tableViewMap.get(type).addColumn(title, fieldName);
-	}
-
-	public <T extends MonitoringResult> void setTableData(MonitoringType type, List<T> dataList) {
+	@SuppressWarnings("unchecked")
+	public <T extends MonitoringResult> void setTableData(String alias, Class<T> type, List<T> dataList,
+			UsageUIType usageUIType) {
 		List<Object> list = tableDataListMap.get(type);
 		if (list == null) {
 			list = new ArrayList<>();
 		}
-		
+
 		list.clear();
 		list.addAll(dataList);
+
+		if (tableViewMap.get(type) == null) {
+			addMonitoringTableView(type, usageUIType);
+		}
 
 		MonitoringTableView<T> tableView = (MonitoringTableView<T>) tableViewMap.get(type);
 		tableView.setItems(FXCollections.observableArrayList(dataList));

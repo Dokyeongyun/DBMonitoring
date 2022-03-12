@@ -14,7 +14,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +33,6 @@ import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
-import root.core.domain.MonitoringResult;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
@@ -55,7 +53,6 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
-import root.javafx.CustomView.MonitoringTableView;
 import root.utils.UnitUtils.FileSize;
 
 public class RunMenuController implements Initializable {
@@ -111,8 +108,8 @@ public class RunMenuController implements Initializable {
 	@FXML
 	HBox step3ToStep4Arrow;
 
-	private MonitoringResultTableViewAP dbResults = new MonitoringResultTableViewAP();
-	private MonitoringResultTableViewAP serverResults = new MonitoringResultTableViewAP();
+	private MonitoringResultTableViewAP dbResults;
+	private MonitoringResultTableViewAP serverResults;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -124,7 +121,8 @@ public class RunMenuController implements Initializable {
 		initRunStep3();
 
 		/* 4. 실행결과 */
-		initRunStep4();
+//		initRunStep4();
+
 	}
 
 	/**
@@ -209,18 +207,21 @@ public class RunMenuController implements Initializable {
 	 * @param e
 	 */
 	public void runMonitoring(ActionEvent e) {
+		initRunStep4();
+
 		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
 		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
 		propService.loadMonitoringInfoConfig(presetConfigFilePath);
 
-//		UsageUIType usageUIType = usageUITypeCB.getSelectionModel().getSelectedItem();
-//		setUsageColumnUIType(usageUIType);
+		UsageUIType usageUIType = usageUITypeCB.getSelectionModel().getSelectedItem();
 
 		boolean isSave = resultSaveToggleBtn.isSelected();
 
 		List<String> dbNames = propService.getMonitoringDBNameList();
+		List<String> serverNames = propService.getMonitoringServerNameList();
+
 		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
 		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			AbstractDatabase db = new JdbcDatabase(jdbc);
@@ -237,13 +238,12 @@ public class RunMenuController implements Initializable {
 			List<ArchiveUsage> archiveUsageList = usecase.getCurrentArchiveUsage();
 			List<TableSpaceUsage> tableSpaceUsageList = usecase.getCurrentTableSpaceUsage();
 			List<ASMDiskUsage> asmDiskUsageList = usecase.getCurrentASMDiskUsage();
-			
-			dbResults.setTableData(MonitoringType.ARCHIVE, archiveUsageList);
-			dbResults.setTableData(MonitoringType.TABLE_SPACE, tableSpaceUsageList);
-			dbResults.setTableData(MonitoringType.ASM_DISK, asmDiskUsageList);
+
+			dbResults.setTableData(jdbc.getJdbcDBName(), ArchiveUsage.class, archiveUsageList, usageUIType);
+			dbResults.setTableData(jdbc.getJdbcDBName(), TableSpaceUsage.class, tableSpaceUsageList, usageUIType);
+			dbResults.setTableData(jdbc.getJdbcDBName(), ASMDiskUsage.class, asmDiskUsageList, usageUIType);
 		}
 
-		List<String> serverNames = propService.getMonitoringServerNameList();
 		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			JschServer server = new JschServer(jsch);
@@ -260,18 +260,11 @@ public class RunMenuController implements Initializable {
 			}
 
 			List<OSDiskUsage> osDiskUsageList = usecase.getCurrentOSDiskUsage();
-			serverResults.setTableData(MonitoringType.OS_DISK, osDiskUsageList);
+			serverResults.setTableData(jsch.getServerName(), OSDiskUsage.class, osDiskUsageList, usageUIType);
 
 //			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
 //					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
 		}
-	}
-
-	/**
-	 * 모니터링 결과를 TableView에 렌더링한다.
-	 */
-	public <T extends MonitoringResult> void setMonitoringResult(MonitoringTableView<T> tableView, List<T> result) {
-		tableView.setItems(FXCollections.observableArrayList(result));
 	}
 
 	/**
@@ -398,6 +391,12 @@ public class RunMenuController implements Initializable {
 	 * 4. 실행결과 영역의 View를 초기화한다.
 	 */
 	private void initRunStep4() {
+		dbResults = new MonitoringResultTableViewAP();
+		serverResults = new MonitoringResultTableViewAP();
+		
+		resultSplitPane.getItems().clear();
+		resultSplitPane.getItems().addAll(dbResults, serverResults);
+
 		step4AP.setVisible(true);
 		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);
@@ -406,29 +405,5 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
-
-		// 4-1. 실행결과 TableView 생성 및 Column 추가
-		// DB
-		dbResults.addTableViewColumn(MonitoringType.ARCHIVE, "Archive", "archiveName");
-		dbResults.addTableViewColumn(MonitoringType.ARCHIVE, "사용량(%)", "usedPercent");
-		dbResults.addTableViewColumn(MonitoringType.TABLE_SPACE, "테이블스페이스", "tableSpaceName");
-		dbResults.addTableViewColumn(MonitoringType.TABLE_SPACE, "사용량(%)", "usedPercent");
-		dbResults.addTableViewColumn(MonitoringType.ASM_DISK, "디스크 그룹", "asmDiskGroupName");
-		dbResults.addTableViewColumn(MonitoringType.ASM_DISK, "디스크 타입", "asmDiskGroupType");
-		dbResults.addTableViewColumn(MonitoringType.ASM_DISK, "사용량(%)", "usedPercent");
-
-		// Server
-		serverResults.addTableViewColumn(MonitoringType.OS_DISK, "파일 시스템", "fileSystem");
-		serverResults.addTableViewColumn(MonitoringType.OS_DISK, "마운트 위치", "mountedOn");
-		serverResults.addTableViewColumn(MonitoringType.OS_DISK, "사용량(%)", "usedPercent");
-
-		resultSplitPane.getItems().addAll(dbResults, serverResults);
 	}
-
-//	private void setUsageColumnUIType(UsageUIType usageUIType) {
-//		archiveTable.setUsageUIType(usageUIType);
-//		tableSpaceTable.setUsageUIType(usageUIType);
-//		asmDiskTable.setUsageUIType(usageUIType);
-//		osDiskTable.setUsageUIType(usageUIType);
-//	}
 }
