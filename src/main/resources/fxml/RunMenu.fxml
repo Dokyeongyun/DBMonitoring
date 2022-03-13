@@ -275,7 +275,7 @@
                                           <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
                                        </children>
                                     </HBox>
-                                    <AnchorPane fx:id="step4AP" maxWidth="0.0" prefWidth="0.0">
+                                    <AnchorPane fx:id="step4AP" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
                                        <children>
                                           <Label fx:id="step4Label" alignment="CENTER" layoutX="111.0" layoutY="42.0" text="4. 실행결과" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                              <font>

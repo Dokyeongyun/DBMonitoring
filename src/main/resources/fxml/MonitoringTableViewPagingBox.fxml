@@ -6,6 +6,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,14 +14,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <fx:root type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox layoutY="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
          <children>
             <AnchorPane>
                <children>
-                  <Label fx:id="dbMonitoringTimeLabel" text="Monitoring Time" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
+                  <Label fx:id="monitoringTimeLabel" text="Monitoring Time" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
                      <padding>
                         <Insets left="5.0" right="5.0" />
                      </padding>
@@ -33,7 +33,7 @@
                   </Label>
                   <HBox alignment="CENTER_LEFT" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <JFXButton fx:id="prevConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                        <JFXButton fx:id="prevButton" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#prevContainer" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                            <styleClass>
                               <String fx:value="bold" />
                               <String fx:value="basic-font" />
@@ -48,18 +48,26 @@
                               <FontAwesomeIconView glyphName="ANGLE_LEFT" size="20" />
                            </graphic>
                         </JFXButton>
-                        <Label fx:id="aliasLabel" text="DB Alias">
-                           <graphic>
-                              <FontAwesomeIconView fill="#003b8e" glyphName="DATABASE" size="15" strokeWidth="0.0" />
-                           </graphic>
-                           <padding>
-                              <Insets left="5.0" right="5.0" />
-                           </padding>
-                           <font>
-                              <Font name="Noto Sans Korean Regular" size="12.0" />
-                           </font>
-                        </Label>
-                        <JFXButton fx:id="nextConnInfoBtn" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
+                        <ScrollPane fitToHeight="true" fitToWidth="true" minWidth="100.0">
+                          <content>
+                            <AnchorPane>
+                                 <children>
+                                    <Label fx:id="aliasLabel" alignment="CENTER" text="DB Alias" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                       <graphic>
+                                          <FontAwesomeIconView fx:id="iconView" fill="#003b8e" glyphName="DATABASE" size="15" strokeWidth="0.0" />
+                                       </graphic>
+                                       <padding>
+                                          <Insets left="5.0" right="5.0" />
+                                       </padding>
+                                       <font>
+                                          <Font name="Noto Sans Korean Regular" size="12.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
+                        <JFXButton fx:id="nextButton" ellipsisString="" graphicTextGap="0.0" maxWidth="30.0" minWidth="30.0" onAction="#nextContainer" ripplerFill="BLACK" style="-fx-border-radius: 30px;" textAlignment="CENTER" textOverrun="CLIP">
                            <styleClass>
                               <String fx:value="bold" />
                               <String fx:value="basic-font" />
@@ -81,14 +89,6 @@
             <Separator prefWidth="200.0" />
          </children>
       </VBox>
-      <StackPane fx:id="tableViewSP" layoutY="45.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0">
-         <children>
-            <HBox fx:id="tableViewHBox">
-               <padding>
-                  <Insets left="10.0" right="10.0" />
-               </padding>
-            </HBox>
-         </children>
-      </StackPane>
+      <StackPane fx:id="tableViewSP" layoutY="45.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="45.0" />
    </children>
 </fx:root>

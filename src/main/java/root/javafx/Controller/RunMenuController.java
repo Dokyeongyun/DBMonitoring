@@ -108,8 +108,8 @@ public class RunMenuController implements Initializable {
 	@FXML
 	HBox step3ToStep4Arrow;
 
-	private MonitoringResultTableViewAP dbResults;
-	private MonitoringResultTableViewAP serverResults;
+	private MonitoringTableViewPagingBox dbResults;
+	private MonitoringTableViewPagingBox serverResults;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -239,9 +239,18 @@ public class RunMenuController implements Initializable {
 			List<TableSpaceUsage> tableSpaceUsageList = usecase.getCurrentTableSpaceUsage();
 			List<ASMDiskUsage> asmDiskUsageList = usecase.getCurrentASMDiskUsage();
 
-			dbResults.setTableData(jdbc.getJdbcDBName(), ArchiveUsage.class, archiveUsageList, usageUIType);
-			dbResults.setTableData(jdbc.getJdbcDBName(), TableSpaceUsage.class, tableSpaceUsageList, usageUIType);
-			dbResults.setTableData(jdbc.getJdbcDBName(), ASMDiskUsage.class, asmDiskUsageList, usageUIType);
+			String dbName = jdbc.getJdbcDBName();
+			dbResults.addMonitoringTableViewContainer(dbName, ArchiveUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, ArchiveUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, ArchiveUsage.class, archiveUsageList);
+
+			dbResults.addMonitoringTableViewContainer(dbName, TableSpaceUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, TableSpaceUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, TableSpaceUsage.class, tableSpaceUsageList);
+
+			dbResults.addMonitoringTableViewContainer(dbName, ASMDiskUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, ASMDiskUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, ASMDiskUsage.class, asmDiskUsageList);
 		}
 
 		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
@@ -259,8 +268,11 @@ public class RunMenuController implements Initializable {
 				}
 			}
 
+			String serverName = jsch.getServerName();
 			List<OSDiskUsage> osDiskUsageList = usecase.getCurrentOSDiskUsage();
-			serverResults.setTableData(jsch.getServerName(), OSDiskUsage.class, osDiskUsageList, usageUIType);
+			serverResults.addMonitoringTableViewContainer(serverName, OSDiskUsage.class);
+			serverResults.setMonitoringTableViewUsageUIType(serverName, OSDiskUsage.class, usageUIType);
+			serverResults.setMonitoringTableViewData(serverName, OSDiskUsage.class, osDiskUsageList);
 
 //			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
 //					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
@@ -391,12 +403,12 @@ public class RunMenuController implements Initializable {
 	 * 4. 실행결과 영역의 View를 초기화한다.
 	 */
 	private void initRunStep4() {
-		dbResults = new MonitoringResultTableViewAP();
-		serverResults = new MonitoringResultTableViewAP();
-		
+		dbResults = new MonitoringTableViewPagingBox("DB");
+		serverResults = new MonitoringTableViewPagingBox("SERVER");
+
 		resultSplitPane.getItems().clear();
 		resultSplitPane.getItems().addAll(dbResults, serverResults);
-
+		
 		step4AP.setVisible(true);
 		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);

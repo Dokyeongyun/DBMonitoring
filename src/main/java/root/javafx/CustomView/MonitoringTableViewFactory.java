@@ -5,14 +5,13 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
-import root.core.domain.enums.UsageUIType;
 
 public class MonitoringTableViewFactory {
 
 	private MonitoringTableViewFactory() {
 	}
 
-	public static <T extends MonitoringResult> MonitoringTableView<T> create(Class<T> clazz, UsageUIType usageUIType) {
+	public static <T extends MonitoringResult> MonitoringTableView<T> create(Class<T> clazz) {
 		MonitoringTableView<T> tableView = new MonitoringTableView<>();
 
 		if (clazz == ArchiveUsage.class) {
@@ -30,8 +29,6 @@ public class MonitoringTableViewFactory {
 			tableView.addColumn("마운트 위치", "mountedOn");
 			tableView.addColumn("사용량(%)", "usedPercent");
 		}
-
-		tableView.setUsageUIType(usageUIType);
 		return tableView;
 	}
 }
