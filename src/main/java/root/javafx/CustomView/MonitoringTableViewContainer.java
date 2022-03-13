@@ -10,6 +10,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import root.core.domain.ASMDiskUsage;
@@ -59,8 +60,10 @@ public class MonitoringTableViewContainer extends HBox {
 		
 		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type, isSimpleTable);
 		tableViewMap.put(type, tableView);
+		tableDataListMap.put(type, new ArrayList<>());
 
 		tableViewWrapper.getChildren().addAll(titleLabel, tableView);
+		setHgrow(tableViewWrapper, Priority.ALWAYS);
 		getChildren().add(tableViewWrapper);
 	}
 
@@ -77,8 +80,10 @@ public class MonitoringTableViewContainer extends HBox {
 			list = new ArrayList<>();
 		}
 
-		list.clear();
-		list.addAll(dataList);
+		clearTableData(type);
+		if(dataList != null) {
+			list.addAll(dataList);	
+		}
 
 		if (tableViewMap.get(type) == null) {
 			addMonitoringTableView(type);
@@ -86,9 +91,14 @@ public class MonitoringTableViewContainer extends HBox {
 
 		MonitoringTableView<T> tableView = (MonitoringTableView<T>) tableViewMap.get(type);
 		tableView.setItems(FXCollections.observableArrayList(dataList));
+		tableView.refresh();
 	}
 	
 	public void setUsageUIType(Class<? extends MonitoringResult> type, UsageUIType uiType) {
 		tableViewMap.get(type).setUsageUIType(uiType);
+	}
+	
+	public void clearTableData(Class<? extends MonitoringResult> type) {
+		tableDataListMap.get(type).clear();
 	}
 }
