@@ -82,6 +82,8 @@ public class MonitoringTableViewFactory {
 				.collect(Collectors.toList());
 
 		tableColumns.stream().forEach(c -> tableView.addColumn(c.getHeaderName(), c.getFieldName()));
+		tableView.setMonitoringDateTimeFormat("yyyy/MM/dd HH:mm:ss");
+		
 		return tableView;
 	}
 }
