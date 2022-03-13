@@ -9,8 +9,8 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.scene.control.Label;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
@@ -43,29 +43,31 @@ public class MonitoringTableViewContainer extends HBox {
 	 * @param type
 	 */
 	public void addMonitoringTableView(Class<? extends MonitoringResult> type) {
-		AnchorPane tableViewWrapper = new AnchorPane();
+		addMonitoringTableView(type, true);
+	}
+	
+	/**
+	 * 모니터링 결과 TableView를 추가한다.
+	 * 
+	 * @param type
+	 */
+	public void addMonitoringTableView(Class<? extends MonitoringResult> type, boolean isSimpleTable) {
+		VBox tableViewWrapper = new VBox();
 		tableViewWrapper.setMinWidth(350);
 
-		Label titleLabel = new Label();
-		titleLabel.setText(titleMap.get(type));
-		titleLabel.setFont(Font.font("Noto Sans Korean Regular"));
-
-		FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.ASTERISK, "9");
-		titleLabel.setGraphic(icon);
-
-		AnchorPane.setTopAnchor(titleLabel, 0.0);
-		AnchorPane.setLeftAnchor(titleLabel, 0.0);
-		AnchorPane.setRightAnchor(titleLabel, 0.0);
-
-		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type);
-		AnchorPane.setTopAnchor(tableView, 20.0);
-		AnchorPane.setLeftAnchor(tableView, 0.0);
-		AnchorPane.setRightAnchor(tableView, 0.0);
-		AnchorPane.setBottomAnchor(tableView, 0.0);
+		Label titleLabel = createTitleLabel(type);
+		
+		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type, isSimpleTable);
 		tableViewMap.put(type, tableView);
 
 		tableViewWrapper.getChildren().addAll(titleLabel, tableView);
 		getChildren().add(tableViewWrapper);
+	}
+
+	private Label createTitleLabel(Class<? extends MonitoringResult> type) {
+		Label titleLabel = new Label(titleMap.get(type), new FontAwesomeIconView(FontAwesomeIcon.ASTERISK, "9"));
+		titleLabel.setFont(Font.font("Noto Sans Korean Regular"));
+		return titleLabel;
 	}
 	
 	@SuppressWarnings("unchecked")
