@@ -2,15 +2,11 @@ package root.javafx.Controller;
 
 import java.io.File;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 
 import com.jfoenix.controls.JFXComboBox;
 
@@ -40,7 +36,6 @@ import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
-import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
@@ -53,17 +48,9 @@ import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
 public class SettingMenuController implements Initializable {
-	private static Logger logger = Logger.getLogger(SettingMenuController.class);
-
-	/**
-	 * Pattern 객체를 정적필드로 선언한 이유 - Pattern 객체는 입력받은 정규표현식에 해당하는 유한상태머신(finite state
-	 * machine)을 생성하기 때문에 인스턴스 생성비용이 높다. - 따라서, 한 번 생성하두고 이를 재사용하는 것이 효과적이다. - 뿐만
-	 * 아니라, 패턴 객체에 이름을 부여하여 해당 객체의 의미가 명확해진다.
-	 */
 
 	/* Dependency Injection */
-	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
-	PropertyService propService = new FilePropertyService(propRepo);
+	PropertyService propService = new FilePropertyService(PropertyRepositoryImpl.getInstance());
 
 	/* View Binding */
 	@FXML
@@ -96,26 +83,19 @@ public class SettingMenuController implements Initializable {
 	@FXML
 	JFXComboBox<UsageUIType> usageUICB;
 
-	/* Common Data */
-	List<JdbcConnectionInfo> jdbcConnInfoList;
-	List<JschConnectionInfo> jschConnInfoList;
-
-	Map<String, String> monitoringPresetMap = new HashMap<>();
-
 	MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-		String lastUsePropertiesFile = propRepo.getLastUseConnInfoFilePath();
-		logger.debug("최근 사용된 프로퍼티파일: " + lastUsePropertiesFile);
-		if (propRepo.isFileExist(lastUsePropertiesFile)) {
+		String lastUsePropertiesFile = propService.getLastUseConnectionInfoFilePath();
+		if (lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
 			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
-				loadMonitoringConfigFile(monitoringPresetMap.get(newValue));
+				loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
 			});
 		} else {
 			setVisible(noConnInfoConfigAP, true);
@@ -123,31 +103,19 @@ public class SettingMenuController implements Initializable {
 		}
 
 		/* 실행 설정 탭 - 조회결과 단위 콤보박스 */
-		// 조회결과 단위 콤보박스 아이템 설정
 		fileSizeCB.getItems().addAll(FileSize.values());
-
-		// 아이템 변경 리스너
-		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("unit.filesize", newValue);
-			propRepo.saveCommonConfig(map);
-		});
-
-		// 초기값 - 설정된 값 없다면 기본값 GB
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
+		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
+			propService.saveCommonConfig("unit.filesize", newValue.getUnit());
+		});
 
 		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
 		// 반올림 자릿수 콤보박스 아이템 설정
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
-
-		// 아이템 변경 리스너
+		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("unit.rounding", newValue.getDigits());
-			propRepo.saveCommonConfig(map);
+			propService.saveCommonConfig("unit.rounding", String.valueOf(newValue.getDigits()));
 		});
-
-		// Converter
 		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
 			@Override
 			public String toString(RoundingDigits digits) {
@@ -160,21 +128,12 @@ public class SettingMenuController implements Initializable {
 			}
 		});
 
-		// 초기값 - 설정된 값 없다면 기본값 2
-		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
-
 		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
-		// 사용량 표시방법 콤보박스 아이템 설정
 		usageUICB.getItems().addAll(UsageUIType.values());
-
-		// 아이템 변경 리스너
+		usageUICB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
-			Map<String, Object> map = new HashMap<>();
-			map.put("usage-ui-type", newValue.getCode());
-			propRepo.saveCommonConfig(map);
+			propService.saveCommonConfig("usage-ui-type", newValue.getCode());
 		});
-
-		// Converter
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
 			public String toString(UsageUIType uiType) {
@@ -186,10 +145,6 @@ public class SettingMenuController implements Initializable {
 				return UsageUIType.find(string);
 			}
 		});
-
-		// 초기값 - 설정된 값 없다면 기본값 GRAPHIC_BAR
-		String usageUICode = propRepo.getCommonResource("usage-ui-type");
-		usageUICB.getSelectionModel().select(UsageUIType.find(usageUICode));
 	}
 
 	/**
@@ -210,18 +165,8 @@ public class SettingMenuController implements Initializable {
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			// TODO validate input value
-
-			// TODO move this logic to propertyService
-			// 1. Preset명 이용하여 설정파일 생성 (./config/monitoring/{접속정보설정파일명}/{preset명}.properties
-			String connInfoFilePath = fileChooserText.getText();
-			String connInfoFileName = connInfoFilePath.substring(0, connInfoFilePath.indexOf(".properties"));
-			String filePath = "./config/monitoring/" + connInfoFileName + "/" + input + ".properties";
-			propRepo.createNewPropertiesFile(filePath, "Monitoring");
-
-			// 2. 접속정보설정파일에 Preset 추가
-			PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
-			config.addProperty("monitoring.setting.preset." + input + ".filepath", filePath);
-			propRepo.save(fileChooserText.getText(), config);
+			// 1. Preset명 이용하여 설정파일 생성 + 접속정보설정파일에 Preset 설정파일 경로 추가
+			propService.addMonitoringPreset(fileChooserText.getText(), input);
 
 			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
 			reloadingMonitoringSetting(input);
@@ -279,17 +224,13 @@ public class SettingMenuController implements Initializable {
 			fileChooserText.setText(filePath);
 
 			// 3. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
-			propRepo.loadConnectionInfoConfig(filePath);
+			propService.loadConnectionInfoConfig(filePath);
 
 			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// TODO move this logic to PropertyService
 			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
-			PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
-			rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
-			propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
-
+			propService.saveLastUseConnectionInfoSetting(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
 			// 6. 파일 load가 실패 시, Alert 메시지를 띄운다.
@@ -352,29 +293,18 @@ public class SettingMenuController implements Initializable {
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
-		// TODO move this logic to PropertyService
-		PropertiesConfiguration config = new PropertiesConfiguration();
-		String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
-		String monitoringFilePath = monitoringPresetMap.get(presetName);
+		String headerText = "설정 저장";
+		String contentText = "모니터링여부 설정이 저장되었습니다.";
+		AlertType alertType = AlertType.INFORMATION;
 
-		if (!monitoringFilePath.isEmpty()) {
-
-			Map<MonitoringType, Map<String, Boolean>> selection = monitoringYNVBox.getToggleSelection();
-
-			for (MonitoringType type : selection.keySet()) {
-				Map<String, Boolean> aliasMap = selection.get(type);
-				for (String alias : aliasMap.keySet()) {
-					String key = StringUtils.join(type.getName().replace(" ", "_"), ".", alias);
-					config.setProperty(key, aliasMap.get(alias) ? "Y" : "N");
-				}
-			}
-			propRepo.save(monitoringFilePath, config);
-
-			loadMonitoringConfigFile(monitoringFilePath);
-
-			String headerText = "설정 저장";
-			String contentText = "모니터링여부 설정이 저장되었습니다.";
-			AlertUtils.showAlert(AlertType.INFORMATION, headerText, contentText);
+		try {
+			String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
+			propService.saveMonitoringPresetSetting(presetName, monitoringYNVBox.getToggleSelection());
+		} catch (Exception ex) {
+			contentText = "모니터링여부 설정 저장에 실패했습니다.";
+			alertType = AlertType.ERROR;
+		} finally {
+			AlertUtils.showAlert(alertType, headerText, contentText);
 		}
 	}
 
@@ -415,8 +345,10 @@ public class SettingMenuController implements Initializable {
 	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
 
-		jdbcConnInfoList = propService.getJdbcConnInfoList(propService.getMonitoringDBNameList());
-		jschConnInfoList = propService.getJschConnInfoList(propService.getMonitoringServerNameList());
+		List<JdbcConnectionInfo> jdbcConnInfoList = propService
+				.getJdbcConnInfoList(propService.getMonitoringDBNameList());
+		List<JschConnectionInfo> jschConnInfoList = propService
+				.getJschConnInfoList(propService.getMonitoringServerNameList());
 
 		ConnectionInfoVBox<JdbcConnectionInfo> dbConnVBox = null;
 		if (connInfoVBox.lookup("#dbConnVBox") != null) {
@@ -456,46 +388,32 @@ public class SettingMenuController implements Initializable {
 	 * @param curPresetName
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
-
 		// 최종 읽을 파일 경로
 		String readPresetName = "";
-		String readPresetFilePath = "";
 
-		// Preset Map & Preset Combo Clear
-		monitoringPresetMap.clear();
+		// Preset Combo Clear
 		monitoringPresetComboBox.getItems().clear();
-
-		// 모니터링여부 설정 Preset Map 값 초기화
-		monitoringPresetMap = propRepo.getMonitoringPresetMap();
-		String lastUsePresetName = propRepo.getLastUseMonitoringPresetName();
-
-		monitoringPresetComboBox.getItems().addAll(monitoringPresetMap.keySet());
-		logger.debug("monitoringPresetMap : " + monitoringPresetMap);
+		monitoringPresetComboBox.getItems().addAll(propService.getMonitoringPresetNameList());
 
 		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다.
 		// 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
 		if (presetName.isEmpty()) {
 			// 최근 사용된 모니터링 설정 읽기
+			String lastUsePresetName = propService.getLastUsePresetFileName(fileChooserText.getText());
 			if (StringUtils.isEmpty(lastUsePresetName) && monitoringPresetComboBox.getItems().size() != 0) {
 				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
 				readPresetName = monitoringPresetComboBox.getItems().get(0);
-				logger.debug("첫번째 Preset: " + readPresetName);
 			} else {
 				readPresetName = lastUsePresetName;
-				logger.debug("최근 사용된 모니터링 Preset: " + readPresetName);
 			}
 		} else {
 			readPresetName = presetName;
-			logger.debug("선택된 Preset: " + readPresetName);
 		}
-
-		logger.debug("readPresetName : " + readPresetName);
-		logger.debug("readPresetFilePath : " + readPresetFilePath);
 
 		// ComboBox 선택 및 Preset 파일 읽기
 		if (!StringUtils.isEmpty(readPresetName)) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
-			loadMonitoringConfigFile(monitoringPresetMap.get(readPresetName));
+			loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(readPresetName));
 		}
 	}
 
@@ -543,22 +461,15 @@ public class SettingMenuController implements Initializable {
 			}
 
 			// TODO 입력값 검사 (영어만)
+			// 1. 접속정보 설정파일 생성 + default 모니터링여부 Preset 설정파일 생성
+			String newSettingFile = propService.addConnectionInfoSetting(input);
 
-			// 1. 접속정보 설정파일 생성 (./config/connectioninfo/{접속정보설정파일명}.properties
-			String filePath = "./config/connectioninfo/" + input + ".properties";
-			propRepo.createNewPropertiesFile(filePath, "ConnectionInfo");
-
-			// 2. 모니터링여부 Preset 설정파일 생성
-			// (./config/monitoring/{접속정보설정파일명}/{default}.properties
-			String presetConfigPath = "./config/monitoring/" + input + "/default.properties";
-			propRepo.createNewPropertiesFile(presetConfigPath, "Monitoring");
-
-			// 3. Set Node Visible
+			// 2. Set Node Visible
 			setVisible(noConnInfoConfigAP, false);
 			setVisible(noMonitoringConfigAP, false);
 
-			// 4. 생성된 설정파일 Load
-			loadSelectedConfigFile(filePath);
+			// 3. 생성된 설정파일 Load
+			loadSelectedConfigFile(newSettingFile);
 		});
 	}
 }
