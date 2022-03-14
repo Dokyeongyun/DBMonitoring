@@ -54,8 +54,7 @@
                         </Label>
                         <AnchorPane layoutX="217.0" layoutY="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <JFXComboBox fx:id="runConnInfoFileComboBox" minWidth="300.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="5.0" />
-                              <JFXComboBox fx:id="runMonitoringPresetComboBox" layoutX="330.8000183105469" minWidth="200.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
+                              <JFXComboBox fx:id="runConnInfoFileComboBox" minWidth="300.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
                               <Button fx:id="monitoringRunBtn" layoutX="540.6000061035156" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />

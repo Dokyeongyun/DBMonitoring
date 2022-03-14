@@ -22,6 +22,8 @@ public interface PropertyRepository {
 	void saveServerConnectionInfo(String filePath, Map<String, JschConnectionInfo> config);
 
 	void saveCommonConfig(Map<String, Object> values);
+	
+	void saveCommonConfig(String key, String value);
 
 	void loadCombinedConfiguration();
 

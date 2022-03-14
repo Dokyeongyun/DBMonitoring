@@ -6,6 +6,7 @@ import java.util.Map;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
+import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.utils.UnitUtils.FileSize;
@@ -99,4 +100,44 @@ public interface PropertyService {
 	 * @return
 	 */
 	UsageUIType getDefaultUsageUIType();
+
+	/**
+	 * 공통 설정정보를 저장한다.
+	 * 
+	 * @param key   설정정보 키
+	 * @param value 설정정보 값
+	 */
+	void saveCommonConfig(String key, String value);
+
+	/**
+	 * 최근 사용한 접속정보 설정정보를 저장한다.
+	 * 
+	 * @param filePath
+	 */
+	void saveLastUseConnectionInfoSetting(String filePath);
+
+	/**
+	 * 접속정보 설정을 추가한다.
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	String addConnectionInfoSetting(String filePath);
+
+	/**
+	 * 모니터링여부 Preset 설정을 추가한다.
+	 * 
+	 * @param connInfoSetting
+	 * @param presetName
+	 */
+	void addMonitoringPreset(String connInfoSetting, String presetName);
+
+	/**
+	 * 모니터링여부 Preset 설정을 저장한다.
+	 * 
+	 * @param presetName
+	 * @param settingedMonitoringYN
+	 */
+	void saveMonitoringPresetSetting(String presetName,
+			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN);
 }
