@@ -354,7 +354,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		this.label.setText(text);
 	}
 
-	public void setAliasComboBoxItems(String[] items) {
+	public void setAliasComboBoxItems(List<String> items) {
 		this.aliasComboBox.getItems().addAll(items);
 		this.aliasComboBox.getSelectionModel().selectFirst();
 	}
