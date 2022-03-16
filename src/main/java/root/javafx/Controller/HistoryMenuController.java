@@ -20,6 +20,7 @@ import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.AlertLog;
+import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
@@ -57,22 +58,22 @@ public class HistoryMenuController implements Initializable {
 
 	@FXML
 	DatePicker alertLogStartDayDP;
-	
+
 	@FXML
 	DatePicker alertLogEndDayDP;
 
 	@FXML
 	AnchorPane archiveUsageTabAP;
-	
+
 	@FXML
 	AnchorPane tableSpaceUsageTabAP;
-	
+
 	@FXML
 	AnchorPane asmDiskUsageTabAP;
-	
+
 	@FXML
 	AnchorPane osDiskUsageTabAP;
-	
+
 	@FXML
 	AnchorPane alertLogUsageTabAP;
 
@@ -282,4 +283,21 @@ public class HistoryMenuController implements Initializable {
 		return true;
 	}
 
+	public void monitoringAlertLog(ActionEvent e) {
+		String alertLogStartDay = alertLogStartDayDP.getValue().toString();
+		String alertLogEndDay = alertLogEndDayDP.getValue().toString();
+
+		String selectedServer = alertLogServerComboBox.getSelectionModel().getSelectedItem();
+		JschConnectionInfo connInfo = propService.getJschConnInfo(selectedServer);
+
+		JschServer server = new JschServer(connInfo);
+		server.init();
+		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
+		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+
+		AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay);
+		alertLogMonitoringResultMap.put(selectedServer, usecase.getAlertLogDuringPeriod(alcp));
+
+		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
+	}
 }

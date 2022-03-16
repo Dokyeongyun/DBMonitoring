@@ -111,7 +111,7 @@
                                                          </padding>
                                                       </Label>
                                                       <JFXComboBox fx:id="alertLogServerComboBox" maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
-                                                      <Button mnemonicParsing="false" styleClass="basic-font" text="조회" />
+                                                      <Button mnemonicParsing="false" onAction="#monitoringAlertLog" styleClass="basic-font" text="조회" />
                                                       <Button mnemonicParsing="false" styleClass="basic-font" text="새로고침" />
                                                       <Button mnemonicParsing="false" styleClass="basic-font" text="엑셀출력" />
                                                       <Button mnemonicParsing="false" styleClass="basic-font" text="그래프보기" />
