@@ -41,7 +41,7 @@ import root.core.usecase.constracts.ServerCheckUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
-import root.javafx.CustomView.DisableAfterTodayDateCell;
+import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
 
 public class HistoryMenuController implements Initializable {
