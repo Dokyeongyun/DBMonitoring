@@ -3,6 +3,7 @@ package root.core.service.contracts;
 import java.util.List;
 import java.util.Map;
 
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
@@ -78,6 +79,20 @@ public interface PropertyService {
 
 	List<JdbcConnectionInfo> getJdbcConnInfoList(List<String> dbNames);
 
+	/**
+	 * 서버의 접속정보를 가져온다.
+	 * 
+	 * @param serverName 서버 접속정보 별칭
+	 * @return
+	 */
+	JschConnectionInfo getJschConnInfo(String serverName);
+
+	/**
+	 * 서버들의 접속정보를 가져온다.
+	 * 
+	 * @param serverNames
+	 * @return
+	 */
 	List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames);
 
 	/**
@@ -140,4 +155,13 @@ public interface PropertyService {
 	 */
 	void saveMonitoringPresetSetting(String presetName,
 			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN);
+
+	/**
+	 * 설정된 AlertLog 모니터링 커맨드 정보를 가져온다.
+	 * 
+	 * @param connInfoSetting
+	 * @param serverName
+	 * @return
+	 */
+	AlertLogCommand getAlertLogCommand(String connInfoSetting, String serverName);
 }

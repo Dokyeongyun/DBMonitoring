@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
@@ -174,6 +175,17 @@ public class FilePropertyService implements PropertyService {
 				.collect(Collectors.mapping(dbName -> propRepo.getJdbcConnectionInfo(dbName), Collectors.toList()));
 	}
 
+	/**
+	 * 서버의 접속정보를 가져온다.
+	 */
+	@Override
+	public JschConnectionInfo getJschConnInfo(String serverName) {
+		return propRepo.getJschConnectionInfo(serverName);
+	}
+
+	/**
+	 * 서버들의 접속정보를 가져온다.
+	 */
 	@Override
 	public List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames) {
 		return serverNames.stream().sorted().collect(
@@ -221,7 +233,7 @@ public class FilePropertyService implements PropertyService {
 		rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 		propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
 	}
-	
+
 	/**
 	 * 접속정보 설정을 추가한다.
 	 */
@@ -268,5 +280,11 @@ public class FilePropertyService implements PropertyService {
 			propRepo.save(monitoringFilePath, config);
 			propRepo.loadMonitoringInfoConfig(monitoringFilePath);
 		}
+	}
+
+	@Override
+	public AlertLogCommand getAlertLogCommand(String connInfoSetting, String serverName) {
+		loadConnectionInfoConfig(connInfoSetting);
+		return propRepo.getAlertLogCommand(serverName);
 	}
 }
