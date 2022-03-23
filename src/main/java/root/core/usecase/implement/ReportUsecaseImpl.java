@@ -94,4 +94,12 @@ public class ReportUsecaseImpl implements ReportUsecase {
 
 		return result;
 	}
+
+	@Override
+	public <T extends MonitoringResult> List<String> getMonitoringHistoryDays(Class<T> clazz, String alias) {
+		return getMonitoringReportData(clazz, alias, FileSize.B, 2)
+				.stream()
+				.map(r -> r.getMonitoringDate())
+				.collect(Collectors.toList());
+	}
 }
