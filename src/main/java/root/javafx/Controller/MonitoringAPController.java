@@ -367,6 +367,14 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 	}
 
+	public void showPrevHistory(ActionEvent e) {
+
+	}
+
+	public void showNextHistory(ActionEvent e) {
+
+	}
+
 	/*
 	 * =============================================================================
 	 */
