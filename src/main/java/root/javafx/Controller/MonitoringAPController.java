@@ -101,8 +101,12 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			setAnchor(this, 0, 0, 0, 0);
 
 			// Add comoboBox click listner
-			aliasComboBox.valueProperty().addListener((options, oldVlaue, newValue) -> {
-				syncTableData(newValue, 0);
+			aliasComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
+				if(oldValue == null) {
+					syncTableData(newValue, 0);
+				} else {
+					runMonitoring();	
+				}
 			});
 
 			// Setting inquiry datepicker initial value
@@ -112,6 +116,11 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 			unitComboBox.getItems().addAll(FileSize.values());
 			unitComboBox.getSelectionModel().select(propService.getDefaultFileSizeUnit());
+			unitComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+				if(oldValue != null) {
+					runMonitoring();	
+				}
+			});
 
 			roundComboBox.getItems().addAll(RoundingDigits.values());
 			roundComboBox.getSelectionModel().select(propService.getDefaultRoundingDigits());
@@ -126,7 +135,12 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 					return RoundingDigits.find(digits);
 				}
 			});
-
+			roundComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+				if(oldValue != null) {
+					runMonitoring();	
+				}
+			});
+			
 			// Set pagination property
 			pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
 				String selected = aliasComboBox.getSelectionModel().getSelectedItem();
@@ -259,6 +273,10 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
+		runMonitoring();
+	}
+	
+	private void runMonitoring() {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
 		// Clear data
