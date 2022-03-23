@@ -34,7 +34,7 @@ import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.CustomView.MonitoringTableViewContainer;
-import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
+import root.javafx.CustomView.dateCell.MonitoringHistoryDateCell;
 import root.javafx.CustomView.prequencyUI.PrequencyButton;
 import root.javafx.DI.DependencyInjection;
 import root.utils.AlertUtils;
@@ -107,9 +107,8 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 			// Setting inquiry datepicker initial value
 			inquiryDatePicker.setValue(LocalDate.now().minusDays(0));
-			
-			inquiryDatePicker.setDayCellFactory(picker -> new DisableAfterTodayDateCell());
-
+			inquiryDatePicker.setDayCellFactory(picker -> new MonitoringHistoryDateCell(
+					reportUsecase.getMonitoringHistoryDays(clazz, getSelectedAliasComboBoxItem())));
 
 			unitComboBox.getItems().addAll(FileSize.values());
 			unitComboBox.getSelectionModel().select(propService.getDefaultFileSizeUnit());
