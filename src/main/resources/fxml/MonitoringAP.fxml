@@ -26,9 +26,9 @@
                <children>
                   <ToolBar layoutY="2.4000000953674316" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                        <HBox alignment="CENTER" spacing="10.0">
+                        <HBox alignment="CENTER_LEFT" maxWidth="350.0" spacing="10.0">
                            <children>
-                              <JFXButton fx:id="prevHistoryBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showPrevHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="이전일자">
+                              <JFXButton fx:id="prevHistoryBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showPrevHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="이전기록">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -36,7 +36,12 @@
                                     <FontAwesomeIconView glyphName="ANGLE_LEFT" size="13" />
                                  </graphic>
                               </JFXButton>
-                              <JFXButton fx:id="nextHistoryBtn" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showNextHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="다음일자">
+                              <Label styleClass="basic-font" text="2022-03-25 00:00:00">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#003b8e" glyphName="CLOCK_ALT" size="15" strokeWidth="0.0" />
+                                 </graphic>
+                              </Label>
+                              <JFXButton fx:id="nextHistoryBtn" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showNextHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="다음기록">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -48,7 +53,7 @@
                         </HBox>
                     </items>
                   </ToolBar>
-                  <HBox alignment="CENTER" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <HBox alignment="CENTER_RIGHT" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Button fx:id="prequencyTimeDivBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#prequencyTimeDivToggle" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #01077e; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: white;" text="AM">
                            <HBox.margin>
