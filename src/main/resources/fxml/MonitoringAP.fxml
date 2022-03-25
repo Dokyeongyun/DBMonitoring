@@ -36,7 +36,7 @@
                                     <FontAwesomeIconView glyphName="ANGLE_LEFT" size="13" />
                                  </graphic>
                               </JFXButton>
-                              <Label styleClass="basic-font" text="2022-03-25 00:00:00">
+                              <Label fx:id="historyDateTimeLabel" styleClass="basic-font" text="기록을 조회해주세요.">
                                  <graphic>
                                     <FontAwesomeIconView fill="#003b8e" glyphName="CLOCK_ALT" size="15" strokeWidth="0.0" />
                                  </graphic>
