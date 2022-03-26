@@ -1,6 +1,7 @@
 package root.core.usecase.implement;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -53,6 +54,62 @@ public class ReportUsecaseImpl implements ReportUsecase {
 				.filter(m -> inquiryDate.equals(m.getMonitoringDate()))
 				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
 						Collectors.mapping(m -> m, Collectors.toList())));
+	}
+	
+	@Override
+	public <T extends MonitoringResult> Map<String, List<T>> getPrevMonitoringReportDataByTime(Class<T> clazz,
+			String alias, FileSize unit, int round, String inquiryDateTime) {
+
+		String prevDateTime = getPrevHistoryDateTime(clazz, alias, unit, round, inquiryDateTime);
+
+		return getMonitoringReportData(clazz, alias, unit, round)
+				.stream()
+				.filter(m -> prevDateTime.equals(m.getMonitoringDateTime()))
+				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime).reversed())
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+						Collectors.mapping(m -> m, Collectors.toList())));
+	}
+
+	private <T extends MonitoringResult> String getPrevHistoryDateTime(Class<T> clazz, String alias, FileSize unit,
+			int round, String curHistoryDateTime) {
+		
+		// TODO 날짜 컬럼만 읽기
+		MonitoringResult result =  getMonitoringReportData(clazz, alias, unit, round)
+				.stream()
+				.filter(m -> DateUtils.compareTo("yyyyMMddHHmmss", curHistoryDateTime, m.getMonitoringDateTime()) == 1)
+				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime).reversed())
+				.findFirst()
+				.orElse(null);
+		
+		return result == null ? curHistoryDateTime : result.getMonitoringDateTime();
+	}
+	
+	@Override
+	public <T extends MonitoringResult> Map<String, List<T>> getNextMonitoringReportDataByTime(Class<T> clazz,
+			String alias, FileSize unit, int round, String inquiryDateTime) {
+
+		String nextDateTime = getNextHistoryDateTime(clazz, alias, unit, round, inquiryDateTime);
+		
+		return getMonitoringReportData(clazz, alias, unit, round)
+				.stream()
+				.filter(m -> nextDateTime.equals(m.getMonitoringDateTime()))
+				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+						Collectors.mapping(m -> m, Collectors.toList())));
+	}
+	
+	private <T extends MonitoringResult> String getNextHistoryDateTime(Class<T> clazz, String alias, FileSize unit,
+			int round, String curHistoryDateTime) {
+		
+		// TODO 날짜 컬럼만 읽기
+		MonitoringResult result =  getMonitoringReportData(clazz, alias, unit, round)
+				.stream()
+				.filter(m -> DateUtils.compareTo("yyyyMMddHHmmss", curHistoryDateTime, m.getMonitoringDateTime()) == -1)
+				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
+				.findFirst()
+				.orElse(null);
+		
+		return result == null ? curHistoryDateTime : result.getMonitoringDateTime();
 	}
 
 	@Override
