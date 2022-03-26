@@ -2,6 +2,7 @@ package root.core.usecase.implement;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -52,7 +53,9 @@ public class ReportUsecaseImpl implements ReportUsecase {
 		return getMonitoringReportData(clazz, alias, unit, round)
 				.stream()
 				.filter(m -> inquiryDate.equals(m.getMonitoringDate()))
-				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
+				.collect(Collectors.groupingBy(MonitoringResult::getMonitoringDateTime, 
+						LinkedHashMap::new, 
 						Collectors.mapping(m -> m, Collectors.toList())));
 	}
 	
@@ -141,6 +144,7 @@ public class ReportUsecaseImpl implements ReportUsecase {
 				.stream()
 				.collect(Collectors.groupingBy(
 						m -> Integer.parseInt(DateUtils.convertDateFormat("yyyyMMddHHmmss", "HH", m, Locale.KOREA)),
+						LinkedHashMap::new,
 						Collectors.mapping(m -> m, Collectors.toList())));
 
 		for (int i = 0; i < 24; i++) {
