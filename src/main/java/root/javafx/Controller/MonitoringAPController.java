@@ -1,6 +1,7 @@
 package root.javafx.Controller;
 
 import java.io.IOException;
+import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -9,20 +10,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -43,7 +49,7 @@ import root.utils.AlertUtils;
 import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
 
-public class MonitoringAPController<T extends MonitoringResult> extends BorderPane {
+public class MonitoringAPController<T extends MonitoringResult> extends BorderPane implements Initializable {
 
 	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "기록을 조회해주세요.";
 
@@ -59,7 +65,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	@FXML
 	JFXComboBox<FileSize> unitComboBox;
-
+ 
 	@FXML
 	JFXComboBox<RoundingDigits> roundComboBox;
 
@@ -101,6 +107,22 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 	}
 
+
+	@Override
+	public void initialize(URL location, ResourceBundle resources) {
+		addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+		    public void handle(KeyEvent ke) {
+		    	if(ke.getCode().equals(KeyCode.Z)) {
+		    		prevHistoryBtn.fire();
+		    		ke.consume();
+		    	} else if(ke.getCode().equals(KeyCode.X)) {
+		    		nextHistoryBtn.fire();
+		    		ke.consume();
+		    	}
+		    }
+		});
+	}
+	
 	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
 
@@ -468,4 +490,5 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	public String getSelectedAliasComboBoxItem() {
 		return this.aliasComboBox.getSelectionModel().getSelectedItem();
 	}
+
 }
