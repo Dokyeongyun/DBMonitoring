@@ -142,7 +142,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 				if (oldValue == null) {
 					syncTableData(newValue, 0);
 				} else {
-					runMonitoring();
+					showMonitoringHistory(0);
 				}
 			});
 
@@ -153,7 +153,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			unitComboBox.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 			unitComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 				if (oldValue != null) {
-					runMonitoring();
+					showMonitoringHistory(0);
 				}
 			});
 
@@ -172,7 +172,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			});
 			roundComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 				if (oldValue != null) {
-					runMonitoring();
+					showMonitoringHistory(0);
 				}
 			});
 
@@ -327,16 +327,24 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param e
 	 */
 	public void run(ActionEvent e) {
-		runMonitoring();
+		showMonitoringHistory(0);
 	}
 
-	private void runMonitoring() {
+	public void showPrevHistory(ActionEvent e) {
+		showMonitoringHistory(-1);
+	}
+
+	public void showNextHistory(ActionEvent e) {
+		showMonitoringHistory(1);
+	}
+	
+	private void showMonitoringHistory(int type) {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
 		// Clear data
 		clearTableData(selected);
-		
-		Map<String, List<T>> allDataList = inquiryMonitoringHistory(0);
+
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory(type);
 		if (allDataList == null || allDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
 			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
@@ -436,42 +444,6 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		for (int i = startIdx; i < endIdx; i++) {
 			prequencyHBox.getChildren().add(new PrequencyButton(countByTime.get(i)));
 		}
-	}
-
-	public void showPrevHistory(ActionEvent e) {
-		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
-
-		// Clear data
-		clearTableData(selected);
-
-		Map<String, List<T>> allDataList = inquiryMonitoringHistory(-1);
-		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
-			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
-			return;
-		}
-
-		// Add and Sync data
-		addTableDataSet(selected, allDataList);
-		syncTableData(selected, 0);
-	}
-
-	public void showNextHistory(ActionEvent e) {
-		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
-
-		// Clear data
-		clearTableData(selected);
-
-		Map<String, List<T>> allDataList = inquiryMonitoringHistory(1);
-		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
-			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
-			return;
-		}
-
-		// Add and Sync data
-		addTableDataSet(selected, allDataList);
-		syncTableData(selected, 0);
 	}
 
 	/*
