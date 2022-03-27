@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 
 import javafx.event.ActionEvent;
@@ -44,6 +45,8 @@ import root.utils.UnitUtils.FileSize;
 
 public class MonitoringAPController<T extends MonitoringResult> extends BorderPane {
 
+	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "기록을 조회해주세요.";
+
 	private ReportUsecase reportUsecase;
 
 	private PropertyService propService = new FilePropertyService(PropertyRepositoryImpl.getInstance());
@@ -68,6 +71,12 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	
 	@FXML
 	Label historyDateTimeLabel;
+	
+	@FXML
+	JFXButton prevHistoryBtn;
+	
+	@FXML
+	JFXButton nextHistoryBtn;
 
 	@FXML
 	Pagination pagination;
@@ -155,6 +164,18 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			String amOrPm = Integer.valueOf(DateUtils.getToday("HH")) < 12 ? "AM" : "PM";
 			prequencyTimeDivBtn.setText(amOrPm);
 
+			// Set historyDateTimeLabel change listener
+			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
+			historyDateTimeLabel.textProperty().addListener((observable, oldValue, newValue) -> {
+				if (oldValue == null || newValue.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
+					prevHistoryBtn.setDisable(true);
+					nextHistoryBtn.setDisable(true);
+				} else {
+					prevHistoryBtn.setDisable(false);
+					nextHistoryBtn.setDisable(false);
+				}
+			});
+
 			initMonitoringTableView();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -178,6 +199,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	 * @param id
 	 */
 	public void clearTableData(String id) {
+		tableViewContainer.clearTableData(clazz);
 		if (tableDataMap.get(id) != null) {
 			tableDataMap.get(id).clear();
 		}
@@ -236,22 +258,19 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		// Add tableView items
 		Map<String, List<T>> data = tableDataMap.get(id);
-		List<String> times = new ArrayList<>(data.keySet());
-		Collections.sort(times);
-
-		List<T> tableData = data.get(times.get(index));
+		List<T> tableData = data.get(new ArrayList<>(data.keySet()).get(index));
 		tableViewContainer.setTableData(clazz, tableData);
 
 		// Sync monitoring prequency UI
 		syncPrequency(prequencyTimeDivBtn.getText());
-		
+
 		// Sync history monitoring datetime
-		if(tableData != null && !tableData.isEmpty()) {
+		if (tableData != null && !tableData.isEmpty()) {
 			String monitoringDateTime = tableData.get(0).getMonitoringDateTime();
 			historyDateTimeLabel.setText(DateUtils.convertDateFormat("yyyyMMddHHmmss", "yyyy-MM-dd HH:mm:ss",
 					monitoringDateTime, Locale.KOREA));
 		} else {
-			historyDateTimeLabel.setText("기록을 조회해주세요.");
+			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 		}
 	}
 
@@ -288,16 +307,17 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	public void run(ActionEvent e) {
 		runMonitoring();
 	}
-	
+
 	private void runMonitoring() {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
 		// Clear data
 		clearTableData(selected);
-
-		Map<String, List<T>> allDataList = inquiryMonitoringHistory();
+		
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory(0);
 		if (allDataList == null || allDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 			return;
 		}
 
@@ -306,7 +326,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		syncTableData(selected, 0);
 	}
 
-	private Map<String, List<T>> inquiryMonitoringHistory() {
+	private Map<String, List<T>> inquiryMonitoringHistory(int type) {
 		// Get selected inquiry condition
 		String inquiryDate = this.inquiryDatePicker.getValue().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
@@ -316,8 +336,24 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		// TODO Show Progress UI
 
 		// Acquire data on inquiry date
-		return reportUsecase.getMonitoringReportDataByTime(this.clazz, selected, selectedUnit,
-				selectedRoundingDigit.getDigits(), inquiryDate);
+		if (type == 0) {
+			return reportUsecase.getMonitoringReportDataByTime(this.clazz, selected, selectedUnit,
+					selectedRoundingDigit.getDigits(), inquiryDate);
+		}
+
+		String current = historyDateTimeLabel.getText();
+		if(current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
+			return null;
+		}
+		String currentDateTime = DateUtils.convertDateFormat("yyyy-MM-dd HH:mm:ss", "yyyyMMddHHmmss", current,
+				Locale.KOREA);
+		if (type == -1) {
+			return reportUsecase.getPrevMonitoringReportDataByTime(this.clazz, selected, selectedUnit,
+					selectedRoundingDigit.getDigits(), currentDateTime);
+		} else {
+			return reportUsecase.getNextMonitoringReportDataByTime(this.clazz, selected, selectedUnit,
+					selectedRoundingDigit.getDigits(), currentDateTime);
+		}
 	}
 
 	private Map<Integer, List<String>> inquiryMonitoringHistoryTimesByTime() {
@@ -379,16 +415,17 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 			prequencyHBox.getChildren().add(new PrequencyButton(countByTime.get(i)));
 		}
 	}
-	
+
 	public void showPrevHistory(ActionEvent e) {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
 		// Clear data
 		clearTableData(selected);
 
-		Map<String, List<T>> allDataList = inquiryMonitoringHistory();
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory(-1);
 		if (allDataList == null || allDataList.size() == 0) {
 			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 			return;
 		}
 
@@ -398,7 +435,21 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	public void showNextHistory(ActionEvent e) {
+		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
+		// Clear data
+		clearTableData(selected);
+
+		Map<String, List<T>> allDataList = inquiryMonitoringHistory(1);
+		if (allDataList == null || allDataList.size() == 0) {
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
+			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
+			return;
+		}
+
+		// Add and Sync data
+		addTableDataSet(selected, allDataList);
+		syncTableData(selected, 0);
 	}
 
 	/*

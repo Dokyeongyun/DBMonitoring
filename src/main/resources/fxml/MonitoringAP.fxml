@@ -28,7 +28,7 @@
                     <items>
                         <HBox alignment="CENTER_LEFT" maxWidth="350.0" spacing="10.0">
                            <children>
-                              <JFXButton fx:id="prevHistoryBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showPrevHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="이전기록">
+                              <JFXButton fx:id="prevHistoryBtn" disable="true" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showPrevHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="이전기록">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
@@ -41,7 +41,7 @@
                                     <FontAwesomeIconView fill="#003b8e" glyphName="CLOCK_ALT" size="15" strokeWidth="0.0" />
                                  </graphic>
                               </Label>
-                              <JFXButton fx:id="nextHistoryBtn" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showNextHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="다음기록">
+                              <JFXButton fx:id="nextHistoryBtn" contentDisplay="RIGHT" disable="true" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showNextHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="다음기록">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
