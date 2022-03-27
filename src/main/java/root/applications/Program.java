@@ -4,16 +4,18 @@ import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Controller.HomeController;
 import root.javafx.Controller.LeftMenuController;
 import root.javafx.DI.DependencyInjection;
 
+@Slf4j
 public class Program extends Application {
 
 	public static Stage stage;
-	
+
 	PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
 
 	@Override
@@ -36,16 +38,21 @@ public class Program extends Application {
 	}
 
 	public static void main(String[] args) {
-		if(System.getProperty("resourceBaseDir") == null) {
-			System.setProperty("resourceBaseDir", "");	
+		if (System.getProperty("resourceBaseDir") == null) {
+			System.setProperty("resourceBaseDir", "");
 		}
 
+		log.info("Start GUI Program");
 		launch(args);
 	}
 
 	private void setUpDependecyInjector() {
 		// save the factory in the injector
-		DependencyInjection.addInjectionMethod(HomeController.class, param -> {return new HomeController();});
-		DependencyInjection.addInjectionMethod(LeftMenuController.class, param -> {return new LeftMenuController();});
+		DependencyInjection.addInjectionMethod(HomeController.class, param -> {
+			return new HomeController();
+		});
+		DependencyInjection.addInjectionMethod(LeftMenuController.class, param -> {
+			return new LeftMenuController();
+		});
 	}
 }
