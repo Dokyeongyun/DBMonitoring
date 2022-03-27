@@ -257,6 +257,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		}
 		save("./config/common.properties", config);
 	}
+	
+	@Override
+	public void saveCommonConfig(String key, String value) {
+		PropertiesConfiguration config = getConfiguration("commonConfig");
+		config.setProperty(key, value);
+		save("./config/common.properties", config);
+	}
 
 	private static PropertiesConfiguration load(String filePath) {
 		Parameters param = new Parameters();

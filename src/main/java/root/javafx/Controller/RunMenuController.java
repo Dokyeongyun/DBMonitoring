@@ -14,7 +14,6 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXToggleButton;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,7 +33,6 @@ import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
-import root.core.domain.MonitoringResult;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
@@ -55,7 +53,6 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerCheckUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
-import root.javafx.CustomView.MonitoringTableView;
 import root.utils.UnitUtils.FileSize;
 
 public class RunMenuController implements Initializable {
@@ -100,22 +97,7 @@ public class RunMenuController implements Initializable {
 	AnchorPane scrollAP;
 
 	@FXML
-	SplitPane upperSplitPane;
-
-	@FXML
-	SplitPane lowerSplitPane;
-
-	@FXML
-	AnchorPane archiveAP;
-
-	@FXML
-	AnchorPane tableSpaceAP;
-
-	@FXML
-	AnchorPane asmDiskAP;
-
-	@FXML
-	AnchorPane osDiskAP;
+	SplitPane resultSplitPane;
 
 	@FXML
 	AnchorPane step4AP;
@@ -126,10 +108,8 @@ public class RunMenuController implements Initializable {
 	@FXML
 	HBox step3ToStep4Arrow;
 
-	private MonitoringTableView<ArchiveUsage> archiveTable;
-	private MonitoringTableView<TableSpaceUsage> tableSpaceTable;
-	private MonitoringTableView<ASMDiskUsage> asmDiskTable;
-	private MonitoringTableView<OSDiskUsage> osDiskTable;
+	private MonitoringTableViewPagingBox dbResults;
+	private MonitoringTableViewPagingBox serverResults;
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -141,7 +121,8 @@ public class RunMenuController implements Initializable {
 		initRunStep3();
 
 		/* 4. 실행결과 */
-		// initRunStep4();
+//		initRunStep4();
+
 	}
 
 	/**
@@ -173,20 +154,6 @@ public class RunMenuController implements Initializable {
 		AnchorPane.setRightAnchor(node, right);
 		AnchorPane.setBottomAnchor(node, bottom);
 		AnchorPane.setLeftAnchor(node, left);
-	}
-
-	/**
-	 * 모니터링 실행 결과 TableView를 부모 AnchorPane에 추가한다.
-	 * 
-	 * @param <T>    모니터링 타입
-	 * @param parent 부모 AnchorPane
-	 * @return 생성된 TableView
-	 */
-	private <T extends MonitoringResult> MonitoringTableView<T> addMonitoringTableView(AnchorPane parent) {
-		MonitoringTableView<T> tableView = new MonitoringTableView<>();
-		setAnchorPaneAnchor(tableView, 20, 0, 0, 0);
-		parent.getChildren().add(tableView);
-		return tableView;
 	}
 
 	/**
@@ -249,11 +216,12 @@ public class RunMenuController implements Initializable {
 		propService.loadMonitoringInfoConfig(presetConfigFilePath);
 
 		UsageUIType usageUIType = usageUITypeCB.getSelectionModel().getSelectedItem();
-		setUsageColumnUIType(usageUIType);
 
 		boolean isSave = resultSaveToggleBtn.isSelected();
 
 		List<String> dbNames = propService.getMonitoringDBNameList();
+		List<String> serverNames = propService.getMonitoringServerNameList();
+
 		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
 		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
 			AbstractDatabase db = new JdbcDatabase(jdbc);
@@ -270,12 +238,21 @@ public class RunMenuController implements Initializable {
 			List<ArchiveUsage> archiveUsageList = usecase.getCurrentArchiveUsage();
 			List<TableSpaceUsage> tableSpaceUsageList = usecase.getCurrentTableSpaceUsage();
 			List<ASMDiskUsage> asmDiskUsageList = usecase.getCurrentASMDiskUsage();
-			setMonitoringResult(archiveTable, archiveUsageList);
-			setMonitoringResult(tableSpaceTable, tableSpaceUsageList);
-			setMonitoringResult(asmDiskTable, asmDiskUsageList);
+
+			String dbName = jdbc.getJdbcDBName();
+			dbResults.addMonitoringTableViewContainer(dbName, ArchiveUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, ArchiveUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, ArchiveUsage.class, archiveUsageList);
+
+			dbResults.addMonitoringTableViewContainer(dbName, TableSpaceUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, TableSpaceUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, TableSpaceUsage.class, tableSpaceUsageList);
+
+			dbResults.addMonitoringTableViewContainer(dbName, ASMDiskUsage.class);
+			dbResults.setMonitoringTableViewUsageUIType(dbName, ASMDiskUsage.class, usageUIType);
+			dbResults.setMonitoringTableViewData(dbName, ASMDiskUsage.class, asmDiskUsageList);
 		}
 
-		List<String> serverNames = propService.getMonitoringServerNameList();
 		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			JschServer server = new JschServer(jsch);
@@ -291,19 +268,15 @@ public class RunMenuController implements Initializable {
 				}
 			}
 
+			String serverName = jsch.getServerName();
 			List<OSDiskUsage> osDiskUsageList = usecase.getCurrentOSDiskUsage();
-			setMonitoringResult(osDiskTable, osDiskUsageList);
+			serverResults.addMonitoringTableViewContainer(serverName, OSDiskUsage.class);
+			serverResults.setMonitoringTableViewUsageUIType(serverName, OSDiskUsage.class, usageUIType);
+			serverResults.setMonitoringTableViewData(serverName, OSDiskUsage.class, osDiskUsageList);
 
 //			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
 //					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
 		}
-	}
-
-	/**
-	 * 모니터링 결과를 TableView에 렌더링한다.
-	 */
-	public <T extends MonitoringResult> void setMonitoringResult(MonitoringTableView<T> tableView, List<T> result) {
-		tableView.setItems(FXCollections.observableArrayList(result));
 	}
 
 	/**
@@ -430,6 +403,12 @@ public class RunMenuController implements Initializable {
 	 * 4. 실행결과 영역의 View를 초기화한다.
 	 */
 	private void initRunStep4() {
+		dbResults = new MonitoringTableViewPagingBox("DB");
+		serverResults = new MonitoringTableViewPagingBox("SERVER");
+
+		resultSplitPane.getItems().clear();
+		resultSplitPane.getItems().addAll(dbResults, serverResults);
+		
 		step4AP.setVisible(true);
 		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);
@@ -438,31 +417,5 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
-
-		// 4-1. 실행결과 TableView 생성 및 Column 추가
-		archiveTable = addMonitoringTableView(archiveAP);
-		archiveTable.addColumn("Archive", "archiveName");
-		archiveTable.addColumn("사용량(%)", "usedPercent");
-
-		tableSpaceTable = addMonitoringTableView(tableSpaceAP);
-		tableSpaceTable.addColumn("테이블스페이스", "tableSpaceName");
-		tableSpaceTable.addColumn("사용량(%)", "usedPercent");
-
-		asmDiskTable = addMonitoringTableView(asmDiskAP);
-		asmDiskTable.addColumn("디스크 그룹", "asmDiskGroupName");
-		asmDiskTable.addColumn("디스크 타입", "asmDiskGroupType");
-		asmDiskTable.addColumn("사용량(%)", "usedPercent");
-
-		osDiskTable = addMonitoringTableView(osDiskAP);
-		osDiskTable.addColumn("파일 시스템", "fileSystem");
-		osDiskTable.addColumn("마운트 위치", "mountedOn");
-		osDiskTable.addColumn("사용량(%)", "usedPercent");
-	}
-
-	private void setUsageColumnUIType(UsageUIType usageUIType) {
-		archiveTable.setUsageUIType(usageUIType);
-		tableSpaceTable.setUsageUIType(usageUIType);
-		asmDiskTable.setUsageUIType(usageUIType);
-		osDiskTable.setUsageUIType(usageUIType);
 	}
 }

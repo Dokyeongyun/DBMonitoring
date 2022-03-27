@@ -1,9 +1,11 @@
 package root.javafx.CustomView;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -12,6 +14,7 @@ import root.core.domain.MonitoringResult;
 import root.core.domain.enums.UsageUIType;
 import root.javafx.CustomView.UsageUI.UsageUI;
 import root.javafx.CustomView.UsageUI.UsageUIFactory;
+import root.utils.DateUtils;
 
 public class MonitoringTableView<T extends MonitoringResult> extends TableView<T> {
 
@@ -24,7 +27,6 @@ public class MonitoringTableView<T extends MonitoringResult> extends TableView<T
 
 		setColumnResizePolicy(CONSTRAINED_RESIZE_POLICY);
 		setTableMenuButtonVisible(true);
-
 	}
 
 	public void addColumn(String title, String fieldName) {
@@ -36,6 +38,10 @@ public class MonitoringTableView<T extends MonitoringResult> extends TableView<T
 
 	public void setUsageUIType(UsageUIType usageUIType) {
 		TableColumn<T, Object> tc = tableColumnMap.get("usedPercent");
+		if(tc == null) {
+			return;
+		}
+		
 		tc.setCellFactory(col -> {
 			TableCell<T, Object> cell = new TableCell<>();
 			cell.itemProperty().addListener((observableValue, o, newValue) -> {
@@ -46,6 +52,21 @@ public class MonitoringTableView<T extends MonitoringResult> extends TableView<T
 				}
 			});
 			return cell;
+		});
+	}
+
+	public void setMonitoringDateTimeFormat(String format) {
+		TableColumn<T, Object> tc = tableColumnMap.get("monitoringDateTime");
+		if(tc == null) {
+			return;
+		}
+		
+		tc.setCellValueFactory(cell -> {
+			String value = DateUtils.convertDateFormat("yyyyMMddHHmmss", format,
+					cell.getValue().getMonitoringDateTime(), Locale.KOREA);
+			SimpleObjectProperty<Object> result = new SimpleObjectProperty<>();
+			result.setValue(value);
+			return result;
 		});
 	}
 }

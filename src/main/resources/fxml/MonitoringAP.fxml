@@ -11,7 +11,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -25,7 +24,36 @@
          <children>
             <AnchorPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="5.0">
                <children>
-                  <HBox alignment="CENTER" layoutX="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <ToolBar layoutY="2.4000000953674316" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <items>
+                        <HBox alignment="CENTER_LEFT" maxWidth="350.0" spacing="10.0">
+                           <children>
+                              <JFXButton fx:id="prevHistoryBtn" disable="true" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showPrevHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="이전기록">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <FontAwesomeIconView glyphName="ANGLE_LEFT" size="13" />
+                                 </graphic>
+                              </JFXButton>
+                              <Label fx:id="historyDateTimeLabel" styleClass="basic-font" text="기록을 조회해주세요.">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#003b8e" glyphName="CLOCK_ALT" size="15" strokeWidth="0.0" />
+                                 </graphic>
+                              </Label>
+                              <JFXButton fx:id="nextHistoryBtn" contentDisplay="RIGHT" disable="true" ellipsisString="" graphicTextGap="8.0" maxWidth="80.0" minWidth="80.0" onAction="#showNextHistory" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="다음기록">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <FontAwesomeIconView glyphName="ANGLE_RIGHT" size="13" />
+                                 </graphic>
+                              </JFXButton>
+                           </children>
+                        </HBox>
+                    </items>
+                  </ToolBar>
+                  <HBox alignment="CENTER_RIGHT" layoutY="32.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="350.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
                         <Button fx:id="prequencyTimeDivBtn" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#prequencyTimeDivToggle" prefHeight="30.0" prefWidth="30.0" style="-fx-background-color: #01077e; -fx-background-radius: 0px; -fx-border-width: 0.2px; -fx-border-color: black; -fx-font-family: NanumGothic; -fx-font-size: 9px; -fx-font-weight: bold; -fx-text-fill: white;" text="AM">
                            <HBox.margin>
@@ -84,14 +112,13 @@
                            </tooltip>
                         </Label>
                      </children>
+                     <padding>
+                        <Insets left="30.0" right="30.0" />
+                     </padding>
                   </HBox>
                </children>
             </AnchorPane>
-            <TableView fx:id="monitoringResultTV" layoutX="10.0" style="-fx-background-color: #ffffff00;" styleClass="basic-font" stylesheets="@../css/tableview.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </TableView>
+            <AnchorPane fx:id="tableViewRegion" layoutX="10.0" layoutY="50.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
          </children>
          <padding>
             <Insets left="10.0" right="10.0" />

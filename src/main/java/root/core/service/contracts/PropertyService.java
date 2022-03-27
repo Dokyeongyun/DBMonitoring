@@ -3,9 +3,11 @@ package root.core.service.contracts;
 import java.util.List;
 import java.util.Map;
 
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
+import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.utils.UnitUtils.FileSize;
@@ -77,6 +79,20 @@ public interface PropertyService {
 
 	List<JdbcConnectionInfo> getJdbcConnInfoList(List<String> dbNames);
 
+	/**
+	 * 서버의 접속정보를 가져온다.
+	 * 
+	 * @param serverName 서버 접속정보 별칭
+	 * @return
+	 */
+	JschConnectionInfo getJschConnInfo(String serverName);
+
+	/**
+	 * 서버들의 접속정보를 가져온다.
+	 * 
+	 * @param serverNames
+	 * @return
+	 */
 	List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames);
 
 	/**
@@ -99,4 +115,53 @@ public interface PropertyService {
 	 * @return
 	 */
 	UsageUIType getDefaultUsageUIType();
+
+	/**
+	 * 공통 설정정보를 저장한다.
+	 * 
+	 * @param key   설정정보 키
+	 * @param value 설정정보 값
+	 */
+	void saveCommonConfig(String key, String value);
+
+	/**
+	 * 최근 사용한 접속정보 설정정보를 저장한다.
+	 * 
+	 * @param filePath
+	 */
+	void saveLastUseConnectionInfoSetting(String filePath);
+
+	/**
+	 * 접속정보 설정을 추가한다.
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	String addConnectionInfoSetting(String filePath);
+
+	/**
+	 * 모니터링여부 Preset 설정을 추가한다.
+	 * 
+	 * @param connInfoSetting
+	 * @param presetName
+	 */
+	void addMonitoringPreset(String connInfoSetting, String presetName);
+
+	/**
+	 * 모니터링여부 Preset 설정을 저장한다.
+	 * 
+	 * @param presetName
+	 * @param settingedMonitoringYN
+	 */
+	void saveMonitoringPresetSetting(String presetName,
+			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN);
+
+	/**
+	 * 설정된 AlertLog 모니터링 커맨드 정보를 가져온다.
+	 * 
+	 * @param connInfoSetting
+	 * @param serverName
+	 * @return
+	 */
+	AlertLogCommand getAlertLogCommand(String connInfoSetting, String serverName);
 }

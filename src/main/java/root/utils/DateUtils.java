@@ -170,4 +170,18 @@ public class DateUtils {
 	public static String format(Date date, String toFormat) {
 		return new SimpleDateFormat(toFormat).format(date);
 	}
+	
+	public static int compareTo(String format, String base, String compare) {
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+			Date date1 = dateFormat.parse(base);
+			Date date2 = dateFormat.parse(compare);
+
+			return date1.compareTo(date2);
+		} catch (ParseException e) {
+			
+		}
+
+		return -1;
+	}
 }

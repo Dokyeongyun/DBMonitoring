@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
+import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
@@ -55,7 +56,8 @@ public class FilePropertyService implements PropertyService {
 	 */
 	@Override
 	public String getLastUseConnectionInfoFilePath() {
-		return propRepo.getLastUseConnInfoFilePath();
+		String filePath = propRepo.getLastUseConnInfoFilePath();
+		return propRepo.isFileExist(filePath) ? filePath : null;
 	}
 
 	/**
@@ -173,6 +175,17 @@ public class FilePropertyService implements PropertyService {
 				.collect(Collectors.mapping(dbName -> propRepo.getJdbcConnectionInfo(dbName), Collectors.toList()));
 	}
 
+	/**
+	 * 서버의 접속정보를 가져온다.
+	 */
+	@Override
+	public JschConnectionInfo getJschConnInfo(String serverName) {
+		return propRepo.getJschConnectionInfo(serverName);
+	}
+
+	/**
+	 * 서버들의 접속정보를 가져온다.
+	 */
 	@Override
 	public List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames) {
 		return serverNames.stream().sorted().collect(
@@ -201,5 +214,77 @@ public class FilePropertyService implements PropertyService {
 	@Override
 	public UsageUIType getDefaultUsageUIType() {
 		return UsageUIType.find(propRepo.getCommonResource("usage-ui-type"));
+	}
+
+	/**
+	 * 공통 설정정보를 저장한다.
+	 */
+	@Override
+	public void saveCommonConfig(String key, String value) {
+		propRepo.saveCommonConfig(key, value);
+	}
+
+	/**
+	 * 최근 사용한 접속정보 설정정보를 저장한다.
+	 */
+	@Override
+	public void saveLastUseConnectionInfoSetting(String filePath) {
+		PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
+		rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
+		propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
+	}
+
+	/**
+	 * 접속정보 설정을 추가한다.
+	 */
+	@Override
+	public String addConnectionInfoSetting(String fileName) {
+		String filePath = "./config/connectioninfo/" + fileName + ".properties";
+		propRepo.createNewPropertiesFile(filePath, "ConnectionInfo");
+		addMonitoringPreset(filePath, "default");
+		return filePath;
+	}
+
+	/**
+	 * 모니터링여부 Preset 설정을 추가한다.
+	 */
+	@Override
+	public void addMonitoringPreset(String connInfoSetting, String presetName) {
+		String connInfoFileName = connInfoSetting.substring(0, connInfoSetting.indexOf(".properties"));
+		String filePath = "./config/monitoring/" + connInfoFileName + "/" + presetName + ".properties";
+
+		propRepo.createNewPropertiesFile(filePath, "Monitoring");
+
+		PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
+		config.addProperty("monitoring.setting.preset." + presetName + ".filepath", filePath);
+		propRepo.save(connInfoSetting, config);
+	}
+
+	/**
+	 * 모니터링여부 Preset 설정을 저장한다.
+	 */
+	@Override
+	public void saveMonitoringPresetSetting(String presetName,
+			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN) {
+		PropertiesConfiguration config = new PropertiesConfiguration();
+		String monitoringFilePath = propRepo.getMonitoringPresetMap().get(presetName);
+
+		if (!monitoringFilePath.isEmpty()) {
+			for (MonitoringType type : settingedMonitoringYN.keySet()) {
+				Map<String, Boolean> aliasMap = settingedMonitoringYN.get(type);
+				for (String alias : aliasMap.keySet()) {
+					String key = StringUtils.join(type.getName().replace(" ", "_"), ".", alias);
+					config.setProperty(key, aliasMap.get(alias) ? "Y" : "N");
+				}
+			}
+			propRepo.save(monitoringFilePath, config);
+			propRepo.loadMonitoringInfoConfig(monitoringFilePath);
+		}
+	}
+
+	@Override
+	public AlertLogCommand getAlertLogCommand(String connInfoSetting, String serverName) {
+		loadConnectionInfoConfig(connInfoSetting);
+		return propRepo.getAlertLogCommand(serverName);
 	}
 }
