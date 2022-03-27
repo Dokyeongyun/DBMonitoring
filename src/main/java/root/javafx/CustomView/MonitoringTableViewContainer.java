@@ -100,5 +100,7 @@ public class MonitoringTableViewContainer extends HBox {
 	
 	public void clearTableData(Class<? extends MonitoringResult> type) {
 		tableDataListMap.get(type).clear();
+		tableViewMap.get(type).getItems().clear();
+		tableViewMap.get(type).refresh();
 	}
 }
