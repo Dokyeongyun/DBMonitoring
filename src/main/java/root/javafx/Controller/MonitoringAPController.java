@@ -115,23 +115,23 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 			// Add comoboBox click listner
 			aliasComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
-				if(oldValue == null) {
+				inquiryDatePicker.setDayCellFactory(picker -> new MonitoringHistoryDateCell(
+						reportUsecase.getMonitoringHistoryDays(clazz, getSelectedAliasComboBoxItem())));
+				if (oldValue == null) {
 					syncTableData(newValue, 0);
 				} else {
-					runMonitoring();	
+					runMonitoring();
 				}
 			});
 
 			// Setting inquiry datepicker initial value
 			inquiryDatePicker.setValue(LocalDate.now().minusDays(0));
-			inquiryDatePicker.setDayCellFactory(picker -> new MonitoringHistoryDateCell(
-					reportUsecase.getMonitoringHistoryDays(clazz, getSelectedAliasComboBoxItem())));
 
 			unitComboBox.getItems().addAll(FileSize.values());
 			unitComboBox.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 			unitComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-				if(oldValue != null) {
-					runMonitoring();	
+				if (oldValue != null) {
+					runMonitoring();
 				}
 			});
 
@@ -149,11 +149,11 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 				}
 			});
 			roundComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-				if(oldValue != null) {
-					runMonitoring();	
+				if (oldValue != null) {
+					runMonitoring();
 				}
 			});
-			
+
 			// Set pagination property
 			pagination.currentPageIndexProperty().addListener((observable, oldValue, newValue) -> {
 				String selected = aliasComboBox.getSelectionModel().getSelectedItem();
