@@ -283,14 +283,18 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		List<T> tableData = data.get(new ArrayList<>(data.keySet()).get(index));
 		tableViewContainer.setTableData(clazz, tableData);
 
-		// Sync monitoring prequency UI
-		syncPrequency(prequencyTimeDivBtn.getText());
-
 		// Sync history monitoring datetime
 		if (tableData != null && !tableData.isEmpty()) {
 			String monitoringDateTime = tableData.get(0).getMonitoringDateTime();
 			historyDateTimeLabel.setText(DateUtils.convertDateFormat("yyyyMMddHHmmss", "yyyy-MM-dd HH:mm:ss",
 					monitoringDateTime, Locale.KOREA));
+
+			// Set datepicker value
+			inquiryDatePicker.setValue(LocalDate.parse(monitoringDateTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+
+			// Sync monitoring prequency UI
+			syncPrequency(prequencyTimeDivBtn.getText());
+
 		} else {
 			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 		}
@@ -375,6 +379,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		if(current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
 			return null;
 		}
+		
 		String currentDateTime = DateUtils.convertDateFormat("yyyy-MM-dd HH:mm:ss", "yyyyMMddHHmmss", current,
 				Locale.KOREA);
 		if (type == -1) {
