@@ -28,7 +28,6 @@ import lombok.Data;
 import root.javafx.DI.DependencyInjection;
 import root.javafx.Service.ConnectionTestService;
 import root.utils.AlertUtils;
-import root.utils.SceneUtils;
 
 public class ConnectionInfoVBox<T> extends VBox {
 
@@ -47,6 +46,9 @@ public class ConnectionInfoVBox<T> extends VBox {
 	@FXML
 	Text connInfoText; // 접속정보 인덱스 텍스트
 
+	@FXML
+	FontAwesomeIconView connTestIcon;
+	
 	@FXML
 	JFXButton connTestBtn;
 
@@ -215,9 +217,6 @@ public class ConnectionInfoVBox<T> extends VBox {
 			prevConnInfoBtn.setDisable(false);
 			nextConnInfoBtn.setDisable(false);
 		}
-		
-		// Index logging
-		// this.connInfoAPMap.print(connInfoIdx);
 	}
 
 	private void setConnInfoIndexText() {
@@ -234,24 +233,23 @@ public class ConnectionInfoVBox<T> extends VBox {
 	
 	// TODO Convert to Enum class
 	private void setConnectionBtnIcon(int type) {
-		FontAwesomeIconView icon = (FontAwesomeIconView) connTestBtn.lookup("#icon");
 		switch (type) {
 		case 1:
-			icon.setIcon(FontAwesomeIcon.PLUG);
-			icon.setFill(Paint.valueOf("#000000"));
+			connTestIcon.setIcon(FontAwesomeIcon.PLUG);
+			connTestIcon.setFill(Paint.valueOf("#000000"));
 			break;
 		case 2:
-			icon.setIcon(FontAwesomeIcon.CHECK);
-			icon.setFill(Paint.valueOf("#49a157"));
+			connTestIcon.setIcon(FontAwesomeIcon.CHECK);
+			connTestIcon.setFill(Paint.valueOf("#49a157"));
 			break;
 		case 3:
-			icon.setIcon(FontAwesomeIcon.TIMES);
-			icon.setFill(Paint.valueOf("#c40a0a"));
+			connTestIcon.setIcon(FontAwesomeIcon.TIMES);
+			connTestIcon.setFill(Paint.valueOf("#c40a0a"));
 			break;
 		case 4:
-			icon.setIcon(FontAwesomeIcon.SPINNER);
-			icon.setFill(Paint.valueOf("#484989"));
-			icon.getStyleClass().add("fa-spin");
+			connTestIcon.setIcon(FontAwesomeIcon.SPINNER);
+			connTestIcon.setFill(Paint.valueOf("#484989"));
+			connTestIcon.getStyleClass().add("fa-spin");
 			break;
 		}
 	}
@@ -356,19 +354,6 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.filter(key -> key > connInfoIdx)
 					.findFirst()
 					.orElse(getLastActiveIdx());
-		}
-		
-		public void print(long index) {
-			System.out.println("Current Index: " + index);
-			for (Long key : map.keySet()) {
-				if(key == index) {
-					System.out.print(key + "[:" + map.get(key).getStatus() + ":], ");	
-				} else {
-					System.out.print(key + "[" + map.get(key).getStatus() + "], ");
-				}
-				
-			}
-			System.out.println();
 		}
 	}
 }

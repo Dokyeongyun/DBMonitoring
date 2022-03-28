@@ -42,7 +42,7 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 
 	@Override
 	public boolean canConnectionTest(ConnectionInfoAP curAP) {
-		return ((DBConnectionInfoAnchorPane) curAP).isAnyEmptyInputForDBConnectionTest();
+		return curAP.isAnyEmptyInputForConnectionTest();
 	}
 
 	@Override

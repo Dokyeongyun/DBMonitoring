@@ -38,8 +38,7 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 
 	@Override
 	public boolean canConnectionTest(ConnectionInfoAP curAP) {
-		// TODO Auto-generated method stub
-		return true;
+		return curAP.isAnyEmptyInputForConnectionTest();
 	}
 
 	@Override
