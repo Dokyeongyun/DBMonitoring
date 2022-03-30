@@ -9,8 +9,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.JschConnectionInfo;
 
+@Slf4j
 public class JschServer {
 	private JSch jsch;
 	private Session session;
@@ -23,19 +25,19 @@ public class JschServer {
 	public void init() {
 		jsch = new JSch();
 		session = null;
-		
+
 		try {
 			session = jsch.getSession(jschConnectionInfo.getUserName(), jschConnectionInfo.getHost(),
 					Integer.valueOf(jschConnectionInfo.getPort()));
 			session.setPassword(jschConnectionInfo.getPassword());
-			
+
 			Properties config = new Properties();
 			config.put("StrictHostKeyChecking", "no"); // 호스트 정보를 검사하지 않는다.
+			config.put("PreferredAuthentications", "password");
 			session.setConfig(config);
-			
+
 		} catch (JSchException e) {
-			System.out.println("JSch Session Creation Faild!");
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 	
@@ -50,8 +52,7 @@ public class JschServer {
 		try {
 			session.connect();
 		} catch (JSchException e) {
-			System.out.println("JSch Connection Faild!");
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return session;
 	}
@@ -69,8 +70,7 @@ public class JschServer {
 			channelExec.setPty(true);
 			channelExec.setCommand(command); 
 		} catch (JSchException e) {
-			System.out.println("Channel Open Faild!");
-			// e.printStackTrace();
+			log.error(e.getMessage());
 		}
 		return channel;
 	}
@@ -84,7 +84,7 @@ public class JschServer {
 			
 			channel.connect();
 		} catch (Exception e) {
-			System.out.println("Channel Connect Failed!");
+			log.error(e.getMessage());
 		}
 		return in;
 	}
@@ -95,5 +95,21 @@ public class JschServer {
 	
 	public String getServerName() {
 		return this.jschConnectionInfo.getServerName();
+	}
+
+	public static boolean validateConn(Session session) {
+		if (session == null) {
+			log.error("JSch session is null");
+			return false;
+		}
+
+		try {
+			session.connect(15);
+		} catch (JSchException e) {
+			log.error(e.getMessage());
+			return false;
+		}
+		
+		return session.isConnected();
 	}
 }

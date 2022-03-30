@@ -57,6 +57,11 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	boolean isAnyEmptyInputForConnectionTest() {
+		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), passwordPF.getText());
+	}
 	
 	public void init() {
 		// Set textFormatter
