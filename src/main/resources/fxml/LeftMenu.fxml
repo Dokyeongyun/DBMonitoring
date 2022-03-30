@@ -90,6 +90,29 @@
                                           <Cursor fx:constant="DEFAULT" />
                                        </cursor>
                                     </HBox>
+                                    <HBox alignment="CENTER_LEFT" minHeight="40.0">
+                                       <children>
+                                          <Label alignment="CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="20.0">
+                                             <graphic>
+                                                <FontAwesomeIconView fill="#003b8e" glyphName="FILE_TEXT_ALT" selectionEnd="0" selectionFill="BLACK" size="22" stroke="WHITE" strokeType="OUTSIDE" />
+                                             </graphic>
+                                          </Label>
+                                          <Button fx:id="alertLogMonitoringMenuBtn" alignment="BASELINE_LEFT" graphicTextGap="10.0" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#goAlertLogMonitoringMenu" prefWidth="200.0" style="-fx-background-color: transparent;" text="Alert Log 모니터링">
+                                             <cursor>
+                                                <Cursor fx:constant="HAND" />
+                                             </cursor>
+                                             <font>
+                                                <Font name="Noto Sans Korean Medium" size="12.0" />
+                                             </font>
+                                          </Button>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="2.0" left="10.0" top="2.0" />
+                                       </padding>
+                                       <cursor>
+                                          <Cursor fx:constant="DEFAULT" />
+                                       </cursor>
+                                    </HBox>
                                     <HBox alignment="CENTER" minHeight="40.0">
                                        <children>
                                           <Label maxWidth="-Infinity" minWidth="-Infinity" prefWidth="20.0">
