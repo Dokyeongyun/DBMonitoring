@@ -123,7 +123,6 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 					if (parsedDate != null && DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate).equals(startDate)) {
 						isStartDate = true;
 						readStartIndex = i;
-						break;
 					}
 				}
 
@@ -139,7 +138,9 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 
 						if (i == readStartIndex) {
 							logTimeStamp = line;
-						} else {
+						} 
+
+						if (i != readStartIndex && !isEndDate) {
 							alertLog.addLog(new Log(logTimeStamp, logContents));
 							logContents = new ArrayList<>();
 							logTimeStamp = line;
@@ -261,6 +262,10 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 					logDate = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 					break;
 				}
+			}
+			
+			if(logDate == null || logDate.equals("")) {
+				break;
 			}
 
 			// 조회시작일자와 로그의 처음 기록일자를 비교한다.
