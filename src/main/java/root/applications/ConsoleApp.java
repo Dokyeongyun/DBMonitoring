@@ -15,7 +15,6 @@ import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschServer;
 import root.core.batch.DBCheckBatch;
 import root.core.batch.ServerCheckBatch;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.DBCheckRepository;
@@ -167,9 +166,9 @@ public class ConsoleApp {
 			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
 			ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
 
-			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
-					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
-			serverBatch.startBatchAlertLogCheckDuringPeriod(alcp);
+			String startDate = DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1);
+			String endDate = DateUtils.getToday("yyyy-MM-dd");
+			serverBatch.startBatchAlertLogCheckDuringPeriod(jsch.getAlc(), startDate, endDate);
 			serverBatch.startBatchOSDiskUsageCheck();
 			System.out.println("бс [ " + jsch.getServerName() + " Monitoring End ]\n\n");
 		}

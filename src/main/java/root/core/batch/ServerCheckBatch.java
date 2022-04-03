@@ -1,7 +1,6 @@
 package root.core.batch;
 
 import root.core.domain.AlertLogCommand;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.usecase.constracts.ServerCheckUsecase;
 
 public class ServerCheckBatch {
@@ -19,9 +18,9 @@ public class ServerCheckBatch {
 		}
 	}
 	
-	public void startBatchAlertLogCheckDuringPeriod(AlertLogCommandPeriod alcp) {
+	public void startBatchAlertLogCheckDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
 		try {
-			this.serverCheckUsecase.printAlertLogDuringPeriod(alcp);
+			this.serverCheckUsecase.printAlertLogDuringPeriod(alc, startDate, endDate);
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

@@ -17,7 +17,6 @@ import com.jcraft.jsch.Session;
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerCheckRepository;
@@ -95,17 +94,15 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 	
 	@Override
-	public AlertLog checkAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
+	public AlertLog checkAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
 		AlertLog alertLog = new AlertLog();
-		int alertLogFileLineCnt = this.getAlertLogFileLineCount(alcp);
-		String fullAlertLogString = this.checkAlertLog(alcp);
-		String dateFormat = alcp.getDateFormat();
-		String dateFormatRegex = alcp.getDateFormatRegex();
+		int alertLogFileLineCnt = this.getAlertLogFileLineCount(alc);
+		String fullAlertLogString = this.checkAlertLog(alc);
+		String dateFormat = alc.getDateFormat();
+		String dateFormatRegex = alc.getDateFormatRegex();
 		int dateLength = dateFormat.equals("yyyy-MM-dd") ? 11 : 24;
 		
 		try {
-			String startDate = alcp.getFromDate();
-			String endDate = alcp.getToDate();
 			
 			// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
 			while(true) {
@@ -129,8 +126,8 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 				// 조회시작일자와 로그의 처음 기록일자를 비교한다.
 				long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
 		        if(diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
-		        	alcp.setReadLine(String.valueOf(Integer.parseInt(alcp.getReadLine()) * 2));
-		        	fullAlertLogString = this.checkAlertLog(alcp);
+		        	alc.setReadLine(String.valueOf(Integer.parseInt(alc.getReadLine()) * 2));
+		        	fullAlertLogString = this.checkAlertLog(alc);
 		        } else {
 		        	break;
 		        }
@@ -199,7 +196,7 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 			alertLog.setFullLogString(sb.toString());
 
 			realNumberOfReadLine = readEndIndex - readStartIndex;
-			System.out.println("\t▶ Alert Log READ LINE: " + realNumberOfReadLine + "/" + alcp.getReadLine());
+			System.out.println("\t▶ Alert Log READ LINE: " + realNumberOfReadLine + "/" + alc.getReadLine());
 
 		} catch (Exception e) {
 			e.printStackTrace();
