@@ -189,6 +189,17 @@ public class DateUtils {
 	}
 
 	/**
+	 * 날짜 표현 포맷을 변환한다.
+	 * 
+	 * @param toFormat
+	 * @param localDate
+	 * @return
+	 */
+	public static String convertDateFormat(String toFormat, LocalDate localDate) {
+		return localDate.format(DateTimeFormatter.ofPattern(toFormat));
+	}
+
+	/**
 	 * Date 객체를 포맷팅한다.
 	 * 
 	 * @param date
