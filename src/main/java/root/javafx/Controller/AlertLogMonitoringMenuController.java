@@ -17,7 +17,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
 import root.core.repository.constracts.ServerCheckRepository;
@@ -188,8 +187,8 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
 		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
 
-		AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay);
-		alertLogMonitoringResultMap.put(selectedServer, usecase.getAlertLogDuringPeriod(alcp));
+		alertLogMonitoringResultMap.put(selectedServer,
+				usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay));
 
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
 	}

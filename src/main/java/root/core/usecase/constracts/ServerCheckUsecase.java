@@ -4,13 +4,12 @@ import java.util.List;
 
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.OSDiskUsage;
 
 public interface ServerCheckUsecase {
 	void printAlertLog(AlertLogCommand alc);
 
-	void printAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
+	void printAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate);
 
 	void printOSDiskUsage();
 
@@ -20,5 +19,5 @@ public interface ServerCheckUsecase {
 
 	List<OSDiskUsage> getCurrentOSDiskUsage();
 
-	AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp);
+	AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate);
 }

@@ -10,12 +10,12 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import root.core.repository.constracts.ReportRepository;
-import root.core.repository.implement.ReportRepositoryImpl;
+import root.core.repository.implement.ReportFileRepo;
 import root.utils.DateUtils;
 
 public class CsvReportSeparatorApp {
 	
-	public static ReportRepository reportRepository = ReportRepositoryImpl.getInstance();
+	public static ReportRepository reportRepository = ReportFileRepo.getInstance();
 	
 	public static void main(String[] args) throws IOException {
 		/*
