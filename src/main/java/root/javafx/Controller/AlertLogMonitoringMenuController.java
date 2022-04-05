@@ -25,8 +25,8 @@ import root.core.repository.implement.ReportFileRepo;
 import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
-import root.core.usecase.constracts.ServerCheckUsecase;
-import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
+import root.core.usecase.implement.LinuxServerMonitoringUsecase;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
@@ -185,7 +185,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		JschServer server = new JschServer(connInfo);
 		server.init();
 		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-		ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+		ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
 
 		alertLogMonitoringResultMap.put(selectedServer,
 				usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay));

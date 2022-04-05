@@ -27,9 +27,9 @@ import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
-import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
-import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.core.usecase.implement.LinuxServerMonitoringUsecase;
 import root.utils.CsvUtils;
 import root.utils.DateUtils;
 import root.utils.PatternUtils;
@@ -163,7 +163,7 @@ public class ConsoleApp {
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+			ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
 			ServerCheckBatch serverBatch = new ServerCheckBatch(usecase);
 
 			String startDate = DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1);

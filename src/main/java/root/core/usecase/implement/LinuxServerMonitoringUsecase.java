@@ -23,18 +23,18 @@ import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ReportRepository;
 import root.core.repository.constracts.ServerCheckRepository;
-import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.utils.ConsoleUtils;
 import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
 import root.utils.ExcelSheet;
 
-public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
+public class LinuxServerMonitoringUsecase implements ServerMonitoringUsecase {
 	private ServerCheckRepository serverCheckRepository;
 	private ReportRepository reportRepository;
 
-	public ServerCheckUsecaseImpl(ServerCheckRepository serverCheckRepository, ReportRepository reportRepository) {
+	public LinuxServerMonitoringUsecase(ServerCheckRepository serverCheckRepository, ReportRepository reportRepository) {
 		this.serverCheckRepository = serverCheckRepository;
 		this.reportRepository = reportRepository;
 	}

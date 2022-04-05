@@ -29,9 +29,9 @@ import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
-import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
-import root.core.usecase.implement.ServerCheckUsecaseImpl;
+import root.core.usecase.implement.LinuxServerMonitoringUsecase;
 import root.utils.AlertUtils;
 
 public class HistoryMenuController implements Initializable {
@@ -152,7 +152,7 @@ public class HistoryMenuController implements Initializable {
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerCheckUsecase usecase = new ServerCheckUsecaseImpl(repo, ReportFileRepo.getInstance());
+			ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
 
 			osDiskUsageMAP.addTableData(server.getServerName(), usecase.getCurrentOSDiskUsage());
 		}
