@@ -19,16 +19,16 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
 import root.utils.DateUtils;
 import root.utils.NumberUnitUtils;
 import root.utils.NumberUnitUtils.Unit;
 
 @Slf4j
-public class ServerCheckRepositoryImpl implements ServerCheckRepository {
+public class LinuxServerMonitoringRepository implements ServerMonitoringRepository {
 	private JschServer jsch;
 
-	public ServerCheckRepositoryImpl(JschServer jsch) {
+	public LinuxServerMonitoringRepository(JschServer jsch) {
 		this.jsch = jsch;
 	}
 

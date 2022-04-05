@@ -40,17 +40,17 @@ import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.DBCheckRepository;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
+import root.core.repository.implement.LinuxServerMonitoringRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
-import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
-import root.core.usecase.implement.LinuxServerMonitoringUsecase;
+import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.utils.UnitUtils.FileSize;
@@ -257,8 +257,8 @@ public class RunMenuController implements Initializable {
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			JschServer server = new JschServer(jsch);
 			server.init();
-			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
+			ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
+			ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 			if (isSave) {
 				try {

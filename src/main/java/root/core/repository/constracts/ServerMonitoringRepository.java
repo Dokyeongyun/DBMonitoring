@@ -8,7 +8,7 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 
-public interface ServerCheckRepository {
+public interface ServerMonitoringRepository {
 	String getServerName();
 
 	Session getSession();

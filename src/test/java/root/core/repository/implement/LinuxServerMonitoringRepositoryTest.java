@@ -20,20 +20,20 @@ import com.jcraft.jsch.Session;
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
 
-public class ServerCheckRepositoryImplTest {
+public class LinuxServerMonitoringRepositoryTest {
 
 	@Mock
 	public static JschServer jsch = mock(JschServer.class);
 
-	public static ServerCheckRepository repo;
+	public static ServerMonitoringRepository repo;
 
 	public static String alertLogString = "";
 
 	@BeforeAll
 	public static void before() {
-		repo = new ServerCheckRepositoryImpl(jsch);
+		repo = new LinuxServerMonitoringRepository(jsch);
 		StringBuffer sb = new StringBuffer();
 		sb.append("2022-03-24T13:38:35.065184+09:00").append("\n");
 		sb.append("Thread 1 advanced to log sequence 7606 (LGWR switch)").append("\n");

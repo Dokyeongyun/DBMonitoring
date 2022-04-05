@@ -19,14 +19,14 @@ import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
+import root.core.repository.implement.LinuxServerMonitoringRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
-import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
-import root.core.usecase.implement.LinuxServerMonitoringUsecase;
+import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
@@ -184,8 +184,8 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		JschServer server = new JschServer(connInfo);
 		server.init();
-		ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-		ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
+		ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
+		ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 		alertLogMonitoringResultMap.put(selectedServer,
 				usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay));

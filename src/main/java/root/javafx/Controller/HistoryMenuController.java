@@ -21,17 +21,17 @@ import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.repository.implement.DBCheckRepositoryImpl;
+import root.core.repository.implement.LinuxServerMonitoringRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
-import root.core.repository.implement.ServerCheckRepositoryImpl;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
-import root.core.usecase.implement.LinuxServerMonitoringUsecase;
+import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.utils.AlertUtils;
 
 public class HistoryMenuController implements Initializable {
@@ -151,8 +151,8 @@ public class HistoryMenuController implements Initializable {
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			JschServer server = new JschServer(jsch);
 			server.init();
-			ServerCheckRepository repo = new ServerCheckRepositoryImpl(server);
-			ServerMonitoringUsecase usecase = new LinuxServerMonitoringUsecase(repo, ReportFileRepo.getInstance());
+			ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
+			ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 			osDiskUsageMAP.addTableData(server.getServerName(), usecase.getCurrentOSDiskUsage());
 		}
