@@ -29,9 +29,4 @@ public class AlertLogCommand {
 		this.readFilePath = readFilePath;
 		this.catchErrorMsg = catchErrorMsg;
 	}
-
-	// TODO OS∫∞ command ¿€º∫
-	public String getCommand() {
-		return "tail -" + this.getReadLine() + " " + this.getReadFilePath();
-	}
 }

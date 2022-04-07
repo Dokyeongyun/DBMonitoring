@@ -83,7 +83,8 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 		try {
 			Session session = this.getSession();
 			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, alc.getCommand());
+			String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
+			Channel channel = jsch.openExecChannel(session, command);
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);

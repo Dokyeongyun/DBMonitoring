@@ -72,7 +72,8 @@ public class LinuxServerMonitoringRepositoryTest {
 		InputStream in = new ByteArrayInputStream(alertLogString.getBytes());
 
 		when(repo.getSession()).thenReturn(session);
-		when(jsch.openExecChannel(session, alc.getCommand())).thenReturn(channel);
+		String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
+		when(jsch.openExecChannel(session, command)).thenReturn(channel);
 		when(jsch.connectChannel(channel)).thenReturn(in);
 		doNothing().when(jsch).disConnectChannel(channel);
 		doNothing().when(channel).disconnect();
@@ -118,7 +119,8 @@ public class LinuxServerMonitoringRepositoryTest {
 		doNothing().when(jsch).disConnectChannel(channel2);
 		doNothing().when(channel2).disconnect();
 
-		when(jsch.openExecChannel(session, alc.getCommand())).thenReturn(channel);
+		String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
+		when(jsch.openExecChannel(session, command)).thenReturn(channel);
 		when(jsch.connectChannel(channel)).thenReturn(in);
 		doNothing().when(jsch).disConnectChannel(channel);
 		doNothing().when(channel).disconnect();
