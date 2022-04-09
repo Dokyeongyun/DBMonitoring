@@ -9,12 +9,10 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.JschConnectionInfo;
 
 @Slf4j
-@ToString
 public class JschServer {
 	private JSch jsch;
 	private Session session;
@@ -55,6 +53,10 @@ public class JschServer {
 			throw new NullPointerException("Session is null");
 		}
 		
+		if(session.isConnected()) {
+			return session;
+		}
+		
 		try {
 			session.connect();
 		} catch (JSchException e) {
@@ -66,16 +68,24 @@ public class JschServer {
 	}
 
 	public void disConnect(Session session) {
+		if(session == null) {
+			throw new NullPointerException("Session is null");
+		}
+		
 		session.disconnect();
 	}
 
 	public Channel openExecChannel(Session session, String command) {
+		if(session == null) {
+			throw new NullPointerException("Session is null");
+		}
+		
 		Channel channel = null;
 		try {
 			channel = session.openChannel("exec");
 			// 채널접속
 			ChannelExec channelExec = (ChannelExec) channel; // 명령 전송 채널사용
-			channelExec.setPty(true);
+//			channelExec.setPty(true);
 			channelExec.setCommand(command);
 		} catch (JSchException e) {
 			log.error(e.getMessage());
