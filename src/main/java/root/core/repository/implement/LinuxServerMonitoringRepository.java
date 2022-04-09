@@ -10,7 +10,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,38 +37,17 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	}
 
 	@Override
-	public Session getSession() {
-		return jsch.getSession();
-	}
-
-	@Override
-	public Session connectSession(Session session) {
-		try {
-			session.connect();
-		} catch (JSchException e) {
-			log.error(e.getMessage());
-		}
-		return session;
-	}
-
-	@Override
-	public void disConnectSession(Session session) {
-		if (session.isConnected() == true && session != null) {
-			session.disconnect();
-		}
-	}
-
-	@Override
 	public int getAlertLogFileLineCount(AlertLogCommand alc) {
 		int fileLineCnt = 0;
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
+			Session session = jsch.getSession();
+			session.connect();
 			Channel channel = jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l");
 			InputStream in = jsch.connectChannel(channel);
 			String result = IOUtils.toString(in, "UTF-8");
 			fileLineCnt = Integer.parseInt(result.trim());
 			jsch.disConnectChannel(channel);
+			jsch.disConnect(session);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -81,13 +59,14 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
+			Session session = jsch.getSession();
+			session.connect();
 			String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
 			Channel channel = jsch.openExecChannel(session, command);
 			InputStream in = jsch.connectChannel(channel);
 			result = IOUtils.toString(in, "UTF-8");
 			jsch.disConnectChannel(channel);
+			jsch.disConnect(session);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -176,13 +155,14 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
+			Session session = jsch.getSession();
+			session.connect();
 			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
 			InputStream in = jsch.connectChannel(channel);
 			String result = IOUtils.toString(in, "UTF-8");
 			list = stringToOsDiskUsageList(result);
 			jsch.disConnectChannel(channel);
+			jsch.disConnect(session);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

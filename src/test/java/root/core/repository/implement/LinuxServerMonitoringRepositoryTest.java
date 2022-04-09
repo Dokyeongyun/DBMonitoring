@@ -71,7 +71,7 @@ public class LinuxServerMonitoringRepositoryTest {
 		AlertLogCommand alc = mock(AlertLogCommand.class);
 		InputStream in = new ByteArrayInputStream(alertLogString.getBytes());
 
-		when(repo.getSession()).thenReturn(session);
+		when(jsch.getSession()).thenReturn(session);
 		String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
 		when(jsch.openExecChannel(session, command)).thenReturn(channel);
 		when(jsch.connectChannel(channel)).thenReturn(in);
@@ -89,7 +89,7 @@ public class LinuxServerMonitoringRepositoryTest {
 		AlertLogCommand alc = mock(AlertLogCommand.class);
 		InputStream in = new ByteArrayInputStream("26".getBytes());
 
-		when(repo.getSession()).thenReturn(session);
+		when(jsch.getSession()).thenReturn(session);
 		when(jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l")).thenReturn(channel);
 		when(jsch.connectChannel(channel)).thenReturn(in);
 		doNothing().when(jsch).disConnectChannel(channel);
@@ -113,7 +113,7 @@ public class LinuxServerMonitoringRepositoryTest {
 		InputStream in = new ByteArrayInputStream(alertLogString.getBytes());
 		InputStream in2 = new ByteArrayInputStream("26".getBytes());
 
-		when(repo.getSession()).thenReturn(session);
+		when(jsch.getSession()).thenReturn(session);
 		when(jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l")).thenReturn(channel2);
 		when(jsch.connectChannel(channel2)).thenReturn(in2);
 		doNothing().when(jsch).disConnectChannel(channel2);
