@@ -103,10 +103,10 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testOpenExecChannel_Fail_SessionIsNull() {
-		NullPointerException thrown = assertThrows(NullPointerException.class,
-				() -> jsch.openExecChannel(null, "echo 1"));
-		assertEquals("Session is null", thrown.getMessage());
+	public void testOpenExecChannel_Success_WhenSessionIsNull() throws JSchException {
+		Session session = null;
+		Channel channel = jsch.openExecChannel(session, "echo 1");
+		assertNotNull(channel);
 	}
 
 	@Test
@@ -115,6 +115,19 @@ public class JschServerTest {
 		Session session = jsch.getSession();
 		jsch.connect(session);
 
+		Channel channel = jsch.openExecChannel(session, "echo 1");
+		InputStream in = jsch.connectChannel(channel);
+
+		assertNotNull(in);
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+			String echoLine = br.readLine();
+			assertEquals(echoLine, "1");
+		}
+	}
+
+	@Test
+	public void testConnectChannel_Success_WhenSessionIsNull() throws JSchException, IOException {
+		Session session = null;
 		Channel channel = jsch.openExecChannel(session, "echo 1");
 		InputStream in = jsch.connectChannel(channel);
 

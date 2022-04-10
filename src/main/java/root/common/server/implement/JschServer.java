@@ -77,7 +77,12 @@ public class JschServer {
 
 	public Channel openExecChannel(Session session, String command) {
 		if(session == null) {
-			throw new NullPointerException("Session is null");
+			init();
+			try {
+				session = this.connect(this.getSession());
+			} catch (JSchException e) {
+				log.error(e.getMessage());
+			}
 		}
 		
 		Channel channel = null;
