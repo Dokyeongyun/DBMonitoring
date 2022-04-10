@@ -6,7 +6,7 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 
-public interface ServerCheckUsecase {
+public interface ServerMonitoringUsecase {
 	void printAlertLog(AlertLogCommand alc);
 
 	void printAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate);

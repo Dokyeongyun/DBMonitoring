@@ -1,5 +1,6 @@
 package root.core.repository.implement;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,16 +20,16 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
-import root.core.repository.constracts.ServerCheckRepository;
+import root.core.repository.constracts.ServerMonitoringRepository;
 import root.utils.DateUtils;
 import root.utils.NumberUnitUtils;
 import root.utils.NumberUnitUtils.Unit;
 
 @Slf4j
-public class ServerCheckRepositoryImpl implements ServerCheckRepository {
+public class LinuxServerMonitoringRepository implements ServerMonitoringRepository {
 	private JschServer jsch;
 
-	public ServerCheckRepositoryImpl(JschServer jsch) {
+	public LinuxServerMonitoringRepository(JschServer jsch) {
 		this.jsch = jsch;
 	}
 
@@ -38,55 +39,25 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	}
 
 	@Override
-	public Session getSession() {
-		return jsch.getSession();
-	}
-
-	@Override
-	public Session connectSession(Session session) {
-		try {
-			session.connect();
-		} catch (JSchException e) {
-			log.error(e.getMessage());
-		}
-		return session;
-	}
-
-	@Override
-	public void disConnectSession(Session session) {
-		if (session.isConnected() == true && session != null) {
-			session.disconnect();
-		}
-	}
-
-	@Override
 	public int getAlertLogFileLineCount(AlertLogCommand alc) {
 		int fileLineCnt = 0;
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l");
-			InputStream in = jsch.connectChannel(channel);
-			String result = IOUtils.toString(in, "UTF-8");
-			fileLineCnt = Integer.parseInt(result.trim());
-			jsch.disConnectChannel(channel);
+			String command = "cat " + alc.getReadFilePath() + " | wc -l";
+			String executeResult = executeCommand(command);
+			fileLineCnt = Integer.parseInt(executeResult.trim());
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
 		return fileLineCnt;
 	}
-
+	
 	@Override
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
-			Channel channel = jsch.openExecChannel(session, alc.getCommand());
-			InputStream in = jsch.connectChannel(channel);
-			result = IOUtils.toString(in, "UTF-8");
-			jsch.disConnectChannel(channel);
+			String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
+			result = executeCommand(command);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -175,13 +146,14 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
-			Session session = this.getSession();
-			session = this.connectSession(session);
+			Session session = jsch.getSession();
+			session.connect();
 			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
 			InputStream in = jsch.connectChannel(channel);
 			String result = IOUtils.toString(in, "UTF-8");
 			list = stringToOsDiskUsageList(result);
 			jsch.disConnectChannel(channel);
+			jsch.disConnect(session);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -279,5 +251,19 @@ public class ServerCheckRepositoryImpl implements ServerCheckRepository {
 		}
 
 		return fullAlertLogString;
+	}
+	
+	private String executeCommand(String command) throws JSchException, IOException {
+		String result = null;
+
+		Session session = jsch.getSession();
+		session.connect();
+		Channel channel = jsch.openExecChannel(session, command);
+		InputStream in = jsch.connectChannel(channel);
+		result = IOUtils.toString(in, "UTF-8");
+		jsch.disConnectChannel(channel);
+		jsch.disConnect(session);
+		
+		return result;
 	}
 }

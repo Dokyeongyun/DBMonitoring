@@ -40,59 +40,82 @@ public class JschServer {
 			log.error(e.getMessage());
 		}
 	}
-	
+
 	public Session getSession() {
-		if(session == null) {
+		if (session == null) {
 			return null;
 		}
 		return session;
 	}
-	
-	public Session connect(Session session) {
+
+	public Session connect(Session session) throws JSchException {
+		if(session == null) {
+			throw new NullPointerException("Session is null");
+		}
+		
+		if(session.isConnected()) {
+			return session;
+		}
+		
 		try {
 			session.connect();
 		} catch (JSchException e) {
 			log.error(e.getMessage());
+			throw e;
 		}
+		
 		return session;
 	}
-	
+
 	public void disConnect(Session session) {
+		if(session == null) {
+			throw new NullPointerException("Session is null");
+		}
+		
 		session.disconnect();
 	}
-	
+
 	public Channel openExecChannel(Session session, String command) {
+		if(session == null) {
+			init();
+			try {
+				session = this.connect(this.getSession());
+			} catch (JSchException e) {
+				log.error(e.getMessage());
+			}
+		}
+		
 		Channel channel = null;
 		try {
 			channel = session.openChannel("exec");
-			//채널접속
-			ChannelExec channelExec = (ChannelExec) channel; //명령 전송 채널사용
-			channelExec.setPty(true);
-			channelExec.setCommand(command); 
+			// 채널접속
+			ChannelExec channelExec = (ChannelExec) channel; // 명령 전송 채널사용
+//			channelExec.setPty(true);
+			channelExec.setCommand(command);
 		} catch (JSchException e) {
 			log.error(e.getMessage());
 		}
 		return channel;
 	}
-	
+
 	public InputStream connectChannel(Channel channel) {
 		InputStream in = null;
 		try {
 			// CallBack
 			in = channel.getInputStream();
-			((ChannelExec) channel).setErrStream(System.err);        
-			
+			((ChannelExec) channel).setErrStream(System.err);
+
 			channel.connect();
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 		return in;
 	}
-	
+
 	public void disConnectChannel(Channel channel) {
-	    channel.disconnect();
+		channel.disconnect();
 	}
-	
+
 	public String getServerName() {
 		return this.jschConnectionInfo.getServerName();
 	}
@@ -104,12 +127,12 @@ public class JschServer {
 		}
 
 		try {
-			session.connect(15);
+			session.connect(3000);
 		} catch (JSchException e) {
 			log.error(e.getMessage());
 			return false;
 		}
-		
+
 		return session.isConnected();
 	}
 }

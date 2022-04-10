@@ -75,7 +75,7 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
 		hostTF.setText(jsch.getHost());
-		portTF.setText(jsch.getPort());
+		portTF.setText(String.valueOf(jsch.getPort()));
 		userTF.setText(jsch.getUserName());
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());

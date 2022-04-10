@@ -1,12 +1,12 @@
 package root.core.batch;
 
 import root.core.domain.AlertLogCommand;
-import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
 
 public class ServerCheckBatch {
-	private ServerCheckUsecase serverCheckUsecase;
+	private ServerMonitoringUsecase serverCheckUsecase;
 	
-	public ServerCheckBatch(ServerCheckUsecase serverCheckUsecase) {
+	public ServerCheckBatch(ServerMonitoringUsecase serverCheckUsecase) {
 		this.serverCheckUsecase = serverCheckUsecase;
 	}
 	
