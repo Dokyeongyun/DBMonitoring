@@ -157,6 +157,11 @@ public class JschServerTest {
 		String serverName = jsch.getServerName();
 		assertEquals(serverName, "DKY SERVER");
 	}
+	@Test
+	public void testExecuteCommand() throws JSchException, IOException {
+		String result = jsch.executeCommand("echo 1");
+		assertEquals(result, "1");
+	}
 
 	@Test
 	public void testValidateConn_Valid() {

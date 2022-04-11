@@ -1,21 +1,20 @@
 package root.core.repository.implement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 
 import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.mockito.MockedStatic;
 
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.Session;
+import com.jcraft.jsch.JSchException;
 
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
@@ -24,16 +23,19 @@ import root.core.repository.constracts.ServerMonitoringRepository;
 
 public class LinuxServerMonitoringRepositoryTest {
 
-	@Mock
-	public static JschServer jsch = mock(JschServer.class);
+	public JschServer jschServer;
 
-	public static ServerMonitoringRepository repo;
+	public ServerMonitoringRepository repo;
+
+	public static MockedStatic<IOUtils> ioUtilsMock;
 
 	public static String alertLogString = "";
+	
+	public static String[] alertLogLines; 
 
 	@BeforeAll
 	public static void before() {
-		repo = new LinuxServerMonitoringRepository(jsch);
+		ioUtilsMock = mockStatic(IOUtils.class);
 		StringBuffer sb = new StringBuffer();
 		sb.append("2022-03-24T13:38:35.065184+09:00").append("\n");
 		sb.append("Thread 1 advanced to log sequence 7606 (LGWR switch)").append("\n");
@@ -62,71 +64,72 @@ public class LinuxServerMonitoringRepositoryTest {
 		sb.append("2022-03-31T02:56:51.984291+09:00").append("\n");
 		sb.append("Starting control autobackup").append("\n");
 		alertLogString = sb.toString();
+		
+		alertLogLines = alertLogString.split("\n");
+	}
+	
+	@BeforeEach
+	public void setup() {
+		jschServer = mock(JschServer.class);
+		repo = new LinuxServerMonitoringRepository(jschServer);
+	}
+	
+	@AfterAll
+	public static void after() {
+		ioUtilsMock.close();
 	}
 
 	@Test
-	public void checkAlertLogTest() {
-		Session session = mock(Session.class);
-		Channel channel = mock(Channel.class);
+	public void checkAlertLogTest() throws JSchException, IOException {
+		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		InputStream in = new ByteArrayInputStream(alertLogString.getBytes());
+		alc.setReadLine("10");
+		alc.setReadFilePath("/test/alert_DB.log");
+		
+		String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+		when(jschServer.executeCommand(command)).thenReturn(alertLogString);
 
-		when(jsch.getSession()).thenReturn(session);
-		String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
-		when(jsch.openExecChannel(session, command)).thenReturn(channel);
-		when(jsch.connectChannel(channel)).thenReturn(in);
-		doNothing().when(jsch).disConnectChannel(channel);
-		doNothing().when(channel).disconnect();
-
+		// Act
 		String result = repo.checkAlertLog(alc);
+
+		// Assert
 		assertEquals(result, alertLogString);
 	}
 
 	@Test
-	public void getAlertLogFileLineCountTest() {
-		Session session = mock(Session.class);
-		Channel channel = mock(Channel.class);
+	public void getAlertLogFileLineCountTest() throws IOException, JSchException {
+		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		InputStream in = new ByteArrayInputStream("26".getBytes());
+		alc.setReadLine("10");
+		alc.setReadFilePath("/test/alert_DB.log");
+		
+		String command = String.format("cat %s | wc -l", alc.getReadFilePath());
+		when(jschServer.executeCommand(command)).thenReturn(String.valueOf(alertLogLines.length));
 
-		when(jsch.getSession()).thenReturn(session);
-		when(jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l")).thenReturn(channel);
-		when(jsch.connectChannel(channel)).thenReturn(in);
-		doNothing().when(jsch).disConnectChannel(channel);
-		doNothing().when(channel).disconnect();
+		// Act
+		int lineCount = repo.getAlertLogFileLineCount(alc);
 
-		try {
-			String result = IOUtils.toString(in, "UTF-8");
-			int fileLineCnt = Integer.parseInt(result.trim());
-			assertEquals(fileLineCnt, 26);
-		} catch (Exception e) {
-			fail();
-		}
+		// Assert
+		assertEquals(lineCount, alertLogLines.length);
 	}
 
 	@Test
-	public void checkAlertLogDuringPeriod() {
-		Session session = mock(Session.class);
-		Channel channel = mock(Channel.class);
-		Channel channel2 = mock(Channel.class);
+	public void checkAlertLogDuringPeriod() throws JSchException, IOException {
+		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		InputStream in = new ByteArrayInputStream(alertLogString.getBytes());
-		InputStream in2 = new ByteArrayInputStream("26".getBytes());
+		alc.setReadLine("10");
+		alc.setReadFilePath("/test/alert_DB.log");
+		
+		String command1 = String.format("cat %s | wc -l", alc.getReadFilePath());
+		when(jschServer.executeCommand(command1)).thenReturn(String.valueOf(alertLogLines.length));
+		
+		String command2 = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+		when(jschServer.executeCommand(command2)).thenReturn(alertLogString);
 
-		when(jsch.getSession()).thenReturn(session);
-		when(jsch.openExecChannel(session, "cat " + alc.getReadFilePath() + " | wc -l")).thenReturn(channel2);
-		when(jsch.connectChannel(channel2)).thenReturn(in2);
-		doNothing().when(jsch).disConnectChannel(channel2);
-		doNothing().when(channel2).disconnect();
-
-		String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
-		when(jsch.openExecChannel(session, command)).thenReturn(channel);
-		when(jsch.connectChannel(channel)).thenReturn(in);
-		doNothing().when(jsch).disConnectChannel(channel);
-		doNothing().when(channel).disconnect();
-
+		// Act
 		AlertLog alertLog = repo.checkAlertLogDuringPeriod(alc, "2022-03-24", "2022-03-29");
 
+		// Assert
 		assertEquals(alertLog.getTotalLineCount(), 14);
 		assertEquals(alertLog.getAlertLogs().size(), 8);
 	}
