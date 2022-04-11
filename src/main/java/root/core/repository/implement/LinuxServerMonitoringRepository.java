@@ -241,7 +241,7 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 			// 조회시작일자와 로그의 처음 기록일자를 비교한다.
 			long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
 			if (diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
-				alc.setReadLine(String.valueOf(Integer.parseInt(alc.getReadLine()) * 2));
+				alc.setReadLine(alc.getReadLine() * 2);
 				fullAlertLogString = this.checkAlertLog(alc);
 			} else {
 				break;

@@ -83,7 +83,7 @@ public class LinuxServerMonitoringRepositoryTest {
 	public void checkAlertLogTest() throws JSchException, IOException {
 		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine("10");
+		alc.setReadLine(10);
 		alc.setReadFilePath("/test/alert_DB.log");
 		
 		String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
@@ -100,7 +100,7 @@ public class LinuxServerMonitoringRepositoryTest {
 	public void getAlertLogFileLineCountTest() throws IOException, JSchException {
 		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine("10");
+		alc.setReadLine(10);
 		alc.setReadFilePath("/test/alert_DB.log");
 		
 		String command = String.format("cat %s | wc -l", alc.getReadFilePath());
@@ -117,7 +117,7 @@ public class LinuxServerMonitoringRepositoryTest {
 	public void checkAlertLogDuringPeriod() throws JSchException, IOException {
 		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine("10");
+		alc.setReadLine(10);
 		alc.setReadFilePath("/test/alert_DB.log");
 		
 		String command1 = String.format("cat %s | wc -l", alc.getReadFilePath());
