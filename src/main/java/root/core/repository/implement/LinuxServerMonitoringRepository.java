@@ -1,6 +1,5 @@
 package root.core.repository.implement;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.io.IOUtils;
 
 import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import lombok.extern.slf4j.Slf4j;
@@ -42,9 +40,9 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	public int getAlertLogFileLineCount(AlertLogCommand alc) {
 		int fileLineCnt = 0;
 		try {
-			String command = "cat " + alc.getReadFilePath() + " | wc -l";
-			String executeResult = executeCommand(command);
-			fileLineCnt = Integer.parseInt(executeResult.trim());
+			String command = String.format("cat %s | wc -l", alc.getReadFilePath());
+			String executeResult = jsch.executeCommand(command);
+			fileLineCnt = Integer.parseInt(executeResult);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -56,8 +54,8 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			String command = "tail -" + alc.getReadLine() + " " + alc.getReadFilePath();
-			result = executeCommand(command);
+			String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+			result = jsch.executeCommand(command);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -251,19 +249,5 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 		}
 
 		return fullAlertLogString;
-	}
-	
-	private String executeCommand(String command) throws JSchException, IOException {
-		String result = null;
-
-		Session session = jsch.getSession();
-		session.connect();
-		Channel channel = jsch.openExecChannel(session, command);
-		InputStream in = jsch.connectChannel(channel);
-		result = IOUtils.toString(in, "UTF-8");
-		jsch.disConnectChannel(channel);
-		jsch.disConnect(session);
-		
-		return result;
 	}
 }
