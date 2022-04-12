@@ -45,7 +45,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			String command = String.format("Get-Content %s -Tail %d", alc.getReadFilePath(), alc.getReadLine());
+			String command = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 			result = jsch.executeCommand(command);
 		} catch (Exception e) {
 			log.error(e.getMessage());

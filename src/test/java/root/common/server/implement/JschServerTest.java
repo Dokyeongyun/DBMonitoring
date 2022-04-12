@@ -2,6 +2,7 @@ package root.common.server.implement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -157,10 +158,17 @@ public class JschServerTest {
 		String serverName = jsch.getServerName();
 		assertEquals(serverName, "DKY SERVER");
 	}
+	
 	@Test
-	public void testExecuteCommand() throws JSchException, IOException {
+	public void testExecuteCommand_EchoCommand() throws JSchException, IOException {
 		String result = jsch.executeCommand("echo 1");
 		assertEquals(result, "1");
+	}
+	
+	@Test
+	public void testExecuteCommand_TailCommand() throws JSchException, IOException {
+		String result = jsch.executeCommand("tail -500 C://Users/aserv/Desktop/alert_DB.log");
+		assertNotEquals(result, "");
 	}
 
 	@Test

@@ -103,7 +103,7 @@ public class WindowServerMonitoringRepositoryTest {
 		alc.setReadLine(10);
 		alc.setReadFilePath("C:\\alert_DKYDB.log");
 		
-		String command = String.format("Get-Content %s -Tail %d", alc.getReadFilePath(), alc.getReadLine());
+		String command = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 		when(jschServer.executeCommand(command)).thenReturn(alertLogString);
 
 		// Act
@@ -123,7 +123,7 @@ public class WindowServerMonitoringRepositoryTest {
 		String command1 = String.format("find /v /c \"\" %s", alc.getReadFilePath());
 		when(jschServer.executeCommand(command1)).thenReturn(String.valueOf(alertLogLines.length));
 		
-		String command2 = String.format("Get-Content %s -Tail %d", alc.getReadFilePath(), alc.getReadLine());
+		String command2 = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 		when(jschServer.executeCommand(command2)).thenReturn(alertLogString);
 
 		// Act
@@ -144,14 +144,14 @@ public class WindowServerMonitoringRepositoryTest {
 		String command1 = String.format("find /v /c \"\" %s", alc.getReadFilePath());
 		when(jschServer.executeCommand(command1)).thenReturn("26");
 		
-		String command2 = String.format("Get-Content %s -Tail %d", alc.getReadFilePath(), alc.getReadLine());
+		String command2 = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());		
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < Math.min(alertLogLines.length, alc.getReadLine()); i++) {
 			builder.append(alertLogLines[i]).append("\n");
 		}
 		when(jschServer.executeCommand(command2)).thenReturn(builder.toString());
 
-		String command3 = String.format("Get-Content %s -Tail %d", alc.getReadFilePath(), alc.getReadLine() * 2);
+		String command3 = String.format("tail %d %s", alc.getReadLine() * 2, alc.getReadFilePath());
 		builder = new StringBuilder();
 		for (int i = 0; i < Math.min(alertLogLines.length, alc.getReadLine() * 2); i++) {
 			builder.append(alertLogLines[i]).append("\n");

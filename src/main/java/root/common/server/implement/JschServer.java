@@ -128,6 +128,7 @@ public class JschServer {
 	}
 
 	public String executeCommand(String command) throws JSchException, IOException {
+		log.debug(command);
 		Channel channel = openExecChannel(command);
 		InputStream in = connectChannel(channel);
 		String result = IOUtils.toString(in, "UTF-8");
