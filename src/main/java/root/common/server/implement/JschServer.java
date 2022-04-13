@@ -1,7 +1,10 @@
 package root.common.server.implement;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.commons.io.IOUtils;
 
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
@@ -97,6 +100,10 @@ public class JschServer {
 		}
 		return channel;
 	}
+	
+	private Channel openExecChannel(String command) {
+		return openExecChannel(session, command);
+	}
 
 	public InputStream connectChannel(Channel channel) {
 		InputStream in = null;
@@ -120,6 +127,16 @@ public class JschServer {
 		return this.jschConnectionInfo.getServerName();
 	}
 
+	public String executeCommand(String command) throws JSchException, IOException {
+		log.debug(command);
+		Channel channel = openExecChannel(command);
+		InputStream in = connectChannel(channel);
+		String result = IOUtils.toString(in, "UTF-8");
+		disConnectChannel(channel);
+		disConnect(session);
+		return result.trim();
+	}
+	
 	public static boolean validateConn(Session session) {
 		if (session == null) {
 			log.error("JSch session is null");

@@ -1,18 +1,16 @@
 package root.core.repository.implement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 
 import com.jcraft.jsch.JSchException;
 
@@ -21,23 +19,17 @@ import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
-public class LinuxServerMonitoringRepositoryTest {
-
-	public JschServer jschServer;
-
-	public ServerMonitoringRepository repo;
-
-	public static MockedStatic<IOUtils> ioUtilsMock;
-
-	public static String alertLogString = "";
+public class WindowServerMonitoringRepositoryTest {
 	
+	public JschServer jschServer;
+	public ServerMonitoringRepository repo;
+	public static String alertLogString = "";
 	public static String[] alertLogLines; 
 
 	@BeforeAll
 	public static void before() {
-		ioUtilsMock = mockStatic(IOUtils.class);
 		StringBuffer sb = new StringBuffer();
-		sb.append("2022-03-24T13:38:35.065184+09:00").append("\n");
+		sb.append("2022-03-23T13:38:35.065184+09:00").append("\n");
 		sb.append("Thread 1 advanced to log sequence 7606 (LGWR switch)").append("\n");
 		sb.append("  Current log# 5 seq# 7606 mem# 0: +REDO/1003346093").append("\n");
 		sb.append("2022-03-24T13:39:00.180206+09:00").append("\n");
@@ -71,22 +63,47 @@ public class LinuxServerMonitoringRepositoryTest {
 	@BeforeEach
 	public void setup() {
 		jschServer = mock(JschServer.class);
-		repo = new LinuxServerMonitoringRepository(jschServer);
-	}
-	
-	@AfterAll
-	public static void after() {
-		ioUtilsMock.close();
+		repo = new WindowServerMonitoringRepository(jschServer);
 	}
 
 	@Test
-	public void checkAlertLogTest() throws JSchException, IOException {
+	public void testGetServerName_ServerNameIsNull() {
+		when(jschServer.getServerName()).thenReturn(null);
+		String result = repo.getServerName();
+		assertNull(result);
+	}
+
+	@Test
+	public void testGetServerName_ServerNameIsNotNull() {
+		when(jschServer.getServerName()).thenReturn("DKY SERVER");
+		String result = repo.getServerName();
+		assertNotNull(result);
+	}
+
+	@Test
+	public void testGetAlertLogFileLineCount() throws JSchException, IOException {
 		// Arrange
-		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine(10);
-		alc.setReadFilePath("/test/alert_DB.log");
+		AlertLogCommand alc = new AlertLogCommand();
+		alc.setReadFilePath("C:\\alert_DKYDB.log");
 		
-		String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+		String command = String.format("find /v /c \"\" %s", alc.getReadFilePath());
+		when(jschServer.executeCommand(command)).thenReturn(String.valueOf(alertLogLines.length));
+
+		// Act
+		int lineCount = repo.getAlertLogFileLineCount(alc);
+
+		// Assert
+		assertEquals(lineCount, alertLogLines.length);
+	}
+	
+	@Test
+	public void testCheckAlertLog() throws JSchException, IOException {
+		// Arrange
+		AlertLogCommand alc = new AlertLogCommand();
+		alc.setReadLine(10);
+		alc.setReadFilePath("C:\\alert_DKYDB.log");
+		
+		String command = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 		when(jschServer.executeCommand(command)).thenReturn(alertLogString);
 
 		// Act
@@ -97,40 +114,55 @@ public class LinuxServerMonitoringRepositoryTest {
 	}
 
 	@Test
-	public void getAlertLogFileLineCountTest() throws IOException, JSchException {
+	public void testCheckAlertLogDuringPeriod() throws JSchException, IOException {
 		// Arrange
-		AlertLogCommand alc = mock(AlertLogCommand.class);
+		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadLine(10);
-		alc.setReadFilePath("/test/alert_DB.log");
+		alc.setReadFilePath("C:\\alert_DKYDB.log");
 		
-		String command = String.format("cat %s | wc -l", alc.getReadFilePath());
-		when(jschServer.executeCommand(command)).thenReturn(String.valueOf(alertLogLines.length));
-
-		// Act
-		int lineCount = repo.getAlertLogFileLineCount(alc);
-
-		// Assert
-		assertEquals(lineCount, alertLogLines.length);
-	}
-
-	@Test
-	public void checkAlertLogDuringPeriod() throws JSchException, IOException {
-		// Arrange
-		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine(10);
-		alc.setReadFilePath("/test/alert_DB.log");
-		
-		String command1 = String.format("cat %s | wc -l", alc.getReadFilePath());
+		String command1 = String.format("find /v /c \"\" %s", alc.getReadFilePath());
 		when(jschServer.executeCommand(command1)).thenReturn(String.valueOf(alertLogLines.length));
 		
-		String command2 = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+		String command2 = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 		when(jschServer.executeCommand(command2)).thenReturn(alertLogString);
 
 		// Act
 		AlertLog alertLog = repo.checkAlertLogDuringPeriod(alc, "2022-03-24", "2022-03-29");
 
 		// Assert
-		assertEquals(alertLog.getTotalLineCount(), 14);
-		assertEquals(alertLog.getAlertLogs().size(), 8);
+		assertEquals(alertLog.getTotalLineCount(), 12);
+		assertEquals(alertLog.getAlertLogs().size(), 7);
+	}
+	
+	@Test
+	public void testCheckAlertLogDuringPeriod_ReadLineBiggerThenTotalLineCnt() throws JSchException, IOException {
+		// Arrange
+		AlertLogCommand alc = new AlertLogCommand();
+		alc.setReadLine(20);
+		alc.setReadFilePath("C:\\alert_DKYDB.log");
+		
+		String command1 = String.format("find /v /c \"\" %s", alc.getReadFilePath());
+		when(jschServer.executeCommand(command1)).thenReturn("26");
+		
+		String command2 = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());		
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < Math.min(alertLogLines.length, alc.getReadLine()); i++) {
+			builder.append(alertLogLines[i]).append("\n");
+		}
+		when(jschServer.executeCommand(command2)).thenReturn(builder.toString());
+
+		String command3 = String.format("tail %d %s", alc.getReadLine() * 2, alc.getReadFilePath());
+		builder = new StringBuilder();
+		for (int i = 0; i < Math.min(alertLogLines.length, alc.getReadLine() * 2); i++) {
+			builder.append(alertLogLines[i]).append("\n");
+		}
+		when(jschServer.executeCommand(command3)).thenReturn(builder.toString());
+
+		// Act
+		AlertLog alertLog = repo.checkAlertLogDuringPeriod(alc, "2022-03-23", "2022-03-24");
+
+		// Assert
+		assertEquals(alertLog.getTotalLineCount(), 3);
+		assertEquals(alertLog.getAlertLogs().size(), 2);
 	}
 }

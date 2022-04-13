@@ -1,16 +1,8 @@
 package root.core.repository.implement;
 
-import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.StringTokenizer;
-
-import org.apache.commons.io.IOUtils;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.Session;
 
 import lombok.extern.slf4j.Slf4j;
 import root.common.server.implement.JschServer;
@@ -20,14 +12,12 @@ import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.utils.DateUtils;
-import root.utils.NumberUnitUtils;
-import root.utils.NumberUnitUtils.Unit;
 
 @Slf4j
-public class LinuxServerMonitoringRepository implements ServerMonitoringRepository {
+public class WindowServerMonitoringRepository implements ServerMonitoringRepository {
 	private JschServer jsch;
 
-	public LinuxServerMonitoringRepository(JschServer jsch) {
+	public WindowServerMonitoringRepository(JschServer jsch) {
 		this.jsch = jsch;
 	}
 
@@ -39,8 +29,9 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	@Override
 	public int getAlertLogFileLineCount(AlertLogCommand alc) {
 		int fileLineCnt = 0;
+
 		try {
-			String command = String.format("cat %s | wc -l", alc.getReadFilePath());
+			String command = String.format("find /v /c \"\" %s", alc.getReadFilePath());
 			String executeResult = jsch.executeCommand(command);
 			fileLineCnt = Integer.parseInt(executeResult);
 		} catch (Exception e) {
@@ -49,12 +40,12 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 
 		return fileLineCnt;
 	}
-	
+
 	@Override
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+			String command = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
 			result = jsch.executeCommand(command);
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -142,78 +133,13 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 
 	@Override
 	public List<OSDiskUsage> checkOSDiskUsage() {
-		List<OSDiskUsage> list = new ArrayList<>();
-		try {
-			Session session = jsch.getSession();
-			session.connect();
-			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
-			InputStream in = jsch.connectChannel(channel);
-			String result = IOUtils.toString(in, "UTF-8");
-			list = stringToOsDiskUsageList(result);
-			jsch.disConnectChannel(channel);
-			jsch.disConnect(session);
-		} catch (Exception e) {
-			log.error(e.getMessage());
-		}
-
-		return list;
-	}
-
-	public List<OSDiskUsage> stringToOsDiskUsageList(String result) {
-		StringTokenizer st = new StringTokenizer(result);
-		List<String> header = Arrays
-				.asList(new String[] { "Filesystem", "1024-blocks", "Used", "Available", "Capacity", "Mounted on" });
-		List<OSDiskUsage> list = new ArrayList<>();
-
-		boolean isHeader = true;
-		int index = 0;
-
-		OSDiskUsage row = new OSDiskUsage();
-		while (st.hasMoreElements()) {
-			String next = st.nextToken();
-			if (!isHeader) {
-				String headerName = header.get(index++);
-
-				switch (headerName) {
-				case "Filesystem":
-					row.setFileSystem(next);
-					break;
-				case "1024-blocks":
-					row.setTotalSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
-							Double.valueOf(next.substring(0, next.indexOf("K")))));
-					break;
-				case "Used":
-					row.setUsedSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
-							Double.valueOf(next.substring(0, next.indexOf("K")))));
-					break;
-				case "Available":
-					row.setFreeSpace(NumberUnitUtils.toByteValue(Unit.KiloByte,
-							Double.valueOf(next.substring(0, next.indexOf("K")))));
-					break;
-				case "Capacity":
-					row.setUsedPercent(Double.valueOf(next.substring(0, next.indexOf("%"))));
-					break;
-				case "Mounted on":
-					row.setMountedOn(next);
-					break;
-				}
-
-				if (index == 6) {
-					list.add(row);
-					row = new OSDiskUsage();
-					index = 0;
-				}
-			}
-			if (next.equals("on"))
-				isHeader = false;
-		}
-
-		return list;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	private String getAlertLogStringFromCertainDate(AlertLogCommand alc, String startDate) {
-		int alertLogFileLineCnt = this.getAlertLogFileLineCount(alc);
-		String fullAlertLogString = this.checkAlertLog(alc);
+		int alertLogFileLineCnt = getAlertLogFileLineCount(alc);
+		String fullAlertLogString = checkAlertLog(alc);
 
 		// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
 		while (true) {
@@ -241,8 +167,8 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 			// 조회시작일자와 로그의 처음 기록일자를 비교한다.
 			long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
 			if (diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
-				alc.setReadLine(alc.getReadLine() * 2);
-				fullAlertLogString = this.checkAlertLog(alc);
+				alc.setReadLine((alc.getReadLine()) * 2);
+				fullAlertLogString = checkAlertLog(alc);
 			} else {
 				break;
 			}

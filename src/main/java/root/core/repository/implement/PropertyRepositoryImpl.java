@@ -546,7 +546,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public AlertLogCommand getAlertLogCommand(String serverName) {
 		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
-		String alertLogReadLine = connInfoConfig.getString(serverName + ".server.alertlog.readline");
+		int alertLogReadLine = connInfoConfig.getInt(serverName + ".server.alertlog.readline");
 		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
 		String alertLogDateFormatRegex = connInfoConfig.getString(serverName + ".server.alertlog.dateformatregex");
 		AlertLogCommand alc = new AlertLogCommand(alertLogReadLine, alertLogFilePath, alertLogDateFormat,
