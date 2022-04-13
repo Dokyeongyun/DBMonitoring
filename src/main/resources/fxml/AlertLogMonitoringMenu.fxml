@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.AlertLogMonitoringMenuController">
+   <items>
+      <AnchorPane maxWidth="200.0" minWidth="150.0" style="-fx-background-color: white;">
+         <fx:include source="LeftMenu.fxml" />
+      </AnchorPane>
+      <AnchorPane minHeight="600.0" minWidth="550.0" style="-fx-background-color: white;">
+         <children>
+            <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <top>
+                  <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button graphicTextGap="0.0" layoutX="4.099999904632568" layoutY="10.399999618530273" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <cursor>
+                              <Cursor fx:constant="HAND" />
+                           </cursor>
+                           <graphic>
+                              <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
+                           </graphic>
+                        </Button>
+                        <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" text="Alert Log 모니터링" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
+                           <graphic>
+                              <FontAwesomeIconView fill="#003b8e" glyphName="BAR_CHART_ALT" selectionEnd="0" selectionFill="BLACK" size="25" />
+                           </graphic>
+                           <font>
+                              <Font name="Noto Sans Korean Medium" size="13.0" />
+                           </font>
+                        </Label>
+                        <AnchorPane layoutX="217.0" layoutY="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <JFXComboBox fx:id="runConnInfoFileComboBox" minWidth="300.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
+                              <Button layoutX="540.6000061035156" mnemonicParsing="false" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#4a892f" glyphName="PLAY_CIRCLE" size="22" />
+                                 </graphic>
+                              </Button>
+                           </children>
+                        </AnchorPane>
+                     </children>
+                  </AnchorPane>
+               </top>
+               <center>
+                  <AnchorPane minWidth="550.0" style="-fx-background-color: white;">
+                     <children>
+                        <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
+                           <tabs>
+                              <Tab text="Alert Log Monitoring">
+                                 <content>
+                                    <AnchorPane fx:id="alertLogTabAP" style="-fx-background-color: #ffffff00;">
+                                       <children>
+                                          <AnchorPane layoutX="10.0" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                             <children>
+                                                <ToolBar nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <items>
+                                                      <Label fx:id="label" minHeight="20.0" text="Server 선택">
+                                                         <padding>
+                                                            <Insets right="10.0" />
+                                                         </padding>
+                                                         <styleClass>
+                                                            <String fx:value="basic-font" />
+                                                            <String fx:value="bold" />
+                                                         </styleClass>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="alertLogServerComboBox" maxHeight="25.0" minHeight="25.0" minWidth="150.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" />
+                                                      <JFXButton ellipsisString="" minHeight="20.0" onAction="#monitoringAlertLog" styleClass="basic-font" text="조회">
+                                                         <graphic>
+                                                            <FontAwesomeIconView fill="#01077dc7" glyphName="PLAY_CIRCLE" size="18">
+                                                               <cursor>
+                                                                  <Cursor fx:constant="HAND" />
+                                                               </cursor>
+                                                            </FontAwesomeIconView>
+                                                         </graphic>
+                                                      </JFXButton>
+                                                   </items>
+                                                </ToolBar>
+                                                <Separator AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                          <SplitPane dividerPositions="0.8" layoutX="1.0" layoutY="41.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0">
+                                             <items>
+                                                <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" />
+                                                <TabPane minWidth="150.0" tabMaxWidth="60.0">
+                                                   <tabs>
+                                                      <Tab closable="false" text="Overview">
+                                                         <content>
+                                                            <AnchorPane>
+                                                               <children>
+                                                                  <JFXListView fx:id="alertLogOverviewLV" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                      <Tab closable="false" text="Error Docs">
+                                                         <content>
+                                                            <AnchorPane>
+                                                               <children>
+                                                                  <JFXListView style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children>
+                                                            </AnchorPane>
+                                                         </content>
+                                                      </Tab>
+                                                   </tabs>
+                                                </TabPane>
+                                             </items>
+                                          </SplitPane>
+                                          <AnchorPane layoutX="204.0" layoutY="317.0" maxHeight="150.0" minHeight="150.0" prefHeight="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0">
+                                             <children>
+                                                <AnchorPane maxWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <HBox layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
+                                                         <children>
+                                                            <Label maxHeight="25.0" minHeight="25.0" minWidth="70.0" prefHeight="25.0" text="조회기간">
+                                                               <graphic>
+                                                                  <FontAwesomeIconView fill="#3c4584" glyphName="CALENDAR" size="20" />
+                                                               </graphic>
+                                                               <styleClass>
+                                                                  <String fx:value="basic-font" />
+                                                                  <String fx:value="bold" />
+                                                               </styleClass>
+                                                               <HBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <DatePicker fx:id="alertLogStartDayDP" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" styleClass="basic-font" />
+                                                            <Label maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-font-size: 18px;" styleClass="basic-font" text="~">
+                                                               <HBox.margin>
+                                                                  <Insets left="10.0" right="10.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                            <DatePicker fx:id="alertLogEndDayDP" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" styleClass="basic-font" />
+                                                         </children>
+                                                      </HBox>
+                                                      <TextArea AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" />
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" right="10.0" top="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                                <Separator orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="400.0" AnchorPane.topAnchor="65.0" />
+                                                <AnchorPane layoutX="487.20001220703125" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="405.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <children>
+                                                      <Label maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Alert Log Selector" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView fill="#354371" glyphName="GAMEPAD" size="30" />
+                                                         </graphic>
+                                                         <styleClass>
+                                                            <String fx:value="basic-font" />
+                                                            <String fx:value="bold" />
+                                                         </styleClass>
+                                                      </Label>
+                                                      <HBox layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="95.0">
+                                                         <children>
+                                                            <ButtonBar buttonMinWidth="21.0" buttonOrder="" maxHeight="25.0" minHeight="25.0" prefHeight="25.0">
+                                                               <buttons>
+                                                                  <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_LEFT" size="20" strokeMiterLimit="0.0" tabSize="0" />
+                                                                     </graphic>
+                                                                  </JFXButton>
+                                                                  <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                                     <graphic>
+                                                                        <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_RIGHT" size="20" strokeMiterLimit="0.0" tabSize="0" />
+                                                                     </graphic>
+                                                                  </JFXButton>
+                                                               </buttons>
+                                                            </ButtonBar>
+                                                            <TextField maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" prefHeight="25.0" prefWidth="100.0">
+                                                               <HBox.margin>
+                                                                  <Insets left="10.0" />
+                                                               </HBox.margin>
+                                                            </TextField>
+                                                            <JFXButton alignment="CENTER" maxHeight="25.0" minHeight="25.0" minWidth="60.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" style="-fx-border-color: #2381E9; -fx-border-radius: 10px; -fx-text-fill: #2381E9;" text="이동">
+                                                               <styleClass>
+                                                                  <String fx:value="basic-font" />
+                                                                  <String fx:value="bold" />
+                                                               </styleClass>
+                                                               <graphic>
+                                                                  <FontAwesomeIconView fill="#2381e9" glyphName="ANGLE_DOUBLE_RIGHT" size="15" />
+                                                               </graphic>
+                                                               <HBox.margin>
+                                                                  <Insets left="10.0" />
+                                                               </HBox.margin>
+                                                            </JFXButton>
+                                                         </children>
+                                                         <padding>
+                                                            <Insets bottom="10.0" right="10.0" top="10.0" />
+                                                         </padding>
+                                                         <effect>
+                                                            <DropShadow height="11.7" offsetX="2.0" offsetY="3.0" radius="5.35" width="11.7">
+                                                               <color>
+                                                                  <Color red="0.8111110925674438" green="0.8268518447875977" blue="1.0" />
+                                                               </color>
+                                                            </DropShadow>
+                                                         </effect>
+                                                      </HBox>
+                                                   </children>
+                                                   <padding>
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                   </padding>
+                                                </AnchorPane>
+                                             </children>
+                                          </AnchorPane>
+                                          <Separator prefWidth="200.0" AnchorPane.bottomAnchor="108.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="10.0" left="5.0" right="5.0" />
+                                       </padding>
+                                    </AnchorPane>
+                                 </content>
+                              </Tab>
+                           </tabs>
+                        </TabPane>
+                     </children>
+                  </AnchorPane>
+               </center>
+               <bottom>
+                  <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
+               </bottom>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </items>
+</SplitPane>

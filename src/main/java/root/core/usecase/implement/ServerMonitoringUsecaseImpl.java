@@ -19,23 +19,22 @@ import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
-import root.core.domain.AlertLogCommandPeriod;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ReportRepository;
-import root.core.repository.constracts.ServerCheckRepository;
-import root.core.usecase.constracts.ServerCheckUsecase;
+import root.core.repository.constracts.ServerMonitoringRepository;
+import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.utils.ConsoleUtils;
 import root.utils.CsvUtils;
 import root.utils.DBManageExcel;
 import root.utils.DateUtils;
 import root.utils.ExcelSheet;
 
-public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
-	private ServerCheckRepository serverCheckRepository;
+public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
+	private ServerMonitoringRepository serverCheckRepository;
 	private ReportRepository reportRepository;
 
-	public ServerCheckUsecaseImpl(ServerCheckRepository serverCheckRepository, ReportRepository reportRepository) {
+	public ServerMonitoringUsecaseImpl(ServerMonitoringRepository serverCheckRepository, ReportRepository reportRepository) {
 		this.serverCheckRepository = serverCheckRepository;
 		this.reportRepository = reportRepository;
 	}
@@ -52,8 +51,8 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 
 	@Override
-	public void printAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
-		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alcp);
+	public void printAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
+		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alc, startDate, endDate);
 		List<Log> logContents = result.getAlertLogs();
 
 		boolean isError = false;
@@ -264,8 +263,8 @@ public class ServerCheckUsecaseImpl implements ServerCheckUsecase {
 	}
 
 	@Override
-	public AlertLog getAlertLogDuringPeriod(AlertLogCommandPeriod alcp) {
-		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alcp);
+	public AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
+		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alc, startDate, endDate);
 		return result;
 	}
 }

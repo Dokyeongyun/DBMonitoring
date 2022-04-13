@@ -29,7 +29,7 @@
                   <String fx:value="font-black" />
                </styleClass>
                <graphic>
-                  <FontAwesomeIconView fx:id="menuIconIV" fill="#0132ac" glyphName="" selectionFill="BLACK" size="20" />
+                  <FontAwesomeIconView fx:id="menuIconIV" fill="#0132ac" glyphName="" selectionFill="BLACK" size="20" text="" />
                </graphic>
             </Label>
             <ToolBar style="-fx-background-color: #ffffff00;" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="0.0">
@@ -41,7 +41,7 @@
                               <Cursor fx:constant="HAND" />
                            </cursor>
                            <graphic>
-                              <FontAwesomeIconView fx:id="icon" glyphName="PLUG" />
+                              <FontAwesomeIconView fx:id="connTestIcon" glyphName="PLUG" />
                            </graphic>
                            <HBox.margin>
                               <Insets right="5.0" />
