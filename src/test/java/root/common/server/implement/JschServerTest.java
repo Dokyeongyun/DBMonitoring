@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -37,14 +36,14 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testInit_ValidConnInfo() {
+	public void testInit_ValidConnInfo() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
 		assertNotNull(session);
 	}
 
 	@Test
-	public void testInit_Fail_InvalidConnInfo() {
+	public void testInit_Fail_InvalidConnInfo() throws Exception {
 		JschServer jsch = new JschServer(new JschConnectionInfo());
 		jsch.init();
 		Session session = jsch.getSession();
@@ -52,35 +51,17 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testConnect_Success() throws JSchException {
+	public void testConnect_Success() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
-		session = jsch.connect(session);
 		assertTrue(session.isConnected());
 	}
 
 	@Test
-	public void testConnect_Success_AlreadyConnection() throws JSchException {
-		jsch.init();
-		Session session = jsch.getSession();
-		jsch.connect(session);
-		jsch.connect(session);
-
-		assertTrue(session.isConnected());
-	}
-
-	@Test
-	public void testConnect_Fail_SessionIsNull() {
-		NullPointerException thrown = assertThrows(NullPointerException.class, () -> jsch.connect(null));
-		assertEquals("Session is null", thrown.getMessage());
-	}
-
-	@Test
-	public void testDisConnect_DisConnectionSuccess() throws JSchException {
+	public void testDisConnect_DisConnectionSuccess() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
 
-		session = jsch.connect(session);
 		assertTrue(session.isConnected());
 
 		jsch.disConnect(session);
@@ -88,16 +69,14 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testDisConnect_DisConnectionFail_SessionIsNull() {
-		NullPointerException thrown = assertThrows(NullPointerException.class, () -> jsch.disConnect(null));
-		assertEquals("Session is null", thrown.getMessage());
+	public void testDisConnect_DisConnectionFail_SessionIsNull() throws Exception {
+		jsch.disConnect(null);
 	}
 
 	@Test
-	public void testOpenExecChannel_Success() throws JSchException {
+	public void testOpenExecChannel_Success() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
-		jsch.connect(session);
 
 		Channel channel = jsch.openExecChannel(session, "echo 1");
 		assertNotNull(channel);
@@ -106,15 +85,14 @@ public class JschServerTest {
 	@Test
 	public void testOpenExecChannel_Success_WhenSessionIsNull() throws JSchException {
 		Session session = null;
-		Channel channel = jsch.openExecChannel(session, "echo 1");
-		assertNotNull(channel);
+		JSchException thrown = assertThrows(JSchException.class, () -> jsch.openExecChannel(session, "echo 1"));
+		assertEquals("session is not valid", thrown.getMessage());
 	}
 
 	@Test
-	public void testConnectChannel_Success() throws JSchException, IOException {
+	public void testConnectChannel_Success() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
-		jsch.connect(session);
 
 		Channel channel = jsch.openExecChannel(session, "echo 1");
 		InputStream in = jsch.connectChannel(channel);
@@ -127,23 +105,15 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testConnectChannel_Success_WhenSessionIsNull() throws JSchException, IOException {
+	public void testConnectChannel_Success_WhenSessionIsNull() throws Exception {
 		Session session = null;
-		Channel channel = jsch.openExecChannel(session, "echo 1");
-		InputStream in = jsch.connectChannel(channel);
-
-		assertNotNull(in);
-		try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
-			String echoLine = br.readLine();
-			assertEquals(echoLine, "1");
-		}
+		assertThrows(JSchException.class, () -> jsch.openExecChannel(session, "echo 1"));
 	}
 
 	@Test
-	public void testDisConnectChannel_Success() throws JSchException {
+	public void testDisConnectChannel_Success() throws Exception {
 		jsch.init();
 		Session session = jsch.getSession();
-		jsch.connect(session);
 
 		Channel channel = jsch.openExecChannel(session, "echo 1");
 		jsch.connectChannel(channel);
@@ -160,27 +130,31 @@ public class JschServerTest {
 	}
 	
 	@Test
-	public void testExecuteCommand_EchoCommand() throws JSchException, IOException {
-		String result = jsch.executeCommand("echo 1");
-		assertEquals(result, "1");
+	public void testExecuteCommand_EchoCommand() throws Exception {
+		jsch.init();
+		Session session = jsch.getSession();
+		String result = jsch.executeCommand(session, "echo 1");
+		assertEquals("1", result.trim());
 	}
 	
 	@Test
-	public void testExecuteCommand_TailCommand() throws JSchException, IOException {
-		String result = jsch.executeCommand("tail -500 C://Users/aserv/Desktop/alert_DB.log");
+	public void testExecuteCommand_TailCommand() throws Exception {
+		jsch.init();
+		Session session = jsch.getSession();
+		String result = jsch.executeCommand(session, "tail -500 C://Users/aserv/Desktop/alert_DB.log");
 		assertNotEquals(result, "");
 	}
-
+	
 	@Test
-	public void testValidateConn_Valid() {
+	public void testValidateConn_Valid() throws Exception {
 		jsch.init();
-		assertTrue(JschServer.validateConn(jsch.getSession()));
+		assertTrue(jsch.validateConn(jsch.getSession()));
 	}
 
 	@Test
-	public void testValidateConn_InValid() {
+	public void testValidateConn_InValid() throws Exception {
 		JschServer jsch = new JschServer(new JschConnectionInfo());
 		jsch.init();
-		assertFalse(JschServer.validateConn(jsch.getSession()));
+		assertFalse(jsch.validateConn(null));
 	}
 }
