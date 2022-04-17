@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
@@ -173,8 +174,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
+			log.error(e.getMessage());
 		}
 	}
 
@@ -188,7 +189,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			serverNames += serverName + ",";
 
 			JschConnectionInfo jsch = serverConfig.get(serverName);
-			config.setProperty(serverName + ".server.servername", jsch.getServerName());
+			config.setProperty(serverName + ".server.name", jsch.getServerName());
+			config.setProperty(serverName + ".server.os", jsch.getServerOS().name());
 			config.setProperty(serverName + ".server.host", jsch.getHost());
 			config.setProperty(serverName + ".server.port", jsch.getPort());
 			config.setProperty(serverName + ".server.username", jsch.getUserName());
@@ -206,9 +208,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
 			config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
 			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
-			config.setProperty(serverName + ".server.alertlog.readLine", 500);
+			config.setProperty(serverName + ".server.alertlog.readline", 500);
 		}
-
 		config.setProperty("servernames", serverNames.substring(0, serverNames.length() - 1));
 
 		PropertiesConfigurationLayout layout = config.getLayout();
@@ -244,8 +245,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
 			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
+			log.error(e.getMessage());
 		}
 	}
 
@@ -529,11 +530,16 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public JschConnectionInfo getJschConnectionInfo(String serverName) {
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
+		ServerOS serverOS = null;
+		try {
+			serverOS = ServerOS.valueOf(connInfoConfig.getString(serverName + ".server.os"));	
+		} catch (Exception e) {
+		}
 		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
 		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
 		AlertLogCommand alc = getAlertLogCommand(serverName);
-		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword,
+		return new JschConnectionInfo(serverName, serverOS, serverHost, serverPort, serverUserName, serverPassword,
 				alc);
 	}
 
