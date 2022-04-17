@@ -268,7 +268,6 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 	public AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
 		log.debug(String.format("alert log file monitoring, %s (%s ~ %s)", alc.getReadFilePath(), startDate, endDate));
 		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alc, startDate, endDate);
-		log.debug(result.toString());
 		return result;
 	}
 }

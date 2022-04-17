@@ -58,7 +58,6 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-
 		log.debug(alc.toString());
 		return result;
 	}
@@ -85,22 +84,34 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
+				
 				// 조회시작일자 찾기
 				if (!isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) {
+						// [조회시작일자 >= 최초 로그기록일자]일 때, 최초 로그기록일자부터 읽기 시작
 						String parsedDateString = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, startDate) >= 0) {
 							isStartDate = true;
 							readStartIndex = i;
+							logTimeStamp = line;
+
+							// [조회종료일자 > 조회 시작일자 >= 최초 로그기록일자]일 때 최초 로그기록일자부터 읽기 시작
+							if(DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, endDate) > 0) {
+								isEndDate = true;
+								readEndIndex = i;
+								break;
+							}
 						}
 					}
 				}
-
+				
 				// 로그 저장 시작 & 조회종료일자 찾기
 				if (isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) { // Log TimeStamp Line
+
+						// 현재 로그기록일자가 조회종료일자 + 1일인지 확인
 						String logDate = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (logDate.startsWith(DateUtils.addDate(endDate, 0, 0, 1))) {
 							isEndDate = true;
@@ -111,7 +122,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 							logTimeStamp = line;
 						}
 
-						if (i != readStartIndex && !isEndDate) {
+						if (i != readStartIndex) {
 							alertLog.addLog(new Log(logTimeStamp, logContents));
 							logContents = new ArrayList<>();
 							logTimeStamp = line;
@@ -129,8 +140,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 				}
 			}
 
-			// 종료 후 마지막 로그 추가하기
-			alertLog.addLog(new Log(logTimeStamp, logContents));
+			// 종료 후 fullLogString 추가
 			alertLog.setFullLogString(sb.toString());
 
 			log.info("\t▶ Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
