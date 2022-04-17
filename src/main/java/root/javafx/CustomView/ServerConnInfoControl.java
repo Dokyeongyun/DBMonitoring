@@ -51,7 +51,7 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 		String id = ((TextField) curAP.lookup("#userTF")).getText();
 		String pw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
 
-		return new ServerConnectService(new JschConnectionInfo("", host, port, id, pw));
+		return new ServerConnectService(new JschConnectionInfo(host, port, id, pw));
 	}
 
 	@Override

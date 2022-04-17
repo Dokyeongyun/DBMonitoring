@@ -14,6 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
@@ -27,6 +28,9 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	@FXML
 	TextField serverNameTF;
+
+	@FXML
+	JFXComboBox<ServerOS> serverOSCB;
 
 	@FXML
 	TextField hostTF;
@@ -62,18 +66,19 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	boolean isAnyEmptyInputForConnectionTest() {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), passwordPF.getText());
 	}
-	
+
 	public void init() {
 		// Set textFormatter
 		portTF.setTextFormatter(new NumberTextFormatter());
-		
+
 		// Set AlertLogDateFormat ComboBox values
 		alertLogDateFormatCB.getItems()
-		.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
 	}
 
 	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
+		serverOSCB.getSelectionModel().select(jsch.getServerOS());
 		hostTF.setText(jsch.getHost());
 		portTF.setText(String.valueOf(jsch.getPort()));
 		userTF.setText(jsch.getUserName());
@@ -84,21 +89,22 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	public JschConnectionInfo getInputValues() {
 		JschConnectionInfo jsch = new JschConnectionInfo();
-		jsch.setServerName(this.serverNameTF.getText());
-		jsch.setHost(this.hostTF.getText());
-		jsch.setPort(this.portTF.getText());
-		jsch.setUserName(this.userTF.getText());
-		jsch.setPassword(this.passwordPF.getText());
+		jsch.setServerName(serverNameTF.getText());
+		jsch.setServerOS(serverOSCB.getValue());
+		jsch.setHost(hostTF.getText());
+		jsch.setPort(portTF.getText());
+		jsch.setUserName(userTF.getText());
+		jsch.setPassword(passwordPF.getText());
 		AlertLogCommand alc = new AlertLogCommand();
-		alc.setReadFilePath(this.alertLogFilePathTF.getText());
-		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+		alc.setReadFilePath(alertLogFilePathTF.getText());
+		alc.setDateFormat(alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 		jsch.setAlc(alc);
 		return jsch;
 	}
 
 	public boolean isAnyEmptyInput() {
-		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), serverNameTF.getText(),
-				passwordPF.getText(), alertLogFilePathTF.getText(),
-				alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+		return StringUtils.isAnyEmpty(serverOSCB.getSelectionModel().getSelectedItem().name(), hostTF.getText(),
+				portTF.getText(), userTF.getText(), serverNameTF.getText(), passwordPF.getText(),
+				alertLogFilePathTF.getText(), alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 	}
 }

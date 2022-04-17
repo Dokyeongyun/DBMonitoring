@@ -1,10 +1,12 @@
 package root.core.domain;
 
 import lombok.Data;
+import root.core.domain.enums.ServerOS;
 
 @Data
 public class JschConnectionInfo {
 	private String serverName;
+	private ServerOS serverOS;
 	private String host;
 	private int port;
 	private String userName;
@@ -15,8 +17,10 @@ public class JschConnectionInfo {
 		this.alc = new AlertLogCommand();
 	}
 
-	public JschConnectionInfo(String serverName, String host, int port, String userName, String password) {
+	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, int port, String userName,
+			String password) {
 		this.serverName = serverName;
+		this.serverOS = serverOS;
 		this.host = host;
 		this.port = port;
 		this.userName = userName;
@@ -24,20 +28,26 @@ public class JschConnectionInfo {
 		this.alc = new AlertLogCommand();
 	}
 
-	public JschConnectionInfo(String serverName, String host, String port, String userName, String password) {
-		this(serverName, host, 22, userName, password);
+	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, String port, String userName,
+			String password) {
+		this(serverName, serverOS, host, 22, userName, password);
 		this.setPort(port);
 	}
 
-	public JschConnectionInfo(String serverName, String host, int port, String userName, String password,
-			AlertLogCommand alc) {
-		this(serverName, host, port, userName, password);
+	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, int port, String userName,
+			String password, AlertLogCommand alc) {
+		this(serverName, serverOS, host, port, userName, password);
 		this.alc = alc;
 	}
 
-	public JschConnectionInfo(String serverName, String host, String port, String userName, String password,
-			AlertLogCommand alc) {
-		this(serverName, host, 22, userName, password, alc);
+	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, String port, String userName,
+			String password, AlertLogCommand alc) {
+		this(serverName, serverOS, host, 22, userName, password, alc);
+		this.setPort(port);
+	}
+
+	public JschConnectionInfo(String host, String port, String userName, String password) {
+		this("", null, host, 22, userName, password);
 		this.setPort(port);
 	}
 

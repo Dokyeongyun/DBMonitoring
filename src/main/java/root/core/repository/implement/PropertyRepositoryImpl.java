@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
@@ -529,11 +530,16 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public JschConnectionInfo getJschConnectionInfo(String serverName) {
 		String serverHost = connInfoConfig.getString(serverName + ".server.host");
+		ServerOS serverOS = null;
+		try {
+			serverOS = ServerOS.valueOf(connInfoConfig.getString(serverName + ".server.os"));	
+		} catch (Exception e) {
+		}
 		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");
 		String serverPassword = connInfoConfig.getString(serverName + ".server.password");
 		AlertLogCommand alc = getAlertLogCommand(serverName);
-		return new JschConnectionInfo(serverName.toUpperCase(), serverHost, serverPort, serverUserName, serverPassword,
+		return new JschConnectionInfo(serverName, serverOS, serverHost, serverPort, serverUserName, serverPassword,
 				alc);
 	}
 

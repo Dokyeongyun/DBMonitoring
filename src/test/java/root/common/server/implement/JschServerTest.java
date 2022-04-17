@@ -20,6 +20,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.ServerOS;
 
 public class JschServerTest {
 
@@ -28,11 +29,12 @@ public class JschServerTest {
 	@BeforeAll
 	public static void setup() {
 		String serverName = "DKY SERVER";
+		ServerOS serverOS = ServerOS.WINDOW;
 		String host = "192.168.154.1";
 		String userName = "dky";
 		String port = "22";
 		String password = "ehruddbs1!";
-		jsch = new JschServer(new JschConnectionInfo(serverName, host, port, userName, password));
+		jsch = new JschServer(new JschConnectionInfo(serverName, serverOS, host, port, userName, password));
 	}
 
 	@Test
@@ -128,7 +130,7 @@ public class JschServerTest {
 		String serverName = jsch.getServerName();
 		assertEquals(serverName, "DKY SERVER");
 	}
-	
+
 	@Test
 	public void testExecuteCommand_EchoCommand() throws Exception {
 		jsch.init();
@@ -136,7 +138,7 @@ public class JschServerTest {
 		String result = jsch.executeCommand(session, "echo 1");
 		assertEquals("1", result.trim());
 	}
-	
+
 	@Test
 	public void testExecuteCommand_TailCommand() throws Exception {
 		jsch.init();
@@ -144,7 +146,7 @@ public class JschServerTest {
 		String result = jsch.executeCommand(session, "tail -500 C://Users/aserv/Desktop/alert_DB.log");
 		assertNotEquals(result, "");
 	}
-	
+
 	@Test
 	public void testValidateConn_Valid() throws Exception {
 		jsch.init();
