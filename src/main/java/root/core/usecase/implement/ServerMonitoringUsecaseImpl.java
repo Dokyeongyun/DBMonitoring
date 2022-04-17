@@ -17,6 +17,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.Log;
@@ -30,6 +31,7 @@ import root.utils.DBManageExcel;
 import root.utils.DateUtils;
 import root.utils.ExcelSheet;
 
+@Slf4j
 public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 	private ServerMonitoringRepository serverCheckRepository;
 	private ReportRepository reportRepository;
@@ -264,7 +266,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 	@Override
 	public AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
+		log.debug(String.format("alert log file monitoring, %s (%s ~ %s)", alc.getReadFilePath(), startDate, endDate));
 		AlertLog result = serverCheckRepository.checkAlertLogDuringPeriod(alc, startDate, endDate);
+		log.debug(result.toString());
 		return result;
 	}
 }

@@ -3,6 +3,7 @@ package root.core.repository.implement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import lombok.extern.slf4j.Slf4j;
 import root.common.server.implement.JschServer;
@@ -33,7 +34,14 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 		try {
 			String command = String.format("find /v /c \"\" %s", alc.getReadFilePath());
 			String executeResult = jsch.executeCommand(command);
-			fileLineCnt = Integer.parseInt(executeResult);
+			StringTokenizer st = new StringTokenizer(executeResult);
+			String lastToken = "0";
+			while (st.hasMoreTokens()) {
+				lastToken = st.nextToken();
+			}
+
+			fileLineCnt = Integer.parseInt(lastToken);
+			log.debug(String.format("alert log file line count: %s, %d", alc.getReadFilePath(), fileLineCnt));
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -45,12 +53,13 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			String command = String.format("tail %d %s", alc.getReadLine(), alc.getReadFilePath());
+			String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
 			result = jsch.executeCommand(command);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
 
+		log.debug(alc.toString());
 		return result;
 	}
 
@@ -62,7 +71,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 		try {
 			// 조회기간동안의 로그만을 취하여 StringBuffer에 저장한다.
-			String[] lines = fullAlertLogString.split("\n");
+			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
 			boolean isStartDate = false;
 			boolean isEndDate = false;
@@ -76,13 +85,15 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
-
 				// 조회시작일자 찾기
 				if (!isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
-					if (parsedDate != null && DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate).equals(startDate)) {
-						isStartDate = true;
-						readStartIndex = i;
+					if (parsedDate != null) {
+						String parsedDateString = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
+						if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, startDate) >= 0) {
+							isStartDate = true;
+							readStartIndex = i;
+						}
 					}
 				}
 
@@ -98,7 +109,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 						if (i == readStartIndex) {
 							logTimeStamp = line;
-						} 
+						}
 
 						if (i != readStartIndex && !isEndDate) {
 							alertLog.addLog(new Log(logTimeStamp, logContents));
@@ -127,7 +138,6 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-
 		return alertLog;
 	}
 
@@ -143,7 +153,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 		// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
 		while (true) {
-			String[] lines = fullAlertLogString.split("\n");
+			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
 			// 현재 Read Line 수가 파일 최대 Line 수를 초과했을 시, 파일 전체를 읽고 반환한다.
 			if (lines.length >= alertLogFileLineCnt) {
@@ -159,8 +169,8 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 					break;
 				}
 			}
-			
-			if(logDate == null || logDate.equals("")) {
+
+			if (logDate == null || logDate.equals("")) {
 				break;
 			}
 
