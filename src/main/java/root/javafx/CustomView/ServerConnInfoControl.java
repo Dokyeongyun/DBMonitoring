@@ -7,6 +7,7 @@ import java.util.Map;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
@@ -15,6 +16,7 @@ import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.ServerConnectService;
 import root.utils.AlertUtils;
 
+@Slf4j
 public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo> {
 
 	/* Dependency Injection */
@@ -31,7 +33,8 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 				return false;
 			}
 			JschConnectionInfo jsch = serverConnAP.getInputValues();
-			config.put(jsch.getServerName().toUpperCase(), jsch);
+			config.put(jsch.getServerName(), jsch);
+			log.debug(jsch.toString());
 		}
 		
 		propertyRepository.saveServerConnectionInfo(configFilePath, config);

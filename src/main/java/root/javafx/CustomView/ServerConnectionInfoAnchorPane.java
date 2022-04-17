@@ -12,6 +12,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.enums.ServerOS;
@@ -21,6 +22,7 @@ import root.javafx.DI.DependencyInjection;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
+@Slf4j
 public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	/* Dependency Injection */
@@ -74,6 +76,9 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		// Set AlertLogDateFormat ComboBox values
 		alertLogDateFormatCB.getItems()
 				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+		
+		// Set ServerOS ComboBox values
+		serverOSCB.getItems().addAll(ServerOS.values());
 	}
 
 	public void setInitialValue(JschConnectionInfo jsch) {
@@ -90,7 +95,7 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	public JschConnectionInfo getInputValues() {
 		JschConnectionInfo jsch = new JschConnectionInfo();
 		jsch.setServerName(serverNameTF.getText());
-		jsch.setServerOS(serverOSCB.getValue());
+		jsch.setServerOS(serverOSCB.getSelectionModel().getSelectedItem());
 		jsch.setHost(hostTF.getText());
 		jsch.setPort(portTF.getText());
 		jsch.setUserName(userTF.getText());
@@ -103,7 +108,13 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	}
 
 	public boolean isAnyEmptyInput() {
-		return StringUtils.isAnyEmpty(serverOSCB.getSelectionModel().getSelectedItem().name(), hostTF.getText(),
+		ServerOS serverOS = serverOSCB.getSelectionModel().getSelectedItem();
+		if(serverOS == null) {
+			log.info("ServerOS input is not valid");
+			return true;
+		}
+		
+		return StringUtils.isAnyEmpty(serverOS.name(), hostTF.getText(),
 				portTF.getText(), userTF.getText(), serverNameTF.getText(), passwordPF.getText(),
 				alertLogFilePathTF.getText(), alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 	}

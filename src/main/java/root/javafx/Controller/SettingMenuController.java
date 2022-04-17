@@ -29,6 +29,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.JdbcConnectionInfo;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
@@ -47,6 +48,7 @@ import root.javafx.CustomView.dialogUI.CustomTextInputDialog;
 import root.utils.AlertUtils;
 import root.utils.UnitUtils.FileSize;
 
+@Slf4j
 public class SettingMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -90,12 +92,15 @@ public class SettingMenuController implements Initializable {
 
 		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 		String lastUsePropertiesFile = propService.getLastUseConnectionInfoFilePath();
+		log.debug("Last use properties file: " + lastUsePropertiesFile);
 		if (lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
 			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
-				loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
+				if(newValue != null) {
+					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));	
+				}
 			});
 		} else {
 			setVisible(noConnInfoConfigAP, true);
@@ -246,6 +251,7 @@ public class SettingMenuController implements Initializable {
 	 * @param filePath
 	 */
 	private void loadMonitoringConfigFile(String filePath) {
+		log.debug("Load monitoring config file: " + filePath);
 		monitoringElementsVBox.getChildren().clear();
 
 		String presetConfigFileName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
