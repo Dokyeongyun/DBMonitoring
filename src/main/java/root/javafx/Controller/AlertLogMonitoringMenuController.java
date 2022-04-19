@@ -19,10 +19,12 @@ import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.repository.implement.LinuxServerMonitoringRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
+import root.core.repository.implement.WindowServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
@@ -170,7 +172,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		return true;
 	}
 
-	public void monitoringAlertLog(ActionEvent e) {
+	public void monitoringAlertLog(ActionEvent e) throws Exception {
 		// 입력값 검사
 		if (!validateInput()) {
 			return;
@@ -184,7 +186,14 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		JschServer server = new JschServer(connInfo);
 		server.init();
-		ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
+		ServerMonitoringRepository repo = null;
+		if (connInfo.getServerOS() == ServerOS.WINDOW) {
+			repo = new WindowServerMonitoringRepository(server);
+		} else if (connInfo.getServerOS() == ServerOS.LINUX) {
+			repo = new LinuxServerMonitoringRepository(server);
+		} else {
+			throw new Exception("Server OS is not valid");
+		}
 		ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 		alertLogMonitoringResultMap.put(selectedServer,

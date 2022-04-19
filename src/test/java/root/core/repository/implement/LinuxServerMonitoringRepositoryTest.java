@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
@@ -107,26 +106,5 @@ public class LinuxServerMonitoringRepositoryTest {
 
 		// Assert
 		assertEquals(lineCount, alertLogLines.length);
-	}
-
-	@Test
-	public void checkAlertLogDuringPeriod() throws Exception {
-		// Arrange
-		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine(10);
-		alc.setReadFilePath("/test/alert_DB.log");
-
-		String command1 = String.format("cat %s | wc -l", alc.getReadFilePath());
-		when(jschServer.executeCommand(command1)).thenReturn(String.valueOf(alertLogLines.length));
-
-		String command2 = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
-		when(jschServer.executeCommand(command2)).thenReturn(alertLogString);
-
-		// Act
-		AlertLog alertLog = repo.checkAlertLogDuringPeriod(alc, "2022-03-24", "2022-03-29");
-
-		// Assert
-		assertEquals(alertLog.getTotalLineCount(), 14);
-		assertEquals(alertLog.getAlertLogs().size(), 8);
 	}
 }
