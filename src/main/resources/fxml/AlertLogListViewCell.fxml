@@ -8,8 +8,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-
-<AnchorPane fx:id="rootAP" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17">
+<AnchorPane fx:id="rootAP" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <HBox maxHeight="15.0" minHeight="15.0" prefHeight="15.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -25,6 +24,11 @@
          </children>
       </HBox>
       <Separator AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="16.0" />
-      <JFXTextArea fx:id="logContentTA" prefRowCount="1" styleClass="basic-font" stylesheets="@../css/javaFx.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.0" />
+      <JFXTextArea fx:id="logContentTA" labelFloat="true" prefColumnCount="1" prefRowCount="1" stylesheets="@../css/javaFx.css" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="17.0">
+         <styleClass>
+            <String fx:value="basic-font" />
+            <String fx:value="gray-scrollbar" />
+         </styleClass>
+      </JFXTextArea>
    </children>
 </AnchorPane>

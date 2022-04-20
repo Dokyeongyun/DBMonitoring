@@ -5,10 +5,10 @@
 
 .button-raised{
     -fx-padding: 0.7em 0.57em;
-    -fx-font-size: 14px;
+    -fx-font-size: 14.0px;
     -jfx-button-type: RAISED;
-    -fx-background-color: rgb(77,102,204);
-    -fx-pref-width: 200;
+    -fx-background-color: rgb(77.0,102.0,204.0);
+    -fx-pref-width: 200.0;
     -fx-text-fill: WHITE;
 }
 
@@ -36,19 +36,19 @@
 /* TabPane */
 .tab-pane > .tab-header-area > .headers-region > .tab:top {
     -fx-border-color: #a3a7a8;
-    -fx-border-radius: 5 5 0 0;
+    -fx-border-radius: 5.0 5.0 0.0 0.0;
     -fx-background-color: transparent;
-    -fx-pref-height: 40px;  
-    -fx-background-insets: 0;
+    -fx-pref-height: 40.0px;  
+    -fx-background-insets: 0.0;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected:top {
     -fx-border-color: #2381E9 #a3a7a8 #a3a7a8 #a3a7a8;
-    -fx-border-width: 5 1 1 1;   
-    -fx-border-radius: 5 5 0 0;
+    -fx-border-width: 5.0 1.0 1.0 1.0;   
+    -fx-border-radius: 5.0 5.0 0.0 0.0;
     -fx-background-color: white;
-    -fx-pref-height: 40px;  
-    -fx-background-insets: 0;
+    -fx-pref-height: 40.0px;  
+    -fx-background-insets: 0.0;
 }
 
 .tab-pane > .tab-header-area > .headers-region > .tab:selected > .tab-container > .tab-label {
@@ -67,16 +67,16 @@
 .tab-pane > .tab-header-area > .tab-header-background {
     -fx-background-color: white;
     -fx-border-color: #a3a7a8;
-    -fx-border-width: 0 0 1 0;
-    -fx-background-insets: 0;
-    -fx-pref-height: 45px;  
+    -fx-border-width: 0.0 0.0 1.0 0.0;
+    -fx-background-insets: 0.0;
+    -fx-pref-height: 45.0px;  
 }
 
 /* TextField */
 .text-field {
     -fx-background-color: -fx-text-box-border, white ;
-    -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
-    -fx-background-radius: 0 ;
+    -fx-background-insets: 0.0, 0.5 0.5 0.5 0.5 ;
+    -fx-background-radius: 0.0 ;
     -fx-font-family: "Noto Sans Korean Regular";
 }
 .text-field:focused {
@@ -86,17 +86,17 @@
 /* Label */
 .gridTitleLabel {
     -fx-font-family: "Noto Sans Korean Regular";
-    -fx-font-size: 11px;
-    -fx-line-spacing: 0;
+    -fx-font-size: 11.0px;
+    -fx-line-spacing: 0.0;
 }
 
 /* JFXComboBox */
 .jfx-combo-box {
     -fx-background-color: -fx-text-box-border, white ;
-    -fx-background-insets: 0, 0.5 0.5 0.5 0.5 ;
-    -fx-background-radius: 0 ;
+    -fx-background-insets: 0.0, 0.5 0.5 0.5 0.5 ;
+    -fx-background-radius: 0.0 ;
     -fx-font-family: "Noto Sans Korean Regular";
-    -fx-font-size: 10px;
+    -fx-font-size: 10.0px;
 }
 
 .jfx-combo-box:focused {
@@ -111,9 +111,9 @@
 
 .table-view .column-header-background {
     -fx-background-color: linear-gradient(to bottom, #1dbbdd44, #93f9b944);
-    -fx-background-radius: 7px 7px 0px 0px;
-    -fx-background-insets: 0 11px 0 0;
-    -fx-padding: 0 0 5px 0;
+    -fx-background-radius: 7.0px 7.0px 0.0px 0.0px;
+    -fx-background-insets: 0.0 11.0px 0.0 0.0;
+    -fx-padding: 0.0 0.0 5.0px 0.0;
 }
 
 .table-view .column-header {
@@ -122,7 +122,7 @@
 
 .table-view .table-cell{
     -fx-border-color: transparent;
-    -fx-padding: 2 0 2 10px;
+    -fx-padding: 2.0 0.0 2.0 10.0px;
 }
 
 .table-row-cell: hover {
@@ -132,13 +132,13 @@
 
 .table-row-cell: odd{
     -fx-background-color: #93f9b911;
-    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-insets: 0.0, 0.0 0.0 1.0 0.0;
     -fx-padding: 0.0em;
 }
 
 .table-row-cell: even{
     -fx-background-color: #1dbbdd11;
-    -fx-background-insets: 0, 0 0 1 0;
+    -fx-background-insets: 0.0, 0.0 0.0 1.0 0.0;
     -fx-padding: 0.0em;
 }
 
@@ -150,7 +150,7 @@
 
 .table-view .show-hide-columns-button {
     -fx-background-color: linear-gradient(to bottom, #1dbbdd44, #93f9b944);
-    -fx-background-insets: 2 0 0 2.5;
+    -fx-background-insets: 2.0 0.0 0.0 2.5;
 }
 
 .table-view .virtual-flow .scroll-bar:vertical,
@@ -164,8 +164,8 @@
 
 .table-view .virtual-flow .scroll-bar .increment-button,
 .table-view .virtual-flow .scroll-bar .decrement-button {
-    -fx-opacity: 0;
-    -fx-padding: 2;
+    -fx-opacity: 0.0;
+    -fx-padding: 2.0;
 }
 
 .table-view .virtual-flow .scroll-bar:vertical .thumb {
@@ -187,7 +187,7 @@
 /* Datepicker */
 .date-picker .arrow-button {
 	-fx-background-color: -fx-primary-color;
-	-fx-background-radius: 0;
+	-fx-background-radius: 0.0;
 }
 .date-picker .arrow-button:hover {
 	-fx-background-color: -fx-secondary-color;
@@ -235,4 +235,36 @@
 
 .scroll-pane {
    -fx-background-color: transparent;
+}
+
+.gray-scrollbar .scroll-bar { 
+	-fx-background-color: white;
+}
+
+.gray-scrollbar .scroll-bar:horizontal .track,
+.gray-scrollbar .scroll-bar:vertical .track{
+	-fx-background-color: transparent;
+	-fx-border-color: transparent;
+}
+
+.gray-scrollbar .scroll-bar:horizontal .increment-button ,
+.gray-scrollbar .scroll-bar:horizontal .decrement-button {
+    -fx-background-color: transparent;
+	-fx-padding: 0.0 0.0 10.0 0.0;
+}
+
+.gray-scrollbar .scroll-bar:vertical .increment-button ,
+.gray-scrollbar .scroll-bar:vertical .decrement-button {
+    -fx-background-color: transparent;
+	-fx-padding: 0.0 10.0 0.0 0.0;
+}
+
+.gray-scrollbar .scroll-bar .increment-arrow,
+.gray-scrollbar .scroll-bar .decrement-arrow{
+	-fx-padding: 2.0 0.0 2.0 0.0;
+}
+ 
+.gray-scrollbar .scroll-bar:horizontal .thumb,
+.gray-scrollbar .scroll-bar:vertical .thumb {
+    -fx-background-color: derive(gray,40.0%);
 }

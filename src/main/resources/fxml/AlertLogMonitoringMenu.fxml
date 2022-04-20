@@ -107,7 +107,7 @@
                                           </AnchorPane>
                                           <SplitPane dividerPositions="0.8" layoutX="1.0" layoutY="41.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0">
                                              <items>
-                                                <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" />
+                                                <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" styleClass="gray-scrollbar" stylesheets="@../css/javaFx.css" />
                                                 <TabPane minWidth="150.0" tabMaxWidth="60.0">
                                                    <tabs>
                                                       <Tab closable="false" text="Overview">
