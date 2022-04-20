@@ -20,8 +20,11 @@ public class Log {
 	
 	public String getFullLogString() {
 		StringBuffer result = new StringBuffer();
-		for(String s : logContents) {
-			result.append(s);
+		for (int i = 0; i < logContents.size(); i++) {
+			result.append(logContents.get(i));
+			if (i != logContents.size()) {
+				result.append(System.lineSeparator());
+			}
 		}
 		return result.toString();
 	}
