@@ -2,12 +2,14 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.Log;
@@ -21,6 +23,10 @@ public class AlertLogListViewCell extends ListCell<Log> {
 	AnchorPane rootAP;
 	@FXML
 	Label logTimeLabel;
+	@FXML
+	Label logIndexLabel;
+	@FXML
+	FontAwesomeIconView logStatusIcon;
 	@FXML
 	TextArea logContentTA;
 
@@ -44,14 +50,29 @@ public class AlertLogListViewCell extends ListCell<Log> {
 				}
 			}
 
+		
+			boolean isErrorLog = isErrorLog(logObj.getFullLogString());
+			
+			// logTimeStamp
+			logTimeLabel.setText(logObj.getLogTimeStamp());
+
+			// logIndex
+			logIndexLabel.setText(String.valueOf(logObj.getIndex() + 1));
+
+			// logStatusIcon
+			logStatusIcon.setFill(Paint.valueOf(isErrorLog ? "#d92a2a" : "#4d9c84"));
+
+			// logContent
 			logContentTA.widthProperty().addListener((observable, oldValue, newValue) -> {
 				Text text = new Text();
 				text.setWrappingWidth(newValue.doubleValue());
 				text.setText(logContentTA.getText());
 				logContentTA.setPrefHeight(text.getLayoutBounds().getHeight() * 1.35);
 			});
-
-			logTimeLabel.setText(logObj.getLogTimeStamp());
+			
+			if(isErrorLog) {
+				logContentTA.setStyle("-fx-background-color: #ffbfbf");	
+			}
 			logContentTA.setText(logObj.getFullLogString());
 			logContentTA.setEditable(false);
 			logContentTA.setWrapText(true);
@@ -60,6 +81,12 @@ public class AlertLogListViewCell extends ListCell<Log> {
 
 			setText(null);
 			setGraphic(rootAP);
+			setStyle("-fx-padding: 0");
 		}
+	}
+
+	private boolean isErrorLog(String logContent) {
+		// TODO Remove hard-coding that identifying error log
+		return logContent.contains("ORA-");
 	}
 }
