@@ -3,6 +3,7 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
@@ -16,7 +17,6 @@
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.effect.DropShadow?>
@@ -146,7 +146,7 @@
                                              <children>
                                                 <AnchorPane maxWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                    <children>
-                                                      <HBox layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
+                                                      <HBox alignment="CENTER_LEFT" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="55.0">
                                                          <children>
                                                             <Label maxHeight="25.0" minHeight="25.0" minWidth="70.0" prefHeight="25.0" text="조회기간">
                                                                <graphic>
@@ -160,16 +160,37 @@
                                                                   <Insets right="10.0" />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="alertLogStartDayDP" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" styleClass="basic-font" />
+                                                            <DatePicker fx:id="alertLogStartDayDP" maxHeight="22.0" minHeight="22.0" prefHeight="22.0" styleClass="basic-font" />
                                                             <Label maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-font-size: 18px;" styleClass="basic-font" text="~">
                                                                <HBox.margin>
                                                                   <Insets left="10.0" right="10.0" />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="alertLogEndDayDP" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" styleClass="basic-font" />
+                                                            <DatePicker fx:id="alertLogEndDayDP" maxHeight="22.0" minHeight="22.0" prefHeight="22.0" styleClass="basic-font" />
                                                          </children>
                                                       </HBox>
-                                                      <TextArea AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0" />
+                                                      <HBox alignment="CENTER_LEFT" layoutY="110.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
+                                                         <children>
+                                                            <Label minWidth="60.0" text="키워드" wrapText="true">
+                                                               <graphic>
+                                                                  <FontAwesomeIconView fill="#3c4584" glyphName="TAGS" size="20" />
+                                                               </graphic>
+                                                               <styleClass>
+                                                                  <String fx:value="bold" />
+                                                                  <String fx:value="basic-font" />
+                                                               </styleClass>
+                                                            </Label>
+                                                            <JFXTextArea style="-fx-border-color: black; -fx-border-width: 0.2px; -fx-font-size: 10px;">
+                                                               <styleClass>
+                                                                  <String fx:value="gray-scrollbar" />
+                                                                  <String fx:value="basic-font" />
+                                                               </styleClass>
+                                                               <HBox.margin>
+                                                                  <Insets left="21.0" />
+                                                               </HBox.margin>
+                                                            </JFXTextArea>
+                                                         </children>
+                                                      </HBox>
                                                    </children>
                                                    <padding>
                                                       <Insets bottom="10.0" right="10.0" top="10.0" />
@@ -187,7 +208,7 @@
                                                             <String fx:value="bold" />
                                                          </styleClass>
                                                       </Label>
-                                                      <HBox layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="95.0">
+                                                      <HBox layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="88.0">
                                                          <children>
                                                             <ButtonBar buttonMinWidth="21.0" buttonOrder="" maxHeight="25.0" minHeight="25.0" prefHeight="25.0">
                                                                <buttons>
