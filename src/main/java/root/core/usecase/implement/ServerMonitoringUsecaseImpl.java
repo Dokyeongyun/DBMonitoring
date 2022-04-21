@@ -327,7 +327,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						}
 
 						if (i != readStartIndex) {
-							alertLog.addLog(new Log(logTimeStamp, logContents));
+							alertLog.addLog(new Log(alertLog.getAlertLogs().size(), logTimeStamp, logContents));
 							logContents = new ArrayList<>();
 							logTimeStamp = line;
 						}

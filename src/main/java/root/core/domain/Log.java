@@ -11,6 +11,7 @@ import root.utils.ConsoleUtils;
 @AllArgsConstructor
 @Data
 public class Log {
+	private int index;
 	private String logTimeStamp;
 	private List<String> logContents;
 
