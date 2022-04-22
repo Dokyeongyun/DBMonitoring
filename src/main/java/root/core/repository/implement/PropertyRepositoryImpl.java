@@ -195,18 +195,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(serverName + ".server.port", jsch.getPort());
 			config.setProperty(serverName + ".server.username", jsch.getUserName());
 			config.setProperty(serverName + ".server.password", jsch.getPassword());
-
-			String dateFormat = jsch.getAlc().getDateFormat();
-			String dateFormatRegex = "";
-
-			if (dateFormat.equals("EEE MMM dd HH:mm:ss yyyy")) {
-				dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\s\\d{4}";
-			} else if (dateFormat.equals("yyyy-MM-dd")) {
-				dateFormatRegex = "\\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])T";
-			}
-
-			config.setProperty(serverName + ".server.alertlog.dateformat", dateFormat);
-			config.setProperty(serverName + ".server.alertlog.dateformatregex", dateFormatRegex);
 			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
 			config.setProperty(serverName + ".server.alertlog.readline", 500);
 		}
@@ -553,10 +541,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	public AlertLogCommand getAlertLogCommand(String serverName) {
 		String alertLogFilePath = connInfoConfig.getString(serverName + ".server.alertlog.filepath");
 		int alertLogReadLine = connInfoConfig.getInt(serverName + ".server.alertlog.readline");
-		String alertLogDateFormat = connInfoConfig.getString(serverName + ".server.alertlog.dateformat");
-		String alertLogDateFormatRegex = connInfoConfig.getString(serverName + ".server.alertlog.dateformatregex");
-		AlertLogCommand alc = new AlertLogCommand(alertLogReadLine, alertLogFilePath, alertLogDateFormat,
-				alertLogDateFormatRegex);
+		AlertLogCommand alc = new AlertLogCommand(alertLogReadLine, alertLogFilePath);
 		return alc;
 	}
 
