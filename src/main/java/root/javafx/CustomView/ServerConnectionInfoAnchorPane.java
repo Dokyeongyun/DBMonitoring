@@ -49,9 +49,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	@FXML
 	TextField alertLogFilePathTF;
 
-	@FXML
-	JFXComboBox<String> alertLogDateFormatCB;
-
 	public ServerConnectionInfoAnchorPane() {
 		try {
 			FXMLLoader loader = DependencyInjection.getLoader("/fxml/ServerConnectionInfoAnchorPane.fxml");
@@ -73,10 +70,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		// Set textFormatter
 		portTF.setTextFormatter(new NumberTextFormatter());
 
-		// Set AlertLogDateFormat ComboBox values
-		alertLogDateFormatCB.getItems()
-				.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
-		
 		// Set ServerOS ComboBox values
 		serverOSCB.getItems().addAll(ServerOS.values());
 	}
@@ -89,7 +82,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		userTF.setText(jsch.getUserName());
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());
-		alertLogDateFormatCB.getSelectionModel().select(jsch.getAlc().getDateFormat());
 	}
 
 	public JschConnectionInfo getInputValues() {
@@ -102,7 +94,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		jsch.setPassword(passwordPF.getText());
 		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadFilePath(alertLogFilePathTF.getText());
-		alc.setDateFormat(alertLogDateFormatCB.getSelectionModel().getSelectedItem());
 		jsch.setAlc(alc);
 		return jsch;
 	}
@@ -116,6 +107,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 		
 		return StringUtils.isAnyEmpty(serverOS.name(), hostTF.getText(),
 				portTF.getText(), userTF.getText(), serverNameTF.getText(), passwordPF.getText(),
-				alertLogFilePathTF.getText(), alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+				alertLogFilePathTF.getText());
 	}
 }
