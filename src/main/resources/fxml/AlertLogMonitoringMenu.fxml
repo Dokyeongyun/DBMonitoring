@@ -22,6 +22,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
 <SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.AlertLogMonitoringMenuController">
@@ -116,15 +117,14 @@
                                           <SplitPane dividerPositions="0.8" layoutX="1.0" layoutY="41.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0">
                                              <items>
                                                 <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" styleClass="gray-scrollbar" stylesheets="@../css/javaFx.css" />
-                                                <TabPane minWidth="150.0" tabMaxWidth="60.0">
+                                                <TabPane minWidth="150.0" style="-fx-font-size: 10px;" tabMaxWidth="60.0">
                                                    <tabs>
-                                                      <Tab closable="false" text="Overview">
+                                                      <Tab closable="false" text="Summary">
                                                          <content>
-                                                            <AnchorPane>
+                                                            <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
                                                                <children>
-                                                                  <JFXListView fx:id="alertLogOverviewLV" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                                               </children>
-                                                            </AnchorPane>
+                                                                  <StackPane fx:id="alertLogSummarySP" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                               </children></AnchorPane>
                                                          </content>
                                                       </Tab>
                                                       <Tab closable="false" text="Error Docs">
