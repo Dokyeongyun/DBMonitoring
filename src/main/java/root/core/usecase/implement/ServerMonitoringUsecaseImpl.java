@@ -344,8 +344,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 				}
 			}
 
-			// 종료 후 fullLogString 추가
+			// 종료 후 fullLogString 추가 & Alert log file path 설정
 			alertLog.setFullLogString(sb.toString());
+			alertLog.setFilePath(alc.getReadFilePath());
 
 			log.info("\t▶ Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
 
