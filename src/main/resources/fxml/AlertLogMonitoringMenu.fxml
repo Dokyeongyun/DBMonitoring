@@ -116,14 +116,39 @@
                                           </AnchorPane>
                                           <SplitPane dividerPositions="0.8" layoutX="1.0" layoutY="41.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 10, 0, 0, 0);" AnchorPane.bottomAnchor="125.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="50.0">
                                              <items>
-                                                <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" styleClass="gray-scrollbar" stylesheets="@../css/javaFx.css" />
+                                                <AnchorPane style="-fx-background-color: white;">
+                                                   <children>
+                                                      <JFXListView fx:id="alertLogLV" style="-fx-background-color: white;" styleClass="gray-scrollbar" stylesheets="@../css/javaFx.css" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                      <AnchorPane styleClass="basic-font" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <children>
+                                                            <Label alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" text="원하시는 기간의 Alert Log를 조회해주세요." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                               <graphic>
+                                                                  <FontAwesomeIconView fill="#737373" glyphName="SEARCH_MINUS" size="30" />
+                                                               </graphic>
+                                                            </Label>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </children>
+                                                </AnchorPane>
                                                 <TabPane minWidth="150.0" style="-fx-font-size: 10px;" tabMaxWidth="60.0">
                                                    <tabs>
                                                       <Tab closable="false" text="Summary">
                                                          <content>
                                                             <AnchorPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;">
                                                                <children>
-                                                                  <StackPane fx:id="alertLogSummarySP" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                                  <StackPane fx:id="alertLogSummarySP" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                     <children>
+                                                                        <AnchorPane styleClass="basic-font">
+                                                                           <children>
+                                                                              <Label alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" text="원하시는 기간의 Alert Log를 조회해주세요." AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                                                 <graphic>
+                                                                                    <FontAwesomeIconView fill="#737373" glyphName="SEARCH_MINUS" size="30" />
+                                                                                 </graphic>
+                                                                              </Label>
+                                                                           </children>
+                                                                        </AnchorPane>
+                                                                     </children>
+                                                                  </StackPane>
                                                                </children></AnchorPane>
                                                          </content>
                                                       </Tab>
