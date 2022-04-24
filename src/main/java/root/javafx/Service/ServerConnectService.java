@@ -25,7 +25,7 @@ public class ServerConnectService extends ConnectionTestService {
 			@Override
 			protected Boolean call() throws Exception {
 				jschServer.init();
-				boolean isConn = JschServer.validateConn(jschServer.getSession());
+				boolean isConn = jschServer.validateConn(jschServer.getSession());
 				if (!isConn) {
 					throw new Exception("Server connection test Failed");
 				}

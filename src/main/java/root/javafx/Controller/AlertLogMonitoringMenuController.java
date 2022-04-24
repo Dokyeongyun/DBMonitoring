@@ -15,19 +15,24 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.JschConnectionInfo;
 import root.core.domain.Log;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.repository.implement.LinuxServerMonitoringRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.repository.implement.ReportFileRepo;
+import root.core.repository.implement.WindowServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
 import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
+import root.javafx.CustomView.AlertLogMonitoringSummaryAP;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
 
@@ -51,6 +56,15 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	@FXML
 	JFXListView<Log> alertLogLV;
+
+	@FXML
+	StackPane alertLogSummarySP;
+
+	@FXML
+	AnchorPane mainNodataAP;
+
+	@FXML
+	AnchorPane summaryNodataAP;
 
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 
@@ -94,9 +108,15 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	private void changeAlertLogListViewData(String serverID) {
 		alertLogLV.getItems().clear();
-		AlertLog al = alertLogMonitoringResultMap.get(serverID);
-		if (al != null) {
-			alertLogLV.getItems().addAll(al.getAlertLogs());
+		AlertLog alertLog = alertLogMonitoringResultMap.get(serverID);
+		if (alertLog != null) {
+			// Alert Log ListView
+			alertLogLV.getItems().addAll(alertLog.getAlertLogs());
+
+			// Alert Log Summary
+			alertLogSummarySP.getChildren().add(new AlertLogMonitoringSummaryAP(alertLog));
+		} else {
+			// TODO There is no alert log monitoring result
 		}
 	}
 
@@ -133,6 +153,11 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		// AlertLog ListView
 		alertLogLV.setCellFactory(categoryList -> new AlertLogListViewCell());
+
+		// Set view visible
+		mainNodataAP.setVisible(true);
+		alertLogLV.setVisible(false);
+		summaryNodataAP.setVisible(true);
 	}
 
 	/**
@@ -170,7 +195,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		return true;
 	}
 
-	public void monitoringAlertLog(ActionEvent e) {
+	public void monitoringAlertLog(ActionEvent e) throws Exception {
 		// 입력값 검사
 		if (!validateInput()) {
 			return;
@@ -184,12 +209,25 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		JschServer server = new JschServer(connInfo);
 		server.init();
-		ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
+		ServerMonitoringRepository repo = null;
+		if (connInfo.getServerOS() == ServerOS.WINDOW) {
+			repo = new WindowServerMonitoringRepository(server);
+		} else if (connInfo.getServerOS() == ServerOS.LINUX) {
+			repo = new LinuxServerMonitoringRepository(server);
+		} else {
+			throw new Exception("Server OS is not valid");
+		}
 		ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
-		alertLogMonitoringResultMap.put(selectedServer,
-				usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay));
+		AlertLog result = usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay);
+		alertLogMonitoringResultMap.put(selectedServer, result);
 
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
+
+		// Set view visible
+		mainNodataAP.setVisible(false);
+		alertLogLV.setVisible(true);
+		summaryNodataAP.setVisible(false);
+		summaryNodataAP.toBack();
 	}
 }

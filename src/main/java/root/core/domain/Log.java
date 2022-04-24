@@ -11,6 +11,7 @@ import root.utils.ConsoleUtils;
 @AllArgsConstructor
 @Data
 public class Log {
+	private int index;
 	private String logTimeStamp;
 	private List<String> logContents;
 
@@ -20,8 +21,11 @@ public class Log {
 	
 	public String getFullLogString() {
 		StringBuffer result = new StringBuffer();
-		for(String s : logContents) {
-			result.append(s);
+		for (int i = 0; i < logContents.size(); i++) {
+			result.append(logContents.get(i));
+			if (i != logContents.size()) {
+				result.append(System.lineSeparator());
+			}
 		}
 		return result.toString();
 	}

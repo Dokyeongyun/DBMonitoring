@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXListView?>
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root styleClass="basic-font" stylesheets="@../css/javaFx.css" type="AnchorPane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <VBox layoutX="10.0" layoutY="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label fx:id="alertLogFileLB" maxHeight="20.0" minHeight="20.0" prefHeight="20.0" text="Summary" wrapText="true">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="FOLDER_ALT" size="16" />
+                     </graphic>
+                  </Label>
+               </children>
+            </HBox>
+            <Separator>
+               <VBox.margin>
+                  <Insets bottom="5.0" top="5.0" />
+               </VBox.margin></Separator>
+            <Label text="Log Count" wrapText="true">
+               <graphic>
+                  <FontAwesomeIconView glyphName="ASTERISK" size="8" />
+               </graphic>
+            </Label>
+            <TableView fx:id="summaryTV" maxHeight="50.0" minHeight="50.0" prefHeight="50.0" style="-fx-border-width: 0px;" tableMenuButtonVisible="true">
+              <columns>
+                <TableColumn fx:id="totalCL" editable="false" prefWidth="-1.0" style="-fx-alignment: center;" text="Total" />
+                <TableColumn fx:id="normalCL" editable="false" prefWidth="-1.0" style="-fx-alignment: center;" text="Normal" />
+                  <TableColumn fx:id="errorCL" editable="false" prefWidth="-1.0" style="-fx-alignment: center;" text="Error" />
+                  <TableColumn fx:id="errorRateCL" editable="false" minWidth="40.0" prefWidth="-1.0" style="-fx-alignment: center;" text="Error Rate(%)" />
+              </columns>
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+               <styleClass>
+                  <String fx:value="no-scrollbar-tableview" />
+                  <String fx:value="bold" />
+               </styleClass>
+            </TableView>
+            <Separator>
+               <VBox.margin>
+                  <Insets bottom="5.0" top="7.0" />
+               </VBox.margin>
+            </Separator>
+            <Label text="Error Log Preview" wrapText="true">
+               <graphic>
+                  <FontAwesomeIconView glyphName="ASTERISK" size="8" />
+               </graphic>
+            </Label>
+            <JFXListView fx:id="errorLogLV" styleClass="gray-scrollbar">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </JFXListView>
+         </children>
+      </VBox>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</fx:root>

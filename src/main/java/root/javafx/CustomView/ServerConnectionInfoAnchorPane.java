@@ -12,14 +12,17 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLogCommand;
 import root.core.domain.JschConnectionInfo;
+import root.core.domain.enums.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
+@Slf4j
 public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	/* Dependency Injection */
@@ -27,6 +30,9 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	@FXML
 	TextField serverNameTF;
+
+	@FXML
+	JFXComboBox<ServerOS> serverOSCB;
 
 	@FXML
 	TextField hostTF;
@@ -42,9 +48,6 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 
 	@FXML
 	TextField alertLogFilePathTF;
-
-	@FXML
-	JFXComboBox<String> alertLogDateFormatCB;
 
 	public ServerConnectionInfoAnchorPane() {
 		try {
@@ -62,43 +65,48 @@ public class ServerConnectionInfoAnchorPane extends ConnectionInfoAP {
 	boolean isAnyEmptyInputForConnectionTest() {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), passwordPF.getText());
 	}
-	
+
 	public void init() {
 		// Set textFormatter
 		portTF.setTextFormatter(new NumberTextFormatter());
-		
-		// Set AlertLogDateFormat ComboBox values
-		alertLogDateFormatCB.getItems()
-		.addAll(propertyRepository.getCommonResources("server.setting.dateformat.combo"));
+
+		// Set ServerOS ComboBox values
+		serverOSCB.getItems().addAll(ServerOS.values());
 	}
 
 	public void setInitialValue(JschConnectionInfo jsch) {
 		serverNameTF.setText(jsch.getServerName());
+		serverOSCB.getSelectionModel().select(jsch.getServerOS());
 		hostTF.setText(jsch.getHost());
 		portTF.setText(String.valueOf(jsch.getPort()));
 		userTF.setText(jsch.getUserName());
 		passwordPF.setText(jsch.getPassword());
 		alertLogFilePathTF.setText(jsch.getAlc().getReadFilePath());
-		alertLogDateFormatCB.getSelectionModel().select(jsch.getAlc().getDateFormat());
 	}
 
 	public JschConnectionInfo getInputValues() {
 		JschConnectionInfo jsch = new JschConnectionInfo();
-		jsch.setServerName(this.serverNameTF.getText());
-		jsch.setHost(this.hostTF.getText());
-		jsch.setPort(this.portTF.getText());
-		jsch.setUserName(this.userTF.getText());
-		jsch.setPassword(this.passwordPF.getText());
+		jsch.setServerName(serverNameTF.getText());
+		jsch.setServerOS(serverOSCB.getSelectionModel().getSelectedItem());
+		jsch.setHost(hostTF.getText());
+		jsch.setPort(portTF.getText());
+		jsch.setUserName(userTF.getText());
+		jsch.setPassword(passwordPF.getText());
 		AlertLogCommand alc = new AlertLogCommand();
-		alc.setReadFilePath(this.alertLogFilePathTF.getText());
-		alc.setDateFormat(this.alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+		alc.setReadFilePath(alertLogFilePathTF.getText());
 		jsch.setAlc(alc);
 		return jsch;
 	}
 
 	public boolean isAnyEmptyInput() {
-		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), userTF.getText(), serverNameTF.getText(),
-				passwordPF.getText(), alertLogFilePathTF.getText(),
-				alertLogDateFormatCB.getSelectionModel().getSelectedItem());
+		ServerOS serverOS = serverOSCB.getSelectionModel().getSelectedItem();
+		if(serverOS == null) {
+			log.info("ServerOS input is not valid");
+			return true;
+		}
+		
+		return StringUtils.isAnyEmpty(serverOS.name(), hostTF.getText(),
+				portTF.getText(), userTF.getText(), serverNameTF.getText(), passwordPF.getText(),
+				alertLogFilePathTF.getText());
 	}
 }

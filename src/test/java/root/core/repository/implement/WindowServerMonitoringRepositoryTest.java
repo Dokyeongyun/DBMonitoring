@@ -6,16 +6,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.jcraft.jsch.JSchException;
-
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
@@ -81,7 +76,7 @@ public class WindowServerMonitoringRepositoryTest {
 	}
 
 	@Test
-	public void testGetAlertLogFileLineCount() throws JSchException, IOException {
+	public void testGetAlertLogFileLineCount() throws Exception {
 		// Arrange
 		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadFilePath("C:\\alert_DKYDB.log");
@@ -97,7 +92,7 @@ public class WindowServerMonitoringRepositoryTest {
 	}
 	
 	@Test
-	public void testCheckAlertLog() throws JSchException, IOException {
+	public void testCheckAlertLog() throws Exception {
 		// Arrange
 		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadLine(10);
@@ -113,8 +108,9 @@ public class WindowServerMonitoringRepositoryTest {
 		assertEquals(result, alertLogString);
 	}
 
+	/*
 	@Test
-	public void testCheckAlertLogDuringPeriod() throws JSchException, IOException {
+	public void testCheckAlertLogDuringPeriod() throws Exception {
 		// Arrange
 		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadLine(10);
@@ -135,7 +131,7 @@ public class WindowServerMonitoringRepositoryTest {
 	}
 	
 	@Test
-	public void testCheckAlertLogDuringPeriod_ReadLineBiggerThenTotalLineCnt() throws JSchException, IOException {
+	public void testCheckAlertLogDuringPeriod_ReadLineBiggerThenTotalLineCnt() throws Exception {
 		// Arrange
 		AlertLogCommand alc = new AlertLogCommand();
 		alc.setReadLine(20);
@@ -165,4 +161,5 @@ public class WindowServerMonitoringRepositoryTest {
 		assertEquals(alertLog.getTotalLineCount(), 3);
 		assertEquals(alertLog.getAlertLogs().size(), 2);
 	}
+	*/
 }

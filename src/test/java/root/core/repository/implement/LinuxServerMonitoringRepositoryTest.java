@@ -5,8 +5,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 
-import java.io.IOException;
-
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,10 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import com.jcraft.jsch.JSchException;
-
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLog;
 import root.core.domain.AlertLogCommand;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
@@ -30,8 +25,8 @@ public class LinuxServerMonitoringRepositoryTest {
 	public static MockedStatic<IOUtils> ioUtilsMock;
 
 	public static String alertLogString = "";
-	
-	public static String[] alertLogLines; 
+
+	public static String[] alertLogLines;
 
 	@BeforeAll
 	public static void before() {
@@ -64,28 +59,28 @@ public class LinuxServerMonitoringRepositoryTest {
 		sb.append("2022-03-31T02:56:51.984291+09:00").append("\n");
 		sb.append("Starting control autobackup").append("\n");
 		alertLogString = sb.toString();
-		
+
 		alertLogLines = alertLogString.split("\n");
 	}
-	
+
 	@BeforeEach
 	public void setup() {
 		jschServer = mock(JschServer.class);
 		repo = new LinuxServerMonitoringRepository(jschServer);
 	}
-	
+
 	@AfterAll
 	public static void after() {
 		ioUtilsMock.close();
 	}
 
 	@Test
-	public void checkAlertLogTest() throws JSchException, IOException {
+	public void checkAlertLogTest() throws Exception {
 		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
 		alc.setReadLine(10);
 		alc.setReadFilePath("/test/alert_DB.log");
-		
+
 		String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
 		when(jschServer.executeCommand(command)).thenReturn(alertLogString);
 
@@ -97,12 +92,12 @@ public class LinuxServerMonitoringRepositoryTest {
 	}
 
 	@Test
-	public void getAlertLogFileLineCountTest() throws IOException, JSchException {
+	public void getAlertLogFileLineCountTest() throws Exception {
 		// Arrange
 		AlertLogCommand alc = mock(AlertLogCommand.class);
 		alc.setReadLine(10);
 		alc.setReadFilePath("/test/alert_DB.log");
-		
+
 		String command = String.format("cat %s | wc -l", alc.getReadFilePath());
 		when(jschServer.executeCommand(command)).thenReturn(String.valueOf(alertLogLines.length));
 
@@ -111,26 +106,5 @@ public class LinuxServerMonitoringRepositoryTest {
 
 		// Assert
 		assertEquals(lineCount, alertLogLines.length);
-	}
-
-	@Test
-	public void checkAlertLogDuringPeriod() throws JSchException, IOException {
-		// Arrange
-		AlertLogCommand alc = mock(AlertLogCommand.class);
-		alc.setReadLine(10);
-		alc.setReadFilePath("/test/alert_DB.log");
-		
-		String command1 = String.format("cat %s | wc -l", alc.getReadFilePath());
-		when(jschServer.executeCommand(command1)).thenReturn(String.valueOf(alertLogLines.length));
-		
-		String command2 = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
-		when(jschServer.executeCommand(command2)).thenReturn(alertLogString);
-
-		// Act
-		AlertLog alertLog = repo.checkAlertLogDuringPeriod(alc, "2022-03-24", "2022-03-29");
-
-		// Assert
-		assertEquals(alertLog.getTotalLineCount(), 14);
-		assertEquals(alertLog.getAlertLogs().size(), 8);
 	}
 }

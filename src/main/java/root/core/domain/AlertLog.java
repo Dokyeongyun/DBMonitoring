@@ -7,6 +7,7 @@ import lombok.Data;
 
 @Data
 public class AlertLog {
+	private String filePath;
 	private String fullLogString;
 	private List<Log> alertLogs;
 	
