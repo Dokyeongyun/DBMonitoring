@@ -279,3 +279,18 @@
     -fx-pref-height: 0;
     -fx-max-height: 0;
 }
+
+/* Expandable listview */
+.expandable-listview .list-cell {
+    -fx-padding: 0;
+    -fx-background-color: white;
+}
+
+.expandable-listview .titled-pane:focused {
+    -fx-text-fill: black;
+}
+
+.expandable-listview .titled-pane > .title {
+    -fx-background-color: -fx-box-border, -fx-inner-border, white;
+    -fx-padding: 7 5 7 5;
+}

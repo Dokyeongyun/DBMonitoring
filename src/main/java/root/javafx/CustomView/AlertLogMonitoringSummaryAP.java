@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
@@ -13,10 +14,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Paint;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import root.core.domain.AlertLog;
@@ -25,6 +27,9 @@ import root.javafx.DI.DependencyInjection;
 
 @Slf4j
 public class AlertLogMonitoringSummaryAP extends AnchorPane implements Initializable {
+
+	@FXML
+	VBox wrapVBox;
 
 	@FXML
 	Label alertLogFileLB;
@@ -43,12 +48,11 @@ public class AlertLogMonitoringSummaryAP extends AnchorPane implements Initializ
 
 	@FXML
 	private TableColumn<AlertLogSummary, Double> errorRateCL;
-	
-	@FXML
-	private ListView<Log> errorLogLV;
-	
+
+	private ExpandableListView<Log> errorLogLV;
+
 	private AlertLog alertLog;
-	
+
 	private List<Log> errorLogs = new ArrayList<>();
 
 	public AlertLogMonitoringSummaryAP(AlertLog alertLog) {
@@ -71,8 +75,21 @@ public class AlertLogMonitoringSummaryAP extends AnchorPane implements Initializ
 		errorCL.setCellValueFactory(cellData -> cellData.getValue().getErrorLogCount().asObject());
 		errorRateCL.setCellValueFactory(cellData -> cellData.getValue().getErrorRate().asObject());
 
-		// Set cell factory of error log listview
-		errorLogLV.setCellFactory(categoryList -> new AlertLogListViewCell());
+		errorLogLV = new ExpandableListView<>(FontAwesomeIcon.CLOCK_ALT, Paint.valueOf("#183279"));
+
+		// Set content provider for expandable listview
+		errorLogLV.setContentProvider(new ExpandableListView.ContentProvider<Log>() {
+			@Override
+			public String getTitleOf(final Log log) {
+				return log.getLogTimeStamp() + "\t(Index: " + (log.getIndex() + 1) + ")";
+			}
+
+			@Override
+			public String getContentOf(final Log log) {
+				return log.getFullLogString();
+			}
+		});
+		wrapVBox.getChildren().add(errorLogLV);
 
 		render();
 	}
@@ -83,7 +100,8 @@ public class AlertLogMonitoringSummaryAP extends AnchorPane implements Initializ
 
 		// Set summary tableview value
 		summaryTV.setItems(FXCollections.observableArrayList(List.of(getSummaryData())));
-		
+
+		// Set errorLog listview values
 		errorLogLV.getItems().addAll(errorLogs);
 	}
 
