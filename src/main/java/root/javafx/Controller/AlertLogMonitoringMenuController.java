@@ -7,16 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
+import lombok.extern.slf4j.Slf4j;
 import root.common.server.implement.JschServer;
 import root.core.domain.AlertLog;
 import root.core.domain.JschConnectionInfo;
@@ -33,9 +38,11 @@ import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.AlertLogMonitoringSummaryAP;
+import root.javafx.CustomView.NumberTextFormatter;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
 
+@Slf4j
 public class AlertLogMonitoringMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -59,6 +66,12 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	@FXML
 	StackPane alertLogSummarySP;
+
+	@FXML
+	TextField navigatorTF;
+
+	@FXML
+	TextField statusTF;
 
 	@FXML
 	AnchorPane mainNodataAP;
@@ -154,6 +167,9 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		// AlertLog ListView
 		alertLogLV.setCellFactory(categoryList -> new AlertLogListViewCell());
 
+		// AlertLog Navigator
+		navigatorTF.setTextFormatter(new NumberTextFormatter());
+
 		// Set view visible
 		mainNodataAP.setVisible(true);
 		alertLogLV.setVisible(false);
@@ -229,5 +245,69 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		alertLogLV.setVisible(true);
 		summaryNodataAP.setVisible(false);
 		summaryNodataAP.toBack();
+	}
+
+	public void focusAlertLog(ActionEvent e) {
+		String input = navigatorTF.getText();
+		if (!validateAlertLogNavigatorInput(input)) {
+			return;
+		}
+
+		int toIndex = Integer.parseInt(input);
+		alertLogLV.scrollTo(toIndex - 1);
+		alertLogLV.getSelectionModel().select(toIndex - 1);
+		updateStatusMessage(String.format("[%d]번째 Log로 이동합니다.", toIndex));
+	}
+
+	private boolean validateAlertLogNavigatorInput(String input) {
+		if (StringUtils.isEmpty(input)) {
+			updateStatusMessage("조회를 원하는 Log index를 입력해주세요.");
+			return false;
+		}
+
+		int toIndex = 0;
+		try {
+			toIndex = Integer.parseInt(input);
+		} catch (NumberFormatException ex) {
+			updateStatusMessage("숫자만 입력하실 수 있습니다.");
+			return false;
+		}
+
+		int alertLogSize = alertLogLV.getItems().size();
+		if (alertLogSize == 0) {
+			updateStatusMessage("Alert Log 조회 후 이용해주세요.");
+			return false;
+		}
+
+		if (toIndex <= 0 || toIndex > alertLogSize) {
+			updateStatusMessage(String.format("Log index를 올바르게 입력해주세요. (가능한 입력값 범위: 1 ~ %d)", alertLogSize));
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Update message at bottom status TextField region
+	 * 
+	 * @param message
+	 */
+	private void updateStatusMessage(String message) {
+		Thread statusTextUpdateThread = new Thread(() -> {
+			Platform.runLater(() -> {
+				statusTF.setText(message);
+			});
+
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				log.error(e.getMessage());
+			}
+			Platform.runLater(() -> {
+				statusTF.setText("");
+			});
+		});
+		statusTextUpdateThread.setDaemon(true);
+		statusTextUpdateThread.start();
 	}
 }
