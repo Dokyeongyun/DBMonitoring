@@ -14,11 +14,15 @@ import com.jfoenix.controls.JFXListView;
 
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
@@ -169,6 +173,15 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		// AlertLog Navigator
 		navigatorTF.setTextFormatter(new NumberTextFormatter());
+		navigatorTF.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent e) {
+				if (e.getCode().equals(KeyCode.ENTER)) {
+					focusAlertLog(e);
+					e.consume();
+				}
+			}
+		});
 
 		// Set view visible
 		mainNodataAP.setVisible(true);
@@ -247,7 +260,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		summaryNodataAP.toBack();
 	}
 
-	public void focusAlertLog(ActionEvent e) {
+	public void focusAlertLog(Event e) {
 		String input = navigatorTF.getText();
 		if (!validateAlertLogNavigatorInput(input)) {
 			return;
