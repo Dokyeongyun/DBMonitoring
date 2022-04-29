@@ -260,6 +260,39 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		summaryNodataAP.toBack();
 	}
 
+	public void prevAlertLog(ActionEvent e) {
+		String input = navigatorTF.getText();
+		if (!validateAlertLogNavigatorInput(input)) {
+			return;
+		}
+
+		int toIndex = Integer.parseInt(input) - 1;
+		if (toIndex == 0) {
+			updateStatusMessage("첫번째 Log입니다.");
+			return;
+		}
+		
+		navigatorTF.setText(String.valueOf(toIndex));
+		focusAlertLog(e);
+	}
+
+	public void nextAlertLog(ActionEvent e) {
+		String input = navigatorTF.getText();
+		if (!validateAlertLogNavigatorInput(input)) {
+			return;
+		}
+
+		
+		int toIndex = Integer.parseInt(input) + 1;
+		if (toIndex > alertLogLV.getItems().size()) {
+			updateStatusMessage("마지막 Log입니다.");
+			return;
+		}
+		
+		navigatorTF.setText(String.valueOf(toIndex));
+		focusAlertLog(e);
+	}
+
 	public void focusAlertLog(Event e) {
 		String input = navigatorTF.getText();
 		if (!validateAlertLogNavigatorInput(input)) {

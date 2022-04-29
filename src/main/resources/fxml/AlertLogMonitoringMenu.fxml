@@ -239,7 +239,7 @@
                                                       </Label>
                                                       <HBox alignment="CENTER_LEFT" layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1; -fx-border-width: 0.5px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0">
                                                          <children>
-                                                            <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                            <JFXButton contentDisplay="GRAPHIC_ONLY" onAction="#prevAlertLog">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_LEFT" size="20" strokeMiterLimit="0.0" tabSize="0" />
                                                                </graphic>
@@ -247,7 +247,7 @@
                                                                   <Insets left="10.0" />
                                                                </HBox.margin>
                                                             </JFXButton>
-                                                            <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                            <JFXButton contentDisplay="GRAPHIC_ONLY" onAction="#nextAlertLog">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_RIGHT" size="20" strokeMiterLimit="0.0" tabSize="0" />
                                                                </graphic>
