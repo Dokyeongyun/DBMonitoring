@@ -18,12 +18,16 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 import root.common.server.implement.JschServer;
@@ -43,6 +47,7 @@ import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.AlertLogListViewCell;
 import root.javafx.CustomView.AlertLogMonitoringSummaryAP;
 import root.javafx.CustomView.NumberTextFormatter;
+import root.javafx.CustomView.TagBar;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
 import root.utils.AlertUtils;
 
@@ -70,7 +75,10 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	@FXML
 	StackPane alertLogSummarySP;
-
+	
+	@FXML
+	HBox searchKeywordHBox;
+	
 	@FXML
 	TextField navigatorTF;
 
@@ -83,6 +91,8 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	@FXML
 	AnchorPane summaryNodataAP;
 
+	TagBar tagBar = new TagBar();
+	
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 
 	public AlertLogMonitoringMenuController() {
@@ -182,7 +192,22 @@ public class AlertLogMonitoringMenuController implements Initializable {
 				}
 			}
 		});
+		
+		// Search Keyword Tagbar
+		ScrollPane tagBarWrapper = new ScrollPane(tagBar);
+		tagBarWrapper.setStyle("-fx-border-width: 0.2px; -fx-border-color: gray;");
+		tagBarWrapper.getStyleClass().add("gray-scrollbar");
+		tagBarWrapper.setMaxWidth(375);
+		tagBarWrapper.setMinHeight(45);
+		tagBarWrapper.setFitToHeight(true);
+		tagBarWrapper.prefHeightProperty().bind(searchKeywordHBox.heightProperty());
+		tagBarWrapper.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
+        HBox.setMargin(tagBarWrapper, new Insets(0, 0, 0, 25));
+        searchKeywordHBox.getChildren().add(tagBarWrapper);
 
+        tagBar.setMaxWidth(355);
+        tagBarWrapper.vvalueProperty().bind(tagBar.heightProperty());
+        
 		// Set view visible
 		mainNodataAP.setVisible(true);
 		alertLogLV.setVisible(false);

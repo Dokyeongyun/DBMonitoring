@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
@@ -167,7 +166,7 @@
                                              </items>
                                           </SplitPane>
                                           <Separator layoutX="5.0" layoutY="505.6000061035156" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                                          <SplitPane dividerPositions="0.5" layoutX="5.0" layoutY="508.6000061035156" maxHeight="110.0" minHeight="110.0" prefHeight="110.0" style="-fx-background-radius: 5px; -fx-background-color: white;" styleClass="divider-exist" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                          <SplitPane dividerPositions="0.5" layoutX="5.0" layoutY="508.6000061035156" maxHeight="115.0" minHeight="115.0" prefHeight="115.0" style="-fx-background-radius: 5px; -fx-background-color: white;" styleClass="divider-exist" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                              <items>
                                                 <AnchorPane>
                                                    <children>
@@ -209,20 +208,11 @@
                                                                   <String fx:value="basic-font" />
                                                                </styleClass>
                                                             </Label>
-                                                            <JFXTextArea maxWidth="375.0" style="-fx-border-width: 0.2px; -fx-border-color: black;">
-                                                               <HBox.margin>
-                                                                  <Insets left="25.0" />
-                                                               </HBox.margin>
-                                                               <styleClass>
-                                                                  <String fx:value="gray-scrollbar" />
-                                                                  <String fx:value="basic-font" />
-                                                               </styleClass>
-                                                            </JFXTextArea>
                                                          </children>
                                                       </HBox>
                                                    </children>
                                                    <padding>
-                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
                                                    </padding>
                                                 </AnchorPane>
                                                 <AnchorPane>
@@ -282,7 +272,7 @@
                                                       </HBox>
                                                    </children>
                                                    <padding>
-                                                      <Insets bottom="10.0" left="20.0" right="10.0" top="10.0" />
+                                                      <Insets bottom="10.0" left="20.0" right="10.0" />
                                                    </padding>
                                                 </AnchorPane>
                                              </items>
