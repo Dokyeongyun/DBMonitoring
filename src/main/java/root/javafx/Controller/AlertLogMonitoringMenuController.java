@@ -75,10 +75,10 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	@FXML
 	StackPane alertLogSummarySP;
-	
+
 	@FXML
 	HBox searchKeywordHBox;
-	
+
 	@FXML
 	TextField navigatorTF;
 
@@ -92,7 +92,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	AnchorPane summaryNodataAP;
 
 	TagBar tagBar = new TagBar();
-	
+
 	Map<String, AlertLog> alertLogMonitoringResultMap;
 
 	public AlertLogMonitoringMenuController() {
@@ -192,7 +192,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 				}
 			}
 		});
-		
+
 		// Search Keyword Tagbar
 		ScrollPane tagBarWrapper = new ScrollPane(tagBar);
 		tagBarWrapper.setStyle("-fx-border-width: 0.2px; -fx-border-color: gray;");
@@ -202,12 +202,12 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		tagBarWrapper.setFitToHeight(true);
 		tagBarWrapper.prefHeightProperty().bind(searchKeywordHBox.heightProperty());
 		tagBarWrapper.setHbarPolicy(ScrollBarPolicy.AS_NEEDED);
-        HBox.setMargin(tagBarWrapper, new Insets(0, 0, 0, 25));
-        searchKeywordHBox.getChildren().add(tagBarWrapper);
+		HBox.setMargin(tagBarWrapper, new Insets(0, 0, 0, 25));
+		searchKeywordHBox.getChildren().add(tagBarWrapper);
 
-        tagBar.setMaxWidth(355);
-        tagBarWrapper.vvalueProperty().bind(tagBar.heightProperty());
-        
+		tagBar.setMaxWidth(355);
+		tagBarWrapper.vvalueProperty().bind(tagBar.heightProperty());
+
 		// Set view visible
 		mainNodataAP.setVisible(true);
 		alertLogLV.setVisible(false);
@@ -273,7 +273,9 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		}
 		ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
-		AlertLog result = usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay);
+		String[] searchKeywords = tagBar.getTags().toArray(new String[0]);
+		AlertLog result = usecase.getAlertLogDuringPeriod(connInfo.getAlc(), alertLogStartDay, alertLogEndDay,
+				searchKeywords);
 		alertLogMonitoringResultMap.put(selectedServer, result);
 
 		changeAlertLogListViewData(alertLogServerComboBox.getSelectionModel().getSelectedItem());
@@ -296,7 +298,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 			updateStatusMessage("첫번째 Log입니다.");
 			return;
 		}
-		
+
 		navigatorTF.setText(String.valueOf(toIndex));
 		focusAlertLog(e);
 	}
@@ -307,13 +309,12 @@ public class AlertLogMonitoringMenuController implements Initializable {
 			return;
 		}
 
-		
 		int toIndex = Integer.parseInt(input) + 1;
 		if (toIndex > alertLogLV.getItems().size()) {
 			updateStatusMessage("마지막 Log입니다.");
 			return;
 		}
-		
+
 		navigatorTF.setText(String.valueOf(toIndex));
 		focusAlertLog(e);
 	}
