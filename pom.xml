@@ -209,5 +209,12 @@
 			<artifactId>commons-pool2</artifactId>
 			<version>2.11.1</version>
 		</dependency>
+		
+		<!-- richtext -->
+		<dependency>
+		    <groupId>org.fxmisc.richtext</groupId>
+		    <artifactId>richtextfx</artifactId>
+		    <version>0.10.5</version>
+		</dependency>
 	</dependencies>
 </project>

@@ -27,10 +27,10 @@
 
 /* SplitPane */
 .split-pane:horizontal > .split-pane-divider {
-   -fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 .split-pane:vertical > .split-pane-divider {
-   -fx-background-color: transparent;
+    -fx-background-color: transparent;
 }
 
 /* TabPane */
@@ -271,18 +271,18 @@
 
 /* No scrollbar tableview */
 .no-scrollbar-tableview .virtual-flow .scroll-bar * {
-    -fx-min-width: 0;
-    -fx-pref-width: 0;
-    -fx-max-width: 0;
+    -fx-min-width: 0.0;
+    -fx-pref-width: 0.0;
+    -fx-max-width: 0.0;
 
-    -fx-min-height: 0;
-    -fx-pref-height: 0;
-    -fx-max-height: 0;
+    -fx-min-height: 0.0;
+    -fx-pref-height: 0.0;
+    -fx-max-height: 0.0;
 }
 
 /* Expandable listview */
 .expandable-listview .list-cell {
-    -fx-padding: 0;
+    -fx-padding: 0.0;
     -fx-background-color: white;
 }
 
@@ -292,5 +292,44 @@
 
 .expandable-listview .titled-pane > .title {
     -fx-background-color: -fx-box-border, -fx-inner-border, white;
-    -fx-padding: 7 5 7 5;
+    -fx-padding: 7.0 5.0 7.0 5.0;
+}
+
+.divider-exist:horizontal > .split-pane-divider {
+    -fx-background-color: #dcdcdc;
+    -fx-padding:0.5px;
+}
+
+
+/* tag-bar */
+.tag-bar {
+    /*-fx-border-color: rgb(200, 200, 200);*/
+    -fx-border-color: transparent;
+    -fx-spacing: 3.0;
+    -fx-padding: 3.0;
+    -fx-max-height: 30.0;
+}
+
+.tag-bar .text-field {
+	-fx-border-width: 0.0px;
+    -fx-background-color: transparent;
+}
+
+.tag-bar .text-field:focused {
+	-fx-focus-color: transparent;
+	-fx-faint-focus-color: transparent;
+}
+
+.tag-bar .tag {
+	-fx-border-radius: 2.0px;
+	-fx-border-width: 0.3px;
+	-fx-border-color: gray;
+    -fx-background-color: transparent;
+    -fx-alignment: center;
+    -fx-font-family: "Noto Sans Korean Regular";
+}
+
+.tag-bar .tag .button {
+	-fx-font-family: "Noto Sans Korean Regular";
+    -fx-background-color: transparent;
 }
