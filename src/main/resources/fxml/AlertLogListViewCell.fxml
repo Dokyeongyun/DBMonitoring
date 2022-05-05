@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXTextArea?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
@@ -44,14 +43,6 @@
             <Insets left="5.0" right="5.0" />
          </padding>
       </AnchorPane>
-      <JFXTextArea fx:id="logContentTA" editable="false" focusTraversable="false" labelFloat="true" pickOnBounds="false" prefColumnCount="1" prefRowCount="1" stylesheets="@../css/javaFx.css" wrapText="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="22.0">
-         <styleClass>
-            <String fx:value="basic-font" />
-            <String fx:value="gray-scrollbar" />
-         </styleClass>
-         <padding>
-            <Insets left="5.0" right="5.0" top="2.0" />
-         </padding>
-      </JFXTextArea>
+      <HBox fx:id="logContentHBox" layoutY="13.399999618530273" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="22.0" />
    </children>
 </AnchorPane>

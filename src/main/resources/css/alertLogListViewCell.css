@@ -1,0 +1,16 @@
+.code-area {
+	-fx-background-color: transparent;
+}
+
+.code-area .error {
+	-fx-background-color: #ffbfbf;
+}
+
+.code-area .text {
+	-fx-font-family: "Noto Sans Korean Regular";
+	-fx-font-size: 11px;
+}
+
+.keyword {
+	-fx-fill: #ba1d21;
+}
