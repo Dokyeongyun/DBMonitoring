@@ -2,13 +2,18 @@ package root.javafx.CustomView;
 
 import java.io.IOException;
 
+import org.fxmisc.richtext.StyleClassedTextArea;
+
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.TextArea;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +33,10 @@ public class AlertLogListViewCell extends ListCell<Log> {
 	@FXML
 	FontAwesomeIconView logStatusIcon;
 	@FXML
-	TextArea logContentTA;
+	HBox logContentHBox;
 
-	private Text textHolder = new Text();
+	public AlertLogListViewCell(String... highlightKeywords) {
+	}
 
 	@Override
 	protected void updateItem(Log logObj, boolean empty) {
@@ -50,9 +56,8 @@ public class AlertLogListViewCell extends ListCell<Log> {
 				}
 			}
 
-		
 			boolean isErrorLog = isErrorLog(logObj.getFullLogString());
-			
+
 			// logTimeStamp
 			logTimeLabel.setText(logObj.getLogTimeStamp());
 
@@ -63,25 +68,40 @@ public class AlertLogListViewCell extends ListCell<Log> {
 			logStatusIcon.setFill(Paint.valueOf(isErrorLog ? "#d92a2a" : "#4d9c84"));
 
 			// logContent
-			logContentTA.widthProperty().addListener((observable, oldValue, newValue) -> {
-				Text text = new Text();
-				text.setWrappingWidth(newValue.doubleValue());
-				text.setText(logContentTA.getText());
-				logContentTA.setPrefHeight(text.getLayoutBounds().getHeight() * 1.35);
-			});
-			
-			if(isErrorLog) {
-				logContentTA.setStyle("-fx-background-color: #ffbfbf");	
-			}
-			logContentTA.setText(logObj.getFullLogString());
-			logContentTA.setEditable(false);
-			logContentTA.setWrapText(true);
+			StyleClassedTextArea codeArea = new StyleClassedTextArea();
+			codeArea.setPadding(new Insets(2, 5, 0, 5));
+			codeArea.setWrapText(false);
+			codeArea.setEditable(false);
+			codeArea.autosize();
+			codeArea.setFocusTraversable(true);
+			HBox.setHgrow(codeArea, Priority.ALWAYS);
 
-			textHolder.textProperty().bind(logContentTA.textProperty());
+			String baseDir = System.getProperty("resourceBaseDir");
+			codeArea.getStylesheets()
+					.add(getClass().getResource(baseDir + "/css/alertLogListViewCell.css").toExternalForm());
+			codeArea.getStyleClass().add("code-area");
+
+			codeArea.replaceText(0, 0, logObj.getFullLogString());
+			if (isErrorLog) {
+				codeArea.getStyleClass().add(".error");
+			}
+
+			// Set initial height
+			Text text = new Text();
+			text.setWrappingWidth(logContentHBox.widthProperty().doubleValue());
+			text.setText(codeArea.getText());
+			codeArea.setPrefHeight(text.getLayoutBounds().getHeight());
+			logContentHBox.getChildren().addAll(codeArea);
 
 			setText(null);
 			setGraphic(rootAP);
 			setStyle("-fx-padding: 0");
+
+			// Propagate scroll event to parent listview
+			codeArea.addEventFilter(ScrollEvent.ANY, scroll -> {
+				codeArea.getParent().getParent().getParent().fireEvent(scroll);
+				scroll.consume();
+			});
 		}
 	}
 

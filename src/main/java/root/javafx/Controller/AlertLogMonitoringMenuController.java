@@ -134,12 +134,20 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	private void changeAlertLogListViewData(String serverID) {
+		// AlertLog ListView
+		String[] hightlightKeywords = tagBar.getTags().toArray(new String[0]);
+		alertLogLV.setCellFactory(categoryList -> new AlertLogListViewCell(hightlightKeywords));
+
 		alertLogLV.getItems().clear();
 		AlertLog alertLog = alertLogMonitoringResultMap.get(serverID);
 		if (alertLog != null) {
 			// Alert Log ListView
 			alertLogLV.getItems().addAll(alertLog.getAlertLogs());
-
+			Platform.runLater(() -> {
+				alertLogLV.scrollTo(0);
+				alertLogLV.getSelectionModel().select(0);
+			});
+			
 			// Alert Log Summary
 			alertLogSummarySP.getChildren().add(new AlertLogMonitoringSummaryAP(alertLog));
 		} else {
@@ -177,9 +185,6 @@ public class AlertLogMonitoringMenuController implements Initializable {
 				alertLogStartDayDP.setValue(newValue);
 			}
 		});
-
-		// AlertLog ListView
-		alertLogLV.setCellFactory(categoryList -> new AlertLogListViewCell());
 
 		// AlertLog Navigator
 		navigatorTF.setTextFormatter(new NumberTextFormatter());
