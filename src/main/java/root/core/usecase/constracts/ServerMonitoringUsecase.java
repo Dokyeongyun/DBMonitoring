@@ -19,5 +19,5 @@ public interface ServerMonitoringUsecase {
 
 	List<OSDiskUsage> getCurrentOSDiskUsage();
 
-	AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate);
+	AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate, String... searchKeywords);
 }
