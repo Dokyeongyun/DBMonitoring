@@ -9,3 +9,7 @@
 .classpath/
 
 /report/
+
+/.gradle/
+
+/build/
