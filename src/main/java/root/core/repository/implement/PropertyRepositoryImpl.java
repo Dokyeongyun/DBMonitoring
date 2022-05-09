@@ -319,6 +319,10 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	public String[] getConnectionInfoFileNames() {
 		String connInfoDirPath = "./config/connectioninfo";
 		String[] connInfoFileList = new File(connInfoDirPath).list();
+		if(connInfoFileList == null || connInfoFileList.length == 0) {
+			return new String[] {};
+		}
+		
 		for (int i = 0; i < connInfoFileList.length; i++) {
 			connInfoFileList[i] = connInfoDirPath + "/" + connInfoFileList[i];
 		}
