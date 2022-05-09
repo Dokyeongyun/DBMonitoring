@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 
@@ -37,7 +38,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 	private ServerMonitoringRepository serverCheckRepository;
 	private ReportRepository reportRepository;
 
-	public ServerMonitoringUsecaseImpl(ServerMonitoringRepository serverCheckRepository, ReportRepository reportRepository) {
+	public ServerMonitoringUsecaseImpl(ServerMonitoringRepository serverCheckRepository,
+			ReportRepository reportRepository) {
 		this.serverCheckRepository = serverCheckRepository;
 		this.reportRepository = reportRepository;
 	}
@@ -266,8 +268,12 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 	}
 
 	@Override
-	public AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate) {
-		log.debug(String.format("alert log file monitoring, %s (%s ~ %s)", alc.getReadFilePath(), startDate, endDate));
+	public AlertLog getAlertLogDuringPeriod(AlertLogCommand alc, String startDate, String endDate,
+			String... searchKeywords) {
+		log.debug(String.format("alert log file monitoring, %s (%s ~ %s), Search Keywords: %s", alc.getReadFilePath(),
+				startDate, endDate, StringUtils.join(searchKeywords, ",")));
+
+		long start = System.currentTimeMillis();
 
 		AlertLog alertLog = new AlertLog();
 		String fullAlertLogString = getAlertLogStringFromCertainDate(alc, startDate);
@@ -285,10 +291,11 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 			String logTimeStamp = "";
 			List<String> logContents = new ArrayList<>();
 			StringBuffer sb = new StringBuffer();
+			boolean containsSearchKeyword = searchKeywords.length == 0;
 
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
-				
+
 				// 조회시작일자 찾기
 				if (!isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
@@ -301,7 +308,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 							logTimeStamp = line;
 
 							// [조회종료일자 > 조회 시작일자 >= 최초 로그기록일자]일 때 최초 로그기록일자부터 읽기 시작
-							if(DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, endDate) > 0) {
+							if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, endDate) > 0) {
 								isEndDate = true;
 								readEndIndex = i;
 								break;
@@ -309,7 +316,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						}
 					}
 				}
-				
+
 				// 로그 저장 시작 & 조회종료일자 찾기
 				if (isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
@@ -327,11 +334,22 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						}
 
 						if (i != readStartIndex) {
-							alertLog.addLog(new Log(alertLog.getAlertLogs().size(), logTimeStamp, logContents));
+							if (containsSearchKeyword) {
+								alertLog.addLog(new Log(alertLog.getAlertLogs().size(), logTimeStamp, logContents));
+								containsSearchKeyword = searchKeywords.length == 0;
+							}
 							logContents = new ArrayList<>();
 							logTimeStamp = line;
 						}
 					} else { // Log Content Line
+
+						// 검색 키워드가 포함되었는지 확인
+						for (String keyword : searchKeywords) {
+							if (line.contains(keyword) || containsSearchKeyword) {
+								containsSearchKeyword = true;
+								break;
+							}
+						}
 						logContents.add(line);
 					}
 
@@ -353,10 +371,15 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
-		
+
+		long end = System.currentTimeMillis();
+		log.info(String.format("Alert Log monitoring result (Log count: %d, Total line count: %d",
+				alertLog.getAlertLogs().size(), alertLog.getTotalLineCount()));
+		log.debug(String.format("Alert Log monitoring elapsed time: (%,.3f)ms", (end - start) / 1000.0));
+
 		return alertLog;
 	}
-	
+
 	private String getAlertLogStringFromCertainDate(AlertLogCommand alc, String startDate) {
 		int alertLogFileLineCnt = serverCheckRepository.getAlertLogFileLineCount(alc);
 		String fullAlertLogString = serverCheckRepository.checkAlertLog(alc);

@@ -3,7 +3,6 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXListView?>
-<?import com.jfoenix.controls.JFXTextArea?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
@@ -167,13 +166,13 @@
                                              </items>
                                           </SplitPane>
                                           <Separator layoutX="5.0" layoutY="505.6000061035156" AnchorPane.bottomAnchor="120.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                                          <HBox layoutX="5.0" layoutY="508.79998779296875" maxHeight="120.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-                                             <children>
+                                          <SplitPane dividerPositions="0.5" layoutX="5.0" layoutY="508.6000061035156" maxHeight="115.0" minHeight="115.0" prefHeight="115.0" style="-fx-background-radius: 5px; -fx-background-color: white;" styleClass="divider-exist" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                                             <items>
                                                 <AnchorPane>
                                                    <children>
-                                                      <HBox alignment="CENTER_LEFT" layoutY="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <HBox alignment="CENTER_LEFT" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" spacing="15.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <children>
-                                                            <Label maxHeight="25.0" minHeight="25.0" minWidth="70.0" prefHeight="25.0" text="조회기간">
+                                                            <Label maxWidth="70.0" minWidth="70.0" prefWidth="70.0" text="조회기간">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#3c4584" glyphName="CALENDAR" size="20" />
                                                                </graphic>
@@ -182,19 +181,23 @@
                                                                   <String fx:value="bold" />
                                                                </styleClass>
                                                                <HBox.margin>
-                                                                  <Insets right="10.0" />
+                                                                  <Insets />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="alertLogStartDayDP" maxHeight="22.0" minHeight="22.0" prefHeight="22.0" styleClass="basic-font" />
-                                                            <Label maxHeight="25.0" minHeight="25.0" prefHeight="25.0" style="-fx-font-size: 18px;" styleClass="basic-font" text="~">
+                                                            <DatePicker fx:id="alertLogStartDayDP" maxHeight="24.0" minHeight="24.0" prefHeight="24.0" styleClass="basic-font">
                                                                <HBox.margin>
-                                                                  <Insets left="10.0" right="10.0" />
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </DatePicker>
+                                                            <Label maxHeight="24.0" minHeight="24.0" prefHeight="24.0" style="-fx-font-size: 18px;" styleClass="basic-font" text="~">
+                                                               <HBox.margin>
+                                                                  <Insets />
                                                                </HBox.margin>
                                                             </Label>
-                                                            <DatePicker fx:id="alertLogEndDayDP" maxHeight="22.0" minHeight="22.0" prefHeight="22.0" styleClass="basic-font" />
+                                                            <DatePicker fx:id="alertLogEndDayDP" maxHeight="24.0" minHeight="24.0" prefHeight="24.0" styleClass="basic-font" />
                                                          </children>
                                                       </HBox>
-                                                      <HBox alignment="CENTER_LEFT" layoutY="110.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0">
+                                                      <HBox fx:id="searchKeywordHBox" alignment="CENTER_LEFT" layoutY="25.600000381469727" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                          <children>
                                                             <Label minWidth="60.0" text="키워드" wrapText="true">
                                                                <graphic>
@@ -205,30 +208,16 @@
                                                                   <String fx:value="basic-font" />
                                                                </styleClass>
                                                             </Label>
-                                                            <JFXTextArea style="-fx-border-color: black; -fx-border-width: 0.2px; -fx-font-size: 10px;">
-                                                               <styleClass>
-                                                                  <String fx:value="gray-scrollbar" />
-                                                                  <String fx:value="basic-font" />
-                                                               </styleClass>
-                                                               <HBox.margin>
-                                                                  <Insets left="21.0" />
-                                                               </HBox.margin>
-                                                            </JFXTextArea>
                                                          </children>
                                                       </HBox>
                                                    </children>
                                                    <padding>
-                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                      <Insets bottom="10.0" left="10.0" right="10.0" />
                                                    </padding>
                                                 </AnchorPane>
-                                                <Separator orientation="VERTICAL">
-                                                   <HBox.margin>
-                                                      <Insets bottom="5.0" top="5.0" />
-                                                   </HBox.margin>
-                                                </Separator>
                                                 <AnchorPane>
                                                    <children>
-                                                      <Label graphicTextGap="8.0" maxHeight="30.0" minHeight="30.0" prefHeight="30.0" text="Alert Log Navigator" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <Label graphicTextGap="8.0" maxHeight="40.0" minHeight="40.0" prefHeight="40.0" text="Alert Log Navigator" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                          <graphic>
                                                             <FontAwesomeIconView fill="#354371" glyphName="GAMEPAD" size="25" />
                                                          </graphic>
@@ -237,9 +226,9 @@
                                                             <String fx:value="bold" />
                                                          </styleClass>
                                                       </Label>
-                                                      <HBox alignment="CENTER_LEFT" layoutY="39.20000076293945" style="-fx-border-color: #e1e1e1; -fx-border-width: 0.5px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="42.0">
+                                                      <HBox alignment="CENTER_LEFT" layoutY="30.399999618530273" style="-fx-border-color: #e1e1e1; -fx-border-width: 0.5px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="40.0">
                                                          <children>
-                                                            <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                            <JFXButton contentDisplay="GRAPHIC_ONLY" onAction="#prevAlertLog">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_LEFT" size="20" strokeMiterLimit="0.0" tabSize="0" />
                                                                </graphic>
@@ -247,7 +236,7 @@
                                                                   <Insets left="10.0" />
                                                                </HBox.margin>
                                                             </JFXButton>
-                                                            <JFXButton contentDisplay="GRAPHIC_ONLY">
+                                                            <JFXButton contentDisplay="GRAPHIC_ONLY" onAction="#nextAlertLog">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="#3c4584" glyphName="ARROW_CIRCLE_RIGHT" size="20" strokeMiterLimit="0.0" tabSize="0" />
                                                                </graphic>
@@ -257,12 +246,12 @@
                                                                   <Insets left="10.0" right="8.0" />
                                                                </HBox.margin>
                                                             </Separator>
-                                                            <TextField maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" prefHeight="25.0" prefWidth="100.0">
+                                                            <TextField fx:id="navigatorTF" maxHeight="25.0" maxWidth="100.0" minHeight="25.0" minWidth="100.0" prefHeight="25.0" prefWidth="100.0">
                                                                <HBox.margin>
                                                                   <Insets left="10.0" />
                                                                </HBox.margin>
                                                             </TextField>
-                                                            <JFXButton alignment="CENTER" maxHeight="30.0" maxWidth="60.0" minHeight="25.0" minWidth="60.0" nodeOrientation="RIGHT_TO_LEFT" prefHeight="25.0" prefWidth="60.0" ripplerFill="#d4d4d4" style="-fx-background-color: #3c4584;" text="Go" textFill="WHITE" wrapText="true">
+                                                            <JFXButton alignment="CENTER" maxHeight="30.0" maxWidth="60.0" minHeight="25.0" minWidth="60.0" nodeOrientation="RIGHT_TO_LEFT" onAction="#focusAlertLog" prefHeight="25.0" prefWidth="60.0" ripplerFill="#d4d4d4" style="-fx-background-color: #3c4584;" text="Go" textFill="WHITE" wrapText="true">
                                                                <graphic>
                                                                   <FontAwesomeIconView fill="WHITE" glyphName="LONG_ARROW_RIGHT" size="14" />
                                                                </graphic>
@@ -274,20 +263,20 @@
                                                                </font>
                                                             </JFXButton>
                                                          </children>
-                                                         <padding>
-                                                            <Insets bottom="10.0" right="10.0" top="10.0" />
-                                                         </padding>
                                                          <effect>
                                                             <Blend />
                                                          </effect>
+                                                         <padding>
+                                                            <Insets bottom="10.0" right="10.0" top="10.0" />
+                                                         </padding>
                                                       </HBox>
                                                    </children>
                                                    <padding>
-                                                      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                                      <Insets bottom="10.0" left="20.0" right="10.0" />
                                                    </padding>
                                                 </AnchorPane>
-                                             </children>
-                                          </HBox>
+                                             </items>
+                                          </SplitPane>
                                        </children>
                                        <padding>
                                           <Insets bottom="5.0" left="5.0" right="5.0" />
@@ -301,7 +290,10 @@
                   </AnchorPane>
                </center>
                <bottom>
-                  <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
+                  <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER">
+                     <children>
+                        <TextField fx:id="statusTF" style="-fx-font-size: 10px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children></AnchorPane>
                </bottom>
             </BorderPane>
          </children>
