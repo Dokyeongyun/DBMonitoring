@@ -1,0 +1,22 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: DBMonitoringDownloaderApp
+  http:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+server:
+  port: 8081
+  servlet:
+    context-path: /
+    
+
+logging:
+  config: config/logback.xml
+
+#logging:
+#  level:
+#    root: info

@@ -4,9 +4,11 @@
 
 .settings/
 
-.project/
+.project
 
-.classpath/
+.classpath
+
+.metadata/*
 
 /report/
 
