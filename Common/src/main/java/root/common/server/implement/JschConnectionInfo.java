@@ -1,7 +1,6 @@
-package root.core.domain;
+package root.common.server.implement;
 
 import lombok.Data;
-import root.core.domain.enums.ServerOS;
 
 @Data
 public class JschConnectionInfo {
@@ -59,7 +58,7 @@ public class JschConnectionInfo {
 		try {
 			this.port = Integer.parseInt(portString);
 		} catch (NumberFormatException e) {
-			this.port = 22; // ±âº»°ª
+			this.port = 22; // ï¿½âº»ï¿½ï¿½
 		}
 	}
 }

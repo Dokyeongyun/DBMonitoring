@@ -1,4 +1,4 @@
-package root.core.domain;
+package root.common.server.implement;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

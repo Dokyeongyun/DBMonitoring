@@ -3,9 +3,9 @@ package root.core.service.contracts;
 import java.util.List;
 import java.util.Map;
 
-import root.core.domain.AlertLogCommand;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
+import root.common.server.implement.AlertLogCommand;
+import root.common.server.implement.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
@@ -15,42 +15,42 @@ import root.utils.UnitUtils.FileSize;
 public interface PropertyService {
 
 	/**
-	 * Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» Load ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Load ï¿½Ñ´ï¿½.
 	 * 
 	 * @param filePath
 	 */
 	void loadConnectionInfoConfig(String filePath);
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÇ °æ·Î¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	List<String> getConnectionInfoList();
 
 	/**
-	 * ÃÖ±Ù »ç¿ëµÈ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÇ °æ·Î¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	String getLastUseConnectionInfoFilePath();
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ÆÄÀÏÀ» Load ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Load ï¿½Ñ´ï¿½.
 	 * 
 	 * @param filePath
 	 */
 	void loadMonitoringInfoConfig(String filePath);
 
 	/**
-	 * ÃÖ±Ù »ç¿ëµÈ ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀÇ Preset¸íÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Presetï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	String getLastUsePresetFileName(String filePath);
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀ» ÀÐ¾î DB ¸ð´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ®¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ DB ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @param presetConfigFileName
 	 * @return
@@ -58,7 +58,7 @@ public interface PropertyService {
 	List<MonitoringYN> getDBMonitoringYnList(String presetConfigFileName);
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀ» ÀÐ¾î Server ¸ð´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ®¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ Server ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @param presetConfigFileName
 	 * @return
@@ -80,15 +80,15 @@ public interface PropertyService {
 	List<JdbcConnectionInfo> getJdbcConnInfoList(List<String> dbNames);
 
 	/**
-	 * ¼­¹öÀÇ Á¢¼ÓÁ¤º¸¸¦ °¡Á®¿Â´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	 * 
-	 * @param serverName ¼­¹ö Á¢¼ÓÁ¤º¸ º°Äª
+	 * @param serverName ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äª
 	 * @return
 	 */
 	JschConnectionInfo getJschConnInfo(String serverName);
 
 	/**
-	 * ¼­¹öµéÀÇ Á¢¼ÓÁ¤º¸¸¦ °¡Á®¿Â´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	 * 
 	 * @param serverNames
 	 * @return
@@ -96,43 +96,43 @@ public interface PropertyService {
 	List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames);
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ FileSize ´ÜÀ§¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FileSize ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	FileSize getDefaultFileSizeUnit();
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ ¹Ý¿Ã¸² ÀÚ¸´¼ö¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿Ã¸ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	RoundingDigits getDefaultRoundingDigits();
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ »ç¿ë·® ÄÃ·³ UI Å¸ÀÔÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ë·® ï¿½Ã·ï¿½ UI Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
 	UsageUIType getDefaultUsageUIType();
 
 	/**
-	 * °øÅë ¼³Á¤Á¤º¸¸¦ ÀúÀåÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
-	 * @param key   ¼³Á¤Á¤º¸ Å°
-	 * @param value ¼³Á¤Á¤º¸ °ª
+	 * @param key   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°
+	 * @param value ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 	 */
 	void saveCommonConfig(String key, String value);
 
 	/**
-	 * ÃÖ±Ù »ç¿ëÇÑ Á¢¼ÓÁ¤º¸ ¼³Á¤Á¤º¸¸¦ ÀúÀåÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param filePath
 	 */
 	void saveLastUseConnectionInfoSetting(String filePath);
 
 	/**
-	 * Á¢¼ÓÁ¤º¸ ¼³Á¤À» Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param filePath
 	 * @return
@@ -140,7 +140,7 @@ public interface PropertyService {
 	String addConnectionInfoSetting(String filePath);
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤À» Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param connInfoSetting
 	 * @param presetName
@@ -148,7 +148,7 @@ public interface PropertyService {
 	void addMonitoringPreset(String connInfoSetting, String presetName);
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤À» ÀúÀåÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param presetName
 	 * @param settingedMonitoringYN
@@ -157,7 +157,7 @@ public interface PropertyService {
 			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN);
 
 	/**
-	 * ¼³Á¤µÈ AlertLog ¸ð´ÏÅÍ¸µ Ä¿¸Çµå Á¤º¸¸¦ °¡Á®¿Â´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AlertLog ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ Ä¿ï¿½Çµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	 * 
 	 * @param connInfoSetting
 	 * @param serverName

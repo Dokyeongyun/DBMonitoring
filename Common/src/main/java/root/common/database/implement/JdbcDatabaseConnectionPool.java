@@ -8,7 +8,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import lombok.extern.slf4j.Slf4j;
 import root.common.database.contracts.AbstractDatabaseConnectionPool;
-import root.core.domain.JdbcConnectionInfo;
 
 @Slf4j
 public class JdbcDatabaseConnectionPool implements AbstractDatabaseConnectionPool {

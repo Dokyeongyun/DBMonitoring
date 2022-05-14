@@ -6,11 +6,10 @@ import java.sql.Statement;
 
 import lombok.Data;
 import root.common.database.contracts.AbstractDatabase;
-import root.core.domain.JdbcConnectionInfo;
 
-// TODO Builder Pattern Àû¿ëÇÏ±â
+// TODO Builder Pattern ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½
 /**
- * Jdbc Driver¸¦ ÀÌ¿ëÇØ DBMS¿Í ¿¬°áÀ» ¼öÇàÇÏ´Â Class
+ * Jdbc Driverï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ DBMSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ Class
  * 
  * @author DKY
  *

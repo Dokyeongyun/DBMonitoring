@@ -16,7 +16,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import root.core.domain.JdbcConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
@@ -178,8 +178,8 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 	}
 	
 	/**
-	 * Å° ÀÔ·ÂÀ» ÅëÇØ ÀÔ·ÂµÈ Database Á¢¼ÓÁ¤º¸¸¦ ÀÌ¿ëÇØ URLÀ» »ý¼ºÇÏ°í,
-	 * ÀÔ·ÂµÈ °ª¿¡ µû¶ó DB ¿¬µ¿Å×½ºÆ® ¹öÆ°À» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÑ´Ù.
+	 * Å° ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·Âµï¿½ Database ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ URLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½,
+	 * ï¿½Ô·Âµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ DB ï¿½ï¿½ï¿½ï¿½ï¿½×½ï¿½Æ® ï¿½ï¿½Æ°ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @author DKY
 	 *
@@ -200,8 +200,8 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 	}
 	
 	/**
-	 * ÄÞº¸¹Ú½º ¼±ÅÃÀ» ÅëÇØ ÀÔ·ÂµÈ Database Á¢¼ÓÁ¤º¸¸¦ ÀÌ¿ëÇØ URLÀ» »ý¼ºÇÏ°í,
-	 * ÀÔ·ÂµÈ °ª¿¡ µû¶ó DB ¿¬µ¿Å×½ºÆ® ¹öÆ°À» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÑ´Ù.
+	 * ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·Âµï¿½ Database ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ URLï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½,
+	 * ï¿½Ô·Âµï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ DB ï¿½ï¿½ï¿½ï¿½ï¿½×½ï¿½Æ® ï¿½ï¿½Æ°ï¿½ï¿½ È°ï¿½ï¿½È­/ï¿½ï¿½È°ï¿½ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @author DKY
 	 *

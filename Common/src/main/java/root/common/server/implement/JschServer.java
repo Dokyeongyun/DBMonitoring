@@ -10,7 +10,6 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 import lombok.extern.slf4j.Slf4j;
-import root.core.domain.JschConnectionInfo;
 
 @Slf4j
 public class JschServer {

@@ -1,4 +1,4 @@
-package root.core.domain;
+package root.common.database.implement;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,7 +31,7 @@ public class JdbcConnectionInfo {
 		this.jdbcValidation = jdbcValidation;
 		this.jdbcConnections = jdbcConnections;
 		
-		// TODO ¼±ÅÃµÈ Oracle Driver Type¿¡ µû¶ó¼­, Driver °ª º¯°æÇÏ±â, ÇöÀç´Â ÀÓ½Ã·Î ¸ðµÎ µ¿ÀÏÇÑ °ª ÀÔ·Â
+		// TODO ï¿½ï¿½ï¿½Ãµï¿½ Oracle Driver Typeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, Driver ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½Ã·ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ô·ï¿½
 		this.jdbcOracleDriver = "oracle.jdbc.driver.OracleDriver";
 	}
 

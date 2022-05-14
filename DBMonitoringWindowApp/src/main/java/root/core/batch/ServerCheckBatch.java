@@ -1,6 +1,6 @@
 package root.core.batch;
 
-import root.core.domain.AlertLogCommand;
+import root.common.server.implement.AlertLogCommand;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 
 public class ServerCheckBatch {

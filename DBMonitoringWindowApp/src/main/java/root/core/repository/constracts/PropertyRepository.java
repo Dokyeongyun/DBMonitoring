@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.apache.commons.configuration2.PropertiesConfiguration;
 
-import root.core.domain.AlertLogCommand;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
+import root.common.server.implement.AlertLogCommand;
+import root.common.server.implement.JschConnectionInfo;
 
 public interface PropertyRepository {
 

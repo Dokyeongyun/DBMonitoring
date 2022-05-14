@@ -10,8 +10,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLogCommand;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
 public class WindowServerMonitoringRepositoryTest {

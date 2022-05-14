@@ -1,19 +1,13 @@
 package root.core.repository.implement;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import org.apache.commons.io.IOUtils;
-
-import com.jcraft.jsch.Channel;
-import com.jcraft.jsch.Session;
-
 import lombok.extern.slf4j.Slf4j;
+import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.utils.NumberUnitUtils;
@@ -63,14 +57,9 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 	public List<OSDiskUsage> checkOSDiskUsage() {
 		List<OSDiskUsage> list = new ArrayList<>();
 		try {
-			Session session = jsch.getSession();
-			session.connect();
-			Channel channel = jsch.openExecChannel(session, "df --block-size=K -P");
-			InputStream in = jsch.connectChannel(channel);
-			String result = IOUtils.toString(in, "UTF-8");
+			String command = "df --block-size=K -P";
+			String result = jsch.executeCommand(command);
 			list = stringToOsDiskUsageList(result);
-			jsch.disConnectChannel(channel);
-			jsch.disConnect(session);
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

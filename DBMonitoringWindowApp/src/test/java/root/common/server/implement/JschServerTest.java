@@ -19,9 +19,6 @@ import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
-import root.core.domain.JschConnectionInfo;
-import root.core.domain.enums.ServerOS;
-
 public class JschServerTest {
 
 	public static JschServer jsch;

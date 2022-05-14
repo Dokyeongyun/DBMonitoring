@@ -12,6 +12,7 @@ dependencies {
 
 	// Another module
     implementation project(':Utils')
+    implementation project(':Common')
     
 	// Quartz Scheduler
     implementation 'org.quartz-scheduler:quartz:2.3.2'

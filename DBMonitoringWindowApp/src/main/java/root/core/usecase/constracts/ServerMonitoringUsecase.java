@@ -2,8 +2,8 @@ package root.core.usecase.constracts;
 
 import java.util.List;
 
+import root.common.server.implement.AlertLogCommand;
 import root.core.domain.AlertLog;
-import root.core.domain.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 
 public interface ServerMonitoringUsecase {

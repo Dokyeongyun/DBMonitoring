@@ -20,8 +20,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import lombok.extern.slf4j.Slf4j;
+import root.common.server.implement.AlertLogCommand;
 import root.core.domain.AlertLog;
-import root.core.domain.AlertLogCommand;
 import root.core.domain.Log;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ReportRepository;
@@ -49,9 +49,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		String result = serverCheckRepository.checkAlertLog(alc);
 		if (result.indexOf("ORA-") >= 0) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "¢º Alert Log : ORA ERROR!! Alert Log È®ÀÎ ÇÊ¿ä" + ConsoleUtils.RESET + "\n");
+					+ "ï¿½ï¿½ Alert Log : ORA ERROR!! Alert Log È®ï¿½ï¿½ ï¿½Ê¿ï¿½" + ConsoleUtils.RESET + "\n");
 		} else {
-			System.out.println("\t¢º Alert Log : SUCCESS!\n");
+			System.out.println("\tï¿½ï¿½ Alert Log : SUCCESS!\n");
 		}
 	}
 
@@ -72,8 +72,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 		if (isError == true) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "¢º Alert Log : ORA ERROR!! Alert Log È®ÀÎ ÇÊ¿ä" + ConsoleUtils.RESET + "\n");
-			System.out.println("\t¡Ø" + errorLogContents.size() + "°³ÀÇ ERROR°¡ ¹ß»ýÇß½À´Ï´Ù. Alert Log¸¦ È®ÀÎÇÏ½Ã°Ú½À´Ï±î? (Y/N)¡Ø");
+					+ "ï¿½ï¿½ Alert Log : ORA ERROR!! Alert Log È®ï¿½ï¿½ ï¿½Ê¿ï¿½" + ConsoleUtils.RESET + "\n");
+			System.out.println("\tï¿½ï¿½" + errorLogContents.size() + "ï¿½ï¿½ï¿½ï¿½ ERRORï¿½ï¿½ ï¿½ß»ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½. Alert Logï¿½ï¿½ È®ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½? (Y/N)ï¿½ï¿½");
 
 			boolean isCheck = false;
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -89,7 +89,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						break;
 					} else {
 						System.out.println(
-								"\t" + ConsoleUtils.FONT_RED + "Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. Y ¶Ç´Â NÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä." + ConsoleUtils.RESET);
+								"\t" + ConsoleUtils.FONT_RED + "ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. Y ï¿½Ç´ï¿½ Nï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½." + ConsoleUtils.RESET);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -98,8 +98,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 			if (isCheck == true) {
 				int errorLogIndex = 0;
-				System.out.println("\t¡ØERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
-						+ "] (Enter: ´ÙÀ½¿¡·¯È®ÀÎ, ¼ýÀÚ: ÁöÁ¤¿¡·¯È®ÀÎ, q: Á¾·á)¡Ø\n");
+				System.out.println("\tï¿½ï¿½ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
+						+ "] (Enter: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, q: ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½\n");
 				System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 
 				boolean isExit = false;
@@ -110,7 +110,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						if ("".equals(input) || "ENTER".equals(input)) {
 							errorLogIndex++;
 							if (errorLogIndex >= errorLogContents.size()) {
-								System.out.println("\t¡Ø¸¶Áö¸· ERRORÀÔ´Ï´Ù. Á¾·áÇÏ½Ã°Ú½À´Ï±î? (Y/N)¡Ø");
+								System.out.println("\tï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ ERRORï¿½Ô´Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½Ï½Ã°Ú½ï¿½ï¿½Ï±ï¿½? (Y/N)ï¿½ï¿½");
 
 								while (true) {
 									String exitInput = br.readLine().trim().toUpperCase();
@@ -125,18 +125,18 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 								}
 
 								if (isExit == true) {
-									System.out.println("\t¡ØÁ¾·á¡Ø");
+									System.out.println("\tï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 									break;
 								} else {
-									System.out.println("\t¡Ø¸í·É¾î¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä. (Enter: ´ÙÀ½¿¡·¯È®ÀÎ, ¼ýÀÚ: ÁöÁ¤¿¡·¯È®ÀÎ, q: Á¾·á)");
+									System.out.println("\tï¿½Ø¸ï¿½É¾î¸¦ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½. (Enter: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, q: ï¿½ï¿½ï¿½ï¿½)");
 								}
 							} else {
-								System.out.println("\t¡ØERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
-										+ "] (Enter: ´ÙÀ½¿¡·¯È®ÀÎ, ¼ýÀÚ: ÁöÁ¤¿¡·¯È®ÀÎ, q: Á¾·á)¡Ø\n");
+								System.out.println("\tï¿½ï¿½ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
+										+ "] (Enter: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, q: ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½\n");
 								System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 							}
 						} else if ("Q".equals(input)) {
-							System.out.println("\t¡ØÁ¾·á¡Ø");
+							System.out.println("\tï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 							break;
 						} else {
 							boolean isWrongInput = false;
@@ -146,8 +146,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 									isWrongInput = true;
 								} else {
 									errorLogIndex = inputIndex;
-									System.out.println("\t¡ØERROR [" + (errorLogIndex + 1) + "/"
-											+ errorLogContents.size() + "] (Enter: ´ÙÀ½¿¡·¯È®ÀÎ, ¼ýÀÚ: ÁöÁ¤¿¡·¯È®ÀÎ, q: Á¾·á)¡Ø\n");
+									System.out.println("\tï¿½ï¿½ERROR [" + (errorLogIndex + 1) + "/"
+											+ errorLogContents.size() + "] (Enter: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, q: ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½\n");
 									System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 								}
 							} catch (NumberFormatException e) {
@@ -156,7 +156,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 							if (isWrongInput == true) {
 								System.out.println("\t" + ConsoleUtils.FONT_RED
-										+ "Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. (Enter: ´ÙÀ½¿¡·¯È®ÀÎ, ¼ýÀÚ: ÁöÁ¤¿¡·¯È®ÀÎ, q: Á¾·á)" + ConsoleUtils.RESET);
+										+ "ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. (Enter: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½, q: ï¿½ï¿½ï¿½ï¿½)" + ConsoleUtils.RESET);
 							}
 						}
 					} catch (IOException e) {
@@ -164,10 +164,10 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 					}
 				}
 			} else {
-				System.out.println("\t¡ØÁ¾·á¡Ø");
+				System.out.println("\tï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 			}
 		} else {
-			System.out.println("\t¢º Alert Log : SUCCESS!\n");
+			System.out.println("\tï¿½ï¿½ Alert Log : SUCCESS!\n");
 		}
 	}
 
@@ -186,9 +186,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 		if (isError == true) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "¢º OS Disk Usage : 80% ÃÊ°ú!! È®ÀÎ ÇÊ¿ä" + ConsoleUtils.RESET);
+					+ "ï¿½ï¿½ OS Disk Usage : 80% ï¿½Ê°ï¿½!! È®ï¿½ï¿½ ï¿½Ê¿ï¿½" + ConsoleUtils.RESET);
 		} else {
-			System.out.println("\t¢º OS Disk Usage : SUCCESS!");
+			System.out.println("\tï¿½ï¿½ OS Disk Usage : SUCCESS!");
 		}
 		try {
 			System.out.println(result);
@@ -214,7 +214,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		int colIndex = day + 2;
 
 		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
-		String fileName = "DB°ü¸®´ëÀå_Á¾ÇÕ_" + year + "." + month;
+		String fileName = "DBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½_" + year + "." + month;
 		String extension = ".xlsx";
 		String file = filePath + fileName + extension;
 
@@ -279,7 +279,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		String fullAlertLogString = getAlertLogStringFromCertainDate(alc, startDate);
 
 		try {
-			// Á¶È¸±â°£µ¿¾ÈÀÇ ·Î±×¸¸À» ÃëÇÏ¿© StringBuffer¿¡ ÀúÀåÇÑ´Ù.
+			// ï¿½ï¿½È¸ï¿½â°£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¿ï¿½ StringBufferï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
 			boolean isStartDate = false;
@@ -296,18 +296,18 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
 
-				// Á¶È¸½ÃÀÛÀÏÀÚ Ã£±â
+				// ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
 				if (!isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) {
-						// [Á¶È¸½ÃÀÛÀÏÀÚ >= ÃÖÃÊ ·Î±×±â·ÏÀÏÀÚ]ÀÏ ¶§, ÃÖÃÊ ·Î±×±â·ÏÀÏÀÚºÎÅÍ ÀÐ±â ½ÃÀÛ
+						// [ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ >= ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×±ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ ï¿½ï¿½ï¿½ï¿½
 						String parsedDateString = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, startDate) >= 0) {
 							isStartDate = true;
 							readStartIndex = i;
 							logTimeStamp = line;
 
-							// [Á¶È¸Á¾·áÀÏÀÚ > Á¶È¸ ½ÃÀÛÀÏÀÚ >= ÃÖÃÊ ·Î±×±â·ÏÀÏÀÚ]ÀÏ ¶§ ÃÖÃÊ ·Î±×±â·ÏÀÏÀÚºÎÅÍ ÀÐ±â ½ÃÀÛ
+							// [ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ > ï¿½ï¿½È¸ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ >= ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×±ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ ï¿½Ð±ï¿½ ï¿½ï¿½ï¿½ï¿½
 							if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, endDate) > 0) {
 								isEndDate = true;
 								readEndIndex = i;
@@ -317,12 +317,12 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 					}
 				}
 
-				// ·Î±× ÀúÀå ½ÃÀÛ & Á¶È¸Á¾·áÀÏÀÚ Ã£±â
+				// ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ & ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
 				if (isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) { // Log TimeStamp Line
 
-						// ÇöÀç ·Î±×±â·ÏÀÏÀÚ°¡ Á¶È¸Á¾·áÀÏÀÚ + 1ÀÏÀÎÁö È®ÀÎ
+						// ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×±ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ + 1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 						String logDate = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (logDate.startsWith(DateUtils.addDate(endDate, 0, 0, 1))) {
 							isEndDate = true;
@@ -343,7 +343,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						}
 					} else { // Log Content Line
 
-						// °Ë»ö Å°¿öµå°¡ Æ÷ÇÔµÇ¾ú´ÂÁö È®ÀÎ
+						// ï¿½Ë»ï¿½ Å°ï¿½ï¿½ï¿½å°¡ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 						for (String keyword : searchKeywords) {
 							if (line.contains(keyword) || containsSearchKeyword) {
 								containsSearchKeyword = true;
@@ -353,7 +353,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						logContents.add(line);
 					}
 
-					// ·Î±× ÀúÀå ÁßÁö
+					// ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 					if (!isEndDate) {
 						sb.append(line);
 					} else {
@@ -362,11 +362,11 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 				}
 			}
 
-			// Á¾·á ÈÄ fullLogString Ãß°¡ & Alert log file path ¼³Á¤
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ fullLogString ï¿½ß°ï¿½ & Alert log file path ï¿½ï¿½ï¿½ï¿½
 			alertLog.setFullLogString(sb.toString());
 			alertLog.setFilePath(alc.getReadFilePath());
 
-			log.info("\t¢º Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
+			log.info("\tï¿½ï¿½ Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -384,16 +384,16 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		int alertLogFileLineCnt = serverCheckRepository.getAlertLogFileLineCount(alc);
 		String fullAlertLogString = serverCheckRepository.checkAlertLog(alc);
 
-		// Á¶È¸½ÃÀÛÀÏÀÚÀÇ ·Î±×¸¦ ¸ðµÎ Æ÷ÇÔÇÏµµ·Ï readLine ¼ö¸¦ Á¡ÁøÀûÀ¸·Î ´Ã¸®¸é¼­ ÀÐ´Â´Ù.
+		// ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Î±×¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ readLine ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½é¼­ ï¿½Ð´Â´ï¿½.
 		while (true) {
 			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
-			// ÇöÀç Read Line ¼ö°¡ ÆÄÀÏ ÃÖ´ë Line ¼ö¸¦ ÃÊ°úÇßÀ» ½Ã, ÆÄÀÏ ÀüÃ¼¸¦ ÀÐ°í ¹ÝÈ¯ÇÑ´Ù.
+			// ï¿½ï¿½ï¿½ï¿½ Read Line ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ Line ï¿½ï¿½ï¿½ï¿½ ï¿½Ê°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ð°ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 			if (lines.length >= alertLogFileLineCnt) {
 				break;
 			}
 
-			// Á¶È¸ÇÑ ·Î±× ³»¿¡¼­ °¡Àå Ã³À½À¸·Î ³ªÅ¸³ª´Â ·Î±×ÀÇ ±â·ÏÀÏÀÚ¸¦ ¾ò¾î³½´Ù.
+			// ï¿½ï¿½È¸ï¿½ï¿½ ï¿½Î±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½î³½ï¿½ï¿½.
 			String logDate = "";
 			for (String line : lines) {
 				LocalDate parsedDate = DateUtils.parse(line);
@@ -407,9 +407,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 				break;
 			}
 
-			// Á¶È¸½ÃÀÛÀÏÀÚ¿Í ·Î±×ÀÇ Ã³À½ ±â·ÏÀÏÀÚ¸¦ ºñ±³ÇÑ´Ù.
+			// ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½Î±ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½.
 			long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
-			if (diffTime >= 0) { // Á¶È¸ Line ¼ö¸¦ ´õ ´Ã·Á¼­ ´Ù½Ã Á¶È¸
+			if (diffTime >= 0) { // ï¿½ï¿½È¸ Line ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½È¸
 				alc.setReadLine((alc.getReadLine()) * 2);
 				fullAlertLogString = serverCheckRepository.checkAlertLog(alc);
 			} else {

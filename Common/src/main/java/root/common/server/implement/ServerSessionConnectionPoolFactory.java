@@ -9,8 +9,6 @@ import org.apache.commons.pool2.impl.DefaultPooledObject;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
-import root.core.domain.JschConnectionInfo;
-
 public class ServerSessionConnectionPoolFactory extends BaseKeyedPooledObjectFactory<JschConnectionInfo, Session> {
 
 	@Override
@@ -20,7 +18,7 @@ public class ServerSessionConnectionPoolFactory extends BaseKeyedPooledObjectFac
 		session.setPassword(connInfo.getPassword());
 
 		Properties config = new Properties();
-		config.put("StrictHostKeyChecking", "no"); // È£½ºÆ® Á¤º¸¸¦ °Ë»çÇÏÁö ¾Ê´Â´Ù.
+		config.put("StrictHostKeyChecking", "no"); // È£ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ë»ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 		config.put("PreferredAuthentications", "password");
 		session.setConfig(config);
 

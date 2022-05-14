@@ -26,35 +26,34 @@ import org.apache.commons.configuration2.builder.fluent.PropertiesBuilderParamet
 import org.apache.commons.configuration2.builder.fluent.XMLBuilderParameters;
 import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
 import org.apache.commons.configuration2.ex.ConfigurationException;
-
-import com.mchange.v2.io.FileUtils;
+import org.apache.commons.io.FileUtils;
 
 import lombok.extern.slf4j.Slf4j;
-import root.core.domain.AlertLogCommand;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
-import root.core.domain.enums.ServerOS;
+import root.common.database.implement.JdbcConnectionInfo;
+import root.common.server.implement.AlertLogCommand;
+import root.common.server.implement.JschConnectionInfo;
+import root.common.server.implement.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
 public class PropertyRepositoryImpl implements PropertyRepository {
 
-	// Private ÇÊµå·Î ¼±¾ð ÈÄ SingletoneÀ¸·Î °ü¸®
+	// Private ï¿½Êµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Singletoneï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	private static PropertyRepository propRepo = new PropertyRepositoryImpl();
 
-	// »ý¼ºÀÚ¸¦ PrivateÀ¸·Î ¼±¾ðÇÔÀ¸·Î½á ÇØ´ç °´Ã¼¸¦ »ý¼ºÇÒ ¼ö ÀÖ´Â ¹æ¹ýÀ» ¾÷¾Ö¹ö¸² => ¾ÈÁ¤ÀûÀÎ Singletone °ü¸®¹æ¹ý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ú¸ï¿½ Privateï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î½ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ => ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Singletone ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	private PropertyRepositoryImpl() {
 		loadCombinedConfiguration();
 	}
 
-	// propertyService Field¿¡ Á¢±ÙÇÒ ¼ö ÀÖ´Â À¯ÀÏÇÑ ¹æ¹ý (Static Factory Pattern)
+	// propertyService Fieldï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ (Static Factory Pattern)
 	public static PropertyRepository getInstance() {
 		return propRepo;
 	}
 
-	private PropertiesConfiguration connInfoConfig; // Á¢¼ÓÁ¤º¸ ¼³Á¤ Configuration
-	private PropertiesConfiguration monitoringConfig; // ¸ð´ÏÅÍ¸µ¿©ºÎ Configuration
-	private CombinedConfiguration combinedConfig; // °øÅë Configuration
+	private PropertiesConfiguration connInfoConfig; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Configuration
+	private PropertiesConfiguration monitoringConfig; // ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Configuration
+	private CombinedConfiguration combinedConfig; // ï¿½ï¿½ï¿½ï¿½ Configuration
 
 	private static Pattern dbPropPattern = Pattern.compile("(.*).jdbc.(.*)");
 	private static Pattern serverPropPattern = Pattern.compile("(.*).server.(.*)");
@@ -67,8 +66,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Configuration °´Ã¼¸¦ ¹ÝÈ¯ÇÑ´Ù. TODO ±»ÀÌ ¸Þ¼­µå¸¦ Wrapping ÇØ¼­ È£ÃâÇÒ ÇÊ¿ä°¡ ÀÖÀ»±î..? Controller¿Í
-	 * ÀÇÁ¸¼º Á¦°Å¸ñÀûÀ¸·Î ÀÏ´Ü ÀÌ·¸°Ô ÇÔ..
+	 * Configuration ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½. TODO ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½å¸¦ Wrapping ï¿½Ø¼ï¿½ È£ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¿ä°¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½..? Controllerï¿½ï¿½
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½Ì·ï¿½ï¿½ï¿½ ï¿½ï¿½..
 	 */
 	@Override
 	public PropertiesConfiguration getConfiguration(String name) {
@@ -81,7 +80,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ÁÖ¾îÁø °æ·Î¿¡ PropertyConfiguration¿¡ ¼³Á¤µÈ Key-Value¸¦ ÀúÀåÇÑ´Ù.
+	 * ï¿½Ö¾ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ PropertyConfigurationï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Key-Valueï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void save(String filePath, PropertiesConfiguration config) {
@@ -113,10 +112,10 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ÆÄÀÏ ÀúÀåÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾ú½À´Ï´Ù.");
+			log.info("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.info("[" + filePath + "] ÆÄÀÏ ÀúÀå¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+			log.info("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 		}
 	}
 
@@ -172,9 +171,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ÆÄÀÏ ÀúÀåÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾ú½À´Ï´Ù.");
+			log.info("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		} catch (Exception e) {
-			log.error("[" + filePath + "] ÆÄÀÏ ÀúÀå¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+			log.error("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 			log.error(e.getMessage());
 		}
 	}
@@ -190,7 +189,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			JschConnectionInfo jsch = serverConfig.get(serverName);
 			config.setProperty(serverName + ".server.name", jsch.getServerName());
-			config.setProperty(serverName + ".server.os", jsch.getServerOS().name());
+			config.setProperty(serverName + ".server.os", jsch.getServerOS());
 			config.setProperty(serverName + ".server.host", jsch.getHost());
 			config.setProperty(serverName + ".server.port", jsch.getPort());
 			config.setProperty(serverName + ".server.username", jsch.getUserName());
@@ -231,9 +230,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ÆÄÀÏ ÀúÀåÀÌ ¼º°øÀûÀ¸·Î ¿Ï·áµÇ¾ú½À´Ï´Ù.");
+			log.info("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï·ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		} catch (Exception e) {
-			log.error("[" + filePath + "] ÆÄÀÏ ÀúÀå¿¡ ½ÇÆÐÇß½À´Ï´Ù.");
+			log.error("[" + filePath + "] ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½å¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ß½ï¿½ï¿½Ï´ï¿½.");
 			log.error(e.getMessage());
 		}
 	}
@@ -273,7 +272,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * [/config/config_definition.xml] ÆÄÀÏÀ» ÀÐ¾î CombinedConfiguration °´Ã¼¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * [/config/config_definition.xml] ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ CombinedConfiguration ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @param path
 	 * @throws Exception
@@ -298,7 +297,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Á¢¼ÓÁ¤º¸ ÇÁ·ÎÆÛÆ¼ ÆÄÀÏÀ» LoadÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Loadï¿½Ñ´ï¿½.
 	 * 
 	 * @throws ConfigurationException
 	 */
@@ -308,7 +307,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ ÇÁ·ÎÆÛÆ¼ ÆÄÀÏÀ» LoadÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Loadï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -330,7 +329,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties¿¡¼­ °ªÀ» ÀÐ¾î ¹ÝÈ¯ÇÑ´Ù.
+	 * commons.propertiesï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String getCommonResource(String key) {
@@ -338,7 +337,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties¿¡¼­ °ªÀ» ÀÐ¾î ¹ÝÈ¯ÇÑ´Ù.
+	 * commons.propertiesï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public int getIntegerCommonResource(String key) {
@@ -346,7 +345,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties¿¡¼­ °ªÀ» ÀÐ¾î ¹ÝÈ¯ÇÑ´Ù.
+	 * commons.propertiesï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getCommonResources(String key) {
@@ -354,7 +353,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * DB¿¡ ¿¬°áÇÏ¿© ¸ð´ÏÅÍ¸µÇÒ ³»¿ëÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * DBï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getDBMonitoringContents() {
@@ -362,7 +361,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Server¿¡ ¿¬°áÇÏ¿© ¸ð´ÏÅÍ¸µÇÒ ³»¿ëÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * Serverï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getServerMonitoringContents() {
@@ -370,7 +369,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Oracle Driver ComboBoxÀÇ °ªÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * Oracle Driver ComboBoxï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getOracleDrivers() {
@@ -378,7 +377,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ÃÖ±Ù »ç¿ëÇÑ Á¢¼ÓÁ¤º¸ ÆÄÀÏ¸íÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String getLastUseConnInfoFilePath() {
@@ -386,7 +385,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ConnectionInfo Property ÆÄÀÏ¿¡ ÀÛ¼ºµÈ Monitoring Preset¸®½ºÆ®¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ConnectionInfo Property ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Û¼ï¿½ï¿½ï¿½ Monitoring Presetï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public List<String> getMonitoringPresetNameList() {
@@ -401,7 +400,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ConnectionInfo Property ÆÄÀÏ¿¡ ÀÛ¼ºµÈ Monitoring Preset¸®½ºÆ®¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ConnectionInfo Property ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Û¼ï¿½ï¿½ï¿½ Monitoring Presetï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
@@ -416,7 +415,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ÃÖ±Ù »ç¿ëÇÑ Monitoring Preset ÀÌ¸§À» ¹ÝÈ¯ÇÑ´Ù. ´Ü, ÃÖ±Ù »ç¿ëÇÑ PresetÀÌ ¾øÀ» ¶§, NULLÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Monitoring Preset ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½. ï¿½ï¿½, ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Presetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, NULLï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
@@ -426,7 +425,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	/**
-	 * ÃÖ±Ù »ç¿ëÇÑ Monitoring Preset ÀÌ¸§À» ¹ÝÈ¯ÇÑ´Ù. ´Ü, ÃÖ±Ù »ç¿ëÇÑ PresetÀÌ ¾øÀ» ¶§, NULLÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Monitoring Preset ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½. ï¿½ï¿½, ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Presetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, NULLï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @return
 	 */
@@ -437,7 +436,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µÇÒ DB¸í ¹è¿­À» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ DBï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getMonitoringDBNames() {
@@ -445,7 +444,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µÇÒ Server¸í ¹è¿­À» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ Serverï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String[] getMonitoringServerNames() {
@@ -458,7 +457,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ÁöÁ¤µÈ °æ·Î¿¡ »õ·Î¿î ÆÄÀÏÀ» »ý¼ºÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param filePath
 	 */
@@ -466,7 +465,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			File newFile = new File(filePath);
 
-			// ÆÄÀÏ ¹× µð·ºÅÍ¸® »ý¼º
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 			new File(newFile.getParent()).mkdirs();
 			FileUtils.touch(newFile);
 
@@ -496,7 +495,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties ÆÄÀÏ¿¡¼­ DBº° JdbcConnectionInfo¸¦ ÀÐ¾î¿Í °´Ã¼¸¦ »ý¼º
+	 * Properties ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ DBï¿½ï¿½ JdbcConnectionInfoï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param dbName
 	 * @return
@@ -514,7 +513,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties ÆÄÀÏ¿¡¼­ Serverº° JschConnectionInfo¸¦ ÀÐ¾î¿Í °´Ã¼¸¦ »ý¼º
+	 * Properties ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ Serverï¿½ï¿½ JschConnectionInfoï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param serverName
 	 * @return
@@ -536,7 +535,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ¼­¹öº° AlertLog ÆÄÀÏ¿¡ ´ëÇÑ Á¤º¸¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AlertLog ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @param serverName
 	 * @return

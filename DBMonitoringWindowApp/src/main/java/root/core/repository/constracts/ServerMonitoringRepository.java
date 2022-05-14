@@ -2,7 +2,7 @@ package root.core.repository.constracts;
 
 import java.util.List;
 
-import root.core.domain.AlertLogCommand;
+import root.common.server.implement.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 
 public interface ServerMonitoringRepository {

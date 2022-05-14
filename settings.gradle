@@ -1,10 +1,12 @@
 rootProject.name = 'DBMonitoring'
 
 include ":Utils"
+include ":Common"
 include ":DBMonitoringWindowApp"
 include ":DBMonitoringDownloaderApp"
 
 
 project(":Utils").projectDir = file("Utils")
+project(":Common").projectDir = file("Common")
 project(":DBMonitoringWindowApp").projectDir = file("DBMonitoringWindowApp")
 project(":DBMonitoringDownloaderApp").projectDir = file("DBMonitoringDownloaderApp")

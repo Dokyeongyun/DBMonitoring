@@ -1,4 +1,4 @@
-package root.core.domain.enums;
+package root.common.server.implement;
 
 public enum ServerOS {
 	WINDOW, LINUX

@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
 import dnl.utils.text.table.TextTable;
 import dnl.utils.text.table.csv.CsvTableModel;
 import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.core.batch.DBCheckBatch;
 import root.core.batch.ServerCheckBatch;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
@@ -35,7 +35,7 @@ import root.utils.DateUtils;
 import root.utils.PatternUtils;
 
 /**
- * ConsoleAppÀº ConsoleÀ» ÅëÇØ ÀÔ/Ãâ·ÂÀ» ¼öÇàÇÕ´Ï´Ù.
+ * ConsoleAppï¿½ï¿½ Consoleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
  * 
  * @author DKY
  *
@@ -49,15 +49,15 @@ public class ConsoleApp {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		// STEP1: Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ¼±ÅÃ
+		// STEP1: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String selectedFile = "";
 		while (true) {
-			System.out.println("Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» ¼±ÅÃÇØÁÖ¼¼¿ä.");
+			System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 			List<String> configFiles = Arrays.asList(new File(DEFAULT_CONFIG_DIR).list()).stream()
 					.filter(fileName -> fileName.endsWith(".properties")).collect(Collectors.toList());
 
 			if (configFiles.size() == 0) {
-				System.out.println("Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.");
+				System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 				return;
 			}
 
@@ -67,22 +67,22 @@ public class ConsoleApp {
 
 			String input = br.readLine().trim();
 			if (!PatternUtils.isOnlyNumber(input)) {
-				System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» ´Ù½Ã ¼±ÅÃÇØÁÖ¼¼¿ä.");
+				System.out.println("ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 				continue;
 			}
 
 			int selectedId = Integer.valueOf(input);
 			if (!PatternUtils.isOnlyNumber(input) || selectedId <= 0 || selectedId > configFiles.size()) {
-				System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» ´Ù½Ã ¼±ÅÃÇØÁÖ¼¼¿ä.");
+				System.out.println("ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 				continue;
 			}
 
 			selectedFile = configFiles.get(selectedId - 1);
 			break;
 		}
-		System.out.println(String.format("¼±ÅÃµÈ ÆÄÀÏÀº [%s] ÀÔ´Ï´Ù.", selectedFile));
+		System.out.println(String.format("ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [%s] ï¿½Ô´Ï´ï¿½.", selectedFile));
 
-		// STEP2: ¼±ÅÃµÈ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ Load
+		// STEP2: ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Load
 		String propertiesFilePath = DEFAULT_CONFIG_DIR + "/" + selectedFile;
 		try {
 			PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
@@ -93,14 +93,14 @@ public class ConsoleApp {
 			return;
 		}
 
-		// STEP3: Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ³», ¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ÆÄÀÏ Ã£±â ¹× LOAD
+		// STEP3: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ LOAD
 		String selectedPreset = "";
 		while (true) {
-			System.out.println(String.format("»ç¿ëÇÏ½Ç ¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤À» ¼±ÅÃÇØÁÖ¼¼¿ä."));
+			System.out.println(String.format("ï¿½ï¿½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½."));
 
 			List<String> presetNames = propService.getMonitoringPresetNameList();
 			if (presetNames.size() == 0) {
-				System.out.println("¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ÆÄÀÏÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.");
+				System.out.println("ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½Î±×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 				return;
 			}
 
@@ -110,42 +110,42 @@ public class ConsoleApp {
 
 			String input = br.readLine().trim();
 			if (!PatternUtils.isOnlyNumber(input)) {
-				System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. ¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ÆÄÀÏÀ» ´Ù½Ã ¼±ÅÃÇØÁÖ¼¼¿ä.");
+				System.out.println("ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 				continue;
 			}
 
 			int selectedId = Integer.valueOf(input);
 			if (!PatternUtils.isOnlyNumber(input) || selectedId <= 0 || selectedId > presetNames.size()) {
-				System.out.println("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù. ¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ÆÄÀÏÀ» ´Ù½Ã ¼±ÅÃÇØÁÖ¼¼¿ä.");
+				System.out.println("ï¿½ß¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï¼Ì½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 				continue;
 			}
 
 			selectedPreset = presetNames.get(selectedId - 1);
 			break;
 		}
-		System.out.println(String.format("¼±ÅÃµÈ ÆÄÀÏÀº [%s] ÀÔ´Ï´Ù.", selectedPreset));
+		System.out.println(String.format("ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ [%s] ï¿½Ô´Ï´ï¿½.", selectedPreset));
 
-		// STEP4: ¼³Á¤ÆÄÀÏÀÇ Á¢¼ÓÁ¤º¸¸¦ ÀÐ¾î DB,Server °´Ã¼ »ý¼º ¹× Ãâ·Â
+		// STEP4: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ð¾ï¿½ DB,Server ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
 		List<String> dbNames = propService.getMonitoringDBNameList();
 		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
-		System.out.println("ÀúÀåµÈ DBÁ¢¼ÓÁ¤º¸´Â ´ÙÀ½°ú °°½À´Ï´Ù.");
+		System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ DBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		TextTable dbTable = new TextTable(
 				new CsvTableModel(CsvUtils.toCsvString(jdbcConnectionList, JdbcConnectionInfo.class)));
 		dbTable.printTable(System.out, 2);
 
 		List<String> serverNames = propService.getMonitoringServerNameList();
 		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
-		System.out.println("ÀúÀåµÈ ServerÁ¢¼ÓÁ¤º¸´Â ´ÙÀ½°ú °°½À´Ï´Ù.");
+		System.out.println("ï¿½ï¿½ï¿½ï¿½ï¿½ Serverï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 		TextTable serverTable = new TextTable(
 				new CsvTableModel(CsvUtils.toCsvString(jschConnectionList, JschConnectionInfo.class)));
 		serverTable.printTable(System.out, 2);
 
-		// TODO STEP5: ¸ð´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ ÀÐ±â
+		// TODO STEP5: ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 
-		// STEP6: ¸ð´ÏÅÍ¸µ ¼öÇà
-		System.out.println("DB ¸ð´ÏÅÍ¸µÀ» ¼öÇàÇÕ´Ï´Ù.");
+		// STEP6: ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
+		System.out.println("DB ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
-			System.out.println("¡á [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			System.out.println("ï¿½ï¿½ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			AbstractDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
@@ -154,12 +154,12 @@ public class ConsoleApp {
 			dbBatch.startBatchArchiveUsageCheck();
 			dbBatch.startBatchTableSpaceUsageCheck();
 			dbBatch.startBatchASMDiskUsageCheck();
-			System.out.println("¡á [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
+			System.out.println("ï¿½ï¿½ [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
 		}
 
-		System.out.println("Server ¸ð´ÏÅÍ¸µÀ» ¼öÇàÇÕ´Ï´Ù.");
+		System.out.println("Server ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.");
 		for (JschConnectionInfo jsch : jschConnectionList) {
-			System.out.println("¡á [ " + jsch.getServerName() + " Monitoring Start ]\n");
+			System.out.println("ï¿½ï¿½ [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
@@ -170,7 +170,7 @@ public class ConsoleApp {
 			String endDate = DateUtils.getToday("yyyy-MM-dd");
 			serverBatch.startBatchAlertLogCheckDuringPeriod(jsch.getAlc(), startDate, endDate);
 			serverBatch.startBatchOSDiskUsageCheck();
-			System.out.println("¡á [ " + jsch.getServerName() + " Monitoring End ]\n\n");
+			System.out.println("ï¿½ï¿½ [ " + jsch.getServerName() + " Monitoring End ]\n\n");
 		}
 	}
 }

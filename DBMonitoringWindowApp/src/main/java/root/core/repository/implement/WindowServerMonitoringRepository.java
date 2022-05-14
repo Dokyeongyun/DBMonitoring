@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import lombok.extern.slf4j.Slf4j;
+import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschServer;
-import root.core.domain.AlertLogCommand;
 import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerMonitoringRepository;
 

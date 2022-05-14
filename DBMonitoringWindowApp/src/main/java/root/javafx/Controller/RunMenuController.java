@@ -27,12 +27,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
@@ -114,25 +114,25 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ + 2. ¸ð´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ */
+		/* 1. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + 2. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 		initRunStep1();
 
-		/* 3. ±âÅ¸ ¼³Á¤ ¹× ½ÇÇà */
+		/* 3. ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
 		initRunStep3();
 
-		/* 4. ½ÇÇà°á°ú */
+		/* 4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 //		initRunStep4();
 
 	}
 
 	/**
-	 * ½ÇÇà¸Þ´º ScrollPane scroll event
+	 * ï¿½ï¿½ï¿½ï¿½Þ´ï¿½ ScrollPane scroll event
 	 * 
 	 * @param e
 	 */
 	public void scroll(ScrollEvent e) {
 		if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-			// TODO ½ºÅ©·Ñ¼Óµµ ¼³Á¤ÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤
+			// TODO ï¿½ï¿½Å©ï¿½Ñ¼Óµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			double deltaY = e.getDeltaY() * 3;
 			double width = mainScrollPane.getWidth();
 			double vvalue = mainScrollPane.getHvalue();
@@ -141,9 +141,9 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * AnchorPaneÀÇ Anchor¸¦ ÇÑ ÁÙ·Î ¼³Á¤ÇÏ±â À§ÇÑ ¸Þ¼­µå
+	 * AnchorPaneï¿½ï¿½ Anchorï¿½ï¿½ ï¿½ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½
 	 * 
-	 * @param node   AnchorPaneÀÇ ÀÚ½Ä ³ëµå
+	 * @param node   AnchorPaneï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½
 	 * @param top    top anchor
 	 * @param right  right anchor
 	 * @param bottom bottom anchor
@@ -157,14 +157,14 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¼³Á¤µÈ ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸¸¦ º¸¿©ÁÖ´Â TreeView¸¦ »ý¼º ¹× Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ TreeViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param dbNameList
 	 * @param serverNameList
 	 */
 	private void addMonitoringConnInfoPreview(List<String> dbNameList, List<String> serverNameList) {
-		// Á¢¼ÓÁ¤º¸ ¸®½ºÆ® TreeView
-		CustomTreeView connInfoCtv = new CustomTreeView("Á¢¼ÓÁ¤º¸ ¸®½ºÆ®", FontAwesomeIcon.LIST, true);
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® TreeView
+		CustomTreeView connInfoCtv = new CustomTreeView("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®", FontAwesomeIcon.LIST, true);
 		connInfoCtv.addTreeItem("DB", dbNameList, FontAwesomeIcon.DATABASE);
 		connInfoCtv.addTreeItem("Server", serverNameList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(connInfoCtv, 80, 0, 0, 0);
@@ -172,7 +172,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¼³Á¤µÈ ¸ð´ÏÅÍ¸µ ¿©ºÎ PresetÀ» º¸¿©ÁÖ´Â TreeTableView¸¦ »ý¼º ¹× Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Presetï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ TreeTableViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param monitoringYNList
 	 */
@@ -184,7 +184,7 @@ public class RunMenuController implements Initializable {
 		List<MonitoringType> serverMonitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
 				.filter(m -> m.getCategory().equals("SERVER")).collect(Collectors.toList());
 
-		// ¸ð´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ® TreeTableView - DB
+		// ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® TreeTableView - DB
 		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		dbCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		dbMonitoringTypeList.forEach(type -> dbCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -192,7 +192,7 @@ public class RunMenuController implements Initializable {
 		setAnchorPaneAnchor(dbCtv, 0, 0, 0, 0);
 		dbPresetAP.getChildren().add(dbCtv);
 
-		// ¸ð´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ® TreeTableView - Server
+		// ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® TreeTableView - Server
 		CustomTreeTableView serverCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		serverCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		serverMonitoringTypeList.forEach(type -> serverCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -202,7 +202,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ½ÇÇà
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param e
 	 */
@@ -280,7 +280,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 1. ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 1. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 */
 	private void initRunStep1() {
 		// 1-0. Clear
@@ -288,16 +288,16 @@ public class RunMenuController implements Initializable {
 			connInfoFileListComboBox.getItems().clear();
 		}
 
-		// 1-1. ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 1-1. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		List<String> connInfoFileList = propService.getConnectionInfoList();
 		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÌ ¾ø´Â °æ¿ì
+			// TODO ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
 		}
 
-		// 1-2. ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ ¸®½º³Ê ¼³Á¤
+		// 1-2. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			propService.loadConnectionInfoConfig(newValue);
 			List<String> dbNames = propService.getMonitoringDBNameList();
@@ -306,10 +306,10 @@ public class RunMenuController implements Initializable {
 			initRunStep2();
 		});
 
-		// 1-3. ¸ð´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄÞº¸¹Ú½º ÃÊ±â°ª ¼³Á¤
+		// 1-3. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½Ê±â°ª ï¿½ï¿½ï¿½ï¿½
 		String lastUseConnInfoFile = propService.getLastUseConnectionInfoFilePath();
 		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
-			// ÃÖ±Ù »ç¿ëµÈ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÌ ¾ø°Å³ª ÇöÀç Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì, Ã¹ ¹øÂ° ¼³Á¤ÆÄÀÏ ¼±ÅÃ
+			// ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½, Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			connInfoFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
@@ -317,7 +317,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 2. ¸ð´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 2. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 */
 	private void initRunStep2() {
 		// 2-0. Clear
@@ -325,18 +325,18 @@ public class RunMenuController implements Initializable {
 			presetFileListComboBox.getItems().clear();
 		}
 
-		// 2-1. ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 2-1. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		propService.loadMonitoringInfoConfig(curConnInfoFile);
 		List<String> presetFileList = propService.getMonitoringPresetNameList();
 		if (presetFileList == null || presetFileList.size() == 0) {
-			// TODO ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀÌ ¾ø´Â °æ¿ì
+			// TODO ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			presetFileListComboBox.getItems().addAll(presetFileList);
 		}
 
-		// 2-2. ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ ¸®½º³Ê ¼³Á¤
+		// 2-2. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(newValue);
@@ -345,10 +345,10 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 2-3. ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ÄÞº¸¹Ú½º ÃÊ±â°ª ¼³Á¤
+		// 2-3. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½Ê±â°ª ï¿½ï¿½ï¿½ï¿½
 		String lastUsePresetFileName = propService.getLastUsePresetFileName(curConnInfoFile);
 		if (StringUtils.isEmpty(lastUsePresetFileName) || !presetFileList.contains(lastUsePresetFileName)) {
-			// ÃÖ±Ù »ç¿ëµÈ ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀÌ ¾ø°Å³ª ÇöÀç Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì, Ã¹ ¹øÂ° ¼³Á¤ÆÄÀÏ ¼±ÅÃ
+			// ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Å³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ ï¿½ï¿½ï¿½, Ã¹ ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			presetFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
@@ -356,15 +356,15 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 3. ±âÅ¸ ¼³Á¤ ¹× ½ÇÇà ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 3. ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 */
 	private void initRunStep3() {
-		// 3-1. Á¶È¸°á°ú ´ÜÀ§ ÄÞº¸¹Ú½º
-		// Á¶È¸°á°ú ´ÜÀ§ ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 3-1. ï¿½ï¿½È¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½
+		// ï¿½ï¿½È¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 
-		// 3-2. ¹Ý¿Ã¸² ÀÚ¸´¼ö ÄÞº¸¹Ú½º
+		// 3-2. ï¿½Ý¿Ã¸ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
@@ -379,8 +379,8 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-3. »ç¿ë·® ÄÃ·³ UI Å¸ÀÔ
-		// »ç¿ë·® Ç¥½Ã¹æ¹ý ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 3-3. ï¿½ï¿½ë·® ï¿½Ã·ï¿½ UI Å¸ï¿½ï¿½
+		// ï¿½ï¿½ë·® Ç¥ï¿½Ã¹ï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		usageUITypeCB.getItems().addAll(UsageUIType.values());
 		usageUITypeCB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUITypeCB.setConverter(new StringConverter<UsageUIType>() {
@@ -395,12 +395,12 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-4. ¸ð´ÏÅÍ¸µ °á°ú ÀúÀå ¿©ºÎ
+		// 3-4. ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		resultSaveToggleBtn.selectedProperty().set(true);
 	}
 
 	/**
-	 * 4. ½ÇÇà°á°ú ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 4. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Viewï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 */
 	private void initRunStep4() {
 		dbResults = new MonitoringTableViewPagingBox("DB");

@@ -7,7 +7,7 @@ import java.util.Map;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import root.core.domain.JdbcConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;

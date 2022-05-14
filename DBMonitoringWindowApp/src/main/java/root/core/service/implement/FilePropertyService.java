@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.lang3.StringUtils;
 
-import root.core.domain.AlertLogCommand;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
+import root.common.server.implement.AlertLogCommand;
+import root.common.server.implement.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
@@ -36,7 +36,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» Load ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Load ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void loadConnectionInfoConfig(String filePath) {
@@ -44,7 +44,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ./config/connectioninfo/ µð·ºÅÍ¸® ÇÏÀ§¿¡ ÀÖ´Â Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ¸®½ºÆ®¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ./config/connectioninfo/ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public List<String> getConnectionInfoList() {
@@ -52,7 +52,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ÃÖ±Ù »ç¿ëµÈ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ °æ·Î¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î¸ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String getLastUseConnectionInfoFilePath() {
@@ -61,7 +61,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ÆÄÀÏÀ» Load ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Load ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -69,7 +69,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ÃÖ±Ù »ç¿ëµÈ ¸ð´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏ¸íÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String getLastUsePresetFileName(String filePath) {
@@ -176,7 +176,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ¼­¹öÀÇ Á¢¼ÓÁ¤º¸¸¦ °¡Á®¿Â´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	 */
 	@Override
 	public JschConnectionInfo getJschConnInfo(String serverName) {
@@ -184,7 +184,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ¼­¹öµéÀÇ Á¢¼ÓÁ¤º¸¸¦ °¡Á®¿Â´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Â´ï¿½.
 	 */
 	@Override
 	public List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames) {
@@ -193,7 +193,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ FileSize ´ÜÀ§¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FileSize ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public FileSize getDefaultFileSizeUnit() {
@@ -201,7 +201,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ ¹Ý¿Ã¸² ÀÚ¸´¼ö¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¿Ã¸ï¿½ ï¿½Ú¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public RoundingDigits getDefaultRoundingDigits() {
@@ -209,7 +209,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ±âº»°ªÀ¸·Î ¼³Á¤µÈ »ç¿ë·® ÄÃ·³ UI Å¸ÀÔÀ» ¹ÝÈ¯ÇÑ´Ù.
+	 * ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ë·® ï¿½Ã·ï¿½ UI Å¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public UsageUIType getDefaultUsageUIType() {
@@ -217,7 +217,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * °øÅë ¼³Á¤Á¤º¸¸¦ ÀúÀåÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void saveCommonConfig(String key, String value) {
@@ -225,7 +225,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ÃÖ±Ù »ç¿ëÇÑ Á¢¼ÓÁ¤º¸ ¼³Á¤Á¤º¸¸¦ ÀúÀåÇÑ´Ù.
+	 * ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void saveLastUseConnectionInfoSetting(String filePath) {
@@ -235,7 +235,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * Á¢¼ÓÁ¤º¸ ¼³Á¤À» Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public String addConnectionInfoSetting(String fileName) {
@@ -246,7 +246,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤À» Ãß°¡ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void addMonitoringPreset(String connInfoSetting, String presetName) {
@@ -261,7 +261,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤À» ÀúÀåÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ï¿½ï¿½ Preset ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void saveMonitoringPresetSetting(String presetName,

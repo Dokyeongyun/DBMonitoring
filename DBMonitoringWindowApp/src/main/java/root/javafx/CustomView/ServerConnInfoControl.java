@@ -8,7 +8,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
-import root.core.domain.JschConnectionInfo;
+import root.common.server.implement.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
