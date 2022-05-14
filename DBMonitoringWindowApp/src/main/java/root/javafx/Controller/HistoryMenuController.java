@@ -32,7 +32,7 @@ import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 public class HistoryMenuController implements Initializable {
 
@@ -70,37 +70,37 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ½ÇÇà¸Þ´º È­¸é ÁøÀÔ½Ã ÃÊ±âÈ­¸¦ ¼öÇàÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Þ´ï¿½ È­ï¿½ï¿½ ï¿½ï¿½ï¿½Ô½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// Á¢¼ÓÁ¤º¸ ¼³Á¤ ÇÁ·ÎÆÛÆ¼ ÆÄÀÏ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½
 		List<String> connInfoFiles = propService.getConnectionInfoList();
 		if (connInfoFiles != null && connInfoFiles.size() != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties ÆÄÀÏ¿¡¼­, ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÆÄÀÏ °æ·Î°¡ ÀÖ´Ù¸é ÇØ´ç ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â´Ù.
+			// remember.properties ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½, ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½Â´ï¿½.
 			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
 			if (lastUseConnInfoFilePath != null) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 			}
 		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "Á¢¼ÓÁ¤º¸ ¼³Á¤", "¼³Á¤µÈ DB/Server Á¢¼ÓÁ¤º¸°¡ ¾ø½À´Ï´Ù.\n[¼³Á¤]¸Þ´º·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ DB/Server ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n[ï¿½ï¿½ï¿½ï¿½]ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.");
 			return;
 		}
 
-		// ComboBox º¯°æ ÀÌº¥Æ®
+		// ComboBox ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
 		runConnInfoFileComboBox.getSelectionModel().selectedItemProperty()
 				.addListener((options, oldValue, newValue) -> {
-					// TODO °¢ Tabº° ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ
+					// TODO ï¿½ï¿½ Tabï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				});
 
-		String dbComboBoxLabel = "DB ¼±ÅÃ";
+		String dbComboBoxLabel = "DB ï¿½ï¿½ï¿½ï¿½";
 		List<String> dbComboBoxItems = propService.getMonitoringDBNameList();
-		String serverComboBoxLabel = "Server ¼±ÅÃ";
+		String serverComboBoxLabel = "Server ï¿½ï¿½ï¿½ï¿½";
 		List<String> serverComboBoxItems = propService.getMonitoringServerNameList();
 
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems);
@@ -110,7 +110,7 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ AnchorPane Ãß°¡ÇÏ°í ¿ä¼Ò¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ AnchorPane ï¿½ß°ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½Ò¸ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @param <T>
 	 * @param monitoringAP
@@ -121,13 +121,13 @@ public class HistoryMenuController implements Initializable {
 	 */
 	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, List<String> comboBoxItems) {
-		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox ÁÂÃø Lebel Text ¼³Á¤
-		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items ¼³Á¤
-		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPaneÀ» ºÎ¸ð Node¿¡ Ãß°¡
+		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox ï¿½ï¿½ï¿½ï¿½ Lebel Text ï¿½ï¿½ï¿½ï¿½
+		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items ï¿½ï¿½ï¿½ï¿½
+		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPaneï¿½ï¿½ ï¿½Î¸ï¿½ Nodeï¿½ï¿½ ï¿½ß°ï¿½
 	}
 
 	/**
-	 * [½ÇÇà] - ¸ð´ÏÅÍ¸µÀ» ½ÃÀÛÇÑ´Ù.
+	 * [ï¿½ï¿½ï¿½ï¿½] - ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param e
 	 */

@@ -45,13 +45,13 @@ import root.javafx.CustomView.MonitoringTableViewContainer;
 import root.javafx.CustomView.dateCell.MonitoringHistoryDateCell;
 import root.javafx.CustomView.prequencyUI.PrequencyButton;
 import root.javafx.DI.DependencyInjection;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
 
 public class MonitoringAPController<T extends MonitoringResult> extends BorderPane implements Initializable {
 
-	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "±â·ÏÀ» Á¶È¸ÇØÁÖ¼¼¿ä.";
+	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.";
 
 	private ReportUsecase reportUsecase;
 
@@ -205,7 +205,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ±â·ÏÀ» Ãâ·ÂÇÒ TableView¸¦ »ý¼ºÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ TableViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	private void initMonitoringTableView() {
 		tableViewContainer = new MonitoringTableViewContainer();
@@ -216,7 +216,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableDataÀÇ µ¥ÀÌÅÍ¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tableDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @param id
 	 */
@@ -228,7 +228,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData¿¡ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÑ´Ù. ´Ü, sync¸¦ ÇÏÁö ¾ÊÀ¸¸é ½ÇÁ¦ TableView¿¡ µ¥ÀÌÅÍ°¡ Ãâ·ÂµÇÁö´Â ¾Ê´Â´Ù.
+	 * ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tableDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½, syncï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ TableViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	 * 
 	 * @param id
 	 * @param data
@@ -245,7 +245,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData¿¡ µ¥ÀÌÅÍ¼ÂÀ» Ãß°¡ÇÑ´Ù. ´Ü, sync¸¦ ÇÏÁö ¾ÊÀ¸¸é ½ÇÁ¦ TableView¿¡ µ¥ÀÌÅÍ°¡ Ãâ·ÂµÇÁö´Â ¾Ê´Â´Ù.
+	 * ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tableDataï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Ñ´ï¿½. ï¿½ï¿½, syncï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ TableViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.
 	 * 
 	 * @param id
 	 * @param dataList
@@ -259,7 +259,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData·Î TableViewÀÇ µ¥ÀÌÅÍ¸¦ µ¿±âÈ­ÇÑ´Ù.
+	 * ï¿½Ø´ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ tableDataï¿½ï¿½ TableViewï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½È­ï¿½Ñ´ï¿½.
 	 * 
 	 * @param id
 	 */
@@ -301,7 +301,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * tableData¿¡ ¼¼ÆÃµÈ µ¥ÀÌÅÍÀÇ Row¼ö¸¦ ¹ÝÈ¯ÇÑ´Ù.
+	 * tableDataï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Rowï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ï¿½Ñ´ï¿½.
 	 * 
 	 * @param id
 	 * @return
@@ -311,7 +311,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç AnchorPaneÀÇ ºÎ¸ð Node¿¡ Anchor¸¦ ¼³Á¤ÇÑ´Ù.
+	 * ï¿½Ø´ï¿½ AnchorPaneï¿½ï¿½ ï¿½Î¸ï¿½ Nodeï¿½ï¿½ Anchorï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param left
 	 * @param top
@@ -326,7 +326,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * Generic Type Parameter <T>ÀÇ ¸ð´ÏÅÍ¸µ History¸¦ ÀÐ¾î Å×ÀÌºí¿¡ Ãâ·ÂÇÑ´Ù.
+	 * Generic Type Parameter <T>ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ Historyï¿½ï¿½ ï¿½Ð¾ï¿½ ï¿½ï¿½ï¿½Ìºï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param e
 	 */
@@ -350,7 +350,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		Map<String, List<T>> allDataList = inquiryMonitoringHistory(type);
 		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "Á¶È¸°á°ú ¾øÀ½", "ÇØ´çÀÏÀÚÀÇ ¸ð´ÏÅÍ¸µ ±â·ÏÀÌ ¾ø½À´Ï´Ù.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "ï¿½ï¿½È¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½Ø´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 			return;
 		}
@@ -404,7 +404,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇöÀç ¼±ÅÃµÈ Á¶È¸Á¶°ÇÀ¸·Î Àç°Ë»öÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ë»ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param e
 	 */
@@ -413,7 +413,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇöÀç TableView¿¡ ¼¼ÆÃµÈ °ªÀ» ExcelÆÄÀÏ·Î ´Ù¿î·ÎµåÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½ TableViewï¿½ï¿½ ï¿½ï¿½ï¿½Ãµï¿½ ï¿½ï¿½ï¿½ï¿½ Excelï¿½ï¿½ï¿½Ï·ï¿½ ï¿½Ù¿ï¿½Îµï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param e
 	 */
@@ -422,7 +422,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ±â·Ï ºóµµ¸¦ ³ªÅ¸³»´Â UI¹ÙÀÇ AM/PM ±¸ºÐÀ» º¯°æÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ ï¿½óµµ¸ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½ï¿½ï¿½ AM/PM ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 * 
 	 * @param e
 	 */
@@ -433,7 +433,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ð´ÏÅÍ¸µ ±â·Ï ºóµµ µ¥ÀÌÅÍ¿Í UIÀÇ Sync¸¦ ¸ÂÃá´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¿ï¿½ UIï¿½ï¿½ Syncï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.
 	 * 
 	 * @param timeDiv
 	 */

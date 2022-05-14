@@ -14,7 +14,7 @@ import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.ServerConnectService;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 @Slf4j
 public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo> {
@@ -29,7 +29,7 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 		for (StatefulAP childAP : statefulAP) {
 			ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 			if (serverConnAP.isAnyEmptyInput()) {
-				AlertUtils.showAlert(AlertType.ERROR, "Á¢¼ÓÁ¤º¸ ¼³Á¤ ÀúÀå", "Server Á¢¼ÓÁ¤º¸¸¦ ¸ðµÎ ÀÔ·ÂÇØÁÖ¼¼¿ä");
+				AlertUtils.showAlert(AlertType.ERROR, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "Server ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½");
 				return false;
 			}
 			JschConnectionInfo jsch = serverConnAP.getInputValues();

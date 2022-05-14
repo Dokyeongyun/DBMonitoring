@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import root.javafx.DI.DependencyInjection;
 import root.javafx.Service.ConnectionTestService;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 public class ConnectionInfoVBox<T> extends VBox {
 
@@ -38,13 +38,13 @@ public class ConnectionInfoVBox<T> extends VBox {
 	FontAwesomeIconView menuIconIV;
 
 	@FXML
-	StackPane connInfoStackPane; // Á¢¼ÓÁ¤º¸ ¼³Á¤ ±×¸®µå¸¦ ´ã´Â ÄÁÅ×ÀÌ³Ê
+	StackPane connInfoStackPane; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½å¸¦ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì³ï¿½
 
 	@FXML
-	AnchorPane connInfoNoDataAP; // Á¢¼ÓÁ¤º¸ No Data AchorPane
+	AnchorPane connInfoNoDataAP; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ No Data AchorPane
 
 	@FXML
-	Text connInfoText; // Á¢¼ÓÁ¤º¸ ÀÎµ¦½º ÅØ½ºÆ®
+	Text connInfoText; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®
 
 	@FXML
 	FontAwesomeIconView connTestIcon;
@@ -124,31 +124,31 @@ public class ConnectionInfoVBox<T> extends VBox {
 	
 	public void testConnection(ActionEvent e) {
 
-		// ÇöÀç AP¿¡ ÀÛ¼ºµÈ Á¢¼ÓÁ¤º¸¸¦ ÀÌ¿ëÇØ ¿¬°á Å×½ºÆ®
+		// ï¿½ï¿½ï¿½ï¿½ APï¿½ï¿½ ï¿½Û¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®
 		ConnectionInfoAP curAP = connInfoAPMap.get(connInfoIdx).getAp();
 		
 		ConnectionTestService testService = connInfoControl.getConnectionTestService(curAP);
 		
 		if (testService != null) {
-			// ¾ÆÀÌÄÜ º¯°æ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			setConnectionBtnIcon(4);
 
-			// ¼º°ø½Ã ÄÝ¹é ÀÌº¥Æ® ¼³Á¤
+			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 			testService.setOnSucceeded(s -> {
 				testService.alertSucceed();
 				setConnectionBtnIcon(2);
 			});
 			
-			// ½ÇÆÐ½Ã ÄÝ¹é ÀÌº¥Æ® ¼³Á¤
+			// ï¿½ï¿½ï¿½Ð½ï¿½ ï¿½Ý¹ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 			testService.setOnFailed(f -> {
 				testService.alertFailed();
 				setConnectionBtnIcon(3);
 			});
 
-			// ¿¬°áÅ×½ºÆ® ½ÃÀÛ
+			// ï¿½ï¿½ï¿½ï¿½ï¿½×½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 			testService.start();
 		} else {
-			AlertUtils.showAlert(AlertType.ERROR, "¿¬°á Å×½ºÆ®", "¿¬°á Å×½ºÆ®¸¦ ¼öÇàÇÏ±â À§ÇÑ Á¤º¸°¡ ºÎÁ·ÇÕ´Ï´Ù.\nÁ¢¼ÓÁ¤º¸¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			AlertUtils.showAlert(AlertType.ERROR, "ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®", "ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.\nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 		}
 	}
 	
@@ -224,7 +224,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 		long maxIdxTxt = this.connInfoAPMap.getActiveAPCnt();
 		
 		if(curIdxTxt == 0 && maxIdxTxt == 0) {
-			connInfoText.setText("¡ØÁ¢¼ÓÁ¤º¸¸¦ Ãß°¡ÇØÁÖ¼¼¿ä.");	
+			connInfoText.setText("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");	
 		} else {
 			connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
 		}
@@ -257,7 +257,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 	@AllArgsConstructor
 	@Data
 	public static class StatefulAP {
-		private int status; // 1: ±âÁ¸, 2: ½Å±Ô, 3: Á¦°Å
+		private int status; // 1: ï¿½ï¿½ï¿½ï¿½, 2: ï¿½Å±ï¿½, 3: ï¿½ï¿½ï¿½ï¿½
 		private ConnectionInfoAP ap;
 	}
 
@@ -270,17 +270,17 @@ public class ConnectionInfoVBox<T> extends VBox {
 		}
 		
 		public long remove(long index) {
-			// »óÅÂ º¯°æ (¡æ »èÁ¦)
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 			this.map.get(index).setStatus(3);
 			
-			// ÇöÀç ÀÎµ¦½º µÚ¿¡ »èÁ¦µÇÁö ¾ÊÀº AnchorPane °¹¼ö Ä«¿îÆ®
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ AnchorPane ï¿½ï¿½ï¿½ï¿½ Ä«ï¿½ï¿½Æ®
 			long count = this.map.keySet()
 					.stream()
 					.filter(key -> key >= index)
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 
-			// ÀÎµ¦½º ¾÷µ¥ÀÌÆ®
+			// ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
 			return count > 0 ? getNextActiveIdx(index) : getPrevActiveIdx(index);
 		}
 		

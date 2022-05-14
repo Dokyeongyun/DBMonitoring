@@ -1,4 +1,4 @@
-package root.utils;
+package root.javafx.utils;
 
 import javafx.scene.Parent;
 import javafx.scene.Scene;

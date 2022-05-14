@@ -9,6 +9,10 @@ repositories {
 }
 
 dependencies {
+
+	// Another module
+    implementation project(':Utils')
+    
 	// Quartz Scheduler
     implementation 'org.quartz-scheduler:quartz:2.3.2'
 

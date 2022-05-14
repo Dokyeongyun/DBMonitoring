@@ -49,7 +49,7 @@ import root.javafx.CustomView.AlertLogMonitoringSummaryAP;
 import root.javafx.CustomView.NumberTextFormatter;
 import root.javafx.CustomView.TagBar;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 @Slf4j
 public class AlertLogMonitoringMenuController implements Initializable {
@@ -101,35 +101,35 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	/**
-	 * ½ÇÇà¸Þ´º È­¸é ÁøÀÔ½Ã ÃÊ±âÈ­¸¦ ¼öÇàÇÑ´Ù.
+	 * ï¿½ï¿½ï¿½ï¿½Þ´ï¿½ È­ï¿½ï¿½ ï¿½ï¿½ï¿½Ô½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// Á¢¼ÓÁ¤º¸ ¼³Á¤ ÇÁ·ÎÆÛÆ¼ ÆÄÀÏ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¼ ï¿½ï¿½ï¿½ï¿½
 		List<String> connInfoFiles = propService.getConnectionInfoList();
 		if (connInfoFiles != null && connInfoFiles.size() != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties ÆÄÀÏ¿¡¼­, ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÆÄÀÏ °æ·Î°¡ ÀÖ´Ù¸é ÇØ´ç ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â´Ù.
+			// remember.properties ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½, ï¿½Ö±ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Î°ï¿½ ï¿½Ö´Ù¸ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½Â´ï¿½.
 			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
 			if (lastUseConnInfoFilePath != null) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 			}
 		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "Á¢¼ÓÁ¤º¸ ¼³Á¤", "¼³Á¤µÈ Á¢¼ÓÁ¤º¸°¡ ¾ø½À´Ï´Ù.\n[¼³Á¤]¸Þ´º·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½", "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.\n[ï¿½ï¿½ï¿½ï¿½]ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.");
 			return;
 		}
 
-		// ComboBox º¯°æ ÀÌº¥Æ®
+		// ComboBox ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
 		runConnInfoFileComboBox.getSelectionModel().selectedItemProperty()
 				.addListener((options, oldValue, newValue) -> {
-					// TODO °¢ Tabº° ÄÞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ
+					// TODO ï¿½ï¿½ Tabï¿½ï¿½ ï¿½Þºï¿½ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 				});
 
-		// AlertLog È­¸éÀÇ UI ¿ä¼Ò¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+		// AlertLog È­ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½Ò¸ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 		initAlertLogMonitoringElements();
 	}
 
@@ -156,25 +156,25 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	/**
-	 * AlertLog AnchorPaneÀÇ UI ¿ä¼ÒµéÀÇ °ªÀ» ÃÊ±âÈ­ÇÑ´Ù.
+	 * AlertLog AnchorPaneï¿½ï¿½ UI ï¿½ï¿½Òµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.
 	 */
 	private void initAlertLogMonitoringElements() {
-		// ComboBox º¯°æ ÀÌº¥Æ®
+		// ComboBox ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
 		alertLogServerComboBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			changeAlertLogListViewData(newValue);
 		});
 		alertLogServerComboBox.getItems().addAll(propService.getMonitoringServerNameList());
 		alertLogServerComboBox.getSelectionModel().selectFirst();
 
-		// AlertLog Á¶È¸±â°£ ±âº»°ª ¼³Á¤
+		// AlertLog ï¿½ï¿½È¸ï¿½â°£ ï¿½âº»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 		alertLogStartDayDP.setValue(LocalDate.now().minusDays(1));
 		alertLogEndDayDP.setValue(LocalDate.now());
 
-		// AlertLog Á¶È¸±â°£ ¿À´Ã ÀÌÈÄ ³¯Â¥ ¼±ÅÃ ºÒ°¡
+		// AlertLog ï¿½ï¿½È¸ï¿½â°£ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¥ ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½
 		alertLogStartDayDP.setDayCellFactory(picker -> new DisableAfterTodayDateCell());
 		alertLogEndDayDP.setDayCellFactory(picker -> new DisableAfterTodayDateCell());
 
-		// AlertLog Á¶È¸±â°£ º¯°æ ÀÌº¥Æ®
+		// AlertLog ï¿½ï¿½È¸ï¿½â°£ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ®
 		alertLogStartDayDP.valueProperty().addListener((ov, oldValue, newValue) -> {
 			if (alertLogEndDayDP.getValue().isBefore(newValue)) {
 				alertLogEndDayDP.setValue(newValue);
@@ -220,7 +220,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	/**
-	 * [½ÇÇà] - ¸ð´ÏÅÍ¸µ ½ÇÇà ½Ã, ÀÔ·Â°ª °Ë»ç
+	 * [ï¿½ï¿½ï¿½ï¿½] - ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½Ô·Â°ï¿½ ï¿½Ë»ï¿½
 	 * 
 	 * @return
 	 */
@@ -228,25 +228,25 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		String alertHeaderText = "";
 		String alertContentText = "";
 
-		// 1. AlertLog Á¶È¸±â°£
-		alertHeaderText = "AlertLog Á¶È¸±â°£";
+		// 1. AlertLog ï¿½ï¿½È¸ï¿½â°£
+		alertHeaderText = "AlertLog ï¿½ï¿½È¸ï¿½â°£";
 
 		LocalDate alertLogStartDay = alertLogStartDayDP.getValue();
 		LocalDate alertLogEndDay = alertLogEndDayDP.getValue();
 		if (alertLogStartDay == null || alertLogEndDay == null) {
-			alertContentText = "Á¶È¸±â°£À» ÀÔ·ÂÇØÁÖ¼¼¿ä.";
+			alertContentText = "ï¿½ï¿½È¸ï¿½â°£ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.";
 			AlertUtils.showAlert(AlertType.ERROR, alertHeaderText, alertContentText);
 			return false;
 		}
 
 		try {
 			if (!alertLogStartDay.isBefore(alertLogEndDay) && !alertLogStartDay.isEqual(alertLogEndDay)) {
-				alertContentText = "Á¶È¸½ÃÀÛÀÏÀº Á¶È¸Á¾·áÀÏº¸´Ù ÀÌÀü ³¯Â¥¿©¾ß ÇÕ´Ï´Ù.";
+				alertContentText = "ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¸ï¿½ï¿½ï¿½ï¿½ï¿½Ïºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¥ï¿½ï¿½ï¿½ï¿½ ï¿½Õ´Ï´ï¿½.";
 				AlertUtils.showAlert(AlertType.ERROR, alertHeaderText, alertContentText);
 				return false;
 			}
 		} catch (Exception e) {
-			alertContentText = "Á¶È¸±â°£ÀÌ ¿Ã¹Ù¸£Áö ¾Ê½À´Ï´Ù.";
+			alertContentText = "ï¿½ï¿½È¸ï¿½â°£ï¿½ï¿½ ï¿½Ã¹Ù¸ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.";
 			AlertUtils.showAlert(AlertType.ERROR, alertHeaderText, alertContentText);
 			return false;
 		}
@@ -255,7 +255,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	public void monitoringAlertLog(ActionEvent e) throws Exception {
-		// ÀÔ·Â°ª °Ë»ç
+		// ï¿½Ô·Â°ï¿½ ï¿½Ë»ï¿½
 		if (!validateInput()) {
 			return;
 		}
@@ -300,7 +300,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		int toIndex = Integer.parseInt(input) - 1;
 		if (toIndex == 0) {
-			updateStatusMessage("Ã¹¹øÂ° LogÀÔ´Ï´Ù.");
+			updateStatusMessage("Ã¹ï¿½ï¿½Â° Logï¿½Ô´Ï´ï¿½.");
 			return;
 		}
 
@@ -316,7 +316,7 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 		int toIndex = Integer.parseInt(input) + 1;
 		if (toIndex > alertLogLV.getItems().size()) {
-			updateStatusMessage("¸¶Áö¸· LogÀÔ´Ï´Ù.");
+			updateStatusMessage("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Logï¿½Ô´Ï´ï¿½.");
 			return;
 		}
 
@@ -333,12 +333,12 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		int toIndex = Integer.parseInt(input);
 		alertLogLV.scrollTo(toIndex - 1);
 		alertLogLV.getSelectionModel().select(toIndex - 1);
-		updateStatusMessage(String.format("[%d]¹øÂ° Log·Î ÀÌµ¿ÇÕ´Ï´Ù.", toIndex));
+		updateStatusMessage(String.format("[%d]ï¿½ï¿½Â° Logï¿½ï¿½ ï¿½Ìµï¿½ï¿½Õ´Ï´ï¿½.", toIndex));
 	}
 
 	private boolean validateAlertLogNavigatorInput(String input) {
 		if (StringUtils.isEmpty(input)) {
-			updateStatusMessage("Á¶È¸¸¦ ¿øÇÏ´Â Log index¸¦ ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+			updateStatusMessage("ï¿½ï¿½È¸ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ Log indexï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 			return false;
 		}
 
@@ -346,18 +346,18 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		try {
 			toIndex = Integer.parseInt(input);
 		} catch (NumberFormatException ex) {
-			updateStatusMessage("¼ýÀÚ¸¸ ÀÔ·ÂÇÏ½Ç ¼ö ÀÖ½À´Ï´Ù.");
+			updateStatusMessage("ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½Ô·ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½Ï´ï¿½.");
 			return false;
 		}
 
 		int alertLogSize = alertLogLV.getItems().size();
 		if (alertLogSize == 0) {
-			updateStatusMessage("Alert Log Á¶È¸ ÈÄ ÀÌ¿ëÇØÁÖ¼¼¿ä.");
+			updateStatusMessage("Alert Log ï¿½ï¿½È¸ ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½.");
 			return false;
 		}
 
 		if (toIndex <= 0 || toIndex > alertLogSize) {
-			updateStatusMessage(String.format("Log index¸¦ ¿Ã¹Ù¸£°Ô ÀÔ·ÂÇØÁÖ¼¼¿ä. (°¡´ÉÇÑ ÀÔ·Â°ª ¹üÀ§: 1 ~ %d)", alertLogSize));
+			updateStatusMessage(String.format("Log indexï¿½ï¿½ ï¿½Ã¹Ù¸ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½Ö¼ï¿½ï¿½ï¿½. (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô·Â°ï¿½ ï¿½ï¿½ï¿½ï¿½: 1 ~ %d)", alertLogSize));
 			return false;
 		}
 
