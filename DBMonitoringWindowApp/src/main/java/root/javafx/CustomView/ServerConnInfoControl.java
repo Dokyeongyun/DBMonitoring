@@ -10,11 +10,11 @@ import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
 import root.common.server.implement.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.ServerConnectService;
 import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
 
 @Slf4j
 public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo> {

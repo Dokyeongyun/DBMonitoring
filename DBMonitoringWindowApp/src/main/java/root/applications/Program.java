@@ -6,10 +6,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.Controller.HomeController;
 import root.javafx.Controller.LeftMenuController;
 import root.javafx.DI.DependencyInjection;
+import root.repository.implement.PropertyRepositoryImpl;
 
 @Slf4j
 public class Program extends Application {

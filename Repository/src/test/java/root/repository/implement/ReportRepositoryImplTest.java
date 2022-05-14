@@ -1,4 +1,4 @@
-package root.core.repository.implement;
+package root.repository.implement;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

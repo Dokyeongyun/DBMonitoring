@@ -1,4 +1,4 @@
-package root.core.repository.implement;
+package root.repository.implement;
 
 import java.util.List;
 import java.util.StringTokenizer;

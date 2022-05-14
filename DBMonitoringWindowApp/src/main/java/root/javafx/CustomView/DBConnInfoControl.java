@@ -9,11 +9,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.DatabaseConnectService;
 import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
 
 public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 

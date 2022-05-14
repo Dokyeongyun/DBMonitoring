@@ -23,12 +23,12 @@ public class CustomTextInputDialog extends TextInputDialog {
 		Image image = new Image(
 				getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString());
 		stage.getIcons().add(image);
-		
+
 		// Button Custom
-		ButtonType okButton = new ButtonType("ÀÔ·Â", ButtonData.OK_DONE);
+		ButtonType okButton = new ButtonType("ìž…ë ¥", ButtonData.OK_DONE);
 		getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
 		getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
-		
+
 		// Content
 		setTitle(title);
 		setHeaderText(headerText);

@@ -18,8 +18,8 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
+import root.repository.implement.PropertyRepositoryImpl;
 
 public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 

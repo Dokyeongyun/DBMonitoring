@@ -17,8 +17,8 @@ import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.ServerOS;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
+import root.repository.implement.PropertyRepositoryImpl;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
