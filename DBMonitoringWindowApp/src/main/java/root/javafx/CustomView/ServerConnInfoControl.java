@@ -8,13 +8,13 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import lombok.extern.slf4j.Slf4j;
-import root.core.domain.JschConnectionInfo;
+import root.common.server.implement.JschConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.ServerConnectService;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
 
 @Slf4j
 public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo> {
@@ -29,16 +29,16 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 		for (StatefulAP childAP : statefulAP) {
 			ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 			if (serverConnAP.isAnyEmptyInput()) {
-				AlertUtils.showAlert(AlertType.ERROR, "Á¢¼ÓÁ¤º¸ ¼³Á¤ ÀúÀå", "Server Á¢¼ÓÁ¤º¸¸¦ ¸ðµÎ ÀÔ·ÂÇØÁÖ¼¼¿ä");
+				AlertUtils.showAlert(AlertType.ERROR, "ì ‘ì†ì •ë³´ ì„¤ì • ì €ìž¥", "Server ì ‘ì†ì •ë³´ë¥¼ ëª¨ë‘ ìž…ë ¥í•´ì£¼ì„¸ìš”");
 				return false;
 			}
 			JschConnectionInfo jsch = serverConnAP.getInputValues();
 			config.put(jsch.getServerName(), jsch);
 			log.debug(jsch.toString());
 		}
-		
+
 		propertyRepository.saveServerConnectionInfo(configFilePath, config);
-		
+
 		return true;
 	}
 

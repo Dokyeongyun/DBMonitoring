@@ -27,12 +27,12 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import root.common.database.contracts.AbstractDatabase;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
@@ -41,18 +41,18 @@ import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
-import root.core.repository.implement.DBCheckRepositoryImpl;
-import root.core.repository.implement.LinuxServerMonitoringRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
-import root.core.repository.implement.ReportFileRepo;
 import root.core.service.contracts.PropertyService;
-import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
+import root.repository.implement.DBCheckRepositoryImpl;
+import root.repository.implement.LinuxServerMonitoringRepository;
+import root.repository.implement.PropertyRepositoryImpl;
+import root.repository.implement.ReportFileRepo;
+import root.service.implement.FilePropertyService;
 import root.utils.UnitUtils.FileSize;
 
 public class RunMenuController implements Initializable {
@@ -114,25 +114,25 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ + 2. ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ */
+		/* 1. ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ ì„¤ì • + 2. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì • */
 		initRunStep1();
 
-		/* 3. ±âÅ¸ ¼³Á¤ ¹× ½ÇÇà */
+		/* 3. ê¸°íƒ€ ì„¤ì • ë° ì‹¤í–‰ */
 		initRunStep3();
 
-		/* 4. ½ÇÇà°á°ú */
-//		initRunStep4();
+		/* 4. ì‹¤í–‰ê²°ê³¼ */
+		// initRunStep4();
 
 	}
 
 	/**
-	 * ½ÇÇà¸Ş´º ScrollPane scroll event
+	 * ì‹¤í–‰ë©”ë‰´ ScrollPane scroll event
 	 * 
 	 * @param e
 	 */
 	public void scroll(ScrollEvent e) {
 		if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-			// TODO ½ºÅ©·Ñ¼Óµµ ¼³Á¤ÇÒ ¼ö ÀÖµµ·Ï ¼öÁ¤
+			// TODO ìŠ¤í¬ë¡¤ì†ë„ ì„¤ì •í•  ìˆ˜ ìˆë„ë¡ ìˆ˜ì •
 			double deltaY = e.getDeltaY() * 3;
 			double width = mainScrollPane.getWidth();
 			double vvalue = mainScrollPane.getHvalue();
@@ -141,9 +141,9 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * AnchorPaneÀÇ Anchor¸¦ ÇÑ ÁÙ·Î ¼³Á¤ÇÏ±â À§ÇÑ ¸Ş¼­µå
+	 * AnchorPaneì˜ Anchorë¥¼ í•œ ì¤„ë¡œ ì„¤ì •í•˜ê¸° ìœ„í•œ ë©”ì„œë“œ
 	 * 
-	 * @param node   AnchorPaneÀÇ ÀÚ½Ä ³ëµå
+	 * @param node   AnchorPaneì˜ ìì‹ ë…¸ë“œ
 	 * @param top    top anchor
 	 * @param right  right anchor
 	 * @param bottom bottom anchor
@@ -157,14 +157,14 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¼³Á¤µÈ ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸¸¦ º¸¿©ÁÖ´Â TreeView¸¦ »ı¼º ¹× Ãß°¡ÇÑ´Ù.
+	 * ì„¤ì •ëœ ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ë¥¼ ë³´ì—¬ì£¼ëŠ” TreeViewë¥¼ ìƒì„± ë° ì¶”ê°€í•œë‹¤.
 	 * 
 	 * @param dbNameList
 	 * @param serverNameList
 	 */
 	private void addMonitoringConnInfoPreview(List<String> dbNameList, List<String> serverNameList) {
-		// Á¢¼ÓÁ¤º¸ ¸®½ºÆ® TreeView
-		CustomTreeView connInfoCtv = new CustomTreeView("Á¢¼ÓÁ¤º¸ ¸®½ºÆ®", FontAwesomeIcon.LIST, true);
+		// ì ‘ì†ì •ë³´ ë¦¬ìŠ¤íŠ¸ TreeView
+		CustomTreeView connInfoCtv = new CustomTreeView("ì ‘ì†ì •ë³´ ë¦¬ìŠ¤íŠ¸", FontAwesomeIcon.LIST, true);
 		connInfoCtv.addTreeItem("DB", dbNameList, FontAwesomeIcon.DATABASE);
 		connInfoCtv.addTreeItem("Server", serverNameList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(connInfoCtv, 80, 0, 0, 0);
@@ -172,7 +172,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¼³Á¤µÈ ¸ğ´ÏÅÍ¸µ ¿©ºÎ PresetÀ» º¸¿©ÁÖ´Â TreeTableView¸¦ »ı¼º ¹× Ãß°¡ÇÑ´Ù.
+	 * ì„¤ì •ëœ ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Presetì„ ë³´ì—¬ì£¼ëŠ” TreeTableViewë¥¼ ìƒì„± ë° ì¶”ê°€í•œë‹¤.
 	 * 
 	 * @param monitoringYNList
 	 */
@@ -184,7 +184,7 @@ public class RunMenuController implements Initializable {
 		List<MonitoringType> serverMonitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
 				.filter(m -> m.getCategory().equals("SERVER")).collect(Collectors.toList());
 
-		// ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ® TreeTableView - DB
+		// ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ë¦¬ìŠ¤íŠ¸ TreeTableView - DB
 		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		dbCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		dbMonitoringTypeList.forEach(type -> dbCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -192,7 +192,7 @@ public class RunMenuController implements Initializable {
 		setAnchorPaneAnchor(dbCtv, 0, 0, 0, 0);
 		dbPresetAP.getChildren().add(dbCtv);
 
-		// ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¸®½ºÆ® TreeTableView - Server
+		// ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ë¦¬ìŠ¤íŠ¸ TreeTableView - Server
 		CustomTreeTableView serverCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		serverCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		serverMonitoringTypeList.forEach(type -> serverCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -202,7 +202,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ½ÇÇà
+	 * ëª¨ë‹ˆí„°ë§ ì‹¤í–‰
 	 * 
 	 * @param e
 	 */
@@ -274,13 +274,14 @@ public class RunMenuController implements Initializable {
 			serverResults.setMonitoringTableViewUsageUIType(serverName, OSDiskUsage.class, usageUIType);
 			serverResults.setMonitoringTableViewData(serverName, OSDiskUsage.class, osDiskUsageList);
 
-//			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
-//					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+			// AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
+			// DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1),
+			// DateUtils.getToday("yyyy-MM-dd"));
 		}
 	}
 
 	/**
-	 * 1. ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 1. ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ ì„¤ì • ì˜ì—­ì˜ Viewë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 */
 	private void initRunStep1() {
 		// 1-0. Clear
@@ -288,16 +289,16 @@ public class RunMenuController implements Initializable {
 			connInfoFileListComboBox.getItems().clear();
 		}
 
-		// 1-1. ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 1-1. ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ì„¤ì •
 		List<String> connInfoFileList = propService.getConnectionInfoList();
 		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÌ ¾ø´Â °æ¿ì
+			// TODO ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ì´ ì—†ëŠ” ê²½ìš°
 			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
 		}
 
-		// 1-2. ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ ¸®½º³Ê ¼³Á¤
+		// 1-2. ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ë³€ê²½ ë¦¬ìŠ¤ë„ˆ ì„¤ì •
 		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			propService.loadConnectionInfoConfig(newValue);
 			List<String> dbNames = propService.getMonitoringDBNameList();
@@ -306,10 +307,10 @@ public class RunMenuController implements Initializable {
 			initRunStep2();
 		});
 
-		// 1-3. ¸ğ´ÏÅÍ¸µ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ ÄŞº¸¹Ú½º ÃÊ±â°ª ¼³Á¤
+		// 1-3. ëª¨ë‹ˆí„°ë§ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ì½¤ë³´ë°•ìŠ¤ ì´ˆê¸°ê°’ ì„¤ì •
 		String lastUseConnInfoFile = propService.getLastUseConnectionInfoFilePath();
 		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
-			// ÃÖ±Ù »ç¿ëµÈ Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÌ ¾ø°Å³ª ÇöÀç Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì, Ã¹ ¹øÂ° ¼³Á¤ÆÄÀÏ ¼±ÅÃ
+			// ìµœê·¼ ì‚¬ìš©ëœ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ì´ ì—†ê±°ë‚˜ í˜„ì¬ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê²½ìš°, ì²« ë²ˆì§¸ ì„¤ì •íŒŒì¼ ì„ íƒ
 			connInfoFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
@@ -317,7 +318,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 2. ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 2. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì • ì˜ì—­ì˜ Viewë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 */
 	private void initRunStep2() {
 		// 2-0. Clear
@@ -325,18 +326,18 @@ public class RunMenuController implements Initializable {
 			presetFileListComboBox.getItems().clear();
 		}
 
-		// 2-1. ¸ğ´ÏÅÍ¸µ ¿©ºÎ Preset ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 2-1. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Preset ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ì„¤ì •
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		propService.loadMonitoringInfoConfig(curConnInfoFile);
 		List<String> presetFileList = propService.getMonitoringPresetNameList();
 		if (presetFileList == null || presetFileList.size() == 0) {
-			// TODO ¸ğ´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀÌ ¾ø´Â °æ¿ì
+			// TODO ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Preset ì„¤ì •íŒŒì¼ì´ ì—†ëŠ” ê²½ìš°
 			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			presetFileListComboBox.getItems().addAll(presetFileList);
 		}
 
-		// 2-2. ¸ğ´ÏÅÍ¸µ ¿©ºÎ Preset ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ ¸®½º³Ê ¼³Á¤
+		// 2-2. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Preset ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ë³€ê²½ ë¦¬ìŠ¤ë„ˆ ì„¤ì •
 		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(newValue);
@@ -345,10 +346,10 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 2-3. ¸ğ´ÏÅÍ¸µ ¿©ºÎ Preset ÄŞº¸¹Ú½º ÃÊ±â°ª ¼³Á¤
+		// 2-3. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Preset ì½¤ë³´ë°•ìŠ¤ ì´ˆê¸°ê°’ ì„¤ì •
 		String lastUsePresetFileName = propService.getLastUsePresetFileName(curConnInfoFile);
 		if (StringUtils.isEmpty(lastUsePresetFileName) || !presetFileList.contains(lastUsePresetFileName)) {
-			// ÃÖ±Ù »ç¿ëµÈ ¸ğ´ÏÅÍ¸µ ¿©ºÎ Preset ¼³Á¤ÆÄÀÏÀÌ ¾ø°Å³ª ÇöÀç Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì, Ã¹ ¹øÂ° ¼³Á¤ÆÄÀÏ ¼±ÅÃ
+			// ìµœê·¼ ì‚¬ìš©ëœ ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Preset ì„¤ì •íŒŒì¼ì´ ì—†ê±°ë‚˜ í˜„ì¬ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê²½ìš°, ì²« ë²ˆì§¸ ì„¤ì •íŒŒì¼ ì„ íƒ
 			presetFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
@@ -356,15 +357,15 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 3. ±âÅ¸ ¼³Á¤ ¹× ½ÇÇà ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 3. ê¸°íƒ€ ì„¤ì • ë° ì‹¤í–‰ ì˜ì—­ì˜ Viewë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 */
 	private void initRunStep3() {
-		// 3-1. Á¶È¸°á°ú ´ÜÀ§ ÄŞº¸¹Ú½º
-		// Á¶È¸°á°ú ´ÜÀ§ ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 3-1. ì¡°íšŒê²°ê³¼ ë‹¨ìœ„ ì½¤ë³´ë°•ìŠ¤
+		// ì¡°íšŒê²°ê³¼ ë‹¨ìœ„ ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ì„¤ì •
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 
-		// 3-2. ¹İ¿Ã¸² ÀÚ¸´¼ö ÄŞº¸¹Ú½º
+		// 3-2. ë°˜ì˜¬ë¦¼ ìë¦¿ìˆ˜ ì½¤ë³´ë°•ìŠ¤
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
@@ -379,8 +380,8 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-3. »ç¿ë·® ÄÃ·³ UI Å¸ÀÔ
-		// »ç¿ë·® Ç¥½Ã¹æ¹ı ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		// 3-3. ì‚¬ìš©ëŸ‰ ì»¬ëŸ¼ UI íƒ€ì…
+		// ì‚¬ìš©ëŸ‰ í‘œì‹œë°©ë²• ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ì„¤ì •
 		usageUITypeCB.getItems().addAll(UsageUIType.values());
 		usageUITypeCB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUITypeCB.setConverter(new StringConverter<UsageUIType>() {
@@ -395,12 +396,12 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-4. ¸ğ´ÏÅÍ¸µ °á°ú ÀúÀå ¿©ºÎ
+		// 3-4. ëª¨ë‹ˆí„°ë§ ê²°ê³¼ ì €ì¥ ì—¬ë¶€
 		resultSaveToggleBtn.selectedProperty().set(true);
 	}
 
 	/**
-	 * 4. ½ÇÇà°á°ú ¿µ¿ªÀÇ View¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * 4. ì‹¤í–‰ê²°ê³¼ ì˜ì—­ì˜ Viewë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 */
 	private void initRunStep4() {
 		dbResults = new MonitoringTableViewPagingBox("DB");
@@ -408,7 +409,7 @@ public class RunMenuController implements Initializable {
 
 		resultSplitPane.getItems().clear();
 		resultSplitPane.getItems().addAll(dbResults, serverResults);
-		
+
 		step4AP.setVisible(true);
 		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);

@@ -2,14 +2,14 @@ package root.javafx.Service;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert.AlertType;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
-import root.core.domain.JdbcConnectionInfo;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 public class DatabaseConnectService extends ConnectionTestService {
 
-	public static final String SUCCESS_MSG = "µ¥ÀÌÅÍº£ÀÌ½º°¡ ¼º°øÀûÀ¸·Î ¿¬µ¿µÇ¾ú½À´Ï´Ù.\n URL: %s \n Driver: %s";
-	public static final String FAIL_MSG = "µ¥ÀÌÅÍº£ÀÌ½º ¿¬µ¿¿¡ ½ÇÆĞÇß½À´Ï´Ù.\n URL: %s \n Driver: %s";
+	public static final String SUCCESS_MSG = "ë°ì´í„°ë² ì´ìŠ¤ê°€ ì„±ê³µì ìœ¼ë¡œ ì—°ë™ë˜ì—ˆìŠµë‹ˆë‹¤.\n URL: %s \n Driver: %s";
+	public static final String FAIL_MSG = "ë°ì´í„°ë² ì´ìŠ¤ ì—°ë™ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.\n URL: %s \n Driver: %s";
 
 	private JdbcConnectionInfo jdbc;
 	private JdbcDatabase db;
@@ -36,13 +36,13 @@ public class DatabaseConnectService extends ConnectionTestService {
 
 	@Override
 	public void alertSucceed() {
-		AlertUtils.showAlert(AlertType.INFORMATION, "DB ¿¬µ¿Å×½ºÆ®",
+		AlertUtils.showAlert(AlertType.INFORMATION, "DB ì—°ë™í…ŒìŠ¤íŠ¸",
 				String.format(DatabaseConnectService.SUCCESS_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
 	}
 
 	@Override
 	public void alertFailed() {
-		AlertUtils.showAlert(AlertType.ERROR, "DB ¿¬µ¿Å×½ºÆ®",
+		AlertUtils.showAlert(AlertType.ERROR, "DB ì—°ë™í…ŒìŠ¤íŠ¸",
 				String.format(DatabaseConnectService.FAIL_MSG, jdbc.getJdbcUrl(), jdbc.getJdbcDriver()));
 	}
 }

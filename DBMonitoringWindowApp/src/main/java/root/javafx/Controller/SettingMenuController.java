@@ -30,22 +30,22 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import lombok.extern.slf4j.Slf4j;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
+import root.common.server.implement.JschConnectionInfo;
 import root.core.domain.MonitoringYN;
 import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.core.service.contracts.PropertyService;
-import root.core.service.implement.FilePropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
 import root.javafx.CustomView.MonitoringYNVBox;
 import root.javafx.CustomView.ServerConnInfoControl;
 import root.javafx.CustomView.dialogUI.CustomTextInputDialog;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
+import root.service.implement.FilePropertyService;
 import root.utils.UnitUtils.FileSize;
 
 @Slf4j
@@ -59,22 +59,22 @@ public class SettingMenuController implements Initializable {
 	SplitPane rootSplitPane;
 
 	@FXML
-	AnchorPane noConnInfoConfigAP; // [¼³Á¤] - [Á¢¼ÓÁ¤º¸ ¼³Á¤] ¼³Á¤ÆÄÀÏÀÌ ÁöÁ¤µÇÁö ¾Ê¾ÒÀ» ¶§ º¸¿©ÁÙ AnchorPane
+	AnchorPane noConnInfoConfigAP; // [ì„¤ì •] - [ì ‘ì†ì •ë³´ ì„¤ì •] ì„¤ì •íŒŒì¼ì´ ì§€ì •ë˜ì§€ ì•Šì•˜ì„ ë•Œ ë³´ì—¬ì¤„ AnchorPane
 
 	@FXML
-	AnchorPane noMonitoringConfigAP; // [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤] ¼³Á¤ÆÄÀÏÀÌ ÁöÁ¤µÇÁö ¾Ê¾ÒÀ» ¶§ º¸¿©ÁÙ AnchorPane
+	AnchorPane noMonitoringConfigAP; // [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •] ì„¤ì •íŒŒì¼ì´ ì§€ì •ë˜ì§€ ì•Šì•˜ì„ ë•Œ ë³´ì—¬ì¤„ AnchorPane
 
 	@FXML
 	VBox monitoringElementsVBox;
 
 	@FXML
-	TextField fileChooserText; // ¼³Á¤ÆÄÀÏ °æ·Î¸¦ ÀÔ·Â/Ãâ·ÂÇÏ´Â TextField
+	TextField fileChooserText; // ì„¤ì •íŒŒì¼ ê²½ë¡œë¥¼ ì…ë ¥/ì¶œë ¥í•˜ëŠ” TextField
 
 	@FXML
 	VBox connInfoVBox;
 
 	@FXML
-	JFXComboBox<String> monitoringPresetComboBox; // ¸ğ´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ Preset ComboBox
+	JFXComboBox<String> monitoringPresetComboBox; // ëª¨ë‹ˆí„°ë§ì—¬ë¶€ ì„¤ì • Preset ComboBox
 
 	@FXML
 	JFXComboBox<FileSize> fileSizeCB;
@@ -90,16 +90,16 @@ public class SettingMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// remember.properties ÆÄÀÏ¿¡¼­, ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÆÄÀÏ °æ·Î°¡ ÀÖ´Ù¸é ÇØ´ç ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â´Ù.
+		// remember.properties íŒŒì¼ì—ì„œ, ìµœê·¼ ì‚¬ìš©ëœ ì„¤ì •íŒŒì¼ ê²½ë¡œê°€ ìˆë‹¤ë©´ í•´ë‹¹ ì„¤ì •íŒŒì¼ì„ ë¶ˆëŸ¬ì˜¨ë‹¤.
 		String lastUsePropertiesFile = propService.getLastUseConnectionInfoFilePath();
 		log.debug("Last use properties file: " + lastUsePropertiesFile);
 		if (lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
-			// [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤] - Preset º¯°æ Event
+			// [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •] - Preset ë³€ê²½ Event
 			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
-				if(newValue != null) {
-					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));	
+				if (newValue != null) {
+					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
 				}
 			});
 		} else {
@@ -107,15 +107,15 @@ public class SettingMenuController implements Initializable {
 			setVisible(noMonitoringConfigAP, true);
 		}
 
-		/* ½ÇÇà ¼³Á¤ ÅÇ - Á¶È¸°á°ú ´ÜÀ§ ÄŞº¸¹Ú½º */
+		/* ì‹¤í–‰ ì„¤ì • íƒ­ - ì¡°íšŒê²°ê³¼ ë‹¨ìœ„ ì½¤ë³´ë°•ìŠ¤ */
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			propService.saveCommonConfig("unit.filesize", newValue.getUnit());
 		});
 
-		/* ½ÇÇà ¼³Á¤ ÅÇ - ¹İ¿Ã¸² ÀÚ¸´¼ö ÄŞº¸¹Ú½º */
-		// ¹İ¿Ã¸² ÀÚ¸´¼ö ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ ¼³Á¤
+		/* ì‹¤í–‰ ì„¤ì • íƒ­ - ë°˜ì˜¬ë¦¼ ìë¦¿ìˆ˜ ì½¤ë³´ë°•ìŠ¤ */
+		// ë°˜ì˜¬ë¦¼ ìë¦¿ìˆ˜ ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ì„¤ì •
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
@@ -133,7 +133,7 @@ public class SettingMenuController implements Initializable {
 			}
 		});
 
-		/* ½ÇÇà ¼³Á¤ ÅÇ - »ç¿ë·® Ç¥½Ã¹æ¹ı ÄŞº¸¹Ú½º */
+		/* ì‹¤í–‰ ì„¤ì • íƒ­ - ì‚¬ìš©ëŸ‰ í‘œì‹œë°©ë²• ì½¤ë³´ë°•ìŠ¤ */
 		usageUICB.getItems().addAll(UsageUIType.values());
 		usageUICB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
@@ -153,16 +153,16 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤] - Preset¸í ÀÔ·Â ÆË¾÷ ¶ç¿ì±â
+	 * [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •] - Presetëª… ì…ë ¥ íŒì—… ë„ìš°ê¸°
 	 * 
 	 * @param e
 	 */
 	public void showMonitoringPresetPopup(ActionEvent e) {
 
 		// Create input dialog
-		String dialogTitle = "Preset »ı¼º";
-		String dialogHeaderText = "»õ·Î¿î Monitoring Preset ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä.";
-		String dialogContentText = "Preset ÀÌ¸§: ";
+		String dialogTitle = "Preset ìƒì„±";
+		String dialogHeaderText = "ìƒˆë¡œìš´ Monitoring Preset ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.";
+		String dialogContentText = "Preset ì´ë¦„: ";
 		CustomTextInputDialog presetInputDialog = new CustomTextInputDialog(dialogTitle, dialogHeaderText,
 				dialogContentText);
 
@@ -170,83 +170,83 @@ public class SettingMenuController implements Initializable {
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			// TODO validate input value
-			// 1. Preset¸í ÀÌ¿ëÇÏ¿© ¼³Á¤ÆÄÀÏ »ı¼º + Á¢¼ÓÁ¤º¸¼³Á¤ÆÄÀÏ¿¡ Preset ¼³Á¤ÆÄÀÏ °æ·Î Ãß°¡
+			// 1. Presetëª… ì´ìš©í•˜ì—¬ ì„¤ì •íŒŒì¼ ìƒì„± + ì ‘ì†ì •ë³´ì„¤ì •íŒŒì¼ì— Preset ì„¤ì •íŒŒì¼ ê²½ë¡œ ì¶”ê°€
 			propService.addMonitoringPreset(fileChooserText.getText(), input);
 
-			// 3. ¸ğ´ÏÅÍ¸µ ¿©ºÎ Config and Preset ComboBox Àç·Îµù
+			// 3. ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ Config and Preset ComboBox ì¬ë¡œë”©
 			reloadingMonitoringSetting(input);
 
-			// 4. ¼º°ø Alert ¶ç¿ì±â
-			String successTitle = "Preset »ı¼º";
-			String successContent = "¸ğ´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ PresetÀÌ »ı¼ºµÇ¾ú½À´Ï´Ù.";
+			// 4. ì„±ê³µ Alert ë„ìš°ê¸°
+			String successTitle = "Preset ìƒì„±";
+			String successContent = "ëª¨ë‹ˆí„°ë§ì—¬ë¶€ ì„¤ì • Presetì´ ìƒì„±ë˜ì—ˆìŠµë‹ˆë‹¤.";
 			AlertUtils.showAlert(AlertType.INFORMATION, successTitle, successContent);
 		});
 	}
 
 	/**
-	 * [¼³Á¤] - [Á¢¼ÓÁ¤º¸ ¼³Á¤] - .properties ÆÄÀÏÀ» ¼±ÅÃÇÏ±â À§ÇÑ FileChooser¸¦ ¿¬´Ù. »ç¿ëÀÚ°¡ ¼±ÅÃÇÑ ÆÄÀÏÀÇ °æ·Î¿¡¼­
-	 * ÆÄÀÏÀ» ÀĞÀº ÈÄ, ¿Ã¹Ù¸¥ ¼³Á¤ÆÄÀÏÀÌ¶ó¸é ÇØ´ç °æ·Î¸¦ remember.properties¿¡ ÀúÀåÇÑ´Ù. ±×·¸Áö ¾Ê´Ù¸é, 'Àß¸øµÈÆÄÀÏÀÔ´Ï´Ù'¶ó´Â
-	 * °æ°í¸¦ ¶ç¿ì°í Á¢¼ÓÁ¤º¸¸¦ Á÷Á¢ ¼³Á¤ÇÏ´Â È­¸éÀ¸·Î ÀÌµ¿½ÃÅ²´Ù.
+	 * [ì„¤ì •] - [ì ‘ì†ì •ë³´ ì„¤ì •] - .properties íŒŒì¼ì„ ì„ íƒí•˜ê¸° ìœ„í•œ FileChooserë¥¼ ì—°ë‹¤. ì‚¬ìš©ìê°€ ì„ íƒí•œ íŒŒì¼ì˜ ê²½ë¡œì—ì„œ
+	 * íŒŒì¼ì„ ì½ì€ í›„, ì˜¬ë°”ë¥¸ ì„¤ì •íŒŒì¼ì´ë¼ë©´ í•´ë‹¹ ê²½ë¡œë¥¼ remember.propertiesì— ì €ì¥í•œë‹¤. ê·¸ë ‡ì§€ ì•Šë‹¤ë©´, 'ì˜ëª»ëœíŒŒì¼ì…ë‹ˆë‹¤'ë¼ëŠ”
+	 * ê²½ê³ ë¥¼ ë„ìš°ê³  ì ‘ì†ì •ë³´ë¥¼ ì§ì ‘ ì„¤ì •í•˜ëŠ” í™”ë©´ìœ¼ë¡œ ì´ë™ì‹œí‚¨ë‹¤.
 	 * 
 	 * @param e
 	 */
 	public void openFileChooser(ActionEvent e) {
 		FileChooser fileChooser = new FileChooser();
 
-		// ¼±ÅÃ°¡´ÉÇÑ Extension Á¦ÇÑ
+		// ì„ íƒê°€ëŠ¥í•œ Extension ì œí•œ
 		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("Properties", ".properties"));
 
-		// ÃÊ±â ÆÄÀÏ°æ·Î ÁöÁ¤
+		// ì´ˆê¸° íŒŒì¼ê²½ë¡œ ì§€ì •
 		fileChooser.setInitialDirectory(new File("./config"));
 
-		// ÆÄÀÏ ¼±ÅÃÃ¢ ¿­°í, ¼±ÅÃµÈ ÆÄÀÏ ¹İÈ¯¹ŞÀ½
+		// íŒŒì¼ ì„ íƒì°½ ì—´ê³ , ì„ íƒëœ íŒŒì¼ ë°˜í™˜ë°›ìŒ
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
 
 		if (selectedFile != null) {
 			if (selectedFile.isFile() && selectedFile.exists()) {
-				// ¿Ã¹Ù¸¥ ÆÄÀÏ
+				// ì˜¬ë°”ë¥¸ íŒŒì¼
 				String filePath = selectedFile.getAbsolutePath();
 				loadSelectedConfigFile(filePath);
 			} else {
-				// Àß¸øµÈ ÆÄÀÏ
+				// ì˜ëª»ëœ íŒŒì¼
 				fileChooserText.setText("");
 			}
 		}
 	}
 
 	/**
-	 * [¼³Á¤] - ÇÁ·ÎÆÛÆ¼ÆÄÀÏÀ» ÀĞ´Â´Ù.
+	 * [ì„¤ì •] - í”„ë¡œí¼í‹°íŒŒì¼ì„ ì½ëŠ”ë‹¤.
 	 * 
 	 * @param filePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
 		try {
-			// 1. Àı´ë°æ·Î¸¦ »ó´ë°æ·Î·Î º¯È¯ÇÑ´Ù.
+			// 1. ì ˆëŒ€ê²½ë¡œë¥¼ ìƒëŒ€ê²½ë¡œë¡œ ë³€í™˜í•œë‹¤.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
 
-			// 2. fileChooserTextÀÇ ÅØ½ºÆ®¸¦ ÇöÀç ¼±ÅÃµÈ ÆÄÀÏ°æ·Î·Î º¯°æÇÑ´Ù.
+			// 2. fileChooserTextì˜ í…ìŠ¤íŠ¸ë¥¼ í˜„ì¬ ì„ íƒëœ íŒŒì¼ê²½ë¡œë¡œ ë³€ê²½í•œë‹¤.
 			fileChooserText.setText(filePath);
 
-			// 3. ÆÄÀÏ°æ·Î¿¡¼­ Á¢¼ÓÁ¤º¸ ÇÁ·ÎÆÛÆ¼ÆÄÀÏÀ» ÀĞ´Â´Ù.
+			// 3. íŒŒì¼ê²½ë¡œì—ì„œ ì ‘ì†ì •ë³´ í”„ë¡œí¼í‹°íŒŒì¼ì„ ì½ëŠ”ë‹¤.
 			propService.loadConnectionInfoConfig(filePath);
 
-			// 4. ÇÁ·ÎÆÛÆ¼ÆÄÀÏ¿¡ ÀÛ¼ºµÈ ³»¿ë¿¡ µû¶ó µ¿Àû ¿ä¼Ò¸¦ »ı¼ºÇÑ´Ù.
+			// 4. í”„ë¡œí¼í‹°íŒŒì¼ì— ì‘ì„±ëœ ë‚´ìš©ì— ë”°ë¼ ë™ì  ìš”ì†Œë¥¼ ìƒì„±í•œë‹¤.
 			createSettingDynamicElements();
 
-			// 5. remember.properties ÆÄÀÏ¿¡ ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÆÄÀÏ °æ·Î¸¦ ÀúÀåÇÑ´Ù.
+			// 5. remember.properties íŒŒì¼ì— ìµœê·¼ ì‚¬ìš©ëœ ì„¤ì •íŒŒì¼ ê²½ë¡œë¥¼ ì €ì¥í•œë‹¤.
 			propService.saveLastUseConnectionInfoSetting(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
-			// 6. ÆÄÀÏ load°¡ ½ÇÆĞ ½Ã, Alert ¸Ş½ÃÁö¸¦ ¶ç¿î´Ù.
-			String headerText = "¼³Á¤ÆÄÀÏ ºÒ·¯¿À±â";
-			String contentText = "¼³Á¤ÆÄÀÏ ºÒ·¯¿À±â¿¡ ½ÇÆĞÇß½À´Ï´Ù. ¼³Á¤ÆÄÀÏÀ» È®ÀÎÇØÁÖ¼¼¿ä.";
+			// 6. íŒŒì¼ loadê°€ ì‹¤íŒ¨ ì‹œ, Alert ë©”ì‹œì§€ë¥¼ ë„ìš´ë‹¤.
+			String headerText = "ì„¤ì •íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°";
+			String contentText = "ì„¤ì •íŒŒì¼ ë¶ˆëŸ¬ì˜¤ê¸°ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤. ì„¤ì •íŒŒì¼ì„ í™•ì¸í•´ì£¼ì„¸ìš”.";
 			AlertUtils.showAlert(AlertType.ERROR, headerText, contentText);
 		}
 	}
 
 	/**
-	 * [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤] - ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â´Ù.
+	 * [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •] - ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •íŒŒì¼ì„ ë¶ˆëŸ¬ì˜¨ë‹¤.
 	 * 
 	 * @param filePath
 	 */
@@ -263,13 +263,13 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [¼³Á¤] - [Á¢¼ÓÁ¤º¸ ¼³Á¤] - º¯°æ»çÇ×À» .propertiesÆÄÀÏ¿¡ ÀúÀåÇÑ´Ù.
+	 * [ì„¤ì •] - [ì ‘ì†ì •ë³´ ì„¤ì •] - ë³€ê²½ì‚¬í•­ì„ .propertiesíŒŒì¼ì— ì €ì¥í•œë‹¤.
 	 * 
 	 * @param e
 	 */
 	@SuppressWarnings("unchecked")
 	public void saveConnInfoSettings(ActionEvent e) {
-		// TODO ÀÔ·Â°ª °Ë»ç
+		// TODO ì…ë ¥ê°’ ê²€ì‚¬
 
 		String configFilePath = fileChooserText.getText();
 
@@ -289,25 +289,25 @@ public class SettingMenuController implements Initializable {
 			return;
 		}
 
-		// ¼³Á¤ÆÄÀÏ ReLoading
+		// ì„¤ì •íŒŒì¼ ReLoading
 		loadSelectedConfigFile(configFilePath);
 	}
 
 	/**
-	 * [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤] - »ç¿ëÀÚ°¡ ¼±ÅÃÇÑ ¼³Á¤¿¡ µû¶ó ¼³Á¤ÆÄÀÏ(.properties)À» »ı¼º ¶Ç´Â ¼öÁ¤ÇÑ´Ù.
+	 * [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •] - ì‚¬ìš©ìê°€ ì„ íƒí•œ ì„¤ì •ì— ë”°ë¼ ì„¤ì •íŒŒì¼(.properties)ì„ ìƒì„± ë˜ëŠ” ìˆ˜ì •í•œë‹¤.
 	 * 
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
-		String headerText = "¼³Á¤ ÀúÀå";
-		String contentText = "¸ğ´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ÀÌ ÀúÀåµÇ¾ú½À´Ï´Ù.";
+		String headerText = "ì„¤ì • ì €ì¥";
+		String contentText = "ëª¨ë‹ˆí„°ë§ì—¬ë¶€ ì„¤ì •ì´ ì €ì¥ë˜ì—ˆìŠµë‹ˆë‹¤.";
 		AlertType alertType = AlertType.INFORMATION;
 
 		try {
 			String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 			propService.saveMonitoringPresetSetting(presetName, monitoringYNVBox.getToggleSelection());
 		} catch (Exception ex) {
-			contentText = "¸ğ´ÏÅÍ¸µ¿©ºÎ ¼³Á¤ ÀúÀå¿¡ ½ÇÆĞÇß½À´Ï´Ù.";
+			contentText = "ëª¨ë‹ˆí„°ë§ì—¬ë¶€ ì„¤ì • ì €ì¥ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.";
 			alertType = AlertType.ERROR;
 		} finally {
 			AlertUtils.showAlert(alertType, headerText, contentText);
@@ -315,7 +315,7 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤ÇÒ ¿ä¼Òµé µ¿Àû »ı¼º
+	 * ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •í•  ìš”ì†Œë“¤ ë™ì  ìƒì„±
 	 * 
 	 * @param rootVBox
 	 * @param dbYnList
@@ -346,7 +346,7 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [¼³Á¤] - ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â ÈÄ, µ¿Àû UI¸¦ »ı¼ºÇÑ´Ù.
+	 * [ì„¤ì •] - ì„¤ì •íŒŒì¼ì„ ë¶ˆëŸ¬ì˜¨ í›„, ë™ì  UIë¥¼ ìƒì„±í•œë‹¤.
 	 */
 	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
@@ -361,9 +361,9 @@ public class SettingMenuController implements Initializable {
 			dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox.lookup("#dbConnVBox");
 			dbConnVBox.clearConnInfoMap();
 		} else {
-			// DB Á¢¼ÓÁ¤º¸ UI
+			// DB ì ‘ì†ì •ë³´ UI
 			dbConnVBox = new ConnectionInfoVBox<>(new DBConnInfoControl());
-			dbConnVBox.setMenuTitle("DB Á¢¼ÓÁ¤º¸", FontAwesomeIcon.DATABASE);
+			dbConnVBox.setMenuTitle("DB ì ‘ì†ì •ë³´", FontAwesomeIcon.DATABASE);
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
 		}
@@ -375,39 +375,39 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
-			// Server Á¢¼ÓÁ¤º¸ UI
+			// Server ì ‘ì†ì •ë³´ UI
 			serverConnVBox = new ConnectionInfoVBox<>(new ServerConnInfoControl());
-			serverConnVBox.setMenuTitle("¼­¹ö Á¢¼ÓÁ¤º¸", FontAwesomeIcon.SERVER);
+			serverConnVBox.setMenuTitle("ì„œë²„ ì ‘ì†ì •ë³´", FontAwesomeIcon.SERVER);
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
 		}
 
 		serverConnVBox.addConnInfoList(jschConnInfoList);
 
-		// [¼³Á¤] - [¸ğ´ÏÅÍ¸µ ¿©ºÎ ¼³Á¤]
+		// [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ ì—¬ë¶€ ì„¤ì •]
 		reloadingMonitoringSetting("");
 	}
 
 	/**
-	 * [¼³Á¤] - [¸ğ´ÏÅÍ¸µ¿©ºÎ¼³Á¤] - PresetÀ» ´Ù½Ã ºÒ·¯¿Â´Ù.
+	 * [ì„¤ì •] - [ëª¨ë‹ˆí„°ë§ì—¬ë¶€ì„¤ì •] - Presetì„ ë‹¤ì‹œ ë¶ˆëŸ¬ì˜¨ë‹¤.
 	 * 
 	 * @param curPresetName
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
-		// ÃÖÁ¾ ÀĞÀ» ÆÄÀÏ °æ·Î
+		// ìµœì¢… ì½ì„ íŒŒì¼ ê²½ë¡œ
 		String readPresetName = "";
 
 		// Preset Combo Clear
 		monitoringPresetComboBox.getItems().clear();
 		monitoringPresetComboBox.getItems().addAll(propService.getMonitoringPresetNameList());
 
-		// ÁöÁ¤µÈ PresetÀÌ ¾ø´Ù¸é ÃÖ±Ù »ç¿ëµÈ PresetÀ¸·Î ¼¼ÆÃÇÑ´Ù.
-		// ¸¸¾à ÃÖ±Ù »ç¿ëµÈ PresetÀÌ ¾ø´Ù¸é Ã¹¹øÂ° PresetÀ¸·Î ¼¼ÆÃÇÑ´Ù.
+		// ì§€ì •ëœ Presetì´ ì—†ë‹¤ë©´ ìµœê·¼ ì‚¬ìš©ëœ Presetìœ¼ë¡œ ì„¸íŒ…í•œë‹¤.
+		// ë§Œì•½ ìµœê·¼ ì‚¬ìš©ëœ Presetì´ ì—†ë‹¤ë©´ ì²«ë²ˆì§¸ Presetìœ¼ë¡œ ì„¸íŒ…í•œë‹¤.
 		if (presetName.isEmpty()) {
-			// ÃÖ±Ù »ç¿ëµÈ ¸ğ´ÏÅÍ¸µ ¼³Á¤ ÀĞ±â
+			// ìµœê·¼ ì‚¬ìš©ëœ ëª¨ë‹ˆí„°ë§ ì„¤ì • ì½ê¸°
 			String lastUsePresetName = propService.getLastUsePresetFileName(fileChooserText.getText());
 			if (StringUtils.isEmpty(lastUsePresetName) && monitoringPresetComboBox.getItems().size() != 0) {
-				// ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÀÌ ¾ø´Ù¸é, Ã¹¹øÂ° ¼³Á¤ ÀĞ±â
+				// ìµœê·¼ ì‚¬ìš©ëœ ì„¤ì •ì´ ì—†ë‹¤ë©´, ì²«ë²ˆì§¸ ì„¤ì • ì½ê¸°
 				readPresetName = monitoringPresetComboBox.getItems().get(0);
 			} else {
 				readPresetName = lastUsePresetName;
@@ -416,7 +416,7 @@ public class SettingMenuController implements Initializable {
 			readPresetName = presetName;
 		}
 
-		// ComboBox ¼±ÅÃ ¹× Preset ÆÄÀÏ ÀĞ±â
+		// ComboBox ì„ íƒ ë° Preset íŒŒì¼ ì½ê¸°
 		if (!StringUtils.isEmpty(readPresetName)) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
 			loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(readPresetName));
@@ -433,12 +433,12 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [¼³Á¤] - [Á¢¼ÓÁ¤º¸ ¼³Á¤] - »õ·Î¿î Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀ» »ı¼ºÇÑ´Ù.
+	 * [ì„¤ì •] - [ì ‘ì†ì •ë³´ ì„¤ì •] - ìƒˆë¡œìš´ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ì„ ìƒì„±í•œë‹¤.
 	 * 
 	 * @param e
 	 */
 	public void createNewConfigFile(ActionEvent e) {
-		// TextInputDialog »ı¼º
+		// TextInputDialog ìƒì„±
 		TextInputDialog configInputDialog = new TextInputDialog();
 		// ICON
 		configInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
@@ -451,30 +451,30 @@ public class SettingMenuController implements Initializable {
 		stage.getIcons().add(new Image(
 				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
 		// Button Custom
-		ButtonType okButton = new ButtonType("ÀÔ·Â", ButtonData.OK_DONE);
+		ButtonType okButton = new ButtonType("ì…ë ¥", ButtonData.OK_DONE);
 		configInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
 		configInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
 		// Content
-		configInputDialog.setTitle("Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ »ı¼º");
-		configInputDialog.setHeaderText("»õ·Î¿î Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏÀÇ ÀÌ¸§À» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
-		configInputDialog.setContentText("¼³Á¤ÆÄÀÏ¸í: ");
+		configInputDialog.setTitle("ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ìƒì„±");
+		configInputDialog.setHeaderText("ìƒˆë¡œìš´ ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ì˜ ì´ë¦„ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
+		configInputDialog.setContentText("ì„¤ì •íŒŒì¼ëª…: ");
 		// Result
 		Optional<String> result = configInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			if (input.length() == 0) {
-				AlertUtils.showAlert(AlertType.ERROR, "Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ »ı¼º", "¼³Á¤ÆÄÀÏ¸íÀ» ÀÔ·ÂÇØÁÖ¼¼¿ä.");
+				AlertUtils.showAlert(AlertType.ERROR, "ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ìƒì„±", "ì„¤ì •íŒŒì¼ëª…ì„ ì…ë ¥í•´ì£¼ì„¸ìš”.");
 				return;
 			}
 
-			// TODO ÀÔ·Â°ª °Ë»ç (¿µ¾î¸¸)
-			// 1. Á¢¼ÓÁ¤º¸ ¼³Á¤ÆÄÀÏ »ı¼º + default ¸ğ´ÏÅÍ¸µ¿©ºÎ Preset ¼³Á¤ÆÄÀÏ »ı¼º
+			// TODO ì…ë ¥ê°’ ê²€ì‚¬ (ì˜ì–´ë§Œ)
+			// 1. ì ‘ì†ì •ë³´ ì„¤ì •íŒŒì¼ ìƒì„± + default ëª¨ë‹ˆí„°ë§ì—¬ë¶€ Preset ì„¤ì •íŒŒì¼ ìƒì„±
 			String newSettingFile = propService.addConnectionInfoSetting(input);
 
 			// 2. Set Node Visible
 			setVisible(noConnInfoConfigAP, false);
 			setVisible(noMonitoringConfigAP, false);
 
-			// 3. »ı¼ºµÈ ¼³Á¤ÆÄÀÏ Load
+			// 3. ìƒì„±ëœ ì„¤ì •íŒŒì¼ Load
 			loadSelectedConfigFile(newSettingFile);
 		});
 	}

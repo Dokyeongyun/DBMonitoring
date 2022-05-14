@@ -16,10 +16,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import root.core.domain.JdbcConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.DI.DependencyInjection;
+import root.repository.implement.PropertyRepositoryImpl;
 
 public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 
@@ -61,7 +61,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public boolean isAnyEmptyInputForConnectionTest() {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
@@ -73,7 +73,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		String dbms = "oracle";
 		DBConnInfoOnChangedEvent changedEvent = new DBConnInfoOnChangedEvent(dbms);
 		DBConnInfoOnChangedActionEvent changedActionEvent = new DBConnInfoOnChangedActionEvent(dbms);
-		
+
 		// Set event
 		driverCB.setOnAction(changedActionEvent);
 		hostTF.setOnKeyReleased(changedEvent);
@@ -113,7 +113,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		driverCB.getSelectionModel().select(jdbc.getJdbcDriver());
 		aliasTF.setText(jdbc.getJdbcDBName());
 	}
-	
+
 	public JdbcConnectionInfo getInputValues() {
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo();
 		jdbc.setJdbcDBName(this.aliasTF.getText());
@@ -133,18 +133,19 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
 				passwordPF.getText(), aliasTF.getText(), driverCB.getSelectionModel().getSelectedItem());
 	}
-	
+
 	private String generateURL(String dbms) {
 		StringBuffer url = new StringBuffer();
 		url.append("jdbc:").append(dbms).append(":")
-				.append(driverCB.getSelectionModel().getSelectedItem() == null ? "" : driverCB.getSelectionModel().getSelectedItem())
+				.append(driverCB.getSelectionModel().getSelectedItem() == null ? ""
+						: driverCB.getSelectionModel().getSelectedItem())
 				.append(":@")
 				.append(hostTF.getText() == null ? "" : hostTF.getText()).append(":")
 				.append(portTF.getText() == null ? "" : portTF.getText()).append("/")
 				.append(sidTF.getText() == null ? "" : sidTF.getText());
 		return url.toString();
 	}
-	
+
 	private void setDBConnTestBtnDisable(Node node) {
 		try {
 			// Find Top Node
@@ -168,18 +169,18 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void dbConnInfoChangedEventHandle(String dbms, Event event) {
 		// Generate URL
 		urlTF.setText(generateURL(dbms));
-		
+
 		// Find Top Parent and set disable DBConnTestBtn
 		setDBConnTestBtnDisable((Node) event.getTarget());
 	}
-	
+
 	/**
-	 * Å° ÀÔ·ÂÀ» ÅëÇØ ÀÔ·ÂµÈ Database Á¢¼ÓÁ¤º¸¸¦ ÀÌ¿ëÇØ URLÀ» »ı¼ºÇÏ°í,
-	 * ÀÔ·ÂµÈ °ª¿¡ µû¶ó DB ¿¬µ¿Å×½ºÆ® ¹öÆ°À» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÑ´Ù.
+	 * í‚¤ ì…ë ¥ì„ í†µí•´ ì…ë ¥ëœ Database ì ‘ì†ì •ë³´ë¥¼ ì´ìš©í•´ URLì„ ìƒì„±í•˜ê³ ,
+	 * ì…ë ¥ëœ ê°’ì— ë”°ë¼ DB ì—°ë™í…ŒìŠ¤íŠ¸ ë²„íŠ¼ì„ í™œì„±í™”/ë¹„í™œì„±í™”í•œë‹¤.
 	 * 
 	 * @author DKY
 	 *
@@ -191,17 +192,17 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		public DBConnInfoOnChangedEvent(String dbms) {
 			this.dbms = dbms;
 		}
-		
+
 		@Override
 		public void handle(Event event) {
 			System.out.println("DBConnInfoOnKeyReleasedEvent Event Fire!");
 			dbConnInfoChangedEventHandle(dbms, event);
 		}
 	}
-	
+
 	/**
-	 * ÄŞº¸¹Ú½º ¼±ÅÃÀ» ÅëÇØ ÀÔ·ÂµÈ Database Á¢¼ÓÁ¤º¸¸¦ ÀÌ¿ëÇØ URLÀ» »ı¼ºÇÏ°í,
-	 * ÀÔ·ÂµÈ °ª¿¡ µû¶ó DB ¿¬µ¿Å×½ºÆ® ¹öÆ°À» È°¼ºÈ­/ºñÈ°¼ºÈ­ÇÑ´Ù.
+	 * ì½¤ë³´ë°•ìŠ¤ ì„ íƒì„ í†µí•´ ì…ë ¥ëœ Database ì ‘ì†ì •ë³´ë¥¼ ì´ìš©í•´ URLì„ ìƒì„±í•˜ê³ ,
+	 * ì…ë ¥ëœ ê°’ì— ë”°ë¼ DB ì—°ë™í…ŒìŠ¤íŠ¸ ë²„íŠ¼ì„ í™œì„±í™”/ë¹„í™œì„±í™”í•œë‹¤.
 	 * 
 	 * @author DKY
 	 *
@@ -213,7 +214,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		public DBConnInfoOnChangedActionEvent(String dbms) {
 			this.dbms = dbms;
 		}
-		
+
 		@Override
 		public void handle(ActionEvent event) {
 			System.out.println("DBConnInfoOnKeyReleasedEvent Event Fire!");

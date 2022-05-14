@@ -27,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import root.javafx.DI.DependencyInjection;
 import root.javafx.Service.ConnectionTestService;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 public class ConnectionInfoVBox<T> extends VBox {
 
@@ -38,17 +38,17 @@ public class ConnectionInfoVBox<T> extends VBox {
 	FontAwesomeIconView menuIconIV;
 
 	@FXML
-	StackPane connInfoStackPane; // ¡¢º”¡§∫∏ º≥¡§ ±◊∏ÆµÂ∏¶ ¥„¥¬ ƒ¡≈◊¿Ã≥ 
+	StackPane connInfoStackPane; // Ï†ëÏÜçÏ†ïÎ≥¥ ÏÑ§Ï†ï Í∑∏Î¶¨ÎìúÎ•º Îã¥Îäî Ïª®ÌÖåÏù¥ÎÑà
 
 	@FXML
-	AnchorPane connInfoNoDataAP; // ¡¢º”¡§∫∏ No Data AchorPane
+	AnchorPane connInfoNoDataAP; // Ï†ëÏÜçÏ†ïÎ≥¥ No Data AchorPane
 
 	@FXML
-	Text connInfoText; // ¡¢º”¡§∫∏ ¿Œµ¶Ω∫ ≈ÿΩ∫∆Æ
+	Text connInfoText; // Ï†ëÏÜçÏ†ïÎ≥¥ Ïù∏Îç±Ïä§ ÌÖçÏä§Ìä∏
 
 	@FXML
 	FontAwesomeIconView connTestIcon;
-	
+
 	@FXML
 	JFXButton connTestBtn;
 
@@ -63,16 +63,16 @@ public class ConnectionInfoVBox<T> extends VBox {
 
 	@FXML
 	JFXButton nextConnInfoBtn;
-	
+
 	private ConnInfoControl<T> connInfoControl;
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
-	
+
 	private long connInfoIdx = -1;
-	
+
 	public ConnectionInfoVBox(ConnInfoControl<T> connInfoControl) {
 		this.connInfoControl = connInfoControl;
-		
+
 		try {
 			FXMLLoader loader = DependencyInjection.getLoader("/fxml/ConnectionInfoVBox.fxml");
 			loader.setController(this);
@@ -82,7 +82,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void clearConnInfoMap() {
 		this.connInfoAPMap.clear();
 		connInfoIdx = -1;
@@ -107,65 +107,65 @@ public class ConnectionInfoVBox<T> extends VBox {
 	public boolean saveConnInfoSettings(String configFilePath) {
 		return connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
 	}
-	
+
 	public void addConnInfoList(List<T> connInfoList) {
 		if (connInfoList.isEmpty()) {
-			connInfoNoDataAP.toFront();	
+			connInfoNoDataAP.toFront();
 			return;
 		}
-		
-		for(T connInfo : connInfoList) {
+
+		for (T connInfo : connInfoList) {
 			ConnectionInfoAP connInfoAP = connInfoControl.getConnInfoAP(connInfo);
 			addConnectionInfoAP(1, connInfoAP);
 		}
 	}
-	
+
 	/* Button Click Listener */
-	
+
 	public void testConnection(ActionEvent e) {
 
-		// «ˆ¿Á APø° ¿€º∫µ» ¡¢º”¡§∫∏∏¶ ¿ÃøÎ«ÿ ø¨∞· ≈◊Ω∫∆Æ
+		// ÌòÑÏû¨ APÏóê ÏûëÏÑ±Îêú Ï†ëÏÜçÏ†ïÎ≥¥Î•º Ïù¥Ïö©Ìï¥ Ïó∞Í≤∞ ÌÖåÏä§Ìä∏
 		ConnectionInfoAP curAP = connInfoAPMap.get(connInfoIdx).getAp();
-		
+
 		ConnectionTestService testService = connInfoControl.getConnectionTestService(curAP);
-		
+
 		if (testService != null) {
-			// æ∆¿Ãƒ‹ ∫Ø∞Ê
+			// ÏïÑÏù¥ÏΩò Î≥ÄÍ≤Ω
 			setConnectionBtnIcon(4);
 
-			// º∫∞¯Ω√ ƒ›πÈ ¿Ã∫•∆Æ º≥¡§
+			// ÏÑ±Í≥µÏãú ÏΩúÎ∞± Ïù¥Î≤§Ìä∏ ÏÑ§Ï†ï
 			testService.setOnSucceeded(s -> {
 				testService.alertSucceed();
 				setConnectionBtnIcon(2);
 			});
-			
-			// Ω«∆–Ω√ ƒ›πÈ ¿Ã∫•∆Æ º≥¡§
+
+			// Ïã§Ìå®Ïãú ÏΩúÎ∞± Ïù¥Î≤§Ìä∏ ÏÑ§Ï†ï
 			testService.setOnFailed(f -> {
 				testService.alertFailed();
 				setConnectionBtnIcon(3);
 			});
 
-			// ø¨∞·≈◊Ω∫∆Æ Ω√¿€
+			// Ïó∞Í≤∞ÌÖåÏä§Ìä∏ ÏãúÏûë
 			testService.start();
 		} else {
-			AlertUtils.showAlert(AlertType.ERROR, "ø¨∞· ≈◊Ω∫∆Æ", "ø¨∞· ≈◊Ω∫∆Æ∏¶ ºˆ«‡«œ±‚ ¿ß«— ¡§∫∏∞° ∫Œ¡∑«’¥œ¥Ÿ.\n¡¢º”¡§∫∏∏¶ ¿‘∑¬«ÿ¡÷ººø‰.");
+			AlertUtils.showAlert(AlertType.ERROR, "Ïó∞Í≤∞ ÌÖåÏä§Ìä∏", "Ïó∞Í≤∞ ÌÖåÏä§Ìä∏Î•º ÏàòÌñâÌïòÍ∏∞ ÏúÑÌïú Ï†ïÎ≥¥Í∞Ä Î∂ÄÏ°±Ìï©ÎãàÎã§.\nÏ†ëÏÜçÏ†ïÎ≥¥Î•º ÏûÖÎ†•Ìï¥Ï£ºÏÑ∏Ïöî.");
 		}
 	}
-	
+
 	public void addNewConnInfo(ActionEvent e) {
 		addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
 	}
 
 	public void removeConnInfo(ActionEvent e) {
 		// Remove view
-		Node removeNode = this.connInfoStackPane.lookup("#"+connInfoIdx);
+		Node removeNode = this.connInfoStackPane.lookup("#" + connInfoIdx);
 		this.connInfoStackPane.getChildren().remove(removeNode);
-		
+
 		// Remove data
 		connInfoIdx = this.connInfoAPMap.remove(connInfoIdx);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
-	
+
 	public void prevConnInfo(ActionEvent e) {
 		if (connInfoAPMap.getActiveAPCnt() == 0) {
 			return;
@@ -186,25 +186,24 @@ public class ConnectionInfoVBox<T> extends VBox {
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
-	
 	/* View Control Method */
-	
+
 	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
 		menuTitleLB.setText(menuTitle);
 		menuIconIV.setIcon(menuIcon);
 	}
-	
+
 	// When connectionInfo index changed, this method always will be invoked.
 	private void bringFrontConnInfoAnchorPane(long index) {
 		connInfoIdx = index;
-		
-		if(connInfoStackPane.lookup("#" + (index)) != null) {
+
+		if (connInfoStackPane.lookup("#" + (index)) != null) {
 			connInfoStackPane.lookup("#" + (index)).toFront();
 		}
-		
+
 		// Set ConnectionInfo index text
 		setConnInfoIndexText();
-		
+
 		// Button disabled when there is no active ConnectionInfoAP
 		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
 			connTestBtn.setDisable(true);
@@ -222,90 +221,90 @@ public class ConnectionInfoVBox<T> extends VBox {
 	private void setConnInfoIndexText() {
 		long curIdxTxt = this.connInfoAPMap.getActiveCurIdx(connInfoIdx);
 		long maxIdxTxt = this.connInfoAPMap.getActiveAPCnt();
-		
-		if(curIdxTxt == 0 && maxIdxTxt == 0) {
-			connInfoText.setText("°ÿ¡¢º”¡§∫∏∏¶ √ﬂ∞°«ÿ¡÷ººø‰.");	
+
+		if (curIdxTxt == 0 && maxIdxTxt == 0) {
+			connInfoText.setText("‚ÄªÏ†ëÏÜçÏ†ïÎ≥¥Î•º Ï∂îÍ∞ÄÌï¥Ï£ºÏÑ∏Ïöî.");
 		} else {
 			connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
 		}
-			
+
 	}
-	
+
 	// TODO Convert to Enum class
 	private void setConnectionBtnIcon(int type) {
 		switch (type) {
-		case 1:
-			connTestIcon.setIcon(FontAwesomeIcon.PLUG);
-			connTestIcon.setFill(Paint.valueOf("#000000"));
-			break;
-		case 2:
-			connTestIcon.setIcon(FontAwesomeIcon.CHECK);
-			connTestIcon.setFill(Paint.valueOf("#49a157"));
-			break;
-		case 3:
-			connTestIcon.setIcon(FontAwesomeIcon.TIMES);
-			connTestIcon.setFill(Paint.valueOf("#c40a0a"));
-			break;
-		case 4:
-			connTestIcon.setIcon(FontAwesomeIcon.SPINNER);
-			connTestIcon.setFill(Paint.valueOf("#484989"));
-			connTestIcon.getStyleClass().add("fa-spin");
-			break;
+			case 1:
+				connTestIcon.setIcon(FontAwesomeIcon.PLUG);
+				connTestIcon.setFill(Paint.valueOf("#000000"));
+				break;
+			case 2:
+				connTestIcon.setIcon(FontAwesomeIcon.CHECK);
+				connTestIcon.setFill(Paint.valueOf("#49a157"));
+				break;
+			case 3:
+				connTestIcon.setIcon(FontAwesomeIcon.TIMES);
+				connTestIcon.setFill(Paint.valueOf("#c40a0a"));
+				break;
+			case 4:
+				connTestIcon.setIcon(FontAwesomeIcon.SPINNER);
+				connTestIcon.setFill(Paint.valueOf("#484989"));
+				connTestIcon.getStyleClass().add("fa-spin");
+				break;
 		}
 	}
-	
+
 	@AllArgsConstructor
 	@Data
 	public static class StatefulAP {
-		private int status; // 1: ±‚¡∏, 2: Ω≈±‘, 3: ¡¶∞≈
+		private int status; // 1: Í∏∞Ï°¥, 2: Ïã†Í∑ú, 3: Ï†úÍ±∞
 		private ConnectionInfoAP ap;
 	}
 
 	private static class ConnInfoAPMap {
 		private ObservableMap<Long, StatefulAP> map = FXCollections.observableHashMap();
-		
+
 		public long put(StatefulAP ap) {
 			this.map.put((long) this.map.size(), ap);
 			return this.map.size() - 1;
 		}
-		
+
 		public long remove(long index) {
-			// ªÛ≈¬ ∫Ø∞Ê (°Ê ªË¡¶)
+			// ÏÉÅÌÉú Î≥ÄÍ≤Ω (‚Üí ÏÇ≠Ï†ú)
 			this.map.get(index).setStatus(3);
-			
-			// «ˆ¿Á ¿Œµ¶Ω∫ µ⁄ø° ªË¡¶µ«¡ˆ æ ¿∫ AnchorPane ∞πºˆ ƒ´øÓ∆Æ
+
+			// ÌòÑÏû¨ Ïù∏Îç±Ïä§ Îí§Ïóê ÏÇ≠Ï†úÎêòÏßÄ ÏïäÏùÄ AnchorPane Í∞ØÏàò Ïπ¥Ïö¥Ìä∏
 			long count = this.map.keySet()
 					.stream()
 					.filter(key -> key >= index)
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 
-			// ¿Œµ¶Ω∫ æ˜µ•¿Ã∆Æ
+			// Ïù∏Îç±Ïä§ ÏóÖÎç∞Ïù¥Ìä∏
 			return count > 0 ? getNextActiveIdx(index) : getPrevActiveIdx(index);
 		}
-		
+
 		public StatefulAP get(long index) {
 			return this.map.get(index);
 		}
-		
+
 		public Map<Long, StatefulAP> getActiveAPs() {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
 					.collect(Collectors.toMap(key -> key, key -> map.get(key)));
 		}
-		
+
 		public long getActiveAPCnt() {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 		}
-		
+
 		public void clear() {
 			this.map.clear();
 		}
-		
+
 		public long getActiveCurIdx(long connInfoIdx) {
 			return this.map.keySet()
 					.stream()
@@ -313,7 +312,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 		}
-		
+
 		public long getFirstActiveIdx() {
 			return this.map.keySet()
 					.stream()
@@ -321,7 +320,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse((long) -1);
 		}
-		
+
 		public long getLastActiveIdx() {
 			return this.map.keySet()
 					.stream()
@@ -330,9 +329,9 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse((long) -1);
 		}
-		
+
 		public long getPrevActiveIdx(long connInfoIdx) {
-			if(connInfoIdx == getFirstActiveIdx()) {
+			if (connInfoIdx == getFirstActiveIdx()) {
 				return getLastActiveIdx();
 			}
 			return this.map.keySet()
@@ -343,9 +342,9 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse(getFirstActiveIdx());
 		}
-		
+
 		public long getNextActiveIdx(long connInfoIdx) {
-			if(connInfoIdx == getLastActiveIdx()) {
+			if (connInfoIdx == getLastActiveIdx()) {
 				return getFirstActiveIdx();
 			}
 			return this.map.keySet()

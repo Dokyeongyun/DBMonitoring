@@ -28,10 +28,10 @@ public class MonitoringYNVBox extends VBox {
 	}
 
 	/**
-	 * ºÎ¸ğ Åä±Û ¹öÆ°À» Ãß°¡ÇÑ´Ù.
+	 * ë¶€ëª¨ í† ê¸€ ë²„íŠ¼ì„ ì¶”ê°€í•œë‹¤.
 	 * 
-	 * @param type ¸ğ´ÏÅÍ¸µ Å¸ÀÔ
-	 * @param text Åä±Û ¿ì±Û ¶óº§ ÅØ½ºÆ®
+	 * @param type ëª¨ë‹ˆí„°ë§ íƒ€ì…
+	 * @param text í† ê¸€ ìš°ê¸€ ë¼ë²¨ í…ìŠ¤íŠ¸
 	 */
 	public void addParentToggle(MonitoringType type, String text) {
 		if (!toggleGroupVBoxs.containsKey(type)) {
@@ -44,18 +44,18 @@ public class MonitoringYNVBox extends VBox {
 	}
 
 	/**
-	 * ÀÚ½Ä Åä±Û ¹öÆ°À» Ãß°¡ÇÑ´Ù.
+	 * ìì‹ í† ê¸€ ë²„íŠ¼ì„ ì¶”ê°€í•œë‹¤.
 	 * 
-	 * @param type       ¸ğ´ÏÅÍ¸µ Å¸ÀÔ
-	 * @param text       Åä±Û ¿ìÃø ¶óº§ ÅØ½ºÆ®
-	 * @param isSelected Åä±Û ¼±ÅÃ ¿©ºÎ
+	 * @param type       ëª¨ë‹ˆí„°ë§ íƒ€ì…
+	 * @param text       í† ê¸€ ìš°ì¸¡ ë¼ë²¨ í…ìŠ¤íŠ¸
+	 * @param isSelected í† ê¸€ ì„ íƒ ì—¬ë¶€
 	 */
 	public void addChildToggle(MonitoringType type, String text) {
 		toggleGroupVBoxs.get(type).addChildToggle(text);
 	}
 
 	/**
-	 * ÀÚ½Ä Åä±ÛÀÇ ¼±ÅÃ¿©ºÎ¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * ìì‹ í† ê¸€ì˜ ì„ íƒì—¬ë¶€ë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 * 
 	 * @param monitoringYn
 	 */
@@ -71,7 +71,7 @@ public class MonitoringYNVBox extends VBox {
 	}
 
 	/**
-	 * ÀÚ½Ä Åä±ÛÀÇ ¼±ÅÃ¿©ºÎ¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * ìì‹ í† ê¸€ì˜ ì„ íƒì—¬ë¶€ë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 * 
 	 * @param list
 	 */

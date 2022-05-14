@@ -8,7 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import root.javafx.DI.DependencyInjection;
-import root.utils.SceneUtils;
+import root.javafx.utils.SceneUtils;
 
 public class HomeController {
 

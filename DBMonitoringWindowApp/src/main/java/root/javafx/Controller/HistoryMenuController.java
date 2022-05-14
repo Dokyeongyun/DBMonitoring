@@ -11,28 +11,28 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
+import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
-import root.core.domain.JdbcConnectionInfo;
-import root.core.domain.JschConnectionInfo;
 import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
-import root.core.repository.implement.DBCheckRepositoryImpl;
-import root.core.repository.implement.LinuxServerMonitoringRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
-import root.core.repository.implement.ReportFileRepo;
 import root.core.service.contracts.PropertyService;
-import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
+import root.repository.implement.DBCheckRepositoryImpl;
+import root.repository.implement.LinuxServerMonitoringRepository;
+import root.repository.implement.PropertyRepositoryImpl;
+import root.repository.implement.ReportFileRepo;
+import root.service.implement.FilePropertyService;
 
 public class HistoryMenuController implements Initializable {
 
@@ -70,37 +70,37 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ½ÇÇà¸Ş´º È­¸é ÁøÀÔ½Ã ÃÊ±âÈ­¸¦ ¼öÇàÇÑ´Ù.
+	 * ì‹¤í–‰ë©”ë‰´ í™”ë©´ ì§„ì…ì‹œ ì´ˆê¸°í™”ë¥¼ ìˆ˜í–‰í•œë‹¤.
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// Á¢¼ÓÁ¤º¸ ¼³Á¤ ÇÁ·ÎÆÛÆ¼ ÆÄÀÏ
+		// ì ‘ì†ì •ë³´ ì„¤ì • í”„ë¡œí¼í‹° íŒŒì¼
 		List<String> connInfoFiles = propService.getConnectionInfoList();
 		if (connInfoFiles != null && connInfoFiles.size() != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties ÆÄÀÏ¿¡¼­, ÃÖ±Ù »ç¿ëµÈ ¼³Á¤ÆÄÀÏ °æ·Î°¡ ÀÖ´Ù¸é ÇØ´ç ¼³Á¤ÆÄÀÏÀ» ºÒ·¯¿Â´Ù.
+			// remember.properties íŒŒì¼ì—ì„œ, ìµœê·¼ ì‚¬ìš©ëœ ì„¤ì •íŒŒì¼ ê²½ë¡œê°€ ìˆë‹¤ë©´ í•´ë‹¹ ì„¤ì •íŒŒì¼ì„ ë¶ˆëŸ¬ì˜¨ë‹¤.
 			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
 			if (lastUseConnInfoFilePath != null) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 			}
 		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "Á¢¼ÓÁ¤º¸ ¼³Á¤", "¼³Á¤µÈ DB/Server Á¢¼ÓÁ¤º¸°¡ ¾ø½À´Ï´Ù.\n[¼³Á¤]¸Ş´º·Î ÀÌµ¿ÇÕ´Ï´Ù.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "ì ‘ì†ì •ë³´ ì„¤ì •", "ì„¤ì •ëœ DB/Server ì ‘ì†ì •ë³´ê°€ ì—†ìŠµë‹ˆë‹¤.\n[ì„¤ì •]ë©”ë‰´ë¡œ ì´ë™í•©ë‹ˆë‹¤.");
 			return;
 		}
 
-		// ComboBox º¯°æ ÀÌº¥Æ®
+		// ComboBox ë³€ê²½ ì´ë²¤íŠ¸
 		runConnInfoFileComboBox.getSelectionModel().selectedItemProperty()
 				.addListener((options, oldValue, newValue) -> {
-					// TODO °¢ Tabº° ÄŞº¸¹Ú½º ¾ÆÀÌÅÛ º¯°æ
+					// TODO ê° Tabë³„ ì½¤ë³´ë°•ìŠ¤ ì•„ì´í…œ ë³€ê²½
 				});
 
-		String dbComboBoxLabel = "DB ¼±ÅÃ";
+		String dbComboBoxLabel = "DB ì„ íƒ";
 		List<String> dbComboBoxItems = propService.getMonitoringDBNameList();
-		String serverComboBoxLabel = "Server ¼±ÅÃ";
+		String serverComboBoxLabel = "Server ì„ íƒ";
 		List<String> serverComboBoxItems = propService.getMonitoringServerNameList();
 
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems);
@@ -110,7 +110,7 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ AnchorPane Ãß°¡ÇÏ°í ¿ä¼Ò¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ AnchorPane ì¶”ê°€í•˜ê³  ìš”ì†Œë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 * 
 	 * @param <T>
 	 * @param monitoringAP
@@ -121,13 +121,13 @@ public class HistoryMenuController implements Initializable {
 	 */
 	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, List<String> comboBoxItems) {
-		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox ÁÂÃø Lebel Text ¼³Á¤
-		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items ¼³Á¤
-		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPaneÀ» ºÎ¸ğ Node¿¡ Ãß°¡
+		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox ì¢Œì¸¡ Lebel Text ì„¤ì •
+		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items ì„¤ì •
+		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPaneì„ ë¶€ëª¨ Nodeì— ì¶”ê°€
 	}
 
 	/**
-	 * [½ÇÇà] - ¸ğ´ÏÅÍ¸µÀ» ½ÃÀÛÇÑ´Ù.
+	 * [ì‹¤í–‰] - ëª¨ë‹ˆí„°ë§ì„ ì‹œì‘í•œë‹¤.
 	 * 
 	 * @param e
 	 */

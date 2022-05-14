@@ -4,16 +4,16 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
-import root.core.domain.JdbcConnectionInfo;
+import root.common.database.implement.JdbcConnectionInfo;
 import root.core.repository.constracts.PropertyRepository;
-import root.core.repository.implement.PropertyRepositoryImpl;
 import root.javafx.CustomView.ConnectionInfoVBox.StatefulAP;
 import root.javafx.Service.ConnectionTestService;
 import root.javafx.Service.DatabaseConnectService;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
 
 public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 
@@ -28,15 +28,15 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 		for (StatefulAP childAP : statefulAP) {
 			DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
 			if (dbConnAP.isAnyEmptyInput()) {
-				AlertUtils.showAlert(AlertType.ERROR, "Á¢¼ÓÁ¤º¸ ¼³Á¤ ÀúÀå", "DB Á¢¼ÓÁ¤º¸¸¦ ¸ğµÎ ÀÔ·ÂÇØÁÖ¼¼¿ä");
+				AlertUtils.showAlert(AlertType.ERROR, "ì ‘ì†ì •ë³´ ì„¤ì • ì €ì¥", "DB ì ‘ì†ì •ë³´ë¥¼ ëª¨ë‘ ì…ë ¥í•´ì£¼ì„¸ìš”");
 				return false;
 			}
 			JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
 			config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
 		}
-		
+
 		propertyRepository.saveDBConnectionInfo(configFilePath, config);
-		
+
 		return true;
 	}
 
@@ -51,7 +51,7 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 		String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
 		String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
 
-		// TODO JdbcDriver, Validation Query ÇÏµåÄÚµù º¯°æ - DBMS¿¡ µû¶ó ´Ù¸£°Ô ÇØ¾ß ÇÔ
+		// TODO JdbcDriver, Validation Query í•˜ë“œì½”ë”© ë³€ê²½ - DBMSì— ë”°ë¼ ë‹¤ë¥´ê²Œ í•´ì•¼ í•¨
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
 				"SELECT 1 FROM DUAL", 1);
 		return new DatabaseConnectService(jdbc);

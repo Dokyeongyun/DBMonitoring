@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+	// Apache commons pool2
+	implementation 'commons-io:commons-io:2.8.0'
+    implementation 'org.apache.commons:commons-pool2:2.11.1'
+ 
+	// Jsch
+    implementation 'com.jcraft:jsch:0.1.55'
+    
+    // Logback
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+}

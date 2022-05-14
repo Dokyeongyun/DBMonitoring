@@ -4,12 +4,12 @@ import java.io.IOException;
 
 import javafx.event.ActionEvent;
 import root.javafx.DI.DependencyInjection;
-import root.utils.SceneUtils;
+import root.javafx.utils.SceneUtils;
 
 public class LeftMenuController {
 
 	/**
-	 * ÁÂÃø »ó´Ü Home Icon(fxId: homeBtn) onAction Event
+	 * ì¢Œì¸¡ ìƒë‹¨ Home Icon(fxId: homeBtn) onAction Event
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -19,7 +19,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ¼³Á¤ ¸Ş´º·Î ÀÌµ¿ÇÑ´Ù.
+	 * ì„¤ì • ë©”ë‰´ë¡œ ì´ë™í•œë‹¤.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -29,7 +29,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ½ÇÇà ¸Ş´º·Î ÀÌµ¿ÇÑ´Ù.
+	 * ì‹¤í–‰ ë©”ë‰´ë¡œ ì´ë™í•œë‹¤.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -39,7 +39,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ±â·Ï Á¶È¸ ¸Ş´º·Î ÀÌµ¿ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê¸°ë¡ ì¡°íšŒ ë©”ë‰´ë¡œ ì´ë™í•œë‹¤.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -49,7 +49,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * Alert Log ¸ğ´ÏÅÍ¸µ ¸Ş´º·Î ÀÌµ¿ÇÑ´Ù.
+	 * Alert Log ëª¨ë‹ˆí„°ë§ ë©”ë‰´ë¡œ ì´ë™í•œë‹¤.
 	 * 
 	 * @param e
 	 */

@@ -2,14 +2,14 @@ package root.javafx.Service;
 
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert.AlertType;
+import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
-import root.core.domain.JschConnectionInfo;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
 
 public class ServerConnectService extends ConnectionTestService {
 
-	public static final String SUCCESS_MSG = "¿ø°İ¼­¹ö¿¡ ¼º°øÀûÀ¸·Î ¿¬µ¿µÇ¾ú½À´Ï´Ù.\n Host: %s:%s";
-	public static final String FAIL_MSG = "¿ø°İ¼­¹ö ¿¬µ¿¿¡ ½ÇÆĞÇß½À´Ï´Ù.";
+	public static final String SUCCESS_MSG = "ì›ê²©ì„œë²„ì— ì„±ê³µì ìœ¼ë¡œ ì—°ë™ë˜ì—ˆìŠµë‹ˆë‹¤.\n Host: %s:%s";
+	public static final String FAIL_MSG = "ì›ê²©ì„œë²„ ì—°ë™ì— ì‹¤íŒ¨í–ˆìŠµë‹ˆë‹¤.";
 
 	private JschConnectionInfo jsch;
 	private JschServer jschServer;
@@ -36,13 +36,13 @@ public class ServerConnectService extends ConnectionTestService {
 
 	@Override
 	public void alertSucceed() {
-		AlertUtils.showAlert(AlertType.INFORMATION, "Server ¿¬µ¿Å×½ºÆ®",
+		AlertUtils.showAlert(AlertType.INFORMATION, "Server ì—°ë™í…ŒìŠ¤íŠ¸",
 				String.format(ServerConnectService.SUCCESS_MSG, jsch.getHost(), jsch.getPort()));
 	}
 
 	@Override
 	public void alertFailed() {
-		AlertUtils.showAlert(AlertType.ERROR, "Server ¿¬µ¿Å×½ºÆ®",
+		AlertUtils.showAlert(AlertType.ERROR, "Server ì—°ë™í…ŒìŠ¤íŠ¸",
 				String.format(ServerConnectService.FAIL_MSG, jsch.getHost(), jsch.getPort()));
 	}
 }

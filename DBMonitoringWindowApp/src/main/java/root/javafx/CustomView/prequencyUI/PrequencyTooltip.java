@@ -27,7 +27,7 @@ public class PrequencyTooltip extends Tooltip {
 		int loopCnt = Math.min(MAX_SHOW_COUNT, monitoringTimeList.size());
 
 		if (loopCnt == 0) {
-			Label label = new Label("¸ğ´ÏÅÍ¸µ ±â·Ï ¾øÀ½");
+			Label label = new Label("ëª¨ë‹ˆí„°ë§ ê¸°ë¡ ì—†ìŒ");
 			label.setStyle("-fx-text-fill: black;");
 			vBox.getChildren().add(label);
 		} else {

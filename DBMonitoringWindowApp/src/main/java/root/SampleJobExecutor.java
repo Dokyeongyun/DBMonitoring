@@ -14,7 +14,7 @@ import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException; 
+import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SimpleScheduleBuilder;
@@ -22,75 +22,74 @@ import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
- 
+
 /**
  * Quartz Job
  */
 public class SampleJobExecutor implements Job {
-    
-    private static final SimpleDateFormat TIMESTAMP_FMT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSS"); 
-    
-    // Scheduler°¡ ¼öÇàÇÒ ±â´ÉÀ» ¸í½ÃÇÑ´Ù.
+
+    private static final SimpleDateFormat TIMESTAMP_FMT = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSS");
+
+    // Schedulerê°€ ìˆ˜í–‰í•  ê¸°ëŠ¥ì„ ëª…ì‹œí•œë‹¤.
     @Override
     public void execute(JobExecutionContext ctx) throws JobExecutionException {
         JobDataMap jobDataMap = ctx.getJobDetail().getJobDataMap();
-        
+
         String currentDate = TIMESTAMP_FMT.format(new Date());
         String triggerKey = ctx.getTrigger().getKey().toString();
         String message = jobDataMap.getString("message");
-        
-        System.out.println(String.format("[%s][%s] %s", currentDate, triggerKey, message ));
+
+        System.out.println(String.format("[%s][%s] %s", currentDate, triggerKey, message));
     }
 }
- 
+
 /**
- * Quartz Scheduler ½ÇÇà
+ * Quartz Scheduler ì‹¤í–‰
  */
 class JobLuancher {
     public static void main(String[] args) {
         try {
-            // JOB DataMap °´Ã¼´Â Quartz¿¡¼­ ½ÇÇàµÇ´Â Job¿¡ Key-Value Çü½ÄÀ¸·Î µ¥ÀÌÅÍ¸¦ Àü´ŞÇÑ´Ù.
+            // JOB DataMap ê°ì²´ëŠ” Quartzì—ì„œ ì‹¤í–‰ë˜ëŠ” Jobì— Key-Value í˜•ì‹ìœ¼ë¡œ ë°ì´í„°ë¥¼ ì „ë‹¬í•œë‹¤.
             JobDataMap jobDataMap = new JobDataMap();
             jobDataMap.put("message", "Hello, Quartz!!!");
-            
-            // JOB »ı¼º
-            // ½ÇÇàÇÒ ³»¿ëÀÌ ÀÛ¼ºµÈ Job Å¬·¡½º¸¦ ¸Å°³º¯¼ö·Î Àü´ŞÇÏ¿© »õ·Î¿î JobÀ» »ı¼ºÇÑ´Ù.
+
+            // JOB ìƒì„±
+            // ì‹¤í–‰í•  ë‚´ìš©ì´ ì‘ì„±ëœ Job í´ë˜ìŠ¤ë¥¼ ë§¤ê°œë³€ìˆ˜ë¡œ ì „ë‹¬í•˜ì—¬ ìƒˆë¡œìš´ Jobì„ ìƒì„±í•œë‹¤.
             JobDetail jobDetail = JobBuilder.newJob(SampleJobExecutor.class)
-                                    .withIdentity("job_name", "job_group")
-                                    .setJobData(jobDataMap)
-                                    .build();
-            
-            // SimpleTrigger »ı¼º
-            // 4ÃÊ¸¶´Ù ¹İº¹ÇÏ¸ç, ÃÖ´ë 5È¸ ½ÇÇà
+                    .withIdentity("job_name", "job_group")
+                    .setJobData(jobDataMap)
+                    .build();
+
+            // SimpleTrigger ìƒì„±
+            // 4ì´ˆë§ˆë‹¤ ë°˜ë³µí•˜ë©°, ìµœëŒ€ 5íšŒ ì‹¤í–‰
             SimpleScheduleBuilder simpleSch = SimpleScheduleBuilder.repeatSecondlyForTotalCount(5, 4);
             SimpleTrigger simpleTrigger = (SimpleTrigger) TriggerBuilder.newTrigger()
-                                            .withIdentity("simple_trigger", "simple_trigger_group")
-                                            .withSchedule(simpleSch)
-                                            .forJob(jobDetail)
-                                            .build();
- 
-            // CronTrigger »ı¼º
-            // 15ÃÊÁÖ±â·Î ¹İº¹( 0, 15, 30, 45 )
+                    .withIdentity("simple_trigger", "simple_trigger_group")
+                    .withSchedule(simpleSch)
+                    .forJob(jobDetail)
+                    .build();
+
+            // CronTrigger ìƒì„±
+            // 15ì´ˆì£¼ê¸°ë¡œ ë°˜ë³µ( 0, 15, 30, 45 )
             CronScheduleBuilder cronSch = CronScheduleBuilder.cronSchedule(new CronExpression("0/15 * * * * ?"));
             CronTrigger cronTrigger = (CronTrigger) TriggerBuilder.newTrigger()
-                                        .withIdentity("cron_trigger", "cron_trigger_group")
-                                        .withSchedule(cronSch)
-                                        .forJob(jobDetail)
-                                        .build();
-            
-            // JobDtail : Trigger = 1 : N ¼³Á¤
+                    .withIdentity("cron_trigger", "cron_trigger_group")
+                    .withSchedule(cronSch)
+                    .forJob(jobDetail)
+                    .build();
+
+            // JobDtail : Trigger = 1 : N ì„¤ì •
             Set<Trigger> triggerSet = new HashSet<Trigger>();
             triggerSet.add(simpleTrigger);
             triggerSet.add(cronTrigger);
 
-            
-            // Scheduler »ı¼º
+            // Scheduler ìƒì„±
             Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             scheduler.start();
-            
-            // Scheduler µî·Ï
+
+            // Scheduler ë“±ë¡
             scheduler.scheduleJob(jobDetail, triggerSet, false);
-            
+
         } catch (ParseException | SchedulerException e) {
             e.printStackTrace();
         }

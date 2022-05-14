@@ -35,23 +35,23 @@ import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
 import root.core.domain.MonitoringResult;
 import root.core.domain.enums.RoundingDigits;
-import root.core.repository.implement.PropertyRepositoryImpl;
-import root.core.repository.implement.ReportFileRepo;
 import root.core.service.contracts.PropertyService;
-import root.core.service.implement.FilePropertyService;
 import root.core.usecase.constracts.ReportUsecase;
 import root.core.usecase.implement.ReportUsecaseImpl;
 import root.javafx.CustomView.MonitoringTableViewContainer;
 import root.javafx.CustomView.dateCell.MonitoringHistoryDateCell;
 import root.javafx.CustomView.prequencyUI.PrequencyButton;
 import root.javafx.DI.DependencyInjection;
-import root.utils.AlertUtils;
+import root.javafx.utils.AlertUtils;
+import root.repository.implement.PropertyRepositoryImpl;
+import root.repository.implement.ReportFileRepo;
+import root.service.implement.FilePropertyService;
 import root.utils.DateUtils;
 import root.utils.UnitUtils.FileSize;
 
 public class MonitoringAPController<T extends MonitoringResult> extends BorderPane implements Initializable {
 
-	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "±â·ÏÀ» Á¶È¸ÇØÁÖ¼¼¿ä.";
+	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "ê¸°ë¡ì„ ì¡°íšŒí•´ì£¼ì„¸ìš”.";
 
 	private ReportUsecase reportUsecase;
 
@@ -65,7 +65,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	@FXML
 	JFXComboBox<FileSize> unitComboBox;
- 
+
 	@FXML
 	JFXComboBox<RoundingDigits> roundComboBox;
 
@@ -74,13 +74,13 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	@FXML
 	DatePicker inquiryDatePicker;
-	
+
 	@FXML
 	Label historyDateTimeLabel;
-	
+
 	@FXML
 	JFXButton prevHistoryBtn;
-	
+
 	@FXML
 	JFXButton nextHistoryBtn;
 
@@ -107,22 +107,21 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 	}
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-		    public void handle(KeyEvent ke) {
-		    	if(ke.getCode().equals(KeyCode.Z)) {
-		    		prevHistoryBtn.fire();
-		    		ke.consume();
-		    	} else if(ke.getCode().equals(KeyCode.X)) {
-		    		nextHistoryBtn.fire();
-		    		ke.consume();
-		    	}
-		    }
+			public void handle(KeyEvent ke) {
+				if (ke.getCode().equals(KeyCode.Z)) {
+					prevHistoryBtn.fire();
+					ke.consume();
+				} else if (ke.getCode().equals(KeyCode.X)) {
+					nextHistoryBtn.fire();
+					ke.consume();
+				}
+			}
 		});
 	}
-	
+
 	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
 
@@ -205,7 +204,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ±â·ÏÀ» Ãâ·ÂÇÒ TableView¸¦ »ı¼ºÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê¸°ë¡ì„ ì¶œë ¥í•  TableViewë¥¼ ìƒì„±í•œë‹¤.
 	 */
 	private void initMonitoringTableView() {
 		tableViewContainer = new MonitoringTableViewContainer();
@@ -216,7 +215,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableDataÀÇ µ¥ÀÌÅÍ¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+	 * í•´ë‹¹ í´ë˜ìŠ¤ì˜ tableDataì˜ ë°ì´í„°ë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 	 * 
 	 * @param id
 	 */
@@ -228,7 +227,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData¿¡ µ¥ÀÌÅÍ¸¦ Ãß°¡ÇÑ´Ù. ´Ü, sync¸¦ ÇÏÁö ¾ÊÀ¸¸é ½ÇÁ¦ TableView¿¡ µ¥ÀÌÅÍ°¡ Ãâ·ÂµÇÁö´Â ¾Ê´Â´Ù.
+	 * í•´ë‹¹ í´ë˜ìŠ¤ì˜ tableDataì— ë°ì´í„°ë¥¼ ì¶”ê°€í•œë‹¤. ë‹¨, syncë¥¼ í•˜ì§€ ì•Šìœ¼ë©´ ì‹¤ì œ TableViewì— ë°ì´í„°ê°€ ì¶œë ¥ë˜ì§€ëŠ” ì•ŠëŠ”ë‹¤.
 	 * 
 	 * @param id
 	 * @param data
@@ -245,7 +244,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData¿¡ µ¥ÀÌÅÍ¼ÂÀ» Ãß°¡ÇÑ´Ù. ´Ü, sync¸¦ ÇÏÁö ¾ÊÀ¸¸é ½ÇÁ¦ TableView¿¡ µ¥ÀÌÅÍ°¡ Ãâ·ÂµÇÁö´Â ¾Ê´Â´Ù.
+	 * í•´ë‹¹ í´ë˜ìŠ¤ì˜ tableDataì— ë°ì´í„°ì…‹ì„ ì¶”ê°€í•œë‹¤. ë‹¨, syncë¥¼ í•˜ì§€ ì•Šìœ¼ë©´ ì‹¤ì œ TableViewì— ë°ì´í„°ê°€ ì¶œë ¥ë˜ì§€ëŠ” ì•ŠëŠ”ë‹¤.
 	 * 
 	 * @param id
 	 * @param dataList
@@ -259,7 +258,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç Å¬·¡½ºÀÇ tableData·Î TableViewÀÇ µ¥ÀÌÅÍ¸¦ µ¿±âÈ­ÇÑ´Ù.
+	 * í•´ë‹¹ í´ë˜ìŠ¤ì˜ tableDataë¡œ TableViewì˜ ë°ì´í„°ë¥¼ ë™ê¸°í™”í•œë‹¤.
 	 * 
 	 * @param id
 	 */
@@ -290,7 +289,8 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 					monitoringDateTime, Locale.KOREA));
 
 			// Set datepicker value
-			inquiryDatePicker.setValue(LocalDate.parse(monitoringDateTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+			inquiryDatePicker
+					.setValue(LocalDate.parse(monitoringDateTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
 			// Sync monitoring prequency UI
 			syncPrequency(prequencyTimeDivBtn.getText());
@@ -301,7 +301,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * tableData¿¡ ¼¼ÆÃµÈ µ¥ÀÌÅÍÀÇ Row¼ö¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * tableDataì— ì„¸íŒ…ëœ ë°ì´í„°ì˜ Rowìˆ˜ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param id
 	 * @return
@@ -311,7 +311,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇØ´ç AnchorPaneÀÇ ºÎ¸ğ Node¿¡ Anchor¸¦ ¼³Á¤ÇÑ´Ù.
+	 * í•´ë‹¹ AnchorPaneì˜ ë¶€ëª¨ Nodeì— Anchorë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param left
 	 * @param top
@@ -326,7 +326,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * Generic Type Parameter <T>ÀÇ ¸ğ´ÏÅÍ¸µ History¸¦ ÀĞ¾î Å×ÀÌºí¿¡ Ãâ·ÂÇÑ´Ù.
+	 * Generic Type Parameter <T>ì˜ ëª¨ë‹ˆí„°ë§ Historyë¥¼ ì½ì–´ í…Œì´ë¸”ì— ì¶œë ¥í•œë‹¤.
 	 * 
 	 * @param e
 	 */
@@ -341,7 +341,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	public void showNextHistory(ActionEvent e) {
 		showMonitoringHistory(1);
 	}
-	
+
 	private void showMonitoringHistory(int type) {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
@@ -350,7 +350,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		Map<String, List<T>> allDataList = inquiryMonitoringHistory(type);
 		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "Á¶È¸°á°ú ¾øÀ½", "ÇØ´çÀÏÀÚÀÇ ¸ğ´ÏÅÍ¸µ ±â·ÏÀÌ ¾ø½À´Ï´Ù.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "ì¡°íšŒê²°ê³¼ ì—†ìŒ", "í•´ë‹¹ì¼ìì˜ ëª¨ë‹ˆí„°ë§ ê¸°ë¡ì´ ì—†ìŠµë‹ˆë‹¤.");
 			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 			return;
 		}
@@ -376,10 +376,10 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 
 		String current = historyDateTimeLabel.getText();
-		if(current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
+		if (current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
 			return null;
 		}
-		
+
 		String currentDateTime = DateUtils.convertDateFormat("yyyy-MM-dd HH:mm:ss", "yyyyMMddHHmmss", current,
 				Locale.KOREA);
 		if (type == -1) {
@@ -404,7 +404,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇöÀç ¼±ÅÃµÈ Á¶È¸Á¶°ÇÀ¸·Î Àç°Ë»öÇÑ´Ù.
+	 * í˜„ì¬ ì„ íƒëœ ì¡°íšŒì¡°ê±´ìœ¼ë¡œ ì¬ê²€ìƒ‰í•œë‹¤.
 	 * 
 	 * @param e
 	 */
@@ -413,7 +413,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ÇöÀç TableView¿¡ ¼¼ÆÃµÈ °ªÀ» ExcelÆÄÀÏ·Î ´Ù¿î·ÎµåÇÑ´Ù.
+	 * í˜„ì¬ TableViewì— ì„¸íŒ…ëœ ê°’ì„ ExcelíŒŒì¼ë¡œ ë‹¤ìš´ë¡œë“œí•œë‹¤.
 	 * 
 	 * @param e
 	 */
@@ -422,7 +422,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ±â·Ï ºóµµ¸¦ ³ªÅ¸³»´Â UI¹ÙÀÇ AM/PM ±¸ºĞÀ» º¯°æÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê¸°ë¡ ë¹ˆë„ë¥¼ ë‚˜íƒ€ë‚´ëŠ” UIë°”ì˜ AM/PM êµ¬ë¶„ì„ ë³€ê²½í•œë‹¤.
 	 * 
 	 * @param e
 	 */
@@ -433,7 +433,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ ±â·Ï ºóµµ µ¥ÀÌÅÍ¿Í UIÀÇ Sync¸¦ ¸ÂÃá´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê¸°ë¡ ë¹ˆë„ ë°ì´í„°ì™€ UIì˜ Syncë¥¼ ë§ì¶˜ë‹¤.
 	 * 
 	 * @param timeDiv
 	 */
