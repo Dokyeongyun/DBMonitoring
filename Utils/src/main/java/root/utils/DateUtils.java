@@ -39,7 +39,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ¿À´Ã ³¯Â¥ ¹× ½Ã°£À» ÁöÁ¤ÇÑ format¿¡ µû¶ó ¹İÈ¯ÇÑ´Ù.
+	 * ì˜¤ëŠ˜ ë‚ ì§œ ë° ì‹œê°„ì„ ì§€ì •í•œ formatì— ë”°ë¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param format
 	 * @return
@@ -50,7 +50,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ¸Å°³º¯¼ö·Î ÁÖ¾îÁø ³âµµ, ´ŞÀÇ ÃÑ ÀÏ¼ö¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * ë§¤ê°œë³€ìˆ˜ë¡œ ì£¼ì–´ì§„ ë…„ë„, ë‹¬ì˜ ì´ ì¼ìˆ˜ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param year
 	 * @param month
@@ -62,7 +62,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ¿ù, ÀÏÀÇ °ªÀ» µÎ ÀÚ¸®·Î º¯È¯ÇÏ¿© ¹İÈ¯ÇÑ´Ù.
+	 * ì›”, ì¼ì˜ ê°’ì„ ë‘ ìë¦¬ë¡œ ë³€í™˜í•˜ì—¬ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param value
 	 * @return
@@ -72,7 +72,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ÁÖ¾îÁø ÀÏÀÚÀÇ ¿äÀÏÀ» ¹İÈ¯ÇÑ´Ù.
+	 * ì£¼ì–´ì§„ ì¼ìì˜ ìš”ì¼ì„ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param year
 	 * @param month
@@ -88,7 +88,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ÁÖ¾îÁø ÀÏÀÚ°¡ ÁÖ¸»ÀÎÁö È®ÀÎÇÑ´Ù.
+	 * ì£¼ì–´ì§„ ì¼ìê°€ ì£¼ë§ì¸ì§€ í™•ì¸í•œë‹¤.
 	 * 
 	 * @param year
 	 * @param month
@@ -102,10 +102,10 @@ public class DateUtils {
 	}
 
 	/**
-	 * ±âÁØÀÏÀÚ¿¡¼­ ³â, ¿ù, ÀÏÀ» ´õÇÑ ³¯Â¥¸¦ ¹İÈ¯ÇÑ´Ù. »©±âµµ °¡´ÉÇÏ´Ù.
+	 * ê¸°ì¤€ì¼ìì—ì„œ ë…„, ì›”, ì¼ì„ ë”í•œ ë‚ ì§œë¥¼ ë°˜í™˜í•œë‹¤. ë¹¼ê¸°ë„ ê°€ëŠ¥í•˜ë‹¤.
 	 * 
-	 * @param curDate      ±âÁØÀÏÀÚ
-	 * @param returnFormat ¹İÈ¯¹ŞÀ» ³¯Â¥Æ÷¸Ë
+	 * @param curDate      ê¸°ì¤€ì¼ì
+	 * @param returnFormat ë°˜í™˜ë°›ì„ ë‚ ì§œí¬ë§·
 	 * @param year
 	 * @param month
 	 * @param day
@@ -122,9 +122,9 @@ public class DateUtils {
 	}
 
 	/**
-	 * ±âÁØÀÏÀÚ¿¡¼­ ³â, ¿ù, ÀÏÀ» ´õÇÑ ³¯Â¥¸¦ ¹İÈ¯ÇÑ´Ù. »©±âµµ °¡´ÉÇÏ´Ù.
+	 * ê¸°ì¤€ì¼ìì—ì„œ ë…„, ì›”, ì¼ì„ ë”í•œ ë‚ ì§œë¥¼ ë°˜í™˜í•œë‹¤. ë¹¼ê¸°ë„ ê°€ëŠ¥í•˜ë‹¤.
 	 * 
-	 * @param dateStringYMD yyyy-MM-dd ÇüÅÂÀÇ ³¯Â¥ ¹®ÀÚ¿­
+	 * @param dateStringYMD yyyy-MM-dd í˜•íƒœì˜ ë‚ ì§œ ë¬¸ìì—´
 	 * @param year
 	 * @param month
 	 * @param day
@@ -145,8 +145,8 @@ public class DateUtils {
 	}
 
 	/**
-	 * µÎ ³¯Â¥°£ Â÷ÀÌ¸¦ ¹İÈ¯ÇÑ´Ù. (Ã¹¹øÂ°³¯Â¥ - µÎ¹øÂ°³¯Â¥) ÀÌ ¶§, °¢ ³¯Â¥ÀÇ Æ÷¸ËÀº Ã¹¹øÂ° ÀÎÀÚ·Î Àü´ŞÇÑ dateFormat°ú
-	 * µ¿ÀÏÇØ¾ßÇÑ´Ù.
+	 * ë‘ ë‚ ì§œê°„ ì°¨ì´ë¥¼ ë°˜í™˜í•œë‹¤. (ì²«ë²ˆì§¸ë‚ ì§œ - ë‘ë²ˆì§¸ë‚ ì§œ) ì´ ë•Œ, ê° ë‚ ì§œì˜ í¬ë§·ì€ ì²«ë²ˆì§¸ ì¸ìë¡œ ì „ë‹¬í•œ dateFormatê³¼
+	 * ë™ì¼í•´ì•¼í•œë‹¤.
 	 * 
 	 * @param dateFormat
 	 * @param date1
@@ -167,7 +167,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ³¯Â¥ Ç¥Çö Æ÷¸ËÀ» º¯È¯ÇÑ´Ù.
+	 * ë‚ ì§œ í‘œí˜„ í¬ë§·ì„ ë³€í™˜í•œë‹¤.
 	 * 
 	 * @param fromFormat
 	 * @param toFormat
@@ -189,7 +189,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * ³¯Â¥ Ç¥Çö Æ÷¸ËÀ» º¯È¯ÇÑ´Ù.
+	 * ë‚ ì§œ í‘œí˜„ í¬ë§·ì„ ë³€í™˜í•œë‹¤.
 	 * 
 	 * @param toFormat
 	 * @param localDate
@@ -200,7 +200,7 @@ public class DateUtils {
 	}
 
 	/**
-	 * Date °´Ã¼¸¦ Æ÷¸ËÆÃÇÑ´Ù.
+	 * Date ê°ì²´ë¥¼ í¬ë§·íŒ…í•œë‹¤.
 	 * 
 	 * @param date
 	 * @param toFormat
@@ -211,11 +211,11 @@ public class DateUtils {
 	}
 
 	/**
-	 * ³¯Â¥°£ ´ë¼Ò°ü°è¸¦ ºñ±³ÇÑ´Ù.
+	 * ë‚ ì§œê°„ ëŒ€ì†Œê´€ê³„ë¥¼ ë¹„êµí•œë‹¤.
 	 * 
-	 * @param format  ³¯Â¥ Æ÷¸Ë
-	 * @param base    ±âÁØ ³¯Â¥
-	 * @param compare ºñ±³ ³¯Â¥
+	 * @param format  ë‚ ì§œ í¬ë§·
+	 * @param base    ê¸°ì¤€ ë‚ ì§œ
+	 * @param compare ë¹„êµ ë‚ ì§œ
 	 * @return
 	 */
 	public static int compareTo(String format, String base, String compare) {
@@ -233,9 +233,9 @@ public class DateUtils {
 	}
 
 	/**
-	 * DateFormat¿¡ ´ëÇÑ Á¤±ÔÇ¥Çö½ÄÀ» ¸ğ¸¦ ¶§, »çÀü ÀúÀåµÈ DateTimeFormatter ¸ñ·ÏÀ» ¼øÈ¸ÇÏ¿© ³¯Â¥¹®ÀÚ¿­À» ÆÄ½ÌÇÑ´Ù.
+	 * DateFormatì— ëŒ€í•œ ì •ê·œí‘œí˜„ì‹ì„ ëª¨ë¥¼ ë•Œ, ì‚¬ì „ ì €ì¥ëœ DateTimeFormatter ëª©ë¡ì„ ìˆœíšŒí•˜ì—¬ ë‚ ì§œë¬¸ìì—´ì„ íŒŒì‹±í•œë‹¤.
 	 * 
-	 * @param dateString ³¯Â¥ ¹®ÀÚ¿­
+	 * @param dateString ë‚ ì§œ ë¬¸ìì—´
 	 * @return
 	 */
 	public static LocalDate parse(String dateString) {

@@ -16,7 +16,7 @@ import org.apache.commons.text.StringEscapeUtils;
 public class CsvUtils {
 
 	/**
-	 * °´Ã¼¸®½ºÆ®¸¦ csv string ÇüÅÂ·Î º¯È¯ÇÑ´Ù.
+	 * ê°ì²´ë¦¬ìŠ¤íŠ¸ë¥¼ csv string í˜•íƒœë¡œ ë³€í™˜í•œë‹¤.
 	 * 
 	 * @param list
 	 * @param clazz
@@ -43,7 +43,7 @@ public class CsvUtils {
 	}
 
 	/**
-	 * ¹®ÀÚ¿­¸®½ºÆ®¸¦ comma(,) ¹®ÀÚ·Î ÀÌ¾î csvÇüÅÂÀÇ Çì´õ¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * ë¬¸ìì—´ë¦¬ìŠ¤íŠ¸ë¥¼ comma(,) ë¬¸ìë¡œ ì´ì–´ csví˜•íƒœì˜ í—¤ë”ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param fieldNames
 	 * @return
@@ -59,7 +59,7 @@ public class CsvUtils {
 	}
 
 	/**
-	 * ¸Å°³º¯¼ö·Î Àü´ŞµÈ ClassÀÇ ÇÊµå¿Í, ºÎ¸ğ Å¬·¡½ºÀÇ ÇÊµå¸¦ comma(,)·Î ÀÌ¾î csvÇüÅÂÀÇ Çì´õ¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * ë§¤ê°œë³€ìˆ˜ë¡œ ì „ë‹¬ëœ Classì˜ í•„ë“œì™€, ë¶€ëª¨ í´ë˜ìŠ¤ì˜ í•„ë“œë¥¼ comma(,)ë¡œ ì´ì–´ csví˜•íƒœì˜ í—¤ë”ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param clazz
 	 * @return
@@ -78,7 +78,7 @@ public class CsvUtils {
 
 		return sb.toString();
 	}
-	
+
 	/**
 	 * 
 	 * @param object
@@ -203,7 +203,7 @@ public class CsvUtils {
 	}
 
 	/**
-	 * csv ÇüÅÂÀÇ ¹®ÀÚ¿­À» ÆÄ½ÌÇÏ¿© ¼ø¼­´ë·Î Map°´Ã¼¿¡ ´ã¾Æ ¹İÈ¯ÇÑ´Ù.
+	 * csv í˜•íƒœì˜ ë¬¸ìì—´ì„ íŒŒì‹±í•˜ì—¬ ìˆœì„œëŒ€ë¡œ Mapê°ì²´ì— ë‹´ì•„ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param csvLine
 	 * @return
@@ -241,7 +241,7 @@ public class CsvUtils {
 	}
 
 	/**
-	 * ¹®ÀÚ¿­À» ½Öµû¿ÈÇ¥·Î °¨½Ñ ÈÄ ¹İÈ¯ÇÑ´Ù. ´Ü, ¹®ÀÚ¿­ ³»¿¡ ½Öµû¿ÈÇ¥°¡ ÀÖ´Ù¸é html escapeµÈ ¹®ÀÚ·Î º¯È¯ÇÑ´Ù.
+	 * ë¬¸ìì—´ì„ ìŒë”°ì˜´í‘œë¡œ ê°ì‹¼ í›„ ë°˜í™˜í•œë‹¤. ë‹¨, ë¬¸ìì—´ ë‚´ì— ìŒë”°ì˜´í‘œê°€ ìˆë‹¤ë©´ html escapeëœ ë¬¸ìë¡œ ë³€í™˜í•œë‹¤.
 	 * 
 	 * @param string
 	 * @return
@@ -251,7 +251,7 @@ public class CsvUtils {
 	}
 
 	/**
-	 * ¸Å°³º¯¼ö·Î Àü´ŞµÈ Å¬·¡½ºÀÇ Field¿Í, ºÎ¸ğÅ¬·¡½ºÀÇ Field±îÁö ReflectionÇÏ¿© ¹İÈ¯ÇÑ´Ù.
+	 * ë§¤ê°œë³€ìˆ˜ë¡œ ì „ë‹¬ëœ í´ë˜ìŠ¤ì˜ Fieldì™€, ë¶€ëª¨í´ë˜ìŠ¤ì˜ Fieldê¹Œì§€ Reflectioní•˜ì—¬ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @param clazz
 	 * @return
