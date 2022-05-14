@@ -45,8 +45,8 @@ public class ExcelSheet {
 	private int colIndex = 0;
 	private int maxCols = 0;
 
-	// 1. DB °ü¸®´ëÀå Æ÷¸ËÀ» ¿ùº°·Î ÀÛ¼ºÇØÁÖ´Â ¸Ş¼­µå ÀÛ¼º (°ü¸®´ëÀå ½Å±Ô »ı¼º)
-	// 2. ±âÁ¸ °ü¸®´ëÀåÀ» ÀĞ¾î Æ¯Á¤ ³¯Â¥ÀÇ DB ¸ğ´ÏÅÍ¸µ °á°ú¸¦ Ãß°¡ÇÏ´Â ¸Ş¼­µå ÀÛ¼º (¸ğ´ÏÅÍ¸µ °á°ú ÀÛ¼º)
+	// 1. DB ê´€ë¦¬ëŒ€ì¥ í¬ë§·ì„ ì›”ë³„ë¡œ ì‘ì„±í•´ì£¼ëŠ” ë©”ì„œë“œ ì‘ì„± (ê´€ë¦¬ëŒ€ì¥ ì‹ ê·œ ìƒì„±)
+	// 2. ê¸°ì¡´ ê´€ë¦¬ëŒ€ì¥ì„ ì½ì–´ íŠ¹ì • ë‚ ì§œì˜ DB ëª¨ë‹ˆí„°ë§ ê²°ê³¼ë¥¼ ì¶”ê°€í•˜ëŠ” ë©”ì„œë“œ ì‘ì„± (ëª¨ë‹ˆí„°ë§ ê²°ê³¼ ì‘ì„±)
 
 	public ExcelSheet(String sheetName) {
 		workbook = new XSSFWorkbook();
@@ -58,10 +58,10 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¿¢¼¿ ÆÄÀÏÀÇ Ä¿¼­ À§Ä¡¸¦ º¯°æÇÑ´Ù.
+	 * ì—‘ì…€ íŒŒì¼ì˜ ì»¤ì„œ ìœ„ì¹˜ë¥¼ ë³€ê²½í•œë‹¤.
 	 * 
-	 * @param col º¯°æÇÒ ¼¿ Column Index
-	 * @param row º¯°æÇÒ ¼¿ Row Index
+	 * @param col ë³€ê²½í•  ì…€ Column Index
+	 * @param row ë³€ê²½í•  ì…€ Row Index
 	 */
 	public void setOffset(int col, int row) {
 		colIndex = col;
@@ -69,7 +69,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¿­ÀÇ ³Êºñ¸¦ º¯°æÇÑ´Ù.
+	 * ì—´ì˜ ë„ˆë¹„ë¥¼ ë³€ê²½í•œë‹¤.
 	 * 
 	 * @param colIndex
 	 * @param width
@@ -79,10 +79,10 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¼¿ ½ºÅ¸ÀÏ ¹× ¼¿ °ªÀ» ¼³Á¤ÇÑ´Ù. ÀÌ ¶§, ¼³Á¤ÇÒ À§Ä¡¿¡ Row ¶Ç´Â CellÀÌ ¾ø´Ù¸é ÇØ´ç À§Ä¡¿¡ Row, CellÀ» »õ·Î »ı¼ºÇÑ´Ù.
+	 * ì…€ ìŠ¤íƒ€ì¼ ë° ì…€ ê°’ì„ ì„¤ì •í•œë‹¤. ì´ ë•Œ, ì„¤ì •í•  ìœ„ì¹˜ì— Row ë˜ëŠ” Cellì´ ì—†ë‹¤ë©´ í•´ë‹¹ ìœ„ì¹˜ì— Row, Cellì„ ìƒˆë¡œ ìƒì„±í•œë‹¤.
 	 * 
-	 * @param colIndex  CellStyle, CellValue¸¦ ¼³Á¤ÇÒ ¼¿ÀÇ Column Index
-	 * @param rowIndex  CellStyle, CellValue¸¦ ¼³Á¤ÇÒ ¼¿ÀÇ Row Index
+	 * @param colIndex  CellStyle, CellValueë¥¼ ì„¤ì •í•  ì…€ì˜ Column Index
+	 * @param rowIndex  CellStyle, CellValueë¥¼ ì„¤ì •í•  ì…€ì˜ Row Index
 	 * @param cellStyle CellStyle
 	 * @param cellValue CellValue
 	 */
@@ -113,8 +113,8 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ÇØ´ç SheetÀÇ ¸¶Áö¸·¿¡ »õ·Î¿î Row¸¦ Ãß°¡ÇÑ´Ù. ¸Å°³º¯¼ö·Î ÁÖ¾îÁø backgroundColor, boldWeight¸¦ ÀÌ¿ëÇÏ¿© »õ·Î¿î
-	 * CellStyleÀ» ¼³Á¤ÇÑ´Ù.
+	 * í•´ë‹¹ Sheetì˜ ë§ˆì§€ë§‰ì— ìƒˆë¡œìš´ Rowë¥¼ ì¶”ê°€í•œë‹¤. ë§¤ê°œë³€ìˆ˜ë¡œ ì£¼ì–´ì§„ backgroundColor, boldWeightë¥¼ ì´ìš©í•˜ì—¬ ìƒˆë¡œìš´
+	 * CellStyleì„ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param backgroundColor
 	 * @param boldweight
@@ -134,8 +134,8 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ÇØ´ç SheetÀÇ ¸¶Áö¸·¿¡ »õ·Î¿î Row¸¦ Ãß°¡ÇÑ´Ù. ¸Å°³º¯¼ö·Î ÁÖ¾îÁø style, cellStrings¿¡ µû¶ó °¢ CellÀÇ Style,
-	 * Value¸¦ ¼³Á¤ÇÑ´Ù.
+	 * í•´ë‹¹ Sheetì˜ ë§ˆì§€ë§‰ì— ìƒˆë¡œìš´ Rowë¥¼ ì¶”ê°€í•œë‹¤. ë§¤ê°œë³€ìˆ˜ë¡œ ì£¼ì–´ì§„ style, cellStringsì— ë”°ë¼ ê° Cellì˜ Style,
+	 * Valueë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param style
 	 * @param cellStrings
@@ -164,7 +164,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * »õ·Î¿î CellStyleÀ» »ı¼ºÇÑ´Ù.
+	 * ìƒˆë¡œìš´ CellStyleì„ ìƒì„±í•œë‹¤.
 	 * 
 	 * @param backgroundColor
 	 * @param boldweight
@@ -189,7 +189,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * FontHeight¸¦ ¼³Á¤ÇÑ´Ù.
+	 * FontHeightë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param cellnum
 	 * @param rownum
@@ -200,7 +200,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * CellÀÇ Á¤·Ä¹æ¹ıÀ» ¼³Á¤ÇÑ´Ù.
+	 * Cellì˜ ì •ë ¬ë°©ë²•ì„ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param cellnum
 	 * @param rownum
@@ -211,7 +211,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¼¿ ³»ÀÇ ÅØ½ºÆ® °³ÇàÀ» ¼³Á¤ÇÑ´Ù.
+	 * ì…€ ë‚´ì˜ í…ìŠ¤íŠ¸ ê°œí–‰ì„ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param cellnum
 	 * @param rownum
@@ -244,7 +244,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * CellStyleÀÇ Å×µÎ¸®¸¦ °ËÀº»ö ½Ç¼±À¸·Î ¼³Á¤ÇÑ´Ù.
+	 * CellStyleì˜ í…Œë‘ë¦¬ë¥¼ ê²€ì€ìƒ‰ ì‹¤ì„ ìœ¼ë¡œ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param cellStyle
 	 */
@@ -260,7 +260,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¿¢¼¿ÆÄÀÏÀ» ÀÛ¼ºÇÑ´Ù.
+	 * ì—‘ì…€íŒŒì¼ì„ ì‘ì„±í•œë‹¤.
 	 * 
 	 * @param outputStream
 	 * @throws IOException
@@ -279,24 +279,24 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ¼¿À» º´ÇÕÇÑ´Ù.
+	 * ì…€ì„ ë³‘í•©í•œë‹¤.
 	 * 
-	 * @param sCol º´ÇÕÇÒ ¹üÀ§ÀÇ ½ÃÀÛ Column Index
-	 * @param sRow º´ÇÕÇÒ ¹üÀ§ÀÇ ½ÃÀÛ Row Index
-	 * @param eCol º´ÇÕÇÒ ¹üÀ§ÀÇ ³¡ Column Index
-	 * @param eRow º´ÇÕÇÒ ¹üÀ§ÀÇ ³¡ Row Index
+	 * @param sCol ë³‘í•©í•  ë²”ìœ„ì˜ ì‹œì‘ Column Index
+	 * @param sRow ë³‘í•©í•  ë²”ìœ„ì˜ ì‹œì‘ Row Index
+	 * @param eCol ë³‘í•©í•  ë²”ìœ„ì˜ ë Column Index
+	 * @param eRow ë³‘í•©í•  ë²”ìœ„ì˜ ë Row Index
 	 */
 	public void merge(int sCol, int sRow, int eCol, int eRow) {
 		sheet.addMergedRegion(new CellRangeAddress(sRow, eRow, sCol, eCol));
 	}
 
 	/**
-	 * ¼¿À» º´ÇÕÇÏ°í, ÇØ´ç ¼¿ÀÇ CellStyleÀ» ¼³Á¤ÇÑ´Ù.
+	 * ì…€ì„ ë³‘í•©í•˜ê³ , í•´ë‹¹ ì…€ì˜ CellStyleì„ ì„¤ì •í•œë‹¤.
 	 * 
-	 * @param sCol      º´ÇÕÇÒ ¹üÀ§ÀÇ ½ÃÀÛ Column Index
-	 * @param sRow      º´ÇÕÇÒ ¹üÀ§ÀÇ ½ÃÀÛ Row Index
-	 * @param eCol      º´ÇÕÇÒ ¹üÀ§ÀÇ ³¡ Column Index
-	 * @param eRow      º´ÇÕÇÒ ¹üÀ§ÀÇ ³¡ Row Index
+	 * @param sCol      ë³‘í•©í•  ë²”ìœ„ì˜ ì‹œì‘ Column Index
+	 * @param sRow      ë³‘í•©í•  ë²”ìœ„ì˜ ì‹œì‘ Row Index
+	 * @param eCol      ë³‘í•©í•  ë²”ìœ„ì˜ ë Column Index
+	 * @param eRow      ë³‘í•©í•  ë²”ìœ„ì˜ ë Row Index
 	 * @param cellStyle
 	 * @param cellValue
 	 */
@@ -320,7 +320,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * »ç°¢ÇüÀ» ±×¸°´Ù.
+	 * ì‚¬ê°í˜•ì„ ê·¸ë¦°ë‹¤.
 	 * 
 	 * @param rownum
 	 * @param scolnum
@@ -371,7 +371,7 @@ public class ExcelSheet {
 	}
 
 	/**
-	 * ROW ³ôÀÌ ÀÚµ¿ Á¶Àı
+	 * ROW ë†’ì´ ìë™ ì¡°ì ˆ
 	 * 
 	 * @param rownum
 	 * @param cellValue
@@ -442,55 +442,55 @@ public class ExcelSheet {
 	public static List<List<String>> readExcel(InputStream is, String fileName, int sheetAt)
 			throws IOException, InvalidFormatException {
 		List<List<String>> resultList = new ArrayList<>();
-		// ÆÄÀÏÀ» ÀĞ±âÀ§ÇØ ¿¢¼¿ÆÄÀÏÀ» °¡Á®¿Â´Ù
+		// íŒŒì¼ì„ ì½ê¸°ìœ„í•´ ì—‘ì…€íŒŒì¼ì„ ê°€ì ¸ì˜¨ë‹¤
 		Workbook workbook = getWorkbook(is, fileName);
 		int rowindex = 0;
 		int columnindex = 0;
-		// ½ÃÆ® ¼ö (Ã¹¹øÂ°¿¡¸¸ Á¸ÀçÇÏ¹Ç·Î 0À» ÁØ´Ù)
-		// ¸¸¾à °¢ ½ÃÆ®¸¦ ÀĞ±âÀ§ÇØ¼­´Â FOR¹®À» ÇÑ¹ø´õ µ¹·ÁÁØ´Ù
+		// ì‹œíŠ¸ ìˆ˜ (ì²«ë²ˆì§¸ì—ë§Œ ì¡´ì¬í•˜ë¯€ë¡œ 0ì„ ì¤€ë‹¤)
+		// ë§Œì•½ ê° ì‹œíŠ¸ë¥¼ ì½ê¸°ìœ„í•´ì„œëŠ” FORë¬¸ì„ í•œë²ˆë” ëŒë ¤ì¤€ë‹¤
 		Sheet sheet = workbook.getSheetAt(sheetAt);
-		// ÇàÀÇ ¼ö
+		// í–‰ì˜ ìˆ˜
 		int rows = sheet.getPhysicalNumberOfRows();
 		for (rowindex = 0; rowindex < rows; rowindex++) {
-			// ÇàÀ» ÀĞ´Â´Ù
+			// í–‰ì„ ì½ëŠ”ë‹¤
 			Row row = sheet.getRow(rowindex);
 			resultList.add(new ArrayList<String>());
 			if (row != null) {
-				// ¼¿ÀÇ ¼ö
+				// ì…€ì˜ ìˆ˜
 				int cells = row.getPhysicalNumberOfCells();
 				for (columnindex = 0; columnindex <= cells; columnindex++) {
-					// ¼¿°ªÀ» ÀĞ´Â´Ù
+					// ì…€ê°’ì„ ì½ëŠ”ë‹¤
 					Cell cell = row.getCell(columnindex);
 					String value = "";
-					// ¼¿ÀÌ ºó°ªÀÏ°æ¿ì¸¦ À§ÇÑ ³ÎÃ¼Å©
+					// ì…€ì´ ë¹ˆê°’ì¼ê²½ìš°ë¥¼ ìœ„í•œ ë„ì²´í¬
 					if (rowindex == 0 && cell == null) {
 						continue;
 					}
 					if (cell != null) {
-						// Å¸ÀÔº°·Î ³»¿ë ÀĞ±â
+						// íƒ€ì…ë³„ë¡œ ë‚´ìš© ì½ê¸°
 						switch (cell.getCellTypeEnum()) {
-						case FORMULA:
-							value = cell.getCellFormula();
-							break;
-						case NUMERIC:
-							value = String.format("%1$,.0f", cell.getNumericCellValue());
-							break;
-						case STRING:
-							value = cell.getStringCellValue() + "";
-							break;
-						case BLANK:
-							value = cell.getBooleanCellValue() + "";
-							break;
-						case ERROR:
-							value = cell.getErrorCellValue() + "";
-							break;
-						case BOOLEAN:
-							value = cell.getBooleanCellValue() + "";
-							break;
-						case _NONE:
-							break;
-						default:
-							break;
+							case FORMULA:
+								value = cell.getCellFormula();
+								break;
+							case NUMERIC:
+								value = String.format("%1$,.0f", cell.getNumericCellValue());
+								break;
+							case STRING:
+								value = cell.getStringCellValue() + "";
+								break;
+							case BLANK:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case ERROR:
+								value = cell.getErrorCellValue() + "";
+								break;
+							case BOOLEAN:
+								value = cell.getBooleanCellValue() + "";
+								break;
+							case _NONE:
+								break;
+							default:
+								break;
 						}
 					}
 					if ("false".equals(value)) {

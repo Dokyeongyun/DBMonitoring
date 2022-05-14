@@ -16,7 +16,7 @@ public class DBManageExcel extends ExcelSheet {
 	}
 
 	/**
-	 * ¿ùº° DB¸ğ´ÏÅÍ¸µ °ü¸®´ëÀå ¿¢¼¿ÆÄÀÏ ÅÛÇÃ¸´À» »ı¼ºÇÑ´Ù.
+	 * ì›”ë³„ DBëª¨ë‹ˆí„°ë§ ê´€ë¦¬ëŒ€ì¥ ì—‘ì…€íŒŒì¼ í…œí”Œë¦¿ì„ ìƒì„±í•œë‹¤.
 	 * 
 	 * @param year
 	 * @param month
@@ -26,66 +26,70 @@ public class DBManageExcel extends ExcelSheet {
 		OutputStream fos;
 		try {
 			String filePath = "./report/";
-			String fileName = "DB°ü¸®´ëÀå_Á¾ÇÕ_"+year+"."+DateUtils.getTwoDigitDate(month);
+			String fileName = "DBê´€ë¦¬ëŒ€ì¥_ì¢…í•©_" + year + "." + DateUtils.getTwoDigitDate(month);
 			String extension = ".xlsx";
 			fos = new FileOutputStream(filePath + fileName + extension);
-		
+
 			ExcelSheet excel = new ExcelSheet("MonthlyReport");
-			
-			// CellStyle »ı¼º
-			// 1. È¸»ö ¹è°æ, °ËÀº»ö ½Ç¼± Å×µÎ¸®, Áß¾ÓÁ¤·Ä
+
+			// CellStyle ìƒì„±
+			// 1. íšŒìƒ‰ ë°°ê²½, ê²€ì€ìƒ‰ ì‹¤ì„  í…Œë‘ë¦¬, ì¤‘ì•™ì •ë ¬
 			XSSFCellStyle grayCS = excel.createCellStyle(IndexedColors.GREY_25_PERCENT, false); /// "#d0cece"
-			// 2. È¸»ö ¹è°æ, °ËÀº»ö ½Ç¼± Å×µÎ¸®, ¿ŞÂÊÁ¤·Ä
+			// 2. íšŒìƒ‰ ë°°ê²½, ê²€ì€ìƒ‰ ì‹¤ì„  í…Œë‘ë¦¬, ì™¼ìª½ì •ë ¬
 			XSSFCellStyle grayCSLeft = excel.createCellStyle(IndexedColors.GREY_25_PERCENT, false);
 			grayCSLeft.setAlignment(HorizontalAlignment.LEFT);
-			// 3. Èò»ö ¹è°æ, °ËÀº»ö ½Ç¼± Å×µÎ¸®, Áß¾ÓÁ¤·Ä
+			// 3. í°ìƒ‰ ë°°ê²½, ê²€ì€ìƒ‰ ì‹¤ì„  í…Œë‘ë¦¬, ì¤‘ì•™ì •ë ¬
 			XSSFCellStyle whiteCS = excel.createCellStyle(IndexedColors.WHITE, false);
-			// 4. Èò»ö ¹è°æ, °ËÀº»ö ½Ç¼± Å×µÎ¸®, ¿ŞÂÊÁ¤·Ä
+			// 4. í°ìƒ‰ ë°°ê²½, ê²€ì€ìƒ‰ ì‹¤ì„  í…Œë‘ë¦¬, ì™¼ìª½ì •ë ¬
 			XSSFCellStyle whiteCSLeft = excel.createCellStyle(IndexedColors.WHITE, false);
 			whiteCSLeft.setAlignment(HorizontalAlignment.LEFT);
-			
+
 			// Write Header Region
-			// 1. [DB Check List] ÅØ½ºÆ®  
+			// 1. [DB Check List] í…ìŠ¤íŠ¸
 			excel.merge(0, 0, 1, 1, grayCS, "DB Check List");
-			// 2. [yyyy³â MM¿ù] ÅØ½ºÆ®
-			excel.merge(2, 0, 2, 1, grayCS, "2021³â 10¿ù");
+			// 2. [yyyyë…„ MMì›”] í…ìŠ¤íŠ¸
+			excel.merge(2, 0, 2, 1, grayCS, "2021ë…„ 10ì›”");
 			excel.setColWidth(2, 8000);
-			// 3. [Check List, ³¯Â¥ Header]
+			// 3. [Check List, ë‚ ì§œ Header]
 			excel.merge(0, 2, 2, 3, grayCS, "Check List");
 
 			int dayOfMonth = DateUtils.getMonthlyDayCount(year, month);
-			
+
 			int dayTextColIndex = 3;
 			int dayTextRowIndex = 2;
-			for(int i=1; i<=dayOfMonth; i++) {
+			for (int i = 1; i <= dayOfMonth; i++) {
 				String dayOfWeek = DateUtils.getDayOfWeek(year, month, i, TextStyle.SHORT, Locale.KOREAN);
-				excel.setCell(dayTextColIndex+i-1, dayTextRowIndex, grayCS, DateUtils.getTwoDigitDate(i));
-				excel.setCell(dayTextColIndex+i-1, dayTextRowIndex+1, DateUtils.isWeekEnd(year, month, i) ? grayCS : whiteCS, dayOfWeek);
+				excel.setCell(dayTextColIndex + i - 1, dayTextRowIndex, grayCS, DateUtils.getTwoDigitDate(i));
+				excel.setCell(dayTextColIndex + i - 1, dayTextRowIndex + 1,
+						DateUtils.isWeekEnd(year, month, i) ? grayCS : whiteCS, dayOfWeek);
 			}
-			
-			// 4. DBº° Header 
-			String[] dbNames = new String[] {"DBERP1", "DBERP2", "DBPOS1", "DBPOS2", "GPOS1", "GPOS2", "OGG"};
-			String[] checkList1 = new String[] {"Oracle Listener(¿À¶óÅ¬ Á¢¼Ó)", "Alert, Trace Log", "Archive Volume(used(%)", "Backup Check(archivelog)", "OGG Running Status", "OS Disk Usage"};
-			String[] checkList2 = new String[] {"Oracle Listener(¿À¶óÅ¬ Á¢¼Ó)", "Alert, Trace Log", "OS Disk Usage"};
-			String[] checkList3 = new String[] {"Oracle Listener(¿À¶óÅ¬ Á¢¼Ó)", "Oradata01", "Oradata02", "Oradata03", "Oradata04", "Oradata05", "Oradata06", "Alert, Trace Log", "OGG Running Status"};
-			String[][] checkListType = new String[][] {checkList1, checkList2, checkList1, checkList2, checkList1, checkList2, checkList3};
+
+			// 4. DBë³„ Header
+			String[] dbNames = new String[] { "DBERP1", "DBERP2", "DBPOS1", "DBPOS2", "GPOS1", "GPOS2", "OGG" };
+			String[] checkList1 = new String[] { "Oracle Listener(ì˜¤ë¼í´ ì ‘ì†)", "Alert, Trace Log",
+					"Archive Volume(used(%)", "Backup Check(archivelog)", "OGG Running Status", "OS Disk Usage" };
+			String[] checkList2 = new String[] { "Oracle Listener(ì˜¤ë¼í´ ì ‘ì†)", "Alert, Trace Log", "OS Disk Usage" };
+			String[] checkList3 = new String[] { "Oracle Listener(ì˜¤ë¼í´ ì ‘ì†)", "Oradata01", "Oradata02", "Oradata03",
+					"Oradata04", "Oradata05", "Oradata06", "Alert, Trace Log", "OGG Running Status" };
+			String[][] checkListType = new String[][] { checkList1, checkList2, checkList1, checkList2, checkList1,
+					checkList2, checkList3 };
 
 			int curIndex = 4;
-			for(int i=0; i<dbNames.length; i++) {
+			for (int i = 0; i < dbNames.length; i++) {
 				excel.merge(1, curIndex, 2, curIndex, grayCSLeft, dbNames[i]);
-				for(int j=3; j<3+DateUtils.getMonthlyDayCount(year, month); j++) {
+				for (int j = 3; j < 3 + DateUtils.getMonthlyDayCount(year, month); j++) {
 					excel.setCell(j, curIndex, grayCS, null);
 				}
 				curIndex++;
-				for(int j=0; j<checkListType[i].length; j++) {
+				for (int j = 0; j < checkListType[i].length; j++) {
 					excel.merge(1, curIndex, 2, curIndex, whiteCSLeft, " - " + checkListType[i][j]);
-					for(int k=3; k<3+DateUtils.getMonthlyDayCount(year, month); k++) {
+					for (int k = 3; k < 3 + DateUtils.getMonthlyDayCount(year, month); k++) {
 						excel.setCell(k, curIndex, whiteCS, null);
 					}
 					curIndex++;
 				}
 			}
-			
+
 			excel.write(fos);
 		} catch (Exception e) {
 			e.printStackTrace();

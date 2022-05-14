@@ -32,11 +32,11 @@ public class UnitUtils {
 	}
 
 	/**
-	 * ÆÄÀÏ »çÀÌÁî ´ÜÀ§¸¦ º¯È¯ÇÑ´Ù.
+	 * íŒŒì¼ ì‚¬ì´ì¦ˆ ë‹¨ìœ„ë¥¼ ë³€í™˜í•œë‹¤.
 	 * 
-	 * @param beforeUnit º¯È¯ Àü ´ÜÀ§
-	 * @param afterUnit  º¯È¯ ÈÄ ´ÜÀ§
-	 * @param value      º¯È¯ÇÒ °ª
+	 * @param beforeUnit ë³€í™˜ ì „ ë‹¨ìœ„
+	 * @param afterUnit  ë³€í™˜ í›„ ë‹¨ìœ„
+	 * @param value      ë³€í™˜í•  ê°’
 	 * @return
 	 */
 	public static double convertFileUnit(FileSize beforeUnit, FileSize afterUnit, double value) {
@@ -44,7 +44,7 @@ public class UnitUtils {
 	}
 
 	/**
-	 * ÆÄÀÏ »çÀÌÁî ´ÜÀ§¸¦ º¯È¯ÇÏ°í, ÁöÁ¤ÇÑ ÀÚ¸´¼ö·Î ¹İ¿Ã¸²ÇÑ´Ù.
+	 * íŒŒì¼ ì‚¬ì´ì¦ˆ ë‹¨ìœ„ë¥¼ ë³€í™˜í•˜ê³ , ì§€ì •í•œ ìë¦¿ìˆ˜ë¡œ ë°˜ì˜¬ë¦¼í•œë‹¤.
 	 * 
 	 * @param beforeUnit
 	 * @param afterUnit
