@@ -53,7 +53,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * Aliasº°·Î ¸ğ´ÏÅÍ¸µ TableView¸¦ ³ª¿­ÇÒ ÄÁÅ×ÀÌ³Ê¸¦ »ı¼ºÇÑ´Ù.
+	 * Aliasë³„ë¡œ ëª¨ë‹ˆí„°ë§ TableViewë¥¼ ë‚˜ì—´í•  ì»¨í…Œì´ë„ˆë¥¼ ìƒì„±í•œë‹¤.
 	 * 
 	 * @param alias
 	 * @param type
@@ -72,7 +72,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ °á°ú TableViewÀÇ »ç¿ë·® ÄÃ·³ÀÇ UI Å¸ÀÔÀ» ¼³Á¤ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê²°ê³¼ TableViewì˜ ì‚¬ìš©ëŸ‰ ì»¬ëŸ¼ì˜ UI íƒ€ì…ì„ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param alias
 	 * @param type
@@ -84,7 +84,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ °á°ú TableView¿¡ µ¥ÀÌÅÍ¼ÂÀ» ¼³Á¤ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê²°ê³¼ TableViewì— ë°ì´í„°ì…‹ì„ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param <T>
 	 * @param alias
@@ -97,7 +97,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * Æ¯Á¤ AliasÀÇ TableViewContainer¸¦ ¸Ç ¾ÕÀ¸·Î °¡Á®¿À°í ¶óº§À» º¯°æÇÑ´Ù.
+	 * íŠ¹ì • Aliasì˜ TableViewContainerë¥¼ ë§¨ ì•ìœ¼ë¡œ ê°€ì ¸ì˜¤ê³  ë¼ë²¨ì„ ë³€ê²½í•œë‹¤.
 	 * 
 	 * @param alias
 	 */
@@ -107,7 +107,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * Alias LabelÀÇ ÅØ½ºÆ®¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Alias Labelì˜ í…ìŠ¤íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param alias
 	 */
@@ -116,7 +116,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	}
 
 	/**
-	 * Monitoring Time LabelÀÇ ÅØ½ºÆ®¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Monitoring Time Labelì˜ í…ìŠ¤íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param time
 	 */
@@ -131,7 +131,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 				.findFirst()
 				.orElse(null);
 	}
-	
+
 	private AliasInfo findAliasInfoByIndex(int index) {
 		return tableViewContainerMap.keySet()
 				.stream()
@@ -143,7 +143,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	private int findAliasInfoIndex(String alias) {
 		return findAliasInfoByAlias(alias).getIndex();
 	}
-	
+
 	private int findFirstAliasInfoIndex() {
 		return tableViewContainerMap.keySet()
 				.stream()
@@ -152,7 +152,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 				.findFirst()
 				.orElse(-1);
 	}
-	
+
 	private int findLastAliasInfoIndex() {
 		return tableViewContainerMap.keySet()
 				.stream()
@@ -161,7 +161,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 				.findFirst()
 				.orElse(-1);
 	}
-	
+
 	private int findPrevAliasInfoIndex(int curIndex) {
 		return tableViewContainerMap.keySet()
 				.stream()
@@ -171,7 +171,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 				.findFirst()
 				.orElse(-1);
 	}
-	
+
 	private int findNextAliasInfoIndex(int curIndex) {
 		return tableViewContainerMap.keySet()
 				.stream()
@@ -185,7 +185,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	public void prevContainer(ActionEvent e) {
 		int curIndex = findAliasInfoIndex(aliasLabel.getText());
 		int prevIndex = findPrevAliasInfoIndex(curIndex);
-		if(prevIndex == -1) {
+		if (prevIndex == -1) {
 			prevIndex = findLastAliasInfoIndex();
 		}
 		showTableViewContainer(findAliasInfoByIndex(prevIndex).getAlias());
@@ -194,7 +194,7 @@ public class MonitoringTableViewPagingBox extends AnchorPane {
 	public void nextContainer(ActionEvent e) {
 		int curIndex = findAliasInfoIndex(aliasLabel.getText());
 		int nextIndex = findNextAliasInfoIndex(curIndex);
-		if(nextIndex == -1) {
+		if (nextIndex == -1) {
 			nextIndex = findFirstAliasInfoIndex();
 		}
 		showTableViewContainer(findAliasInfoByIndex(nextIndex).getAlias());

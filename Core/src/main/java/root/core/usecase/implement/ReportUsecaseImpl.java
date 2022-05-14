@@ -54,11 +54,11 @@ public class ReportUsecaseImpl implements ReportUsecase {
 				.stream()
 				.filter(m -> inquiryDate.equals(m.getMonitoringDate()))
 				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
-				.collect(Collectors.groupingBy(MonitoringResult::getMonitoringDateTime, 
-						LinkedHashMap::new, 
+				.collect(Collectors.groupingBy(MonitoringResult::getMonitoringDateTime,
+						LinkedHashMap::new,
 						Collectors.mapping(m -> m, Collectors.toList())));
 	}
-	
+
 	@Override
 	public <T extends MonitoringResult> Map<String, List<T>> getPrevMonitoringReportDataByTime(Class<T> clazz,
 			String alias, FileSize unit, int round, String inquiryDateTime) {
@@ -69,56 +69,56 @@ public class ReportUsecaseImpl implements ReportUsecase {
 				.stream()
 				.filter(m -> prevDateTime.equals(m.getMonitoringDateTime()))
 				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime).reversed())
-				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(),
 						Collectors.mapping(m -> m, Collectors.toList())));
 	}
 
 	private <T extends MonitoringResult> String getPrevHistoryDateTime(Class<T> clazz, String alias, FileSize unit,
 			int round, String curHistoryDateTime) {
-		
-		// TODO ³¯Â¥ ÄÃ·³¸¸ ÀÐ±â
-		MonitoringResult result =  getMonitoringReportData(clazz, alias, unit, round)
+
+		// TODO ë‚ ì§œ ì»¬ëŸ¼ë§Œ ì½ê¸°
+		MonitoringResult result = getMonitoringReportData(clazz, alias, unit, round)
 				.stream()
 				.filter(m -> DateUtils.compareTo("yyyyMMddHHmmss", curHistoryDateTime, m.getMonitoringDateTime()) == 1)
 				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime).reversed())
 				.findFirst()
 				.orElse(null);
-		
+
 		return result == null ? curHistoryDateTime : result.getMonitoringDateTime();
 	}
-	
+
 	@Override
 	public <T extends MonitoringResult> Map<String, List<T>> getNextMonitoringReportDataByTime(Class<T> clazz,
 			String alias, FileSize unit, int round, String inquiryDateTime) {
 
 		String nextDateTime = getNextHistoryDateTime(clazz, alias, unit, round, inquiryDateTime);
-		
+
 		return getMonitoringReportData(clazz, alias, unit, round)
 				.stream()
 				.filter(m -> nextDateTime.equals(m.getMonitoringDateTime()))
 				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
-				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(), 
+				.collect(Collectors.groupingBy(m -> m.getMonitoringDateTime(),
 						Collectors.mapping(m -> m, Collectors.toList())));
 	}
-	
+
 	private <T extends MonitoringResult> String getNextHistoryDateTime(Class<T> clazz, String alias, FileSize unit,
 			int round, String curHistoryDateTime) {
-		
-		// TODO ³¯Â¥ ÄÃ·³¸¸ ÀÐ±â
-		MonitoringResult result =  getMonitoringReportData(clazz, alias, unit, round)
+
+		// TODO ë‚ ì§œ ì»¬ëŸ¼ë§Œ ì½ê¸°
+		MonitoringResult result = getMonitoringReportData(clazz, alias, unit, round)
 				.stream()
 				.filter(m -> DateUtils.compareTo("yyyyMMddHHmmss", curHistoryDateTime, m.getMonitoringDateTime()) == -1)
 				.sorted(Comparator.comparing(MonitoringResult::getMonitoringDateTime))
 				.findFirst()
 				.orElse(null);
-		
+
 		return result == null ? curHistoryDateTime : result.getMonitoringDateTime();
 	}
 
 	@Override
 	public <T extends MonitoringResult> Map<Integer, Long> getMonitoringReportCountByTime(Class<T> clazz,
 			String alias, FileSize unit, int round, String inquiryDate) {
-		
+
 		Map<Integer, Long> result = getMonitoringReportDataByTime(clazz, alias, unit, round, inquiryDate)
 				.keySet()
 				.stream()
@@ -138,7 +138,7 @@ public class ReportUsecaseImpl implements ReportUsecase {
 	@Override
 	public <T extends MonitoringResult> Map<Integer, List<String>> getMonitoringReportTimesByTime(Class<T> clazz,
 			String alias, FileSize unit, int round, String inquiryDate) {
-		
+
 		Map<Integer, List<String>> result = getMonitoringReportDataByTime(clazz, alias, unit, round, inquiryDate)
 				.keySet()
 				.stream()

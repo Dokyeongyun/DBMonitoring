@@ -70,37 +70,37 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ����޴� ȭ�� ���Խ� �ʱ�ȭ�� �����Ѵ�.
+	 * 실행메뉴 화면 진입시 초기화를 수행한다.
 	 */
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// �������� ���� ������Ƽ ����
+		// 접속정보 설정 프로퍼티 파일
 		List<String> connInfoFiles = propService.getConnectionInfoList();
 		if (connInfoFiles != null && connInfoFiles.size() != 0) {
 			// Connection Info ComboBox
 			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
 			runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties ���Ͽ���, �ֱ� ���� �������� ��ΰ� �ִٸ� �ش� ���������� �ҷ��´�.
+			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
 			if (lastUseConnInfoFilePath != null) {
 				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 			}
 		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "�������� ����", "������ DB/Server ���������� �����ϴ�.\n[����]�޴��� �̵��մϴ�.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
 			return;
 		}
 
-		// ComboBox ���� �̺�Ʈ
+		// ComboBox 변경 이벤트
 		runConnInfoFileComboBox.getSelectionModel().selectedItemProperty()
 				.addListener((options, oldValue, newValue) -> {
-					// TODO �� Tab�� �޺��ڽ� ������ ����
+					// TODO 각 Tab별 콤보박스 아이템 변경
 				});
 
-		String dbComboBoxLabel = "DB ����";
+		String dbComboBoxLabel = "DB 선택";
 		List<String> dbComboBoxItems = propService.getMonitoringDBNameList();
-		String serverComboBoxLabel = "Server ����";
+		String serverComboBoxLabel = "Server 선택";
 		List<String> serverComboBoxItems = propService.getMonitoringServerNameList();
 
 		initAndAddMonitoringAnchorPane(archiveUsageMAP, archiveUsageTabAP, dbComboBoxLabel, dbComboBoxItems);
@@ -110,7 +110,7 @@ public class HistoryMenuController implements Initializable {
 	}
 
 	/**
-	 * ����͸� AnchorPane �߰��ϰ� ��Ҹ� �ʱ�ȭ�Ѵ�.
+	 * 모니터링 AnchorPane 추가하고 요소를 초기화한다.
 	 * 
 	 * @param <T>
 	 * @param monitoringAP
@@ -121,13 +121,13 @@ public class HistoryMenuController implements Initializable {
 	 */
 	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, List<String> comboBoxItems) {
-		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox ���� Lebel Text ����
-		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items ����
-		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane�� �θ� Node�� �߰�
+		monitoringAP.setAliasComboBoxLabelText(labelText); // ComboBox 좌측 Lebel Text 설정
+		monitoringAP.setAliasComboBoxItems(comboBoxItems); // ComboBox Items 설정
+		parentAP.getChildren().add(monitoringAP); // Monitoring AnchorPane을 부모 Node에 추가
 	}
 
 	/**
-	 * [����] - ����͸��� �����Ѵ�.
+	 * [실행] - 모니터링을 시작한다.
 	 * 
 	 * @param e
 	 */

@@ -42,9 +42,9 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ºÎ¸ğ Åä±Û ¹öÆ°ÀÇ ÅØ½ºÆ®, »çÀÌÁî, ÄÃ·¯¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Groupì˜ ë¶€ëª¨ í† ê¸€ ë²„íŠ¼ì˜ í…ìŠ¤íŠ¸, ì‚¬ì´ì¦ˆ, ì»¬ëŸ¬ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
-	 * @param text Åä±Û ¿ìÃø ¶óº§ ÅØ½ºÆ®
+	 * @param text í† ê¸€ ìš°ì¸¡ ë¼ë²¨ í…ìŠ¤íŠ¸
 	 */
 	public void setParentToggle(String text) {
 		parentToggleHBox.setLabelText(text);
@@ -52,9 +52,9 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ÀÚ½Ä Åä±Û ¹öÆ°À» Ãß°¡ÇÑ´Ù.
+	 * Groupì˜ ìì‹ í† ê¸€ ë²„íŠ¼ì„ ì¶”ê°€í•œë‹¤.
 	 * 
-	 * @param text Åä±Û ¿ìÃø ¶óº§ ÅØ½ºÆ®
+	 * @param text í† ê¸€ ìš°ì¸¡ ë¼ë²¨ í…ìŠ¤íŠ¸
 	 */
 	public void addChildToggle(String text) {
 		ToggleHBox childToggleHBox = new ToggleHBox();
@@ -77,10 +77,10 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ÀÚ½Ä Åä±Û ¹öÆ°ÀÇ ¼±ÅÃ¿©ºÎ¸¦ º¯°æÇÑ´Ù.
+	 * Groupì˜ ìì‹ í† ê¸€ ë²„íŠ¼ì˜ ì„ íƒì—¬ë¶€ë¥¼ ë³€ê²½í•œë‹¤.
 	 * 
-	 * @param alias      º¯°æÇÏ°íÀÚ ÇÏ´Â Åä±Û ¹öÆ° ¿ìÃøÀÇ Label Text
-	 * @param isSelected ¼±ÅÃ¿©ºÎ
+	 * @param alias      ë³€ê²½í•˜ê³ ì í•˜ëŠ” í† ê¸€ ë²„íŠ¼ ìš°ì¸¡ì˜ Label Text
+	 * @param isSelected ì„ íƒì—¬ë¶€
 	 */
 	public void setSelected(String alias, boolean isSelected) {
 		childToggleList.stream().filter(child -> child.getLabelText().equals(alias))
@@ -89,7 +89,7 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ÀÚ½Ä Åä±Û ¹öÆ°ÀÌ ¸ğµÎ ¼±ÅÃµÇÁö ¾Ê¾Ò´ÂÁö ¿©ºÎ¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * Groupì˜ ìì‹ í† ê¸€ ë²„íŠ¼ì´ ëª¨ë‘ ì„ íƒë˜ì§€ ì•Šì•˜ëŠ”ì§€ ì—¬ë¶€ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @return
 	 */
@@ -105,7 +105,7 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ºÎ¸ğ Åä±Û ¹öÆ°ÀÇ ¿ìÃø ¶óº§ ÅØ½ºÆ®¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * Groupì˜ ë¶€ëª¨ í† ê¸€ ë²„íŠ¼ì˜ ìš°ì¸¡ ë¼ë²¨ í…ìŠ¤íŠ¸ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @return
 	 */
@@ -114,7 +114,7 @@ public class ToggleGroupVBox extends VBox {
 	}
 
 	/**
-	 * GroupÀÇ ÀÚ½Ä Åä±Û ¹öÆ°ÀÇ ¼±ÅÃ¿©ºÎ¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * Groupì˜ ìì‹ í† ê¸€ ë²„íŠ¼ì˜ ì„ íƒì—¬ë¶€ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @return
 	 */

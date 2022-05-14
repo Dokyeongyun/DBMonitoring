@@ -8,8 +8,8 @@ import root.javafx.utils.AlertUtils;
 
 public class ServerConnectService extends ConnectionTestService {
 
-	public static final String SUCCESS_MSG = "���ݼ����� ���������� �����Ǿ����ϴ�.\n Host: %s:%s";
-	public static final String FAIL_MSG = "���ݼ��� ������ �����߽��ϴ�.";
+	public static final String SUCCESS_MSG = "원격서버에 성공적으로 연동되었습니다.\n Host: %s:%s";
+	public static final String FAIL_MSG = "원격서버 연동에 실패했습니다.";
 
 	private JschConnectionInfo jsch;
 	private JschServer jschServer;
@@ -36,13 +36,13 @@ public class ServerConnectService extends ConnectionTestService {
 
 	@Override
 	public void alertSucceed() {
-		AlertUtils.showAlert(AlertType.INFORMATION, "Server �����׽�Ʈ",
+		AlertUtils.showAlert(AlertType.INFORMATION, "Server 연동테스트",
 				String.format(ServerConnectService.SUCCESS_MSG, jsch.getHost(), jsch.getPort()));
 	}
 
 	@Override
 	public void alertFailed() {
-		AlertUtils.showAlert(AlertType.ERROR, "Server �����׽�Ʈ",
+		AlertUtils.showAlert(AlertType.ERROR, "Server 연동테스트",
 				String.format(ServerConnectService.FAIL_MSG, jsch.getHost(), jsch.getPort()));
 	}
 }

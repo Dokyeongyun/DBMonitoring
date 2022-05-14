@@ -29,16 +29,16 @@ public class ServerConnInfoControl implements ConnInfoControl<JschConnectionInfo
 		for (StatefulAP childAP : statefulAP) {
 			ServerConnectionInfoAnchorPane serverConnAP = (ServerConnectionInfoAnchorPane) childAP.getAp();
 			if (serverConnAP.isAnyEmptyInput()) {
-				AlertUtils.showAlert(AlertType.ERROR, "�������� ���� ����", "Server ���������� ��� �Է����ּ���");
+				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정 저장", "Server 접속정보를 모두 입력해주세요");
 				return false;
 			}
 			JschConnectionInfo jsch = serverConnAP.getInputValues();
 			config.put(jsch.getServerName(), jsch);
 			log.debug(jsch.toString());
 		}
-		
+
 		propertyRepository.saveServerConnectionInfo(configFilePath, config);
-		
+
 		return true;
 	}
 

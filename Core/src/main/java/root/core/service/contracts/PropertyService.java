@@ -15,42 +15,42 @@ import root.utils.UnitUtils.FileSize;
 public interface PropertyService {
 
 	/**
-	 * �������� ���������� Load �Ѵ�.
+	 * 접속정보 설정파일을 Load 한다.
 	 * 
 	 * @param filePath
 	 */
 	void loadConnectionInfoConfig(String filePath);
 
 	/**
-	 * ����͸� �������� ���������� ��θ� ��ȯ�Ѵ�.
+	 * 모니터링 접속정보 설정파일의 경로를 반환한다.
 	 * 
 	 * @return
 	 */
 	List<String> getConnectionInfoList();
 
 	/**
-	 * �ֱ� ���� �������� ���������� ��θ� ��ȯ�Ѵ�.
+	 * 최근 사용된 접속정보 설정파일의 경로를 반환한다.
 	 * 
 	 * @return
 	 */
 	String getLastUseConnectionInfoFilePath();
 
 	/**
-	 * ����͸� ���� ���������� Load �Ѵ�.
+	 * 모니터링 여부 설정파일을 Load 한다.
 	 * 
 	 * @param filePath
 	 */
 	void loadMonitoringInfoConfig(String filePath);
 
 	/**
-	 * �ֱ� ���� ����͸� ���� Preset ���������� Preset���� ��ȯ�Ѵ�.
+	 * 최근 사용된 모니터링 여부 Preset 설정파일의 Preset명을 반환한다.
 	 * 
 	 * @return
 	 */
 	String getLastUsePresetFileName(String filePath);
 
 	/**
-	 * ����͸����� Preset ���������� �о� DB ����͸� ���� ����Ʈ�� ��ȯ�Ѵ�.
+	 * 모니터링여부 Preset 설정파일을 읽어 DB 모니터링 여부 리스트를 반환한다.
 	 * 
 	 * @param presetConfigFileName
 	 * @return
@@ -58,7 +58,7 @@ public interface PropertyService {
 	List<MonitoringYN> getDBMonitoringYnList(String presetConfigFileName);
 
 	/**
-	 * ����͸����� Preset ���������� �о� Server ����͸� ���� ����Ʈ�� ��ȯ�Ѵ�.
+	 * 모니터링여부 Preset 설정파일을 읽어 Server 모니터링 여부 리스트를 반환한다.
 	 * 
 	 * @param presetConfigFileName
 	 * @return
@@ -80,15 +80,15 @@ public interface PropertyService {
 	List<JdbcConnectionInfo> getJdbcConnInfoList(List<String> dbNames);
 
 	/**
-	 * ������ ���������� �����´�.
+	 * 서버의 접속정보를 가져온다.
 	 * 
-	 * @param serverName ���� �������� ��Ī
+	 * @param serverName 서버 접속정보 별칭
 	 * @return
 	 */
 	JschConnectionInfo getJschConnInfo(String serverName);
 
 	/**
-	 * �������� ���������� �����´�.
+	 * 서버들의 접속정보를 가져온다.
 	 * 
 	 * @param serverNames
 	 * @return
@@ -96,43 +96,43 @@ public interface PropertyService {
 	List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames);
 
 	/**
-	 * �⺻������ ������ FileSize ������ ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 FileSize 단위를 반환한다.
 	 * 
 	 * @return
 	 */
 	FileSize getDefaultFileSizeUnit();
 
 	/**
-	 * �⺻������ ������ �ݿø� �ڸ����� ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 반올림 자릿수를 반환한다.
 	 * 
 	 * @return
 	 */
 	RoundingDigits getDefaultRoundingDigits();
 
 	/**
-	 * �⺻������ ������ ��뷮 �÷� UI Ÿ���� ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 사용량 컬럼 UI 타입을 반환한다.
 	 * 
 	 * @return
 	 */
 	UsageUIType getDefaultUsageUIType();
 
 	/**
-	 * ���� ���������� �����Ѵ�.
+	 * 공통 설정정보를 저장한다.
 	 * 
-	 * @param key   �������� Ű
-	 * @param value �������� ��
+	 * @param key   설정정보 키
+	 * @param value 설정정보 값
 	 */
 	void saveCommonConfig(String key, String value);
 
 	/**
-	 * �ֱ� ����� �������� ���������� �����Ѵ�.
+	 * 최근 사용한 접속정보 설정정보를 저장한다.
 	 * 
 	 * @param filePath
 	 */
 	void saveLastUseConnectionInfoSetting(String filePath);
 
 	/**
-	 * �������� ������ �߰��Ѵ�.
+	 * 접속정보 설정을 추가한다.
 	 * 
 	 * @param filePath
 	 * @return
@@ -140,7 +140,7 @@ public interface PropertyService {
 	String addConnectionInfoSetting(String filePath);
 
 	/**
-	 * ����͸����� Preset ������ �߰��Ѵ�.
+	 * 모니터링여부 Preset 설정을 추가한다.
 	 * 
 	 * @param connInfoSetting
 	 * @param presetName
@@ -148,7 +148,7 @@ public interface PropertyService {
 	void addMonitoringPreset(String connInfoSetting, String presetName);
 
 	/**
-	 * ����͸����� Preset ������ �����Ѵ�.
+	 * 모니터링여부 Preset 설정을 저장한다.
 	 * 
 	 * @param presetName
 	 * @param settingedMonitoringYN
@@ -157,7 +157,7 @@ public interface PropertyService {
 			Map<MonitoringType, Map<String, Boolean>> settingedMonitoringYN);
 
 	/**
-	 * ������ AlertLog ����͸� Ŀ�ǵ� ������ �����´�.
+	 * 설정된 AlertLog 모니터링 커맨드 정보를 가져온다.
 	 * 
 	 * @param connInfoSetting
 	 * @param serverName

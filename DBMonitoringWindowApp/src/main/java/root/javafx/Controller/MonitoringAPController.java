@@ -51,7 +51,7 @@ import root.utils.UnitUtils.FileSize;
 
 public class MonitoringAPController<T extends MonitoringResult> extends BorderPane implements Initializable {
 
-	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "����� ��ȸ���ּ���.";
+	private static final String MONITORING_HISTORY_DEFAULT_TEXT = "기록을 조회해주세요.";
 
 	private ReportUsecase reportUsecase;
 
@@ -65,7 +65,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	@FXML
 	JFXComboBox<FileSize> unitComboBox;
- 
+
 	@FXML
 	JFXComboBox<RoundingDigits> roundComboBox;
 
@@ -74,13 +74,13 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 	@FXML
 	DatePicker inquiryDatePicker;
-	
+
 	@FXML
 	Label historyDateTimeLabel;
-	
+
 	@FXML
 	JFXButton prevHistoryBtn;
-	
+
 	@FXML
 	JFXButton nextHistoryBtn;
 
@@ -107,22 +107,21 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 	}
 
-
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-		    public void handle(KeyEvent ke) {
-		    	if(ke.getCode().equals(KeyCode.Z)) {
-		    		prevHistoryBtn.fire();
-		    		ke.consume();
-		    	} else if(ke.getCode().equals(KeyCode.X)) {
-		    		nextHistoryBtn.fire();
-		    		ke.consume();
-		    	}
-		    }
+			public void handle(KeyEvent ke) {
+				if (ke.getCode().equals(KeyCode.Z)) {
+					prevHistoryBtn.fire();
+					ke.consume();
+				} else if (ke.getCode().equals(KeyCode.X)) {
+					nextHistoryBtn.fire();
+					ke.consume();
+				}
+			}
 		});
 	}
-	
+
 	public MonitoringAPController(Class<T> clazz) {
 		this.reportUsecase = new ReportUsecaseImpl(ReportFileRepo.getInstance());
 
@@ -205,7 +204,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ����͸� ����� ����� TableView�� �����Ѵ�.
+	 * 모니터링 기록을 출력할 TableView를 생성한다.
 	 */
 	private void initMonitoringTableView() {
 		tableViewContainer = new MonitoringTableViewContainer();
@@ -216,7 +215,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * �ش� Ŭ������ tableData�� �����͸� �ʱ�ȭ�Ѵ�.
+	 * 해당 클래스의 tableData의 데이터를 초기화한다.
 	 * 
 	 * @param id
 	 */
@@ -228,7 +227,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * �ش� Ŭ������ tableData�� �����͸� �߰��Ѵ�. ��, sync�� ���� ������ ���� TableView�� �����Ͱ� ��µ����� �ʴ´�.
+	 * 해당 클래스의 tableData에 데이터를 추가한다. 단, sync를 하지 않으면 실제 TableView에 데이터가 출력되지는 않는다.
 	 * 
 	 * @param id
 	 * @param data
@@ -245,7 +244,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * �ش� Ŭ������ tableData�� �����ͼ��� �߰��Ѵ�. ��, sync�� ���� ������ ���� TableView�� �����Ͱ� ��µ����� �ʴ´�.
+	 * 해당 클래스의 tableData에 데이터셋을 추가한다. 단, sync를 하지 않으면 실제 TableView에 데이터가 출력되지는 않는다.
 	 * 
 	 * @param id
 	 * @param dataList
@@ -259,7 +258,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * �ش� Ŭ������ tableData�� TableView�� �����͸� ����ȭ�Ѵ�.
+	 * 해당 클래스의 tableData로 TableView의 데이터를 동기화한다.
 	 * 
 	 * @param id
 	 */
@@ -290,7 +289,8 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 					monitoringDateTime, Locale.KOREA));
 
 			// Set datepicker value
-			inquiryDatePicker.setValue(LocalDate.parse(monitoringDateTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
+			inquiryDatePicker
+					.setValue(LocalDate.parse(monitoringDateTime, DateTimeFormatter.ofPattern("yyyyMMddHHmmss")));
 
 			// Sync monitoring prequency UI
 			syncPrequency(prequencyTimeDivBtn.getText());
@@ -301,7 +301,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * tableData�� ���õ� �������� Row���� ��ȯ�Ѵ�.
+	 * tableData에 세팅된 데이터의 Row수를 반환한다.
 	 * 
 	 * @param id
 	 * @return
@@ -311,7 +311,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * �ش� AnchorPane�� �θ� Node�� Anchor�� �����Ѵ�.
+	 * 해당 AnchorPane의 부모 Node에 Anchor를 설정한다.
 	 * 
 	 * @param left
 	 * @param top
@@ -326,7 +326,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * Generic Type Parameter <T>�� ����͸� History�� �о� ���̺� ����Ѵ�.
+	 * Generic Type Parameter <T>의 모니터링 History를 읽어 테이블에 출력한다.
 	 * 
 	 * @param e
 	 */
@@ -341,7 +341,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	public void showNextHistory(ActionEvent e) {
 		showMonitoringHistory(1);
 	}
-	
+
 	private void showMonitoringHistory(int type) {
 		String selected = aliasComboBox.getSelectionModel().getSelectedItem();
 
@@ -350,7 +350,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 
 		Map<String, List<T>> allDataList = inquiryMonitoringHistory(type);
 		if (allDataList == null || allDataList.size() == 0) {
-			AlertUtils.showAlert(AlertType.INFORMATION, "��ȸ��� ����", "�ش������� ����͸� ����� �����ϴ�.");
+			AlertUtils.showAlert(AlertType.INFORMATION, "조회결과 없음", "해당일자의 모니터링 기록이 없습니다.");
 			historyDateTimeLabel.setText(MONITORING_HISTORY_DEFAULT_TEXT);
 			return;
 		}
@@ -376,10 +376,10 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 		}
 
 		String current = historyDateTimeLabel.getText();
-		if(current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
+		if (current.equals(MONITORING_HISTORY_DEFAULT_TEXT)) {
 			return null;
 		}
-		
+
 		String currentDateTime = DateUtils.convertDateFormat("yyyy-MM-dd HH:mm:ss", "yyyyMMddHHmmss", current,
 				Locale.KOREA);
 		if (type == -1) {
@@ -404,7 +404,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ���� ���õ� ��ȸ�������� ��˻��Ѵ�.
+	 * 현재 선택된 조회조건으로 재검색한다.
 	 * 
 	 * @param e
 	 */
@@ -413,7 +413,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ���� TableView�� ���õ� ���� Excel���Ϸ� �ٿ�ε��Ѵ�.
+	 * 현재 TableView에 세팅된 값을 Excel파일로 다운로드한다.
 	 * 
 	 * @param e
 	 */
@@ -422,7 +422,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ����͸� ��� �󵵸� ��Ÿ���� UI���� AM/PM ������ �����Ѵ�.
+	 * 모니터링 기록 빈도를 나타내는 UI바의 AM/PM 구분을 변경한다.
 	 * 
 	 * @param e
 	 */
@@ -433,7 +433,7 @@ public class MonitoringAPController<T extends MonitoringResult> extends BorderPa
 	}
 
 	/**
-	 * ����͸� ��� �� �����Ϳ� UI�� Sync�� �����.
+	 * 모니터링 기록 빈도 데이터와 UI의 Sync를 맞춘다.
 	 * 
 	 * @param timeDiv
 	 */

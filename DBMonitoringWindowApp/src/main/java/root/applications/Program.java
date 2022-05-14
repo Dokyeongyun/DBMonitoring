@@ -29,7 +29,7 @@ public class Program extends Application {
 		propRepo.loadCombinedConfiguration();
 
 		// fxml load
-		System.setProperty("prism.lcdtext", "false"); // ¾ÈÆ¼¾Ù¸®¾î½Ì (Font ºÎµå·´°Ô)
+		System.setProperty("prism.lcdtext", "false"); // ì•ˆí‹°ì•¨ë¦¬ì–´ì‹± (Font ë¶€ë“œëŸ½ê²Œ)
 
 		Parent root = DependencyInjection.load("/fxml/Home.fxml");
 		primaryStage.setTitle("DB Monitoring Window Program");

@@ -14,7 +14,7 @@ import lombok.Getter;
 @Getter
 public enum UsageUIType implements EnumType {
 
-	NUMERIC("1", "¼öÄ¡ °ª"), GRAPHIC_BAR("2", "¸·´ëÇü ±×·¡ÇÈ"), GRAPHIC_PIE("3", "¿øÇü ±×·¡ÇÈ");
+	NUMERIC("1", "ìˆ˜ì¹˜ ê°’"), GRAPHIC_BAR("2", "ë§‰ëŒ€í˜• ê·¸ë˜í”½"), GRAPHIC_PIE("3", "ì›í˜• ê·¸ë˜í”½");
 
 	private String code;
 	private String name;

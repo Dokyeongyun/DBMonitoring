@@ -9,7 +9,7 @@ import root.javafx.utils.SceneUtils;
 public class LeftMenuController {
 
 	/**
-	 * ���� ��� Home Icon(fxId: homeBtn) onAction Event
+	 * 좌측 상단 Home Icon(fxId: homeBtn) onAction Event
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -19,7 +19,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ���� �޴��� �̵��Ѵ�.
+	 * 설정 메뉴로 이동한다.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -29,7 +29,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ���� �޴��� �̵��Ѵ�.
+	 * 실행 메뉴로 이동한다.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -39,7 +39,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * ����͸� ��� ��ȸ �޴��� �̵��Ѵ�.
+	 * 모니터링 기록 조회 메뉴로 이동한다.
 	 * 
 	 * @param e
 	 * @throws IOException
@@ -49,7 +49,7 @@ public class LeftMenuController {
 	}
 
 	/**
-	 * Alert Log ����͸� �޴��� �̵��Ѵ�.
+	 * Alert Log 모니터링 메뉴로 이동한다.
 	 * 
 	 * @param e
 	 */

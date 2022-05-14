@@ -59,22 +59,22 @@ public class SettingMenuController implements Initializable {
 	SplitPane rootSplitPane;
 
 	@FXML
-	AnchorPane noConnInfoConfigAP; // [����] - [�������� ����] ���������� �������� �ʾ��� �� ������ AnchorPane
+	AnchorPane noConnInfoConfigAP; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
 
 	@FXML
-	AnchorPane noMonitoringConfigAP; // [����] - [����͸� ���� ����] ���������� �������� �ʾ��� �� ������ AnchorPane
+	AnchorPane noMonitoringConfigAP; // [설정] - [모니터링 여부 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
 
 	@FXML
 	VBox monitoringElementsVBox;
 
 	@FXML
-	TextField fileChooserText; // �������� ��θ� �Է�/����ϴ� TextField
+	TextField fileChooserText; // 설정파일 경로를 입력/출력하는 TextField
 
 	@FXML
 	VBox connInfoVBox;
 
 	@FXML
-	JFXComboBox<String> monitoringPresetComboBox; // ����͸����� ���� Preset ComboBox
+	JFXComboBox<String> monitoringPresetComboBox; // 모니터링여부 설정 Preset ComboBox
 
 	@FXML
 	JFXComboBox<FileSize> fileSizeCB;
@@ -90,16 +90,16 @@ public class SettingMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		// remember.properties ���Ͽ���, �ֱ� ���� �������� ��ΰ� �ִٸ� �ش� ���������� �ҷ��´�.
+		// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
 		String lastUsePropertiesFile = propService.getLastUseConnectionInfoFilePath();
 		log.debug("Last use properties file: " + lastUsePropertiesFile);
 		if (lastUsePropertiesFile != null) {
 			loadSelectedConfigFile(lastUsePropertiesFile);
 
-			// [����] - [����͸� ���� ����] - Preset ���� Event
+			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
 			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
-				if(newValue != null) {
-					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));	
+				if (newValue != null) {
+					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
 				}
 			});
 		} else {
@@ -107,15 +107,15 @@ public class SettingMenuController implements Initializable {
 			setVisible(noMonitoringConfigAP, true);
 		}
 
-		/* ���� ���� �� - ��ȸ��� ���� �޺��ڽ� */
+		/* 실행 설정 탭 - 조회결과 단위 콤보박스 */
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
 			propService.saveCommonConfig("unit.filesize", newValue.getUnit());
 		});
 
-		/* ���� ���� �� - �ݿø� �ڸ��� �޺��ڽ� */
-		// �ݿø� �ڸ��� �޺��ڽ� ������ ����
+		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
+		// 반올림 자릿수 콤보박스 아이템 설정
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
@@ -133,7 +133,7 @@ public class SettingMenuController implements Initializable {
 			}
 		});
 
-		/* ���� ���� �� - ��뷮 ǥ�ù�� �޺��ڽ� */
+		/* 실행 설정 탭 - 사용량 표시방법 콤보박스 */
 		usageUICB.getItems().addAll(UsageUIType.values());
 		usageUICB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
@@ -153,16 +153,16 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [����] - [����͸� ���� ����] - Preset�� �Է� �˾� ����
+	 * [설정] - [모니터링 여부 설정] - Preset명 입력 팝업 띄우기
 	 * 
 	 * @param e
 	 */
 	public void showMonitoringPresetPopup(ActionEvent e) {
 
 		// Create input dialog
-		String dialogTitle = "Preset ����";
-		String dialogHeaderText = "���ο� Monitoring Preset �̸��� �Է����ּ���.";
-		String dialogContentText = "Preset �̸�: ";
+		String dialogTitle = "Preset 생성";
+		String dialogHeaderText = "새로운 Monitoring Preset 이름을 입력해주세요.";
+		String dialogContentText = "Preset 이름: ";
 		CustomTextInputDialog presetInputDialog = new CustomTextInputDialog(dialogTitle, dialogHeaderText,
 				dialogContentText);
 
@@ -170,83 +170,83 @@ public class SettingMenuController implements Initializable {
 		Optional<String> result = presetInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			// TODO validate input value
-			// 1. Preset�� �̿��Ͽ� �������� ���� + ���������������Ͽ� Preset �������� ��� �߰�
+			// 1. Preset명 이용하여 설정파일 생성 + 접속정보설정파일에 Preset 설정파일 경로 추가
 			propService.addMonitoringPreset(fileChooserText.getText(), input);
 
-			// 3. ����͸� ���� Config and Preset ComboBox ��ε�
+			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
 			reloadingMonitoringSetting(input);
 
-			// 4. ���� Alert ����
-			String successTitle = "Preset ����";
-			String successContent = "����͸����� ���� Preset�� �����Ǿ����ϴ�.";
+			// 4. 성공 Alert 띄우기
+			String successTitle = "Preset 생성";
+			String successContent = "모니터링여부 설정 Preset이 생성되었습니다.";
 			AlertUtils.showAlert(AlertType.INFORMATION, successTitle, successContent);
 		});
 	}
 
 	/**
-	 * [����] - [�������� ����] - .properties ������ �����ϱ� ���� FileChooser�� ����. ����ڰ� ������ ������ ��ο���
-	 * ������ ���� ��, �ùٸ� ���������̶�� �ش� ��θ� remember.properties�� �����Ѵ�. �׷��� �ʴٸ�, '�߸��������Դϴ�'���
-	 * ��� ���� ���������� ���� �����ϴ� ȭ������ �̵���Ų��.
+	 * [설정] - [접속정보 설정] - .properties 파일을 선택하기 위한 FileChooser를 연다. 사용자가 선택한 파일의 경로에서
+	 * 파일을 읽은 후, 올바른 설정파일이라면 해당 경로를 remember.properties에 저장한다. 그렇지 않다면, '잘못된파일입니다'라는
+	 * 경고를 띄우고 접속정보를 직접 설정하는 화면으로 이동시킨다.
 	 * 
 	 * @param e
 	 */
 	public void openFileChooser(ActionEvent e) {
 		FileChooser fileChooser = new FileChooser();
 
-		// ���ð����� Extension ����
+		// 선택가능한 Extension 제한
 		fileChooser.setSelectedExtensionFilter(new ExtensionFilter("Properties", ".properties"));
 
-		// �ʱ� ���ϰ�� ����
+		// 초기 파일경로 지정
 		fileChooser.setInitialDirectory(new File("./config"));
 
-		// ���� ����â ����, ���õ� ���� ��ȯ����
+		// 파일 선택창 열고, 선택된 파일 반환받음
 		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
 
 		if (selectedFile != null) {
 			if (selectedFile.isFile() && selectedFile.exists()) {
-				// �ùٸ� ����
+				// 올바른 파일
 				String filePath = selectedFile.getAbsolutePath();
 				loadSelectedConfigFile(filePath);
 			} else {
-				// �߸��� ����
+				// 잘못된 파일
 				fileChooserText.setText("");
 			}
 		}
 	}
 
 	/**
-	 * [����] - ������Ƽ������ �д´�.
+	 * [설정] - 프로퍼티파일을 읽는다.
 	 * 
 	 * @param filePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
 		try {
-			// 1. �����θ� ����η� ��ȯ�Ѵ�.
+			// 1. 절대경로를 상대경로로 변환한다.
 			int startIdx = absoluteFilePath.lastIndexOf("\\config");
 			String filePath = startIdx == -1 ? absoluteFilePath : "." + absoluteFilePath.substring(startIdx);
 
-			// 2. fileChooserText�� �ؽ�Ʈ�� ���� ���õ� ���ϰ�η� �����Ѵ�.
+			// 2. fileChooserText의 텍스트를 현재 선택된 파일경로로 변경한다.
 			fileChooserText.setText(filePath);
 
-			// 3. ���ϰ�ο��� �������� ������Ƽ������ �д´�.
+			// 3. 파일경로에서 접속정보 프로퍼티파일을 읽는다.
 			propService.loadConnectionInfoConfig(filePath);
 
-			// 4. ������Ƽ���Ͽ� �ۼ��� ���뿡 ���� ���� ��Ҹ� �����Ѵ�.
+			// 4. 프로퍼티파일에 작성된 내용에 따라 동적 요소를 생성한다.
 			createSettingDynamicElements();
 
-			// 5. remember.properties ���Ͽ� �ֱ� ���� �������� ��θ� �����Ѵ�.
+			// 5. remember.properties 파일에 최근 사용된 설정파일 경로를 저장한다.
 			propService.saveLastUseConnectionInfoSetting(filePath);
 		} catch (Exception e) {
 			e.printStackTrace();
-			// 6. ���� load�� ���� ��, Alert �޽����� ����.
-			String headerText = "�������� �ҷ�����";
-			String contentText = "�������� �ҷ����⿡ �����߽��ϴ�. ���������� Ȯ�����ּ���.";
+			// 6. 파일 load가 실패 시, Alert 메시지를 띄운다.
+			String headerText = "설정파일 불러오기";
+			String contentText = "설정파일 불러오기에 실패했습니다. 설정파일을 확인해주세요.";
 			AlertUtils.showAlert(AlertType.ERROR, headerText, contentText);
 		}
 	}
 
 	/**
-	 * [����] - [����͸� ���� ����] - ����͸� ���� ���������� �ҷ��´�.
+	 * [설정] - [모니터링 여부 설정] - 모니터링 여부 설정파일을 불러온다.
 	 * 
 	 * @param filePath
 	 */
@@ -263,13 +263,13 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [����] - [�������� ����] - ��������� .properties���Ͽ� �����Ѵ�.
+	 * [설정] - [접속정보 설정] - 변경사항을 .properties파일에 저장한다.
 	 * 
 	 * @param e
 	 */
 	@SuppressWarnings("unchecked")
 	public void saveConnInfoSettings(ActionEvent e) {
-		// TODO �Է°� �˻�
+		// TODO 입력값 검사
 
 		String configFilePath = fileChooserText.getText();
 
@@ -289,25 +289,25 @@ public class SettingMenuController implements Initializable {
 			return;
 		}
 
-		// �������� ReLoading
+		// 설정파일 ReLoading
 		loadSelectedConfigFile(configFilePath);
 	}
 
 	/**
-	 * [����] - [����͸� ���� ����] - ����ڰ� ������ ������ ���� ��������(.properties)�� ���� �Ǵ� �����Ѵ�.
+	 * [설정] - [모니터링 여부 설정] - 사용자가 선택한 설정에 따라 설정파일(.properties)을 생성 또는 수정한다.
 	 * 
 	 * @param e
 	 */
 	public void saveMonitoringSettings(ActionEvent e) {
-		String headerText = "���� ����";
-		String contentText = "����͸����� ������ ����Ǿ����ϴ�.";
+		String headerText = "설정 저장";
+		String contentText = "모니터링여부 설정이 저장되었습니다.";
 		AlertType alertType = AlertType.INFORMATION;
 
 		try {
 			String presetName = monitoringPresetComboBox.getSelectionModel().getSelectedItem();
 			propService.saveMonitoringPresetSetting(presetName, monitoringYNVBox.getToggleSelection());
 		} catch (Exception ex) {
-			contentText = "����͸����� ���� ���忡 �����߽��ϴ�.";
+			contentText = "모니터링여부 설정 저장에 실패했습니다.";
 			alertType = AlertType.ERROR;
 		} finally {
 			AlertUtils.showAlert(alertType, headerText, contentText);
@@ -315,7 +315,7 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * ����͸� ���� ������ ��ҵ� ���� ����
+	 * 모니터링 여부 설정할 요소들 동적 생성
 	 * 
 	 * @param rootVBox
 	 * @param dbYnList
@@ -346,7 +346,7 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [����] - ���������� �ҷ��� ��, ���� UI�� �����Ѵ�.
+	 * [설정] - 설정파일을 불러온 후, 동적 UI를 생성한다.
 	 */
 	@SuppressWarnings("unchecked")
 	private void createSettingDynamicElements() {
@@ -361,9 +361,9 @@ public class SettingMenuController implements Initializable {
 			dbConnVBox = (ConnectionInfoVBox<JdbcConnectionInfo>) connInfoVBox.lookup("#dbConnVBox");
 			dbConnVBox.clearConnInfoMap();
 		} else {
-			// DB �������� UI
+			// DB 접속정보 UI
 			dbConnVBox = new ConnectionInfoVBox<>(new DBConnInfoControl());
-			dbConnVBox.setMenuTitle("DB ��������", FontAwesomeIcon.DATABASE);
+			dbConnVBox.setMenuTitle("DB 접속정보", FontAwesomeIcon.DATABASE);
 			dbConnVBox.setId("dbConnVBox");
 			connInfoVBox.getChildren().add(dbConnVBox);
 		}
@@ -375,39 +375,39 @@ public class SettingMenuController implements Initializable {
 			serverConnVBox = (ConnectionInfoVBox<JschConnectionInfo>) connInfoVBox.lookup("#serverConnVBox");
 			serverConnVBox.clearConnInfoMap();
 		} else {
-			// Server �������� UI
+			// Server 접속정보 UI
 			serverConnVBox = new ConnectionInfoVBox<>(new ServerConnInfoControl());
-			serverConnVBox.setMenuTitle("���� ��������", FontAwesomeIcon.SERVER);
+			serverConnVBox.setMenuTitle("서버 접속정보", FontAwesomeIcon.SERVER);
 			serverConnVBox.setId("serverConnVBox");
 			connInfoVBox.getChildren().add(serverConnVBox);
 		}
 
 		serverConnVBox.addConnInfoList(jschConnInfoList);
 
-		// [����] - [����͸� ���� ����]
+		// [설정] - [모니터링 여부 설정]
 		reloadingMonitoringSetting("");
 	}
 
 	/**
-	 * [����] - [����͸����μ���] - Preset�� �ٽ� �ҷ��´�.
+	 * [설정] - [모니터링여부설정] - Preset을 다시 불러온다.
 	 * 
 	 * @param curPresetName
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
-		// ���� ���� ���� ���
+		// 최종 읽을 파일 경로
 		String readPresetName = "";
 
 		// Preset Combo Clear
 		monitoringPresetComboBox.getItems().clear();
 		monitoringPresetComboBox.getItems().addAll(propService.getMonitoringPresetNameList());
 
-		// ������ Preset�� ���ٸ� �ֱ� ���� Preset���� �����Ѵ�.
-		// ���� �ֱ� ���� Preset�� ���ٸ� ù��° Preset���� �����Ѵ�.
+		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다.
+		// 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
 		if (presetName.isEmpty()) {
-			// �ֱ� ���� ����͸� ���� �б�
+			// 최근 사용된 모니터링 설정 읽기
 			String lastUsePresetName = propService.getLastUsePresetFileName(fileChooserText.getText());
 			if (StringUtils.isEmpty(lastUsePresetName) && monitoringPresetComboBox.getItems().size() != 0) {
-				// �ֱ� ���� ������ ���ٸ�, ù��° ���� �б�
+				// 최근 사용된 설정이 없다면, 첫번째 설정 읽기
 				readPresetName = monitoringPresetComboBox.getItems().get(0);
 			} else {
 				readPresetName = lastUsePresetName;
@@ -416,7 +416,7 @@ public class SettingMenuController implements Initializable {
 			readPresetName = presetName;
 		}
 
-		// ComboBox ���� �� Preset ���� �б�
+		// ComboBox 선택 및 Preset 파일 읽기
 		if (!StringUtils.isEmpty(readPresetName)) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
 			loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(readPresetName));
@@ -433,12 +433,12 @@ public class SettingMenuController implements Initializable {
 	}
 
 	/**
-	 * [����] - [�������� ����] - ���ο� �������� ���������� �����Ѵ�.
+	 * [설정] - [접속정보 설정] - 새로운 접속정보 설정파일을 생성한다.
 	 * 
 	 * @param e
 	 */
 	public void createNewConfigFile(ActionEvent e) {
-		// TextInputDialog ����
+		// TextInputDialog 생성
 		TextInputDialog configInputDialog = new TextInputDialog();
 		// ICON
 		configInputDialog.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.PENCIL, "30"));
@@ -451,30 +451,30 @@ public class SettingMenuController implements Initializable {
 		stage.getIcons().add(new Image(
 				this.getClass().getResource(System.getProperty("resourceBaseDir") + "/image/add_icon.png").toString()));
 		// Button Custom
-		ButtonType okButton = new ButtonType("�Է�", ButtonData.OK_DONE);
+		ButtonType okButton = new ButtonType("입력", ButtonData.OK_DONE);
 		configInputDialog.getDialogPane().getButtonTypes().removeAll(ButtonType.OK, ButtonType.CANCEL);
 		configInputDialog.getDialogPane().getButtonTypes().addAll(okButton, ButtonType.CANCEL);
 		// Content
-		configInputDialog.setTitle("�������� �������� ����");
-		configInputDialog.setHeaderText("���ο� �������� ���������� �̸��� �Է����ּ���.");
-		configInputDialog.setContentText("�������ϸ�: ");
+		configInputDialog.setTitle("접속정보 설정파일 생성");
+		configInputDialog.setHeaderText("새로운 접속정보 설정파일의 이름을 입력해주세요.");
+		configInputDialog.setContentText("설정파일명: ");
 		// Result
 		Optional<String> result = configInputDialog.showAndWait();
 		result.ifPresent(input -> {
 			if (input.length() == 0) {
-				AlertUtils.showAlert(AlertType.ERROR, "�������� �������� ����", "�������ϸ��� �Է����ּ���.");
+				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정파일 생성", "설정파일명을 입력해주세요.");
 				return;
 			}
 
-			// TODO �Է°� �˻� (���)
-			// 1. �������� �������� ���� + default ����͸����� Preset �������� ����
+			// TODO 입력값 검사 (영어만)
+			// 1. 접속정보 설정파일 생성 + default 모니터링여부 Preset 설정파일 생성
 			String newSettingFile = propService.addConnectionInfoSetting(input);
 
 			// 2. Set Node Visible
 			setVisible(noConnInfoConfigAP, false);
 			setVisible(noMonitoringConfigAP, false);
 
-			// 3. ������ �������� Load
+			// 3. 생성된 설정파일 Load
 			loadSelectedConfigFile(newSettingFile);
 		});
 	}

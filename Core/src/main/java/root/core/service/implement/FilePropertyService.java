@@ -36,7 +36,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �������� ���������� Load �Ѵ�.
+	 * 접속정보 설정파일을 Load 한다.
 	 */
 	@Override
 	public void loadConnectionInfoConfig(String filePath) {
@@ -44,7 +44,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ./config/connectioninfo/ ���͸� ������ �ִ� �������� �������� ����Ʈ�� ��ȯ�Ѵ�.
+	 * ./config/connectioninfo/ 디렉터리 하위에 있는 접속정보 설정파일 리스트를 반환한다.
 	 */
 	@Override
 	public List<String> getConnectionInfoList() {
@@ -52,7 +52,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �ֱ� ���� �������� �������� ��θ� ��ȯ�Ѵ�.
+	 * 최근 사용된 접속정보 설정파일 경로를 반환한다.
 	 */
 	@Override
 	public String getLastUseConnectionInfoFilePath() {
@@ -61,7 +61,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ����͸� ���� ���������� Load �Ѵ�.
+	 * 모니터링 여부 설정파일을 Load 한다.
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -69,7 +69,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �ֱ� ���� ����͸� ���� Preset �������ϸ��� ��ȯ�Ѵ�.
+	 * 최근 사용된 모니터링 여부 Preset 설정파일명을 반환한다.
 	 */
 	@Override
 	public String getLastUsePresetFileName(String filePath) {
@@ -176,7 +176,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ������ ���������� �����´�.
+	 * 서버의 접속정보를 가져온다.
 	 */
 	@Override
 	public JschConnectionInfo getJschConnInfo(String serverName) {
@@ -184,7 +184,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �������� ���������� �����´�.
+	 * 서버들의 접속정보를 가져온다.
 	 */
 	@Override
 	public List<JschConnectionInfo> getJschConnInfoList(List<String> serverNames) {
@@ -193,7 +193,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �⺻������ ������ FileSize ������ ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 FileSize 단위를 반환한다.
 	 */
 	@Override
 	public FileSize getDefaultFileSizeUnit() {
@@ -201,7 +201,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �⺻������ ������ �ݿø� �ڸ����� ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 반올림 자릿수를 반환한다.
 	 */
 	@Override
 	public RoundingDigits getDefaultRoundingDigits() {
@@ -209,7 +209,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �⺻������ ������ ��뷮 �÷� UI Ÿ���� ��ȯ�Ѵ�.
+	 * 기본값으로 설정된 사용량 컬럼 UI 타입을 반환한다.
 	 */
 	@Override
 	public UsageUIType getDefaultUsageUIType() {
@@ -217,7 +217,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ���� ���������� �����Ѵ�.
+	 * 공통 설정정보를 저장한다.
 	 */
 	@Override
 	public void saveCommonConfig(String key, String value) {
@@ -225,7 +225,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �ֱ� ����� �������� ���������� �����Ѵ�.
+	 * 최근 사용한 접속정보 설정정보를 저장한다.
 	 */
 	@Override
 	public void saveLastUseConnectionInfoSetting(String filePath) {
@@ -235,7 +235,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * �������� ������ �߰��Ѵ�.
+	 * 접속정보 설정을 추가한다.
 	 */
 	@Override
 	public String addConnectionInfoSetting(String fileName) {
@@ -246,7 +246,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ����͸����� Preset ������ �߰��Ѵ�.
+	 * 모니터링여부 Preset 설정을 추가한다.
 	 */
 	@Override
 	public void addMonitoringPreset(String connInfoSetting, String presetName) {
@@ -261,7 +261,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	/**
-	 * ����͸����� Preset ������ �����Ѵ�.
+	 * 모니터링여부 Preset 설정을 저장한다.
 	 */
 	@Override
 	public void saveMonitoringPresetSetting(String presetName,

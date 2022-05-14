@@ -38,17 +38,17 @@ public class ConnectionInfoVBox<T> extends VBox {
 	FontAwesomeIconView menuIconIV;
 
 	@FXML
-	StackPane connInfoStackPane; // �������� ���� �׸��带 ��� �����̳�
+	StackPane connInfoStackPane; // 접속정보 설정 그리드를 담는 컨테이너
 
 	@FXML
-	AnchorPane connInfoNoDataAP; // �������� No Data AchorPane
+	AnchorPane connInfoNoDataAP; // 접속정보 No Data AchorPane
 
 	@FXML
-	Text connInfoText; // �������� �ε��� �ؽ�Ʈ
+	Text connInfoText; // 접속정보 인덱스 텍스트
 
 	@FXML
 	FontAwesomeIconView connTestIcon;
-	
+
 	@FXML
 	JFXButton connTestBtn;
 
@@ -63,16 +63,16 @@ public class ConnectionInfoVBox<T> extends VBox {
 
 	@FXML
 	JFXButton nextConnInfoBtn;
-	
+
 	private ConnInfoControl<T> connInfoControl;
 
 	private ConnInfoAPMap connInfoAPMap = new ConnInfoAPMap();
-	
+
 	private long connInfoIdx = -1;
-	
+
 	public ConnectionInfoVBox(ConnInfoControl<T> connInfoControl) {
 		this.connInfoControl = connInfoControl;
-		
+
 		try {
 			FXMLLoader loader = DependencyInjection.getLoader("/fxml/ConnectionInfoVBox.fxml");
 			loader.setController(this);
@@ -82,7 +82,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void clearConnInfoMap() {
 		this.connInfoAPMap.clear();
 		connInfoIdx = -1;
@@ -107,65 +107,65 @@ public class ConnectionInfoVBox<T> extends VBox {
 	public boolean saveConnInfoSettings(String configFilePath) {
 		return connInfoControl.save(configFilePath, this.connInfoAPMap.getActiveAPs().values());
 	}
-	
+
 	public void addConnInfoList(List<T> connInfoList) {
 		if (connInfoList.isEmpty()) {
-			connInfoNoDataAP.toFront();	
+			connInfoNoDataAP.toFront();
 			return;
 		}
-		
-		for(T connInfo : connInfoList) {
+
+		for (T connInfo : connInfoList) {
 			ConnectionInfoAP connInfoAP = connInfoControl.getConnInfoAP(connInfo);
 			addConnectionInfoAP(1, connInfoAP);
 		}
 	}
-	
+
 	/* Button Click Listener */
-	
+
 	public void testConnection(ActionEvent e) {
 
-		// ���� AP�� �ۼ��� ���������� �̿��� ���� �׽�Ʈ
+		// 현재 AP에 작성된 접속정보를 이용해 연결 테스트
 		ConnectionInfoAP curAP = connInfoAPMap.get(connInfoIdx).getAp();
-		
+
 		ConnectionTestService testService = connInfoControl.getConnectionTestService(curAP);
-		
+
 		if (testService != null) {
-			// ������ ����
+			// 아이콘 변경
 			setConnectionBtnIcon(4);
 
-			// ������ �ݹ� �̺�Ʈ ����
+			// 성공시 콜백 이벤트 설정
 			testService.setOnSucceeded(s -> {
 				testService.alertSucceed();
 				setConnectionBtnIcon(2);
 			});
-			
-			// ���н� �ݹ� �̺�Ʈ ����
+
+			// 실패시 콜백 이벤트 설정
 			testService.setOnFailed(f -> {
 				testService.alertFailed();
 				setConnectionBtnIcon(3);
 			});
 
-			// �����׽�Ʈ ����
+			// 연결테스트 시작
 			testService.start();
 		} else {
-			AlertUtils.showAlert(AlertType.ERROR, "���� �׽�Ʈ", "���� �׽�Ʈ�� �����ϱ� ���� ������ �����մϴ�.\n���������� �Է����ּ���.");
+			AlertUtils.showAlert(AlertType.ERROR, "연결 테스트", "연결 테스트를 수행하기 위한 정보가 부족합니다.\n접속정보를 입력해주세요.");
 		}
 	}
-	
+
 	public void addNewConnInfo(ActionEvent e) {
 		addConnectionInfoAP(2, connInfoControl.getNewConnInfoAP());
 	}
 
 	public void removeConnInfo(ActionEvent e) {
 		// Remove view
-		Node removeNode = this.connInfoStackPane.lookup("#"+connInfoIdx);
+		Node removeNode = this.connInfoStackPane.lookup("#" + connInfoIdx);
 		this.connInfoStackPane.getChildren().remove(removeNode);
-		
+
 		// Remove data
 		connInfoIdx = this.connInfoAPMap.remove(connInfoIdx);
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
-	
+
 	public void prevConnInfo(ActionEvent e) {
 		if (connInfoAPMap.getActiveAPCnt() == 0) {
 			return;
@@ -186,25 +186,24 @@ public class ConnectionInfoVBox<T> extends VBox {
 		bringFrontConnInfoAnchorPane(connInfoIdx);
 	}
 
-	
 	/* View Control Method */
-	
+
 	public void setMenuTitle(String menuTitle, FontAwesomeIcon menuIcon) {
 		menuTitleLB.setText(menuTitle);
 		menuIconIV.setIcon(menuIcon);
 	}
-	
+
 	// When connectionInfo index changed, this method always will be invoked.
 	private void bringFrontConnInfoAnchorPane(long index) {
 		connInfoIdx = index;
-		
-		if(connInfoStackPane.lookup("#" + (index)) != null) {
+
+		if (connInfoStackPane.lookup("#" + (index)) != null) {
 			connInfoStackPane.lookup("#" + (index)).toFront();
 		}
-		
+
 		// Set ConnectionInfo index text
 		setConnInfoIndexText();
-		
+
 		// Button disabled when there is no active ConnectionInfoAP
 		if (this.connInfoAPMap.getActiveAPCnt() == 0) {
 			connTestBtn.setDisable(true);
@@ -222,90 +221,90 @@ public class ConnectionInfoVBox<T> extends VBox {
 	private void setConnInfoIndexText() {
 		long curIdxTxt = this.connInfoAPMap.getActiveCurIdx(connInfoIdx);
 		long maxIdxTxt = this.connInfoAPMap.getActiveAPCnt();
-		
-		if(curIdxTxt == 0 && maxIdxTxt == 0) {
-			connInfoText.setText("������������ �߰����ּ���.");	
+
+		if (curIdxTxt == 0 && maxIdxTxt == 0) {
+			connInfoText.setText("※접속정보를 추가해주세요.");
 		} else {
 			connInfoText.setText(String.format("(%d/%d)", curIdxTxt, maxIdxTxt));
 		}
-			
+
 	}
-	
+
 	// TODO Convert to Enum class
 	private void setConnectionBtnIcon(int type) {
 		switch (type) {
-		case 1:
-			connTestIcon.setIcon(FontAwesomeIcon.PLUG);
-			connTestIcon.setFill(Paint.valueOf("#000000"));
-			break;
-		case 2:
-			connTestIcon.setIcon(FontAwesomeIcon.CHECK);
-			connTestIcon.setFill(Paint.valueOf("#49a157"));
-			break;
-		case 3:
-			connTestIcon.setIcon(FontAwesomeIcon.TIMES);
-			connTestIcon.setFill(Paint.valueOf("#c40a0a"));
-			break;
-		case 4:
-			connTestIcon.setIcon(FontAwesomeIcon.SPINNER);
-			connTestIcon.setFill(Paint.valueOf("#484989"));
-			connTestIcon.getStyleClass().add("fa-spin");
-			break;
+			case 1:
+				connTestIcon.setIcon(FontAwesomeIcon.PLUG);
+				connTestIcon.setFill(Paint.valueOf("#000000"));
+				break;
+			case 2:
+				connTestIcon.setIcon(FontAwesomeIcon.CHECK);
+				connTestIcon.setFill(Paint.valueOf("#49a157"));
+				break;
+			case 3:
+				connTestIcon.setIcon(FontAwesomeIcon.TIMES);
+				connTestIcon.setFill(Paint.valueOf("#c40a0a"));
+				break;
+			case 4:
+				connTestIcon.setIcon(FontAwesomeIcon.SPINNER);
+				connTestIcon.setFill(Paint.valueOf("#484989"));
+				connTestIcon.getStyleClass().add("fa-spin");
+				break;
 		}
 	}
-	
+
 	@AllArgsConstructor
 	@Data
 	public static class StatefulAP {
-		private int status; // 1: ����, 2: �ű�, 3: ����
+		private int status; // 1: 기존, 2: 신규, 3: 제거
 		private ConnectionInfoAP ap;
 	}
 
 	private static class ConnInfoAPMap {
 		private ObservableMap<Long, StatefulAP> map = FXCollections.observableHashMap();
-		
+
 		public long put(StatefulAP ap) {
 			this.map.put((long) this.map.size(), ap);
 			return this.map.size() - 1;
 		}
-		
+
 		public long remove(long index) {
-			// ���� ���� (�� ����)
+			// 상태 변경 (→ 삭제)
 			this.map.get(index).setStatus(3);
-			
-			// ���� �ε��� �ڿ� �������� ���� AnchorPane ���� ī��Ʈ
+
+			// 현재 인덱스 뒤에 삭제되지 않은 AnchorPane 갯수 카운트
 			long count = this.map.keySet()
 					.stream()
 					.filter(key -> key >= index)
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 
-			// �ε��� ������Ʈ
+			// 인덱스 업데이트
 			return count > 0 ? getNextActiveIdx(index) : getPrevActiveIdx(index);
 		}
-		
+
 		public StatefulAP get(long index) {
 			return this.map.get(index);
 		}
-		
+
 		public Map<Long, StatefulAP> getActiveAPs() {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
 					.collect(Collectors.toMap(key -> key, key -> map.get(key)));
 		}
-		
+
 		public long getActiveAPCnt() {
 			return this.map.keySet()
 					.stream()
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 		}
-		
+
 		public void clear() {
 			this.map.clear();
 		}
-		
+
 		public long getActiveCurIdx(long connInfoIdx) {
 			return this.map.keySet()
 					.stream()
@@ -313,7 +312,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.filter(key -> map.get(key).getStatus() != 3)
 					.count();
 		}
-		
+
 		public long getFirstActiveIdx() {
 			return this.map.keySet()
 					.stream()
@@ -321,7 +320,7 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse((long) -1);
 		}
-		
+
 		public long getLastActiveIdx() {
 			return this.map.keySet()
 					.stream()
@@ -330,9 +329,9 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse((long) -1);
 		}
-		
+
 		public long getPrevActiveIdx(long connInfoIdx) {
-			if(connInfoIdx == getFirstActiveIdx()) {
+			if (connInfoIdx == getFirstActiveIdx()) {
 				return getLastActiveIdx();
 			}
 			return this.map.keySet()
@@ -343,9 +342,9 @@ public class ConnectionInfoVBox<T> extends VBox {
 					.findFirst()
 					.orElse(getFirstActiveIdx());
 		}
-		
+
 		public long getNextActiveIdx(long connInfoIdx) {
-			if(connInfoIdx == getLastActiveIdx()) {
+			if (connInfoIdx == getLastActiveIdx()) {
 				return getFirstActiveIdx();
 			}
 			return this.map.keySet()

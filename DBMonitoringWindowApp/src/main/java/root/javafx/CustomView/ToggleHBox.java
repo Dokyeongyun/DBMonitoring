@@ -34,7 +34,7 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * Toggle ¹öÆ° ¿ìÃø LabelÀÇ ÅØ½ºÆ®¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ ìš°ì¸¡ Labelì˜ í…ìŠ¤íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param text
 	 */
@@ -43,7 +43,7 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * Toggle ¹öÆ° ¿ìÃø LabelÀÇ ÅØ½ºÆ®¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ ìš°ì¸¡ Labelì˜ í…ìŠ¤íŠ¸ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @return
 	 */
@@ -52,11 +52,11 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * ToggleÀÇ ¼Ó¼ºÀ» ¼³Á¤ÇÑ´Ù.
+	 * Toggleì˜ ì†ì„±ì„ ì„¤ì •í•œë‹¤.
 	 * 
-	 * @param size      ¹öÆ° Å©±â
-	 * @param color     ¹öÆ° Ã¤¿ò »ö
-	 * @param lineColor ¹öÆ° ¶óÀÎ »ö
+	 * @param size      ë²„íŠ¼ í¬ê¸°
+	 * @param color     ë²„íŠ¼ ì±„ì›€ ìƒ‰
+	 * @param lineColor ë²„íŠ¼ ë¼ì¸ ìƒ‰
 	 */
 	public void setToggle(int size, Paint color, Paint lineColor) {
 		toggleBtn.setSize(size);
@@ -65,7 +65,7 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * Toggle ¹öÆ°ÀÇ ¼±ÅÃ¿©ºÎ¸¦ ÀüÈ¯ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ì˜ ì„ íƒì—¬ë¶€ë¥¼ ì „í™˜í•œë‹¤.
 	 * 
 	 * @param isSelected
 	 */
@@ -74,7 +74,7 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * Toggle ¹öÆ°ÀÌ ¼±ÅÃµÇ¾ú´ÂÁö ¿©ºÎ¸¦ ¹İÈ¯ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ì´ ì„ íƒë˜ì—ˆëŠ”ì§€ ì—¬ë¶€ë¥¼ ë°˜í™˜í•œë‹¤.
 	 * 
 	 * @return
 	 */
@@ -83,16 +83,16 @@ public class ToggleHBox extends HBox {
 	}
 
 	/**
-	 * Toggle ¹öÆ° Å¬¸¯ ÀÌº¥Æ®¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param e
 	 */
 	public void setToggleChangeListener(ChangeListener<? super Boolean> listener) {
 		toggleBtn.selectedProperty().addListener(listener);
 	}
-	
+
 	/**
-	 * Toggle ¹öÆ° Å¬¸¯ ÀÌº¥Æ®¸¦ ¼³Á¤ÇÑ´Ù.
+	 * Toggle ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ë¥¼ ì„¤ì •í•œë‹¤.
 	 * 
 	 * @param e
 	 */

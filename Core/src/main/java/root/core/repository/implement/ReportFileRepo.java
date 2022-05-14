@@ -45,7 +45,7 @@ public class ReportFileRepo implements ReportRepository {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ °á°ú¸¦ ÆÄÀÏ¿¡ ±â·ÏÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê²°ê³¼ë¥¼ íŒŒì¼ì— ê¸°ë¡í•œë‹¤.
 	 */
 	@Override
 	public <T> void writeReportFile(String filePath, String fileName, String fileExtension, List<T> monitoringResult,
@@ -61,8 +61,8 @@ public class ReportFileRepo implements ReportRepository {
 				isNewFile = file.createNewFile();
 			}
 
-			if(isNewFile) {
-				content = CsvUtils.createCsvHeader(clazz);	
+			if (isNewFile) {
+				content = CsvUtils.createCsvHeader(clazz);
 			}
 
 			for (Object t : monitoringResult) {
@@ -74,7 +74,7 @@ public class ReportFileRepo implements ReportRepository {
 		}
 
 		if (content == null) {
-			log.info(String.format("ÆÄÀÏ¿¡ ÀÛ¼ºÇÒ ³»¿ëÀÌ ¾ø½À´Ï´Ù. ÆÄÀÏ°æ·Î: %s", file.getPath()));
+			log.info(String.format("íŒŒì¼ì— ì‘ì„±í•  ë‚´ìš©ì´ ì—†ìŠµë‹ˆë‹¤. íŒŒì¼ê²½ë¡œ: %s", file.getPath()));
 			return;
 		}
 
@@ -115,9 +115,9 @@ public class ReportFileRepo implements ReportRepository {
 	@Override
 	public String getReportContentsInCsv(Class<?> monitoringType, String alias) {
 		StringBuilder result = new StringBuilder();
-		
+
 		File reportFile = new File(this.monitoringFileDirMap.get(monitoringType) + "/" + alias + ".txt");
-		
+
 		try (BufferedReader br = new BufferedReader(new FileReader(reportFile))) {
 
 			String line = br.readLine();

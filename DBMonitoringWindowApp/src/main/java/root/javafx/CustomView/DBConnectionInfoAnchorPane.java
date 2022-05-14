@@ -61,7 +61,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public boolean isAnyEmptyInputForConnectionTest() {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
@@ -73,7 +73,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		String dbms = "oracle";
 		DBConnInfoOnChangedEvent changedEvent = new DBConnInfoOnChangedEvent(dbms);
 		DBConnInfoOnChangedActionEvent changedActionEvent = new DBConnInfoOnChangedActionEvent(dbms);
-		
+
 		// Set event
 		driverCB.setOnAction(changedActionEvent);
 		hostTF.setOnKeyReleased(changedEvent);
@@ -113,7 +113,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		driverCB.getSelectionModel().select(jdbc.getJdbcDriver());
 		aliasTF.setText(jdbc.getJdbcDBName());
 	}
-	
+
 	public JdbcConnectionInfo getInputValues() {
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo();
 		jdbc.setJdbcDBName(this.aliasTF.getText());
@@ -133,18 +133,19 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		return StringUtils.isAnyEmpty(hostTF.getText(), portTF.getText(), sidTF.getText(), userTF.getText(),
 				passwordPF.getText(), aliasTF.getText(), driverCB.getSelectionModel().getSelectedItem());
 	}
-	
+
 	private String generateURL(String dbms) {
 		StringBuffer url = new StringBuffer();
 		url.append("jdbc:").append(dbms).append(":")
-				.append(driverCB.getSelectionModel().getSelectedItem() == null ? "" : driverCB.getSelectionModel().getSelectedItem())
+				.append(driverCB.getSelectionModel().getSelectedItem() == null ? ""
+						: driverCB.getSelectionModel().getSelectedItem())
 				.append(":@")
 				.append(hostTF.getText() == null ? "" : hostTF.getText()).append(":")
 				.append(portTF.getText() == null ? "" : portTF.getText()).append("/")
 				.append(sidTF.getText() == null ? "" : sidTF.getText());
 		return url.toString();
 	}
-	
+
 	private void setDBConnTestBtnDisable(Node node) {
 		try {
 			// Find Top Node
@@ -168,18 +169,18 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void dbConnInfoChangedEventHandle(String dbms, Event event) {
 		// Generate URL
 		urlTF.setText(generateURL(dbms));
-		
+
 		// Find Top Parent and set disable DBConnTestBtn
 		setDBConnTestBtnDisable((Node) event.getTarget());
 	}
-	
+
 	/**
-	 * Ű �Է��� ���� �Էµ� Database ���������� �̿��� URL�� �����ϰ�,
-	 * �Էµ� ���� ���� DB �����׽�Ʈ ��ư�� Ȱ��ȭ/��Ȱ��ȭ�Ѵ�.
+	 * 키 입력을 통해 입력된 Database 접속정보를 이용해 URL을 생성하고,
+	 * 입력된 값에 따라 DB 연동테스트 버튼을 활성화/비활성화한다.
 	 * 
 	 * @author DKY
 	 *
@@ -191,17 +192,17 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		public DBConnInfoOnChangedEvent(String dbms) {
 			this.dbms = dbms;
 		}
-		
+
 		@Override
 		public void handle(Event event) {
 			System.out.println("DBConnInfoOnKeyReleasedEvent Event Fire!");
 			dbConnInfoChangedEventHandle(dbms, event);
 		}
 	}
-	
+
 	/**
-	 * �޺��ڽ� ������ ���� �Էµ� Database ���������� �̿��� URL�� �����ϰ�,
-	 * �Էµ� ���� ���� DB �����׽�Ʈ ��ư�� Ȱ��ȭ/��Ȱ��ȭ�Ѵ�.
+	 * 콤보박스 선택을 통해 입력된 Database 접속정보를 이용해 URL을 생성하고,
+	 * 입력된 값에 따라 DB 연동테스트 버튼을 활성화/비활성화한다.
 	 * 
 	 * @author DKY
 	 *
@@ -213,7 +214,7 @@ public class DBConnectionInfoAnchorPane extends ConnectionInfoAP {
 		public DBConnInfoOnChangedActionEvent(String dbms) {
 			this.dbms = dbms;
 		}
-		
+
 		@Override
 		public void handle(ActionEvent event) {
 			System.out.println("DBConnInfoOnKeyReleasedEvent Event Fire!");

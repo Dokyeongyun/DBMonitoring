@@ -17,7 +17,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import Utils.CsvUtilsTest;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.OSDiskUsage;
@@ -126,7 +125,7 @@ public class ReportRepositoryImplTest {
 		}
 
 		if (content == null) {
-			System.out.println(String.format("ÆÄÀÏ¿¡ ÀÛ¼ºÇÒ ³»¿ëÀÌ ¾ø½À´Ï´Ù. ÆÄÀÏ°æ·Î: %s", file.getPath()));
+			System.out.println(String.format("ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Û¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½. ï¿½ï¿½ï¿½Ï°ï¿½ï¿½: %s", file.getPath()));
 			return;
 		}
 
@@ -145,7 +144,7 @@ public class ReportRepositoryImplTest {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 
 			String firstLine = br.readLine();
-			Map<Integer, String> headerMap = CsvUtilsTest.parseCsvLine(firstLine);
+			Map<Integer, String> headerMap = CsvUtils.parseCsvLine(firstLine);
 			List<Integer> sortedKeyList = headerMap.keySet().stream().sorted().collect(Collectors.toList());
 
 			for (int i : sortedKeyList) {

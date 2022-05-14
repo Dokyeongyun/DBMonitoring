@@ -14,33 +14,33 @@ import root.core.repository.implement.ReportFileRepo;
 import root.utils.DateUtils;
 
 public class CsvReportSeparatorApp {
-	
+
 	public static ReportRepository reportRepository = ReportFileRepo.getInstance();
-	
+
 	public static void main(String[] args) throws IOException {
 		/*
-		 * ÇØ´ç Application¿¡¼­´Â ¿¬¼ÓÀûÀ¸·Î ±â·ÏµÇ¾î ÀÖ´Â .txt ÆÄÀÏÀ»
-		 * °¢ ³¯Â¥º° º°µµÀÇ .txt ÆÄÀÏ·Î ³ª´©¾î ÀÛ¼ºÇÏ´Â ±â´ÉÀ» Á¦°øÇÑ´Ù.
+		 * í•´ë‹¹ Applicationì—ì„œëŠ” ì—°ì†ì ìœ¼ë¡œ ê¸°ë¡ë˜ì–´ ìˆëŠ” .txt íŒŒì¼ì„
+		 * ê° ë‚ ì§œë³„ ë³„ë„ì˜ .txt íŒŒì¼ë¡œ ë‚˜ëˆ„ì–´ ì‘ì„±í•˜ëŠ” ê¸°ëŠ¥ì„ ì œê³µí•œë‹¤.
 		 */
-		
+
 		String filePath = "OSDiskUsage";
 		String fileName = "STS";
-		String dateFormat ="EEE MMM dd HH:mm:ss yyyy";
+		String dateFormat = "EEE MMM dd HH:mm:ss yyyy";
 		String dateFormatRegex = "...\\s...\\s([0-2][0-9]|1[012])\\s\\d\\d:\\d\\d:\\d\\d\\sKST\\s\\d{4}";
 
 		Map<String, StringBuffer> map = new HashMap<>();
-		
-		File file = new File("./report/" + filePath + "/"+ fileName + ".txt");
+
+		File file = new File("./report/" + filePath + "/" + fileName + ".txt");
 		String line = "";
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		StringBuffer sb = new StringBuffer();
-		
+
 		String newFileName = "";
-		while((line = br.readLine()) != null) {
-			
-			if(Pattern.matches("^"+dateFormatRegex, line)) {
+		while ((line = br.readLine()) != null) {
+
+			if (Pattern.matches("^" + dateFormatRegex, line)) {
 				String[] split = line.split(" KST ");
-				String date = line = split[0]+" "+split[1];
+				String date = line = split[0] + " " + split[1];
 				String logDate = DateUtils.convertDateFormat(dateFormat, "yyyyMMdd_HHmmss", date, Locale.ENGLISH);
 				newFileName = logDate + "_" + fileName;
 				sb = new StringBuffer();
@@ -49,14 +49,15 @@ public class CsvReportSeparatorApp {
 			} else {
 				map.get(newFileName).append(line).append("\n");
 			}
-			
+
 		}
 		br.close();
-		
-		for(String key : map.keySet()) {
-//			System.out.println("[" + key + "]\n" + map.get(key));
-			// TODO ¼öÁ¤
-		//	reportRepository.writeReportFile(filePath + "/" + fileName, key, ".txt", map.get(key).toString());
-		}
+
+		//for (String key : map.keySet()) {
+			// System.out.println("[" + key + "]\n" + map.get(key));
+			// TODO ìˆ˜ì •
+			// reportRepository.writeReportFile(filePath + "/" + fileName, key, ".txt",
+			// map.get(key).toString());
+		//}
 	}
 }

@@ -35,7 +35,7 @@ import root.utils.DateUtils;
 import root.utils.PatternUtils;
 
 /**
- * ConsoleApp�� Console�� ���� ��/����� �����մϴ�.
+ * ConsoleApp은 Console을 통해 입/출력을 수행합니다.
  * 
  * @author DKY
  *
@@ -49,15 +49,15 @@ public class ConsoleApp {
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-		// STEP1: �������� �������� ����
+		// STEP1: 접속정보 설정파일 선택
 		String selectedFile = "";
 		while (true) {
-			System.out.println("�������� ���������� �������ּ���.");
+			System.out.println("접속정보 설정파일을 선택해주세요.");
 			List<String> configFiles = Arrays.asList(new File(DEFAULT_CONFIG_DIR).list()).stream()
 					.filter(fileName -> fileName.endsWith(".properties")).collect(Collectors.toList());
 
 			if (configFiles.size() == 0) {
-				System.out.println("�������� ���������� �������� �ʽ��ϴ�. ���α׷��� �����մϴ�.");
+				System.out.println("접속정보 설정파일이 존재하지 않습니다. 프로그램을 종료합니다.");
 				return;
 			}
 
@@ -67,22 +67,22 @@ public class ConsoleApp {
 
 			String input = br.readLine().trim();
 			if (!PatternUtils.isOnlyNumber(input)) {
-				System.out.println("�߸� �Է��ϼ̽��ϴ�. �������� ���������� �ٽ� �������ּ���.");
+				System.out.println("잘못 입력하셨습니다. 접속정보 설정파일을 다시 선택해주세요.");
 				continue;
 			}
 
 			int selectedId = Integer.valueOf(input);
 			if (!PatternUtils.isOnlyNumber(input) || selectedId <= 0 || selectedId > configFiles.size()) {
-				System.out.println("�߸� �Է��ϼ̽��ϴ�. �������� ���������� �ٽ� �������ּ���.");
+				System.out.println("잘못 입력하셨습니다. 접속정보 설정파일을 다시 선택해주세요.");
 				continue;
 			}
 
 			selectedFile = configFiles.get(selectedId - 1);
 			break;
 		}
-		System.out.println(String.format("���õ� ������ [%s] �Դϴ�.", selectedFile));
+		System.out.println(String.format("선택된 파일은 [%s] 입니다.", selectedFile));
 
-		// STEP2: ���õ� �������� �������� Load
+		// STEP2: 선택된 접속정보 설정파일 Load
 		String propertiesFilePath = DEFAULT_CONFIG_DIR + "/" + selectedFile;
 		try {
 			PropertyRepository propRepo = PropertyRepositoryImpl.getInstance();
@@ -93,14 +93,14 @@ public class ConsoleApp {
 			return;
 		}
 
-		// STEP3: �������� �������� ��, ����͸����� �������� ã�� �� LOAD
+		// STEP3: 접속정보 설정파일 내, 모니터링여부 설정파일 찾기 및 LOAD
 		String selectedPreset = "";
 		while (true) {
-			System.out.println(String.format("����Ͻ� ����͸����� ������ �������ּ���."));
+			System.out.println(String.format("사용하실 모니터링여부 설정을 선택해주세요."));
 
 			List<String> presetNames = propService.getMonitoringPresetNameList();
 			if (presetNames.size() == 0) {
-				System.out.println("����͸����� ���������� �������� �ʽ��ϴ�. ���α׷��� �����մϴ�.");
+				System.out.println("모니터링여부 설정파일이 존재하지 않습니다. 프로그램을 종료합니다.");
 				return;
 			}
 
@@ -110,42 +110,42 @@ public class ConsoleApp {
 
 			String input = br.readLine().trim();
 			if (!PatternUtils.isOnlyNumber(input)) {
-				System.out.println("�߸� �Է��ϼ̽��ϴ�. ����͸����� ���������� �ٽ� �������ּ���.");
+				System.out.println("잘못 입력하셨습니다. 모니터링여부 설정파일을 다시 선택해주세요.");
 				continue;
 			}
 
 			int selectedId = Integer.valueOf(input);
 			if (!PatternUtils.isOnlyNumber(input) || selectedId <= 0 || selectedId > presetNames.size()) {
-				System.out.println("�߸� �Է��ϼ̽��ϴ�. ����͸����� ���������� �ٽ� �������ּ���.");
+				System.out.println("잘못 입력하셨습니다. 모니터링여부 설정파일을 다시 선택해주세요.");
 				continue;
 			}
 
 			selectedPreset = presetNames.get(selectedId - 1);
 			break;
 		}
-		System.out.println(String.format("���õ� ������ [%s] �Դϴ�.", selectedPreset));
+		System.out.println(String.format("선택된 파일은 [%s] 입니다.", selectedPreset));
 
-		// STEP4: ���������� ���������� �о� DB,Server ��ü ���� �� ���
+		// STEP4: 설정파일의 접속정보를 읽어 DB,Server 객체 생성 및 출력
 		List<String> dbNames = propService.getMonitoringDBNameList();
 		List<JdbcConnectionInfo> jdbcConnectionList = propService.getJdbcConnInfoList(dbNames);
-		System.out.println("����� DB���������� ������ �����ϴ�.");
+		System.out.println("저장된 DB접속정보는 다음과 같습니다.");
 		TextTable dbTable = new TextTable(
 				new CsvTableModel(CsvUtils.toCsvString(jdbcConnectionList, JdbcConnectionInfo.class)));
 		dbTable.printTable(System.out, 2);
 
 		List<String> serverNames = propService.getMonitoringServerNameList();
 		List<JschConnectionInfo> jschConnectionList = propService.getJschConnInfoList(serverNames);
-		System.out.println("����� Server���������� ������ �����ϴ�.");
+		System.out.println("저장된 Server접속정보는 다음과 같습니다.");
 		TextTable serverTable = new TextTable(
 				new CsvTableModel(CsvUtils.toCsvString(jschConnectionList, JschConnectionInfo.class)));
 		serverTable.printTable(System.out, 2);
 
-		// TODO STEP5: ����͸����� ���� �б�
+		// TODO STEP5: 모니터링여부 설정 읽기
 
-		// STEP6: ����͸� ����
-		System.out.println("DB ����͸��� �����մϴ�.");
+		// STEP6: 모니터링 수행
+		System.out.println("DB 모니터링을 수행합니다.");
 		for (JdbcConnectionInfo jdbc : jdbcConnectionList) {
-			System.out.println("�� [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring Start ]\n");
 			AbstractDatabase db = new JdbcDatabase(jdbc);
 			db.init();
 			DBCheckRepository repo = new DBCheckRepositoryImpl(db);
@@ -154,12 +154,12 @@ public class ConsoleApp {
 			dbBatch.startBatchArchiveUsageCheck();
 			dbBatch.startBatchTableSpaceUsageCheck();
 			dbBatch.startBatchASMDiskUsageCheck();
-			System.out.println("�� [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
+			System.out.println("■ [ " + jdbc.getJdbcDBName() + " Monitoring End ]\n\n");
 		}
 
-		System.out.println("Server ����͸��� �����մϴ�.");
+		System.out.println("Server 모니터링을 수행합니다.");
 		for (JschConnectionInfo jsch : jschConnectionList) {
-			System.out.println("�� [ " + jsch.getServerName() + " Monitoring Start ]\n");
+			System.out.println("■ [ " + jsch.getServerName() + " Monitoring Start ]\n");
 			JschServer server = new JschServer(jsch);
 			server.init();
 			ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
@@ -170,7 +170,7 @@ public class ConsoleApp {
 			String endDate = DateUtils.getToday("yyyy-MM-dd");
 			serverBatch.startBatchAlertLogCheckDuringPeriod(jsch.getAlc(), startDate, endDate);
 			serverBatch.startBatchOSDiskUsageCheck();
-			System.out.println("�� [ " + jsch.getServerName() + " Monitoring End ]\n\n");
+			System.out.println("■ [ " + jsch.getServerName() + " Monitoring End ]\n\n");
 		}
 	}
 }

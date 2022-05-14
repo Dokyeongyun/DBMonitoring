@@ -49,9 +49,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		String result = serverCheckRepository.checkAlertLog(alc);
 		if (result.indexOf("ORA-") >= 0) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "�� Alert Log : ORA ERROR!! Alert Log Ȯ�� �ʿ�" + ConsoleUtils.RESET + "\n");
+					+ "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요" + ConsoleUtils.RESET + "\n");
 		} else {
-			System.out.println("\t�� Alert Log : SUCCESS!\n");
+			System.out.println("\t▶ Alert Log : SUCCESS!\n");
 		}
 	}
 
@@ -72,8 +72,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 		if (isError == true) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "�� Alert Log : ORA ERROR!! Alert Log Ȯ�� �ʿ�" + ConsoleUtils.RESET + "\n");
-			System.out.println("\t��" + errorLogContents.size() + "���� ERROR�� �߻��߽��ϴ�. Alert Log�� Ȯ���Ͻðڽ��ϱ�? (Y/N)��");
+					+ "▶ Alert Log : ORA ERROR!! Alert Log 확인 필요" + ConsoleUtils.RESET + "\n");
+			System.out.println("\t※" + errorLogContents.size() + "개의 ERROR가 발생했습니다. Alert Log를 확인하시겠습니까? (Y/N)※");
 
 			boolean isCheck = false;
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -89,7 +89,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						break;
 					} else {
 						System.out.println(
-								"\t" + ConsoleUtils.FONT_RED + "�߸� �Է��ϼ̽��ϴ�. Y �Ǵ� N�� �Է����ּ���." + ConsoleUtils.RESET);
+								"\t" + ConsoleUtils.FONT_RED + "잘못 입력하셨습니다. Y 또는 N을 입력해주세요." + ConsoleUtils.RESET);
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -98,8 +98,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 			if (isCheck == true) {
 				int errorLogIndex = 0;
-				System.out.println("\t��ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
-						+ "] (Enter: ��������Ȯ��, ����: ��������Ȯ��, q: ����)��\n");
+				System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
+						+ "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
 				System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 
 				boolean isExit = false;
@@ -110,7 +110,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						if ("".equals(input) || "ENTER".equals(input)) {
 							errorLogIndex++;
 							if (errorLogIndex >= errorLogContents.size()) {
-								System.out.println("\t�ظ����� ERROR�Դϴ�. �����Ͻðڽ��ϱ�? (Y/N)��");
+								System.out.println("\t※마지막 ERROR입니다. 종료하시겠습니까? (Y/N)※");
 
 								while (true) {
 									String exitInput = br.readLine().trim().toUpperCase();
@@ -125,18 +125,18 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 								}
 
 								if (isExit == true) {
-									System.out.println("\t�������");
+									System.out.println("\t※종료※");
 									break;
 								} else {
-									System.out.println("\t�ظ�ɾ �Է����ּ���. (Enter: ��������Ȯ��, ����: ��������Ȯ��, q: ����)");
+									System.out.println("\t※명령어를 입력해주세요. (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)");
 								}
 							} else {
-								System.out.println("\t��ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
-										+ "] (Enter: ��������Ȯ��, ����: ��������Ȯ��, q: ����)��\n");
+								System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/" + errorLogContents.size()
+										+ "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
 								System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 							}
 						} else if ("Q".equals(input)) {
-							System.out.println("\t�������");
+							System.out.println("\t※종료※");
 							break;
 						} else {
 							boolean isWrongInput = false;
@@ -146,8 +146,8 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 									isWrongInput = true;
 								} else {
 									errorLogIndex = inputIndex;
-									System.out.println("\t��ERROR [" + (errorLogIndex + 1) + "/"
-											+ errorLogContents.size() + "] (Enter: ��������Ȯ��, ����: ��������Ȯ��, q: ����)��\n");
+									System.out.println("\t※ERROR [" + (errorLogIndex + 1) + "/"
+											+ errorLogContents.size() + "] (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)※\n");
 									System.out.print(errorLogContents.get(errorLogIndex).errorLogToString());
 								}
 							} catch (NumberFormatException e) {
@@ -156,7 +156,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 							if (isWrongInput == true) {
 								System.out.println("\t" + ConsoleUtils.FONT_RED
-										+ "�߸� �Է��ϼ̽��ϴ�. (Enter: ��������Ȯ��, ����: ��������Ȯ��, q: ����)" + ConsoleUtils.RESET);
+										+ "잘못 입력하셨습니다. (Enter: 다음에러확인, 숫자: 지정에러확인, q: 종료)" + ConsoleUtils.RESET);
 							}
 						}
 					} catch (IOException e) {
@@ -164,10 +164,10 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 					}
 				}
 			} else {
-				System.out.println("\t�������");
+				System.out.println("\t※종료※");
 			}
 		} else {
-			System.out.println("\t�� Alert Log : SUCCESS!\n");
+			System.out.println("\t▶ Alert Log : SUCCESS!\n");
 		}
 	}
 
@@ -186,9 +186,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 
 		if (isError == true) {
 			System.out.println("\t" + ConsoleUtils.BACKGROUND_RED + ConsoleUtils.FONT_WHITE
-					+ "�� OS Disk Usage : 80% �ʰ�!! Ȯ�� �ʿ�" + ConsoleUtils.RESET);
+					+ "▶ OS Disk Usage : 80% 초과!! 확인 필요" + ConsoleUtils.RESET);
 		} else {
-			System.out.println("\t�� OS Disk Usage : SUCCESS!");
+			System.out.println("\t▶ OS Disk Usage : SUCCESS!");
 		}
 		try {
 			System.out.println(result);
@@ -214,7 +214,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		int colIndex = day + 2;
 
 		String filePath = "C:\\Users\\aserv\\Documents\\WorkSpace_DBMonitoring_Quartz\\DBMonitoring\\report\\";
-		String fileName = "DB��������_����_" + year + "." + month;
+		String fileName = "DB관리대장_종합_" + year + "." + month;
 		String extension = ".xlsx";
 		String file = filePath + fileName + extension;
 
@@ -279,7 +279,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		String fullAlertLogString = getAlertLogStringFromCertainDate(alc, startDate);
 
 		try {
-			// ��ȸ�Ⱓ������ �α׸��� ���Ͽ� StringBuffer�� �����Ѵ�.
+			// 조회기간동안의 로그만을 취하여 StringBuffer에 저장한다.
 			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
 			boolean isStartDate = false;
@@ -296,18 +296,18 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 			for (int i = 0; i < lines.length; i++) {
 				String line = lines[i];
 
-				// ��ȸ�������� ã��
+				// 조회시작일자 찾기
 				if (!isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) {
-						// [��ȸ�������� >= ���� �αױ������]�� ��, ���� �αױ�����ں��� �б� ����
+						// [조회시작일자 >= 최초 로그기록일자]일 때, 최초 로그기록일자부터 읽기 시작
 						String parsedDateString = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, startDate) >= 0) {
 							isStartDate = true;
 							readStartIndex = i;
 							logTimeStamp = line;
 
-							// [��ȸ�������� > ��ȸ �������� >= ���� �αױ������]�� �� ���� �αױ�����ں��� �б� ����
+							// [조회종료일자 > 조회 시작일자 >= 최초 로그기록일자]일 때 최초 로그기록일자부터 읽기 시작
 							if (DateUtils.getDateDiffTime("yyyy-MM-dd", parsedDateString, endDate) > 0) {
 								isEndDate = true;
 								readEndIndex = i;
@@ -317,12 +317,12 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 					}
 				}
 
-				// �α� ���� ���� & ��ȸ�������� ã��
+				// 로그 저장 시작 & 조회종료일자 찾기
 				if (isStartDate) {
 					LocalDate parsedDate = DateUtils.parse(line);
 					if (parsedDate != null) { // Log TimeStamp Line
 
-						// ���� �αױ�����ڰ� ��ȸ�������� + 1������ Ȯ��
+						// 현재 로그기록일자가 조회종료일자 + 1일인지 확인
 						String logDate = DateUtils.convertDateFormat("yyyy-MM-dd", parsedDate);
 						if (logDate.startsWith(DateUtils.addDate(endDate, 0, 0, 1))) {
 							isEndDate = true;
@@ -343,7 +343,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						}
 					} else { // Log Content Line
 
-						// �˻� Ű���尡 ���ԵǾ����� Ȯ��
+						// 검색 키워드가 포함되었는지 확인
 						for (String keyword : searchKeywords) {
 							if (line.contains(keyword) || containsSearchKeyword) {
 								containsSearchKeyword = true;
@@ -353,7 +353,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 						logContents.add(line);
 					}
 
-					// �α� ���� ����
+					// 로그 저장 중지
 					if (!isEndDate) {
 						sb.append(line);
 					} else {
@@ -362,11 +362,11 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 				}
 			}
 
-			// ���� �� fullLogString �߰� & Alert log file path ����
+			// 종료 후 fullLogString 추가 & Alert log file path 설정
 			alertLog.setFullLogString(sb.toString());
 			alertLog.setFilePath(alc.getReadFilePath());
 
-			log.info("\t�� Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
+			log.info("\t▶ Alert Log READ LINE: " + (readEndIndex - readStartIndex) + "/" + alc.getReadLine());
 
 		} catch (Exception e) {
 			log.error(e.getMessage());
@@ -384,16 +384,16 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 		int alertLogFileLineCnt = serverCheckRepository.getAlertLogFileLineCount(alc);
 		String fullAlertLogString = serverCheckRepository.checkAlertLog(alc);
 
-		// ��ȸ���������� �α׸� ��� �����ϵ��� readLine ���� ���������� �ø��鼭 �д´�.
+		// 조회시작일자의 로그를 모두 포함하도록 readLine 수를 점진적으로 늘리면서 읽는다.
 		while (true) {
 			String[] lines = fullAlertLogString.split(System.lineSeparator());
 
-			// ���� Read Line ���� ���� �ִ� Line ���� �ʰ����� ��, ���� ��ü�� �а� ��ȯ�Ѵ�.
+			// 현재 Read Line 수가 파일 최대 Line 수를 초과했을 시, 파일 전체를 읽고 반환한다.
 			if (lines.length >= alertLogFileLineCnt) {
 				break;
 			}
 
-			// ��ȸ�� �α� ������ ���� ó������ ��Ÿ���� �α��� ������ڸ� ����.
+			// 조회한 로그 내에서 가장 처음으로 나타나는 로그의 기록일자를 얻어낸다.
 			String logDate = "";
 			for (String line : lines) {
 				LocalDate parsedDate = DateUtils.parse(line);
@@ -407,9 +407,9 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 				break;
 			}
 
-			// ��ȸ�������ڿ� �α��� ó�� ������ڸ� ���Ѵ�.
+			// 조회시작일자와 로그의 처음 기록일자를 비교한다.
 			long diffTime = DateUtils.getDateDiffTime("yyyy-MM-dd", logDate, startDate);
-			if (diffTime >= 0) { // ��ȸ Line ���� �� �÷��� �ٽ� ��ȸ
+			if (diffTime >= 0) { // 조회 Line 수를 더 늘려서 다시 조회
 				alc.setReadLine((alc.getReadLine()) * 2);
 				fullAlertLogString = serverCheckRepository.checkAlertLog(alc);
 			} else {

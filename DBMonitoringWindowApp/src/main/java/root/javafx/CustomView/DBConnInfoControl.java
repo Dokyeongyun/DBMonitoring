@@ -28,15 +28,15 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 		for (StatefulAP childAP : statefulAP) {
 			DBConnectionInfoAnchorPane dbConnAP = (DBConnectionInfoAnchorPane) childAP.getAp();
 			if (dbConnAP.isAnyEmptyInput()) {
-				AlertUtils.showAlert(AlertType.ERROR, "�������� ���� ����", "DB ���������� ��� �Է����ּ���");
+				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정 저장", "DB 접속정보를 모두 입력해주세요");
 				return false;
 			}
 			JdbcConnectionInfo jdbc = dbConnAP.getInputValues();
 			config.put(jdbc.getJdbcDBName().toUpperCase(), jdbc);
 		}
-		
+
 		propertyRepository.saveDBConnectionInfo(configFilePath, config);
-		
+
 		return true;
 	}
 
@@ -51,7 +51,7 @@ public class DBConnInfoControl implements ConnInfoControl<JdbcConnectionInfo> {
 		String jdbcId = ((TextField) curAP.lookup("#userTF")).getText();
 		String jdbcPw = ((PasswordField) curAP.lookup("#passwordPF")).getText();
 
-		// TODO JdbcDriver, Validation Query �ϵ��ڵ� ���� - DBMS�� ���� �ٸ��� �ؾ� ��
+		// TODO JdbcDriver, Validation Query 하드코딩 변경 - DBMS에 따라 다르게 해야 함
 		JdbcConnectionInfo jdbc = new JdbcConnectionInfo("oracle.jdbc.driver.OracleDriver", jdbcUrl, jdbcId, jdbcPw,
 				"SELECT 1 FROM DUAL", 1);
 		return new DatabaseConnectService(jdbc);

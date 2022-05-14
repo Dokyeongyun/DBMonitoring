@@ -31,42 +31,42 @@ public class MonitoringTableViewFactory {
 	static {
 		List<Column> archiveColumns = new ArrayList<>();
 		archiveColumns.add(new Column("Archive", "archiveName", true));
-		archiveColumns.add(new Column("ÆÄÀÏ °³¼ö", "numberOfFiles", false));
-		archiveColumns.add(new Column("ÀüÃ¼ °ø°£", "totalSpace", false));
-		archiveColumns.add(new Column("°¡¿ë °ø°£", "reclaimableSpace", false));
-		archiveColumns.add(new Column("»ç¿ëÁßÀÎ °ø°£", "usedSpace", false));
-		archiveColumns.add(new Column("»ç¿ë·®(%)", "usedPercent", true));
-		archiveColumns.add(new Column("¸ğ´ÏÅÍ¸µÀÏ½Ã", "monitoringDateTime", false));
+		archiveColumns.add(new Column("íŒŒì¼ ê°œìˆ˜", "numberOfFiles", false));
+		archiveColumns.add(new Column("ì „ì²´ ê³µê°„", "totalSpace", false));
+		archiveColumns.add(new Column("ê°€ìš© ê³µê°„", "reclaimableSpace", false));
+		archiveColumns.add(new Column("ì‚¬ìš©ì¤‘ì¸ ê³µê°„", "usedSpace", false));
+		archiveColumns.add(new Column("ì‚¬ìš©ëŸ‰(%)", "usedPercent", true));
+		archiveColumns.add(new Column("ëª¨ë‹ˆí„°ë§ì¼ì‹œ", "monitoringDateTime", false));
 		tableColumnMap.put(ArchiveUsage.class, archiveColumns);
 
 		List<Column> tableSpaceColumns = new ArrayList<>();
-		tableSpaceColumns.add(new Column("Å×ÀÌºí½ºÆäÀÌ½º¸í", "tableSpaceName", true));
-		tableSpaceColumns.add(new Column("ÀüÃ¼ °ø°£", "totalSpace", false));
-		tableSpaceColumns.add(new Column("°¡¿ë °ø°£", "freeSpace", false));
-		tableSpaceColumns.add(new Column("»ç¿ëÁßÀÎ °ø°£", "usedSpace", false));
-		tableSpaceColumns.add(new Column("»ç¿ë·®(%)", "usedPercent", true));
-		tableSpaceColumns.add(new Column("¸ğ´ÏÅÍ¸µÀÏ½Ã", "monitoringDateTime", false));
+		tableSpaceColumns.add(new Column("í…Œì´ë¸”ìŠ¤í˜ì´ìŠ¤ëª…", "tableSpaceName", true));
+		tableSpaceColumns.add(new Column("ì „ì²´ ê³µê°„", "totalSpace", false));
+		tableSpaceColumns.add(new Column("ê°€ìš© ê³µê°„", "freeSpace", false));
+		tableSpaceColumns.add(new Column("ì‚¬ìš©ì¤‘ì¸ ê³µê°„", "usedSpace", false));
+		tableSpaceColumns.add(new Column("ì‚¬ìš©ëŸ‰(%)", "usedPercent", true));
+		tableSpaceColumns.add(new Column("ëª¨ë‹ˆí„°ë§ì¼ì‹œ", "monitoringDateTime", false));
 		tableColumnMap.put(TableSpaceUsage.class, tableSpaceColumns);
 
 		List<Column> asmDiskColumns = new ArrayList<>();
-		asmDiskColumns.add(new Column("µğ½ºÅ© ±×·ì", "asmDiskGroupName", true));
-		asmDiskColumns.add(new Column("µğ½ºÅ© Å¸ÀÔ", "asmDiskGroupType", true));
-		asmDiskColumns.add(new Column("ÀüÃ¼ °ø°£(Raw)", "totalRawSpace", false));
-		asmDiskColumns.add(new Column("ÀüÃ¼ °ø°£(Actual)", "totalFreeSpace", false));
-		asmDiskColumns.add(new Column("°¡¿ë °ø°£", "freeSpace", false));
-		asmDiskColumns.add(new Column("»ç¿ëÁßÀÎ °ø°£", "usedSpace", false));
-		asmDiskColumns.add(new Column("»ç¿ë·®(%)", "usedPercent", true));
-		asmDiskColumns.add(new Column("¸ğ´ÏÅÍ¸µÀÏ½Ã", "monitoringDateTime", false));
+		asmDiskColumns.add(new Column("ë””ìŠ¤í¬ ê·¸ë£¹", "asmDiskGroupName", true));
+		asmDiskColumns.add(new Column("ë””ìŠ¤í¬ íƒ€ì…", "asmDiskGroupType", true));
+		asmDiskColumns.add(new Column("ì „ì²´ ê³µê°„(Raw)", "totalRawSpace", false));
+		asmDiskColumns.add(new Column("ì „ì²´ ê³µê°„(Actual)", "totalFreeSpace", false));
+		asmDiskColumns.add(new Column("ê°€ìš© ê³µê°„", "freeSpace", false));
+		asmDiskColumns.add(new Column("ì‚¬ìš©ì¤‘ì¸ ê³µê°„", "usedSpace", false));
+		asmDiskColumns.add(new Column("ì‚¬ìš©ëŸ‰(%)", "usedPercent", true));
+		asmDiskColumns.add(new Column("ëª¨ë‹ˆí„°ë§ì¼ì‹œ", "monitoringDateTime", false));
 		tableColumnMap.put(ASMDiskUsage.class, asmDiskColumns);
 
 		List<Column> osDiskColumns = new ArrayList<>();
-		osDiskColumns.add(new Column("ÆÄÀÏ ½Ã½ºÅÛ", "fileSystem", true));
-		osDiskColumns.add(new Column("¸¶¿îÆ® À§Ä¡", "mountedOn", true));
-		osDiskColumns.add(new Column("ÀüÃ¼ °ø°£", "totalSpace", false));
-		osDiskColumns.add(new Column("°¡¿ë °ø°£", "freeSpace", false));
-		osDiskColumns.add(new Column("»ç¿ëÁßÀÎ °ø°£", "usedSpace", false));
-		osDiskColumns.add(new Column("»ç¿ë·®(%)", "usedPercent", true));
-		osDiskColumns.add(new Column("¸ğ´ÏÅÍ¸µÀÏ½Ã", "monitoringDateTime", false));
+		osDiskColumns.add(new Column("íŒŒì¼ ì‹œìŠ¤í…œ", "fileSystem", true));
+		osDiskColumns.add(new Column("ë§ˆìš´íŠ¸ ìœ„ì¹˜", "mountedOn", true));
+		osDiskColumns.add(new Column("ì „ì²´ ê³µê°„", "totalSpace", false));
+		osDiskColumns.add(new Column("ê°€ìš© ê³µê°„", "freeSpace", false));
+		osDiskColumns.add(new Column("ì‚¬ìš©ì¤‘ì¸ ê³µê°„", "usedSpace", false));
+		osDiskColumns.add(new Column("ì‚¬ìš©ëŸ‰(%)", "usedPercent", true));
+		osDiskColumns.add(new Column("ëª¨ë‹ˆí„°ë§ì¼ì‹œ", "monitoringDateTime", false));
 		tableColumnMap.put(OSDiskUsage.class, osDiskColumns);
 	}
 
@@ -83,7 +83,7 @@ public class MonitoringTableViewFactory {
 
 		tableColumns.stream().forEach(c -> tableView.addColumn(c.getHeaderName(), c.getFieldName()));
 		tableView.setMonitoringDateTimeFormat("yyyy/MM/dd HH:mm:ss");
-		
+
 		return tableView;
 	}
 }

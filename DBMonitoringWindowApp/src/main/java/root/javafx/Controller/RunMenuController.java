@@ -114,25 +114,25 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. ����͸� �������� ���� + 2. ����͸� ���� ���� */
+		/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
 		initRunStep1();
 
-		/* 3. ��Ÿ ���� �� ���� */
+		/* 3. 기타 설정 및 실행 */
 		initRunStep3();
 
-		/* 4. ������ */
-//		initRunStep4();
+		/* 4. 실행결과 */
+		// initRunStep4();
 
 	}
 
 	/**
-	 * ����޴� ScrollPane scroll event
+	 * 실행메뉴 ScrollPane scroll event
 	 * 
 	 * @param e
 	 */
 	public void scroll(ScrollEvent e) {
 		if (e.getDeltaX() == 0 && e.getDeltaY() != 0) {
-			// TODO ��ũ�Ѽӵ� ������ �� �ֵ��� ����
+			// TODO 스크롤속도 설정할 수 있도록 수정
 			double deltaY = e.getDeltaY() * 3;
 			double width = mainScrollPane.getWidth();
 			double vvalue = mainScrollPane.getHvalue();
@@ -141,9 +141,9 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * AnchorPane�� Anchor�� �� �ٷ� �����ϱ� ���� �޼���
+	 * AnchorPane의 Anchor를 한 줄로 설정하기 위한 메서드
 	 * 
-	 * @param node   AnchorPane�� �ڽ� ���
+	 * @param node   AnchorPane의 자식 노드
 	 * @param top    top anchor
 	 * @param right  right anchor
 	 * @param bottom bottom anchor
@@ -157,14 +157,14 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ������ ����͸� ���������� �����ִ� TreeView�� ���� �� �߰��Ѵ�.
+	 * 설정된 모니터링 접속정보를 보여주는 TreeView를 생성 및 추가한다.
 	 * 
 	 * @param dbNameList
 	 * @param serverNameList
 	 */
 	private void addMonitoringConnInfoPreview(List<String> dbNameList, List<String> serverNameList) {
-		// �������� ����Ʈ TreeView
-		CustomTreeView connInfoCtv = new CustomTreeView("�������� ����Ʈ", FontAwesomeIcon.LIST, true);
+		// 접속정보 리스트 TreeView
+		CustomTreeView connInfoCtv = new CustomTreeView("접속정보 리스트", FontAwesomeIcon.LIST, true);
 		connInfoCtv.addTreeItem("DB", dbNameList, FontAwesomeIcon.DATABASE);
 		connInfoCtv.addTreeItem("Server", serverNameList, FontAwesomeIcon.SERVER);
 		setAnchorPaneAnchor(connInfoCtv, 80, 0, 0, 0);
@@ -172,7 +172,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ������ ����͸� ���� Preset�� �����ִ� TreeTableView�� ���� �� �߰��Ѵ�.
+	 * 설정된 모니터링 여부 Preset을 보여주는 TreeTableView를 생성 및 추가한다.
 	 * 
 	 * @param monitoringYNList
 	 */
@@ -184,7 +184,7 @@ public class RunMenuController implements Initializable {
 		List<MonitoringType> serverMonitoringTypeList = Arrays.asList(MonitoringType.values()).stream()
 				.filter(m -> m.getCategory().equals("SERVER")).collect(Collectors.toList());
 
-		// ����͸� ���� ����Ʈ TreeTableView - DB
+		// 모니터링 여부 리스트 TreeTableView - DB
 		CustomTreeTableView dbCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		dbCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		dbMonitoringTypeList.forEach(type -> dbCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -192,7 +192,7 @@ public class RunMenuController implements Initializable {
 		setAnchorPaneAnchor(dbCtv, 0, 0, 0, 0);
 		dbPresetAP.getChildren().add(dbCtv);
 
-		// ����͸� ���� ����Ʈ TreeTableView - Server
+		// 모니터링 여부 리스트 TreeTableView - Server
 		CustomTreeTableView serverCtv = new CustomTreeTableView("", FontAwesomeIcon.LIST);
 		serverCtv.addMonitoringInstanceColumn("Instance", "monitoringAlias");
 		serverMonitoringTypeList.forEach(type -> serverCtv.addMonitoringYNTableColumn(type.getName(), type));
@@ -202,7 +202,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * ����͸� ����
+	 * 모니터링 실행
 	 * 
 	 * @param e
 	 */
@@ -274,13 +274,14 @@ public class RunMenuController implements Initializable {
 			serverResults.setMonitoringTableViewUsageUIType(serverName, OSDiskUsage.class, usageUIType);
 			serverResults.setMonitoringTableViewData(serverName, OSDiskUsage.class, osDiskUsageList);
 
-//			AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
-//					DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1), DateUtils.getToday("yyyy-MM-dd"));
+			// AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
+			// DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1),
+			// DateUtils.getToday("yyyy-MM-dd"));
 		}
 	}
 
 	/**
-	 * 1. ����͸� �������� ���� ������ View�� �ʱ�ȭ�Ѵ�.
+	 * 1. 모니터링 접속정보 설정 영역의 View를 초기화한다.
 	 */
 	private void initRunStep1() {
 		// 1-0. Clear
@@ -288,16 +289,16 @@ public class RunMenuController implements Initializable {
 			connInfoFileListComboBox.getItems().clear();
 		}
 
-		// 1-1. ����͸� �������� �������� �޺��ڽ� ������ ����
+		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
 		List<String> connInfoFileList = propService.getConnectionInfoList();
 		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO �������� ���������� ���� ���
+			// TODO 접속정보 설정파일이 없는 경우
 			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
 		}
 
-		// 1-2. ����͸� �������� �������� �޺��ڽ� ������ ���� ������ ����
+		// 1-2. 모니터링 접속정보 설정파일 콤보박스 아이템 변경 리스너 설정
 		connInfoFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			propService.loadConnectionInfoConfig(newValue);
 			List<String> dbNames = propService.getMonitoringDBNameList();
@@ -306,10 +307,10 @@ public class RunMenuController implements Initializable {
 			initRunStep2();
 		});
 
-		// 1-3. ����͸� �������� �������� �޺��ڽ� �ʱⰪ ����
+		// 1-3. 모니터링 접속정보 설정파일 콤보박스 초기값 설정
 		String lastUseConnInfoFile = propService.getLastUseConnectionInfoFilePath();
 		if (StringUtils.isEmpty(lastUseConnInfoFile) || !connInfoFileList.contains(lastUseConnInfoFile)) {
-			// �ֱ� ���� �������� ���������� ���ų� ���� �������� �ʴ� ���, ù ��° �������� ����
+			// 최근 사용된 접속정보 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
 			connInfoFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			connInfoFileListComboBox.getSelectionModel().select(lastUseConnInfoFile);
@@ -317,7 +318,7 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 2. ����͸� ���� ���� ������ View�� �ʱ�ȭ�Ѵ�.
+	 * 2. 모니터링 여부 설정 영역의 View를 초기화한다.
 	 */
 	private void initRunStep2() {
 		// 2-0. Clear
@@ -325,18 +326,18 @@ public class RunMenuController implements Initializable {
 			presetFileListComboBox.getItems().clear();
 		}
 
-		// 2-1. ����͸� ���� Preset �޺��ڽ� ������ ����
+		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		propService.loadMonitoringInfoConfig(curConnInfoFile);
 		List<String> presetFileList = propService.getMonitoringPresetNameList();
 		if (presetFileList == null || presetFileList.size() == 0) {
-			// TODO ����͸� ���� Preset ���������� ���� ���
+			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
 			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			presetFileListComboBox.getItems().addAll(presetFileList);
 		}
 
-		// 2-2. ����͸� ���� Preset �޺��ڽ� ������ ���� ������ ����
+		// 2-2. 모니터링 여부 Preset 콤보박스 아이템 변경 리스너 설정
 		presetFileListComboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if (newValue != null) {
 				List<MonitoringYN> dbYnList = propService.getDBMonitoringYnList(newValue);
@@ -345,10 +346,10 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 2-3. ����͸� ���� Preset �޺��ڽ� �ʱⰪ ����
+		// 2-3. 모니터링 여부 Preset 콤보박스 초기값 설정
 		String lastUsePresetFileName = propService.getLastUsePresetFileName(curConnInfoFile);
 		if (StringUtils.isEmpty(lastUsePresetFileName) || !presetFileList.contains(lastUsePresetFileName)) {
-			// �ֱ� ���� ����͸� ���� Preset ���������� ���ų� ���� �������� �ʴ� ���, ù ��° �������� ����
+			// 최근 사용된 모니터링 여부 Preset 설정파일이 없거나 현재 존재하지 않는 경우, 첫 번째 설정파일 선택
 			presetFileListComboBox.getSelectionModel().selectFirst();
 		} else {
 			presetFileListComboBox.getSelectionModel().select(lastUsePresetFileName);
@@ -356,15 +357,15 @@ public class RunMenuController implements Initializable {
 	}
 
 	/**
-	 * 3. ��Ÿ ���� �� ���� ������ View�� �ʱ�ȭ�Ѵ�.
+	 * 3. 기타 설정 및 실행 영역의 View를 초기화한다.
 	 */
 	private void initRunStep3() {
-		// 3-1. ��ȸ��� ���� �޺��ڽ�
-		// ��ȸ��� ���� �޺��ڽ� ������ ����
+		// 3-1. 조회결과 단위 콤보박스
+		// 조회결과 단위 콤보박스 아이템 설정
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 
-		// 3-2. �ݿø� �ڸ��� �޺��ڽ�
+		// 3-2. 반올림 자릿수 콤보박스
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
@@ -379,8 +380,8 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-3. ��뷮 �÷� UI Ÿ��
-		// ��뷮 ǥ�ù�� �޺��ڽ� ������ ����
+		// 3-3. 사용량 컬럼 UI 타입
+		// 사용량 표시방법 콤보박스 아이템 설정
 		usageUITypeCB.getItems().addAll(UsageUIType.values());
 		usageUITypeCB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUITypeCB.setConverter(new StringConverter<UsageUIType>() {
@@ -395,12 +396,12 @@ public class RunMenuController implements Initializable {
 			}
 		});
 
-		// 3-4. ����͸� ��� ���� ����
+		// 3-4. 모니터링 결과 저장 여부
 		resultSaveToggleBtn.selectedProperty().set(true);
 	}
 
 	/**
-	 * 4. ������ ������ View�� �ʱ�ȭ�Ѵ�.
+	 * 4. 실행결과 영역의 View를 초기화한다.
 	 */
 	private void initRunStep4() {
 		dbResults = new MonitoringTableViewPagingBox("DB");
@@ -408,7 +409,7 @@ public class RunMenuController implements Initializable {
 
 		resultSplitPane.getItems().clear();
 		resultSplitPane.getItems().addAll(dbResults, serverResults);
-		
+
 		step4AP.setVisible(true);
 		step4AP.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step4AP.setMaxWidth(Control.USE_COMPUTED_SIZE);

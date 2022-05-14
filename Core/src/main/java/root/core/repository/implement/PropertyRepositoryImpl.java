@@ -38,22 +38,22 @@ import root.core.repository.constracts.PropertyRepository;
 @Slf4j
 public class PropertyRepositoryImpl implements PropertyRepository {
 
-	// Private �ʵ�� ���� �� Singletone���� ����
+	// Private 필드로 선언 후 Singletone으로 관리
 	private static PropertyRepository propRepo = new PropertyRepositoryImpl();
 
-	// �����ڸ� Private���� ���������ν� �ش� ��ü�� ������ �� �ִ� ����� ���ֹ��� => �������� Singletone �������
+	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 업애버림 => 안정적인 Singletone 관리방법
 	private PropertyRepositoryImpl() {
 		loadCombinedConfiguration();
 	}
 
-	// propertyService Field�� ������ �� �ִ� ������ ��� (Static Factory Pattern)
+	// propertyService Field에 접근할 수 있는 유일한 방법 (Static Factory Pattern)
 	public static PropertyRepository getInstance() {
 		return propRepo;
 	}
 
-	private PropertiesConfiguration connInfoConfig; // �������� ���� Configuration
-	private PropertiesConfiguration monitoringConfig; // ����͸����� Configuration
-	private CombinedConfiguration combinedConfig; // ���� Configuration
+	private PropertiesConfiguration connInfoConfig; // 접속정보 설정 Configuration
+	private PropertiesConfiguration monitoringConfig; // 모니터링여부 Configuration
+	private CombinedConfiguration combinedConfig; // 공통 Configuration
 
 	private static Pattern dbPropPattern = Pattern.compile("(.*).jdbc.(.*)");
 	private static Pattern serverPropPattern = Pattern.compile("(.*).server.(.*)");
@@ -66,8 +66,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Configuration ��ü�� ��ȯ�Ѵ�. TODO ���� �޼��带 Wrapping �ؼ� ȣ���� �ʿ䰡 ������..? Controller��
-	 * ������ ���Ÿ������� �ϴ� �̷��� ��..
+	 * Configuration 객체를 반환한다. TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와
+	 * 의존성 제거목적으로 일단 이렇게 함..
 	 */
 	@Override
 	public PropertiesConfiguration getConfiguration(String name) {
@@ -80,7 +80,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * �־��� ��ο� PropertyConfiguration�� ������ Key-Value�� �����Ѵ�.
+	 * 주어진 경로에 PropertyConfiguration에 설정된 Key-Value를 저장한다.
 	 */
 	@Override
 	public void save(String filePath, PropertiesConfiguration config) {
@@ -112,10 +112,10 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ���� ������ ���������� �Ϸ�Ǿ����ϴ�.");
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			log.info("[" + filePath + "] ���� ���忡 �����߽��ϴ�.");
+			log.info("[" + filePath + "] 파일 저장에 실패했습니다.");
 		}
 	}
 
@@ -171,9 +171,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ���� ������ ���������� �Ϸ�Ǿ����ϴ�.");
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
-			log.error("[" + filePath + "] ���� ���忡 �����߽��ϴ�.");
+			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
 			log.error(e.getMessage());
 		}
 	}
@@ -189,7 +189,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			JschConnectionInfo jsch = serverConfig.get(serverName);
 			config.setProperty(serverName + ".server.name", jsch.getServerName());
-			config.setProperty(serverName + ".server.os", jsch.getServerOS());
+			config.setProperty(serverName + ".server.os", jsch.getServerOS().name());
 			config.setProperty(serverName + ".server.host", jsch.getHost());
 			config.setProperty(serverName + ".server.port", jsch.getPort());
 			config.setProperty(serverName + ".server.username", jsch.getUserName());
@@ -230,9 +230,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
 
-			log.info("[" + filePath + "] ���� ������ ���������� �Ϸ�Ǿ����ϴ�.");
+			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
-			log.error("[" + filePath + "] ���� ���忡 �����߽��ϴ�.");
+			log.error("[" + filePath + "] 파일 저장에 실패했습니다.");
 			log.error(e.getMessage());
 		}
 	}
@@ -272,7 +272,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * [/config/config_definition.xml] ������ �о� CombinedConfiguration ��ü�� �ʱ�ȭ�Ѵ�.
+	 * [/config/config_definition.xml] 파일을 읽어 CombinedConfiguration 객체를 초기화한다.
 	 * 
 	 * @param path
 	 * @throws Exception
@@ -297,7 +297,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * �������� ������Ƽ ������ Load�Ѵ�.
+	 * 접속정보 프로퍼티 파일을 Load한다.
 	 * 
 	 * @throws ConfigurationException
 	 */
@@ -307,7 +307,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ����͸����� ������Ƽ ������ Load�Ѵ�.
+	 * 모니터링여부 프로퍼티 파일을 Load한다.
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -318,10 +318,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	public String[] getConnectionInfoFileNames() {
 		String connInfoDirPath = "./config/connectioninfo";
 		String[] connInfoFileList = new File(connInfoDirPath).list();
-		if(connInfoFileList == null || connInfoFileList.length == 0) {
-			return new String[] {};
-		}
-		
 		for (int i = 0; i < connInfoFileList.length; i++) {
 			connInfoFileList[i] = connInfoDirPath + "/" + connInfoFileList[i];
 		}
@@ -329,7 +325,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties���� ���� �о� ��ȯ�Ѵ�.
+	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String getCommonResource(String key) {
@@ -337,7 +333,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties���� ���� �о� ��ȯ�Ѵ�.
+	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public int getIntegerCommonResource(String key) {
@@ -345,7 +341,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * commons.properties���� ���� �о� ��ȯ�Ѵ�.
+	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
 	public String[] getCommonResources(String key) {
@@ -353,7 +349,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * DB�� �����Ͽ� ����͸��� ������ ��ȯ�Ѵ�.
+	 * DB에 연결하여 모니터링할 내용을 반환한다.
 	 */
 	@Override
 	public String[] getDBMonitoringContents() {
@@ -361,7 +357,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Server�� �����Ͽ� ����͸��� ������ ��ȯ�Ѵ�.
+	 * Server에 연결하여 모니터링할 내용을 반환한다.
 	 */
 	@Override
 	public String[] getServerMonitoringContents() {
@@ -369,7 +365,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Oracle Driver ComboBox�� ���� ��ȯ�Ѵ�.
+	 * Oracle Driver ComboBox의 값을 반환한다.
 	 */
 	@Override
 	public String[] getOracleDrivers() {
@@ -377,7 +373,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * �ֱ� ����� �������� ���ϸ��� ��ȯ�Ѵ�.
+	 * 최근 사용한 접속정보 파일명을 반환한다.
 	 */
 	@Override
 	public String getLastUseConnInfoFilePath() {
@@ -385,7 +381,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ConnectionInfo Property ���Ͽ� �ۼ��� Monitoring Preset����Ʈ�� ��ȯ�Ѵ�.
+	 * ConnectionInfo Property 파일에 작성된 Monitoring Preset리스트를 반환한다.
 	 */
 	@Override
 	public List<String> getMonitoringPresetNameList() {
@@ -400,7 +396,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ConnectionInfo Property ���Ͽ� �ۼ��� Monitoring Preset����Ʈ�� ��ȯ�Ѵ�.
+	 * ConnectionInfo Property 파일에 작성된 Monitoring Preset리스트를 반환한다.
 	 */
 	@Override
 	public Map<String, String> getMonitoringPresetMap() {
@@ -415,7 +411,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * �ֱ� ����� Monitoring Preset �̸��� ��ȯ�Ѵ�. ��, �ֱ� ����� Preset�� ���� ��, NULL�� ��ȯ�Ѵ�.
+	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
 	 * 
 	 * @return
 	 */
@@ -425,7 +421,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	/**
-	 * �ֱ� ����� Monitoring Preset �̸��� ��ȯ�Ѵ�. ��, �ֱ� ����� Preset�� ���� ��, NULL�� ��ȯ�Ѵ�.
+	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
 	 * 
 	 * @return
 	 */
@@ -436,7 +432,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ����͸��� DB�� �迭�� ��ȯ�Ѵ�.
+	 * 모니터링할 DB명 배열을 반환한다.
 	 */
 	@Override
 	public String[] getMonitoringDBNames() {
@@ -444,7 +440,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ����͸��� Server�� �迭�� ��ȯ�Ѵ�.
+	 * 모니터링할 Server명 배열을 반환한다.
 	 */
 	@Override
 	public String[] getMonitoringServerNames() {
@@ -457,7 +453,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ������ ��ο� ���ο� ������ �����Ѵ�.
+	 * 지정된 경로에 새로운 파일을 생성한다.
 	 * 
 	 * @param filePath
 	 */
@@ -465,7 +461,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			File newFile = new File(filePath);
 
-			// ���� �� ���͸� ����
+			// 파일 및 디렉터리 생성
 			new File(newFile.getParent()).mkdirs();
 			FileUtils.touch(newFile);
 
@@ -495,7 +491,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties ���Ͽ��� DB�� JdbcConnectionInfo�� �о�� ��ü�� ����
+	 * Properties 파일에서 DB별 JdbcConnectionInfo를 읽어와 객체를 생성
 	 * 
 	 * @param dbName
 	 * @return
@@ -513,7 +509,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * Properties ���Ͽ��� Server�� JschConnectionInfo�� �о�� ��ü�� ����
+	 * Properties 파일에서 Server별 JschConnectionInfo를 읽어와 객체를 생성
 	 * 
 	 * @param serverName
 	 * @return
@@ -535,7 +531,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	/**
-	 * ������ AlertLog ���Ͽ� ���� ������ ��ȯ�Ѵ�.
+	 * 서버별 AlertLog 파일에 대한 정보를 반환한다.
 	 * 
 	 * @param serverName
 	 * @return

@@ -28,10 +28,10 @@ public class MonitoringTableViewContainer extends HBox {
 
 	private static final Map<Class<? extends MonitoringResult>, String> titleMap = new HashMap<>();
 	static {
-		titleMap.put(ArchiveUsage.class, "Archive »ç¿ë·®");
-		titleMap.put(TableSpaceUsage.class, "TableSpace »ç¿ë·®");
-		titleMap.put(ASMDiskUsage.class, "ASM Disk »ç¿ë·®");
-		titleMap.put(OSDiskUsage.class, "OS Disk »ç¿ë·®");
+		titleMap.put(ArchiveUsage.class, "Archive ì‚¬ìš©ëŸ‰");
+		titleMap.put(TableSpaceUsage.class, "TableSpace ì‚¬ìš©ëŸ‰");
+		titleMap.put(ASMDiskUsage.class, "ASM Disk ì‚¬ìš©ëŸ‰");
+		titleMap.put(OSDiskUsage.class, "OS Disk ì‚¬ìš©ëŸ‰");
 	}
 
 	public MonitoringTableViewContainer() {
@@ -39,16 +39,16 @@ public class MonitoringTableViewContainer extends HBox {
 	}
 
 	/**
-	 * ¸ğ´ÏÅÍ¸µ °á°ú TableView¸¦ Ãß°¡ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê²°ê³¼ TableViewë¥¼ ì¶”ê°€í•œë‹¤.
 	 * 
 	 * @param type
 	 */
 	public void addMonitoringTableView(Class<? extends MonitoringResult> type) {
 		addMonitoringTableView(type, true);
 	}
-	
+
 	/**
-	 * ¸ğ´ÏÅÍ¸µ °á°ú TableView¸¦ Ãß°¡ÇÑ´Ù.
+	 * ëª¨ë‹ˆí„°ë§ ê²°ê³¼ TableViewë¥¼ ì¶”ê°€í•œë‹¤.
 	 * 
 	 * @param type
 	 */
@@ -57,8 +57,9 @@ public class MonitoringTableViewContainer extends HBox {
 		tableViewWrapper.setMinWidth(350);
 
 		Label titleLabel = createTitleLabel(type);
-		
-		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type, isSimpleTable);
+
+		MonitoringTableView<? extends MonitoringResult> tableView = MonitoringTableViewFactory.create(type,
+				isSimpleTable);
 		tableViewMap.put(type, tableView);
 		tableDataListMap.put(type, new ArrayList<>());
 
@@ -72,7 +73,7 @@ public class MonitoringTableViewContainer extends HBox {
 		titleLabel.setFont(Font.font("Noto Sans Korean Regular"));
 		return titleLabel;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <T extends MonitoringResult> void setTableData(Class<T> type, List<T> dataList) {
 		List<Object> list = tableDataListMap.get(type);
@@ -81,8 +82,8 @@ public class MonitoringTableViewContainer extends HBox {
 		}
 
 		clearTableData(type);
-		if(dataList != null) {
-			list.addAll(dataList);	
+		if (dataList != null) {
+			list.addAll(dataList);
 		}
 
 		if (tableViewMap.get(type) == null) {
@@ -93,11 +94,11 @@ public class MonitoringTableViewContainer extends HBox {
 		tableView.setItems(FXCollections.observableArrayList(dataList));
 		tableView.refresh();
 	}
-	
+
 	public void setUsageUIType(Class<? extends MonitoringResult> type, UsageUIType uiType) {
 		tableViewMap.get(type).setUsageUIType(uiType);
 	}
-	
+
 	public void clearTableData(Class<? extends MonitoringResult> type) {
 		tableDataListMap.get(type).clear();
 		tableViewMap.get(type).getItems().clear();
