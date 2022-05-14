@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.6.4")
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.6.4'
+    id 'io.spring.dependency-management' version '1.0.7.RELEASE'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	// Spring
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.6.4'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // Logback
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+}
+
+group = 'DBMonitoringDownloaderApp'
+version = '0.0.1-SNAPSHOT'
+description = 'DBMonitoringDownloaderApp'
+
+java.sourceCompatibility = JavaVersion.VERSION_15
+java.targetCompatibility = JavaVersion.VERSION_15
+
+sourceSets.main.java.srcDirs = ['src/main/java']
+sourceSets.test.java.srcDirs = ['src/test/java']
+
+
+tasks.named("bootRun") {
+	mainClass = 'root.applications.Application'
+}
+
+tasks.named("bootJar") {
+	mainClass = 'root.applications.Application'
+}

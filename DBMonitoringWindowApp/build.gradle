@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+	id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+	// Another module
+    implementation project(':Utils')
+    implementation project(':Common')
+    implementation project(':Core')
+    implementation project(':Repository')
+    
+	// Quartz Scheduler
+    implementation 'org.quartz-scheduler:quartz:2.3.2'
+
+	// Jsch
+    implementation 'com.jcraft:jsch:0.1.55'
+    
+    // j-text-utils 
+    implementation 'com.massisframework:j-text-utils:0.3.4'
+    
+    // Apache commons configuration2
+    implementation 'commons-beanutils:commons-beanutils:1.9.4'
+    implementation 'org.apache.commons:commons-configuration2:2.7'
+    
+    // JavaFx 
+    implementation 'org.openjfx:javafx-controls:17'
+    implementation 'org.openjfx:javafx-graphics:17'
+    implementation 'org.openjfx:javafx-base:17'
+    implementation 'org.openjfx:javafx-fxml:17'
+    implementation 'org.openjfx:javafx-media:17'
+    implementation 'com.jfoenix:jfoenix:9.0.10'
+    implementation 'de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2'
+    implementation 'org.fxmisc.richtext:richtextfx:0.10.9'
+    
+    // Logback
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+}
+
+group = 'DBMonitoring'
+version = '0.0.1-SNAPSHOT'
+description = 'DBMonitoring'
+java.sourceCompatibility = JavaVersion.VERSION_15
+java.targetCompatibility = JavaVersion.VERSION_15
+
+javafx {
+    version = '17'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+application {
+    mainClass = 'root.applications.Program'
+}
+
+run {   
+    systemProperties['resourceBaseDir'] = ''
+}

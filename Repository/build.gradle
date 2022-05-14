@@ -1,0 +1,28 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+	// Another module
+	implementation project(':Utils')
+    implementation project(':Common')
+    implementation project(':Core')
+
+    // Apache Commons Library
+    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'org.apache.commons:commons-configuration2:2.7'
+    
+    // Apache POI
+    implementation 'org.apache.poi:poi:3.17'
+    implementation 'org.apache.poi:poi-ooxml-schemas:3.17'
+    implementation 'org.apache.poi:poi-scratchpad:3.17'
+    implementation 'org.apache.poi:poi-ooxml:3.17'
+    
+    // Logback
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
+}
