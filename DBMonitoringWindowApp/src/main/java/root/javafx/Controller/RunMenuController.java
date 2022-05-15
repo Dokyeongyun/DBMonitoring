@@ -1,5 +1,6 @@
 package root.javafx.Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,7 +23,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -51,7 +51,8 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
-import root.javafx.utils.AlertUtils;
+import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.SceneUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
@@ -112,6 +113,9 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	HBox step3ToStep4Arrow;
+	
+	@FXML
+	AnchorPane noPropertyFileAP;
 
 	private MonitoringTableViewPagingBox dbResults;
 	private MonitoringTableViewPagingBox serverResults;
@@ -129,9 +133,10 @@ public class RunMenuController implements Initializable {
 			/* 4. 실행결과 */
 			// initRunStep4();
 
+			noPropertyFileAP.setVisible(false);
 		} catch (PropertyNotFoundException e) {
 			log.error(e.getMessage());
-			AlertUtils.showAlert(AlertType.ERROR, "설정 파일 Load", "설정 파일 읽기에 실패했습니다. 설정파일을 확인해주세요.");
+			noPropertyFileAP.setVisible(true);
 		}
 	}
 
@@ -429,5 +434,15 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
+	}
+	
+	/**
+	 * 설정 메뉴로 이동
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goSettingMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
 	}
 }

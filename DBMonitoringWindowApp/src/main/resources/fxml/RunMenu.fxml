@@ -4,6 +4,7 @@
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXToggleButton?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
@@ -14,6 +15,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
 <SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.RunMenuController">
@@ -59,249 +61,285 @@
                   </AnchorPane>
                </top>
                <center>
-                  <ScrollPane fx:id="mainScrollPane" fitToHeight="true" onScroll="#scroll" pannable="true">
-                    <content>
-                      <AnchorPane fx:id="scrollAP" onScroll="#scroll">
-                           <children>
-                              <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <StackPane>
+                     <children>
+                        <ScrollPane fx:id="mainScrollPane" fitToHeight="true" onScroll="#scroll" pannable="true">
+                          <content>
+                            <AnchorPane fx:id="scrollAP" onScroll="#scroll">
                                  <children>
-                                    <AnchorPane>
+                                    <HBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <AnchorPane fx:id="connInfoSettingAP" layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                          <AnchorPane>
                                              <children>
-                                                <Label layoutX="26.0" layoutY="7.0" text="접속정보 설정파일 선택" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView fill="#c42727" glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
+                                                <AnchorPane fx:id="connInfoSettingAP" layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                   <children>
+                                                      <Label layoutX="26.0" layoutY="7.0" text="접속정보 설정파일 선택" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView fill="#c42727" glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="connInfoFileListComboBox" maxWidth="230.0" minHeight="22.0" promptText="모니터링 접속정보 설정파일을 선택해주세요." styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                         <padding>
+                                                            <Insets left="5.0" />
+                                                         </padding>
+                                                      </JFXComboBox>
+                                                      <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
                                                    <padding>
-                                                      <Insets left="5.0" right="5.0" />
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                                    </padding>
+                                                </AnchorPane>
+                                                <Label alignment="CENTER" layoutX="98.0" layoutY="31.0" text="1. 모니터링 접속정보 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                                    <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                      <Font name="Noto Sans Korean Bold Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox fx:id="connInfoFileListComboBox" maxWidth="230.0" minHeight="22.0" promptText="모니터링 접속정보 설정파일을 선택해주세요." styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding></JFXComboBox>
-                                                <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
-                                                   </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
-                                                   </font>
-                                                </Label>
+                                                <Separator layoutX="38.0" layoutY="42.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
                                              </children>
                                              <padding>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </AnchorPane>
-                                          <Label alignment="CENTER" layoutX="98.0" layoutY="31.0" text="1. 모니터링 접속정보 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-                                             <font>
-                                                <Font name="Noto Sans Korean Bold Bold" size="13.0" />
-                                             </font>
-                                          </Label>
-                                          <Separator layoutX="38.0" layoutY="42.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </AnchorPane>
-                                    <HBox alignment="CENTER">
-                                       <children>
-                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
-                                       </children>
-                                    </HBox>
-                                    <AnchorPane>
-                                       <children>
-                                          <Label alignment="CENTER" layoutX="98.0" layoutY="31.0" text="2. 모니터링 여부 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-                                             <font>
-                                                <Font name="Noto Sans Korean Bold Bold" size="13.0" />
-                                             </font>
-                                          </Label>
-                                          <Separator layoutX="38.0" layoutY="42.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
-                                          <AnchorPane fx:id="presetSettingAP" layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                          <HBox alignment="CENTER">
                                              <children>
-                                                <Label layoutX="26.0" layoutY="7.0" text="모니터링 여부 설정파일 선택" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView fill="#c42727" glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
-                                                   </padding>
+                                                <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane>
+                                             <children>
+                                                <Label alignment="CENTER" layoutX="98.0" layoutY="31.0" text="2. 모니터링 여부 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                                    <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                      <Font name="Noto Sans Korean Bold Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox fx:id="presetFileListComboBox" maxWidth="230.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                <Separator layoutX="38.0" layoutY="42.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
+                                                <AnchorPane fx:id="presetSettingAP" layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                   <children>
+                                                      <Label layoutX="26.0" layoutY="7.0" text="모니터링 여부 설정파일 선택" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView fill="#c42727" glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="presetFileListComboBox" maxWidth="230.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                         <padding>
+                                                            <Insets left="5.0" />
+                                                         </padding>
+                                                      </JFXComboBox>
+                                                      <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <SplitPane dividerPositions="0.5" orientation="VERTICAL" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                                        <items>
+                                                          <AnchorPane fx:id="dbPresetAP" />
+                                                          <AnchorPane fx:id="serverPresetAP" />
+                                                        </items>
+                                                      </SplitPane>
+                                                   </children>
                                                    <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding></JFXComboBox>
-                                                <Label layoutX="36.0" layoutY="17.0" text="Preview" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                                    </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <SplitPane dividerPositions="0.5" orientation="VERTICAL" style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
-                                                  <items>
-                                                    <AnchorPane fx:id="dbPresetAP" />
-                                                    <AnchorPane fx:id="serverPresetAP" />
-                                                  </items>
-                                                </SplitPane>
+                                                </AnchorPane>
                                              </children>
                                              <padding>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                                              </padding>
                                           </AnchorPane>
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </AnchorPane>
-                                    <HBox alignment="CENTER">
-                                       <children>
-                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
-                                       </children>
-                                    </HBox>
-                                    <AnchorPane>
-                                       <children>
-                                          <AnchorPane layoutX="10.0" layoutY="30.0" minWidth="200.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-                                             <padding>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                                             </padding>
+                                          <HBox alignment="CENTER">
                                              <children>
-                                                <Label text="조회결과 단위 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
+                                                <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane>
+                                             <children>
+                                                <AnchorPane layoutX="10.0" layoutY="30.0" minWidth="200.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
                                                    <padding>
-                                                      <Insets left="5.0" right="5.0" />
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                                                    </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <JFXComboBox fx:id="fileSizeCB" layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding></JFXComboBox>
-                                                <Label text="반올림 자릿수 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
-                                                   </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <JFXComboBox fx:id="roundingDigitsCB" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding></JFXComboBox>
-                                                <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
-                                                   </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
-                                                   </font>
-                                                </Label>
-                                                <JFXToggleButton fx:id="resultSaveToggleBtn" alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Bold Bold" size="10.0" />
-                                                   </font>
-                                                </JFXToggleButton>
-                                                <JFXButton fx:id="monitoringRunBtn" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" onAction="#runMonitoring" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="260.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView fill="#438661" glyphName="PLAY_CIRCLE" size="30">
+                                                   <children>
+                                                      <Label text="조회결과 단위 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="fileSizeCB" layoutY="46.0" minHeight="22.0" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0">
+                                                         <padding>
+                                                            <Insets left="5.0" />
+                                                         </padding>
+                                                      </JFXComboBox>
+                                                      <Label text="반올림 자릿수 설정" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="roundingDigitsCB" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
+                                                         <padding>
+                                                            <Insets left="5.0" />
+                                                         </padding>
+                                                      </JFXComboBox>
+                                                      <Label layoutX="10.0" layoutY="10.0" text="모니터링 결과 저장 여부" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="180.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXToggleButton fx:id="resultSaveToggleBtn" alignment="CENTER_LEFT" selected="true" size="5.0" style="-fx-background-color: #eaeaea;" text="저장하기" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="200.0">
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Bold Bold" size="10.0" />
+                                                         </font>
+                                                      </JFXToggleButton>
+                                                      <JFXButton fx:id="monitoringRunBtn" alignment="CENTER" contentDisplay="TOP" graphicTextGap="10.0" layoutX="74.0" layoutY="319.0" onAction="#runMonitoring" ripplerFill="#90cfaa" style="-fx-background-radius: 20px;" text="모니터링 실행" textAlignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="260.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView fill="#438661" glyphName="PLAY_CIRCLE" size="30">
+                                                               <font>
+                                                                  <Font name="Noto Sans Korean Bold Bold" size="12.0" />
+                                                               </font>
+                                                            </FontAwesomeIconView>
+                                                         </graphic>
                                                          <font>
                                                             <Font name="Noto Sans Korean Bold Bold" size="12.0" />
                                                          </font>
-                                                      </FontAwesomeIconView>
-                                                   </graphic>
+                                                         <cursor>
+                                                            <Cursor fx:constant="HAND" />
+                                                         </cursor>
+                                                      </JFXButton>
+                                                      <Label layoutX="10.0" layoutY="10.0" text="사용량 컬럼 UI 타입" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
+                                                         <graphic>
+                                                            <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
+                                                         </graphic>
+                                                         <padding>
+                                                            <Insets left="5.0" right="5.0" />
+                                                         </padding>
+                                                         <font>
+                                                            <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <JFXComboBox fx:id="usageUITypeCB" layoutX="10.0" layoutY="10.0" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
+                                                         <padding>
+                                                            <Insets left="5.0" />
+                                                         </padding>
+                                                      </JFXComboBox>
+                                                   </children>
+                                                </AnchorPane>
+                                                <Label alignment="CENTER" layoutX="111.0" layoutY="42.0" text="3. 기타 설정 및 실행" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
                                                    <font>
-                                                      <Font name="Noto Sans Korean Bold Bold" size="12.0" />
-                                                   </font>
-                                                   <cursor>
-                                                      <Cursor fx:constant="HAND" />
-                                                   </cursor>
-                                                </JFXButton>
-                                                <Label layoutX="10.0" layoutY="10.0" text="사용량 컬럼 UI 타입" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="120.0">
-                                                   <graphic>
-                                                      <FontAwesomeIconView glyphName="ASTERISK" size="9" strokeWidth="0.0" />
-                                                   </graphic>
-                                                   <padding>
-                                                      <Insets left="5.0" right="5.0" />
-                                                   </padding>
-                                                   <font>
-                                                      <Font name="Noto Sans Korean Regular" size="12.0" />
+                                                      <Font name="Noto Sans Korean Bold Bold" size="13.0" />
                                                    </font>
                                                 </Label>
-                                                <JFXComboBox fx:id="usageUITypeCB" layoutX="10.0" layoutY="10.0" minHeight="22.0" minWidth="-Infinity" styleClass="basic-font" stylesheets="@../css/javaFx.css" unFocusColor="#ececec" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="140.0">
-                                                   <padding>
-                                                      <Insets left="5.0" />
-                                                   </padding>
-                                                </JFXComboBox>
+                                                <Separator layoutX="-50.0" layoutY="37.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
                                              </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
                                           </AnchorPane>
-                                          <Label alignment="CENTER" layoutX="111.0" layoutY="42.0" text="3. 기타 설정 및 실행" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-                                             <font>
-                                                <Font name="Noto Sans Korean Bold Bold" size="13.0" />
-                                             </font>
-                                          </Label>
-                                          <Separator layoutX="-50.0" layoutY="37.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </AnchorPane>
-                                    <HBox fx:id="step3ToStep4Arrow" alignment="CENTER" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
-                                       <children>
-                                          <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                          <HBox fx:id="step3ToStep4Arrow" alignment="CENTER" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
+                                             <children>
+                                                <FontAwesomeIconView fill="#366e4f" glyphName="PLAY" size="20" />
+                                             </children>
+                                          </HBox>
+                                          <AnchorPane fx:id="step4AP" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
+                                             <children>
+                                                <Label fx:id="step4Label" alignment="CENTER" layoutX="111.0" layoutY="42.0" text="4. 실행결과" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+                                                   <font>
+                                                      <Font name="Noto Sans Korean Bold Bold" size="13.0" />
+                                                   </font>
+                                                </Label>
+                                                <Separator layoutX="-50.0" layoutY="37.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
+                                                <AnchorPane layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
+                                                   <padding>
+                                                      <Insets bottom="20.0" left="20.0" right="20.0" />
+                                                   </padding>
+                                                   <children>
+                                                      <SplitPane fx:id="resultSplitPane" orientation="VERTICAL" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                                   </children>
+                                                </AnchorPane>
+                                             </children>
+                                             <padding>
+                                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                             </padding>
+                                          </AnchorPane>
                                        </children>
                                     </HBox>
-                                    <AnchorPane fx:id="step4AP" maxWidth="0.0" minWidth="0.0" prefWidth="0.0" visible="false">
-                                       <children>
-                                          <Label fx:id="step4Label" alignment="CENTER" layoutX="111.0" layoutY="42.0" text="4. 실행결과" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-                                             <font>
-                                                <Font name="Noto Sans Korean Bold Bold" size="13.0" />
-                                             </font>
-                                          </Label>
-                                          <Separator layoutX="-50.0" layoutY="37.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="40.0" />
-                                          <AnchorPane layoutX="10.0" layoutY="30.0" style="-fx-border-color: #e1e1e1; -fx-border-radius: 20px;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0">
-                                             <padding>
-                                                <Insets bottom="20.0" left="20.0" right="20.0" />
-                                             </padding>
-                                             <children>
-                                                <SplitPane fx:id="resultSplitPane" orientation="VERTICAL" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                             </children>
-                                          </AnchorPane>
-                                       </children>
-                                       <padding>
-                                          <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-                                       </padding>
-                                    </AnchorPane>
+                                 </children>
+                              </AnchorPane>
+                          </content>
+                        </ScrollPane>
+                        <AnchorPane fx:id="noPropertyFileAP" style="-fx-background-color: white;">
+                           <children>
+                              <HBox alignment="CENTER" layoutY="269.6000061035156" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                 <children>
+                                    <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="접속정보 설정파일이 없습니다.">
+                                       <graphic>
+                                          <FontAwesomeIconView fill="#1f6cc4" glyphName="ARCHIVE" size="40" text="" />
+                                       </graphic>
+                                       <styleClass>
+                                          <String fx:value="basic-font" />
+                                          <String fx:value="bold" />
+                                       </styleClass>
+                                    </Label>
+                                    <JFXButton fx:id="goSettingMenuBtn" alignment="CENTER" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#goSettingMenu" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="설정하기">
+                                       <cursor>
+                                          <Cursor fx:constant="HAND" />
+                                       </cursor>
+                                       <graphic>
+                                          <FontAwesomeIconView fill="#1f6cc4" glyphName="ARROW_CIRCLE_RIGHT" selectionEnd="0" selectionStart="0" size="13" />
+                                       </graphic>
+                                       <HBox.margin>
+                                          <Insets left="15.0" />
+                                       </HBox.margin>
+                                    </JFXButton>
                                  </children>
                               </HBox>
                            </children>
                         </AnchorPane>
-                    </content>
-                  </ScrollPane>
+                     </children>
+                  </StackPane>
                </center>
                <bottom>
                   <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
