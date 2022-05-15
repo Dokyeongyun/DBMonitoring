@@ -3,12 +3,15 @@ package root.applications;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.PropertyRepository;
 import root.javafx.Controller.HomeController;
 import root.javafx.Controller.LeftMenuController;
 import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.AlertUtils;
 import root.repository.implement.PropertyRepositoryImpl;
 
 @Slf4j
@@ -26,7 +29,12 @@ public class Program extends Application {
 		setUpDependecyInjector();
 
 		// configuration load
-		propRepo.loadCombinedConfiguration();
+		try {
+			propRepo.loadCombinedConfiguration();	
+		} catch (PropertyNotFoundException e) {
+			AlertUtils.showAlert(AlertType.ERROR, "설정 파일 Load", "설정 파일 읽기에 실패했습니다. 설정파일을 확인해주세요.");
+			return;
+		}
 
 		// fxml load
 		System.setProperty("prism.lcdtext", "false"); // 안티앨리어싱 (Font 부드럽게)

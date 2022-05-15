@@ -10,6 +10,7 @@ import root.core.domain.MonitoringYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.utils.UnitUtils.FileSize;
 
 public interface PropertyService {
@@ -26,7 +27,7 @@ public interface PropertyService {
 	 * 
 	 * @return
 	 */
-	List<String> getConnectionInfoList();
+	List<String> getConnectionInfoList() throws PropertyNotFoundException;
 
 	/**
 	 * 최근 사용된 접속정보 설정파일의 경로를 반환한다.

@@ -35,6 +35,7 @@ import root.common.server.implement.JschServer;
 import root.common.server.implement.ServerOS;
 import root.core.domain.AlertLog;
 import root.core.domain.Log;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
@@ -107,18 +108,25 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// 접속정보 설정 프로퍼티 파일
-		List<String> connInfoFiles = propService.getConnectionInfoList();
-		if (connInfoFiles != null && connInfoFiles.size() != 0) {
-			// Connection Info ComboBox
-			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
-			runConnInfoFileComboBox.getSelectionModel().selectFirst();
+		List<String> connInfoFiles;
+		try {
+			connInfoFiles = propService.getConnectionInfoList();
+			if (connInfoFiles != null && connInfoFiles.size() != 0) {
+				// Connection Info ComboBox
+				runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
+				runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
-			if (lastUseConnInfoFilePath != null) {
-				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+				String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
+				if (lastUseConnInfoFilePath != null) {
+					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				}
+			} else {
+				AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+				return;
 			}
-		} else {
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
 			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
 			return;
 		}

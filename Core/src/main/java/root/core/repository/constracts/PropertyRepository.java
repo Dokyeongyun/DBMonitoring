@@ -8,6 +8,7 @@ import org.apache.commons.configuration2.PropertiesConfiguration;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
+import root.core.domain.exceptions.PropertyNotFoundException;
 
 public interface PropertyRepository {
 
@@ -25,13 +26,13 @@ public interface PropertyRepository {
 	
 	void saveCommonConfig(String key, String value);
 
-	void loadCombinedConfiguration();
+	void loadCombinedConfiguration() throws PropertyNotFoundException;
 
 	void loadConnectionInfoConfig(String filePath);
 
 	void loadMonitoringInfoConfig(String filePath);
 
-	String[] getConnectionInfoFileNames();
+	String[] getConnectionInfoFileNames() throws PropertyNotFoundException;
 
 	String getCommonResource(String key);
 

@@ -22,10 +22,12 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import root.common.database.contracts.AbstractDatabase;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
@@ -39,6 +41,7 @@ import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
@@ -48,6 +51,7 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
+import root.javafx.utils.AlertUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
@@ -55,6 +59,7 @@ import root.repository.implement.ReportFileRepo;
 import root.service.implement.FilePropertyService;
 import root.utils.UnitUtils.FileSize;
 
+@Slf4j
 public class RunMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -114,15 +119,20 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
-		initRunStep1();
+		try {
+			/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
+			initRunStep1();
+			
+			/* 3. 기타 설정 및 실행 */
+			initRunStep3();
 
-		/* 3. 기타 설정 및 실행 */
-		initRunStep3();
+			/* 4. 실행결과 */
+			// initRunStep4();
 
-		/* 4. 실행결과 */
-		// initRunStep4();
-
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+			AlertUtils.showAlert(AlertType.ERROR, "설정 파일 Load", "설정 파일 읽기에 실패했습니다. 설정파일을 확인해주세요.");
+		}
 	}
 
 	/**
@@ -282,8 +292,9 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 1. 모니터링 접속정보 설정 영역의 View를 초기화한다.
+	 * @throws PropertyNotFoundException 
 	 */
-	private void initRunStep1() {
+	private void initRunStep1() throws PropertyNotFoundException {
 		// 1-0. Clear
 		if (connInfoFileListComboBox.getItems().size() != 0) {
 			connInfoFileListComboBox.getItems().clear();

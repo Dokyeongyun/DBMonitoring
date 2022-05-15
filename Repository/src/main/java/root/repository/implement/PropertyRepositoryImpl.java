@@ -33,6 +33,7 @@ import root.common.database.implement.JdbcConnectionInfo;
 import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.ServerOS;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
@@ -41,9 +42,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	// Private 필드로 선언 후 Singletone으로 관리
 	private static PropertyRepository propRepo = new PropertyRepositoryImpl();
 
-	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 업애버림 => 안정적인 Singletone 관리방법
+	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 없애버림 => 안정적인 Singletone 관리방법
 	private PropertyRepositoryImpl() {
-		loadCombinedConfiguration();
+		try {
+			loadCombinedConfiguration();
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+		}
 	}
 
 	// propertyService Field에 접근할 수 있는 유일한 방법 (Static Factory Pattern)
@@ -278,7 +283,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * @throws Exception
 	 */
 	@Override
-	public void loadCombinedConfiguration() {
+	public void loadCombinedConfiguration() throws PropertyNotFoundException {
 		Parameters params = new Parameters();
 
 		CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
@@ -292,7 +297,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			combinedConfig = builder.getConfiguration();
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new PropertyNotFoundException("there is no config_definition properties file");
 		}
 	}
 
@@ -315,9 +321,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	@Override
-	public String[] getConnectionInfoFileNames() {
+	public String[] getConnectionInfoFileNames() throws PropertyNotFoundException {
 		String connInfoDirPath = "./config/connectioninfo";
 		String[] connInfoFileList = new File(connInfoDirPath).list();
+		if(connInfoFileList == null) {
+			throw new PropertyNotFoundException("there is no ConnectionInfo properties file");
+		}
+		
 		for (int i = 0; i < connInfoFileList.length; i++) {
 			connInfoFileList[i] = connInfoDirPath + "/" + connInfoFileList[i];
 		}

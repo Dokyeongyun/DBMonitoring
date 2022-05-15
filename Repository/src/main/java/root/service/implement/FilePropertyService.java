@@ -20,6 +20,7 @@ import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
 import root.utils.UnitUtils.FileSize;
@@ -45,9 +46,10 @@ public class FilePropertyService implements PropertyService {
 
 	/**
 	 * ./config/connectioninfo/ 디렉터리 하위에 있는 접속정보 설정파일 리스트를 반환한다.
+	 * @throws PropertyNotFoundException 
 	 */
 	@Override
-	public List<String> getConnectionInfoList() {
+	public List<String> getConnectionInfoList() throws PropertyNotFoundException {
 		return new ArrayList<>(Arrays.asList(propRepo.getConnectionInfoFileNames()));
 	}
 

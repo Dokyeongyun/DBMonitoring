@@ -11,6 +11,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
+import lombok.extern.slf4j.Slf4j;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschConnectionInfo;
@@ -20,6 +21,7 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
@@ -34,6 +36,7 @@ import root.repository.implement.PropertyRepositoryImpl;
 import root.repository.implement.ReportFileRepo;
 import root.service.implement.FilePropertyService;
 
+@Slf4j
 public class HistoryMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -76,18 +79,25 @@ public class HistoryMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// 접속정보 설정 프로퍼티 파일
-		List<String> connInfoFiles = propService.getConnectionInfoList();
-		if (connInfoFiles != null && connInfoFiles.size() != 0) {
-			// Connection Info ComboBox
-			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
-			runConnInfoFileComboBox.getSelectionModel().selectFirst();
+		List<String> connInfoFiles;
+		try {
+			connInfoFiles = propService.getConnectionInfoList();
+			if (connInfoFiles != null && connInfoFiles.size() != 0) {
+				// Connection Info ComboBox
+				runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
+				runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
-			if (lastUseConnInfoFilePath != null) {
-				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+				String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
+				if (lastUseConnInfoFilePath != null) {
+					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				}
+			} else {
+				AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+				return;
 			}
-		} else {
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
 			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
 			return;
 		}
