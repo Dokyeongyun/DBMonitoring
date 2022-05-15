@@ -36,7 +36,7 @@
               <items>
                   <HBox alignment="CENTER_RIGHT">
                      <children>
-                        <JFXButton fx:id="connTestBtn" ellipsisString="" graphicTextGap="8.0" maxWidth="100.0" minWidth="100.0" onAction="#testConnection" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="연동 테스트">
+                        <JFXButton fx:id="connTestBtn" disable="true" ellipsisString="" graphicTextGap="8.0" maxWidth="100.0" minWidth="100.0" onAction="#testConnection" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="연동 테스트">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
