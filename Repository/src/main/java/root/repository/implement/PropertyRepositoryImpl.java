@@ -138,7 +138,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> dbConfig) {
 		PropertiesConfiguration config = connInfoConfig;
-
+		
 		// TODO dbnames property..
 		String dbNames = "";
 		for (String dbName : dbConfig.keySet()) {
@@ -153,8 +153,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
 			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
 		}
-
-		config.setProperty("dbnames", dbNames.substring(0, dbNames.length() - 1));
+		
+		String newDbNames = dbNames.length() == 0 ? "" : dbNames.substring(0, dbNames.length() - 1);
+		config.setProperty("dbnames", newDbNames);
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
@@ -213,7 +214,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
 			config.setProperty(serverName + ".server.alertlog.readline", 500);
 		}
-		config.setProperty("servernames", serverNames.substring(0, serverNames.length() - 1));
+		
+		String newServerNames = serverNames.length() == 0 ? "" : serverNames.substring(0, serverNames.length() - 1);
+		config.setProperty("servernames", newServerNames);
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
