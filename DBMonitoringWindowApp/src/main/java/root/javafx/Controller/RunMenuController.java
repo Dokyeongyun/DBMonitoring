@@ -42,6 +42,7 @@ import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
@@ -52,6 +53,7 @@ import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
 import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.AlertUtils;
 import root.javafx.utils.SceneUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
@@ -226,7 +228,12 @@ public class RunMenuController implements Initializable {
 
 		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
-		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		String presetConfigFilePath = null;
+		try {
+			presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		} catch (PropertyNotLoadedException e2) {
+			AlertUtils.showPropertyNotLoadedAlert();
+		}
 		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
 		propService.loadMonitoringInfoConfig(presetConfigFilePath);
 
@@ -345,7 +352,12 @@ public class RunMenuController implements Initializable {
 		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		propService.loadMonitoringInfoConfig(curConnInfoFile);
-		List<String> presetFileList = propService.getMonitoringPresetNameList();
+		List<String> presetFileList = null;
+		try {
+			presetFileList = propService.getMonitoringPresetNameList();
+		} catch (PropertyNotLoadedException e) {
+			AlertUtils.showPropertyNotLoadedAlert();
+		}
 		if (presetFileList == null || presetFileList.size() == 0) {
 			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
 			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());

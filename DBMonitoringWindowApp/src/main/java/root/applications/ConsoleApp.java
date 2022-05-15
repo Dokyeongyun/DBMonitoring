@@ -17,6 +17,7 @@ import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.core.batch.DBCheckBatch;
 import root.core.batch.ServerCheckBatch;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
@@ -98,8 +99,13 @@ public class ConsoleApp {
 		while (true) {
 			System.out.println(String.format("사용하실 모니터링여부 설정을 선택해주세요."));
 
-			List<String> presetNames = propService.getMonitoringPresetNameList();
-			if (presetNames.size() == 0) {
+			List<String> presetNames = null;
+			try {
+				presetNames = propService.getMonitoringPresetNameList();
+			} catch (PropertyNotLoadedException e) {
+				e.printStackTrace();
+			}
+			if (presetNames == null || presetNames.size() == 0) {
 				System.out.println("모니터링여부 설정파일이 존재하지 않습니다. 프로그램을 종료합니다.");
 				return;
 			}

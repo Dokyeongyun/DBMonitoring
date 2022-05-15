@@ -34,6 +34,7 @@ import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.ServerOS;
 import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
@@ -75,11 +76,21 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 의존성 제거목적으로 일단 이렇게 함..
 	 */
 	@Override
-	public PropertiesConfiguration getConfiguration(String name) {
+	public PropertiesConfiguration getConfiguration(String name) throws PropertyNotLoadedException {
 		if (name.equals("connInfoConfig")) {
+			if (connInfoConfig == null) {
+				throw new PropertyNotLoadedException("connInfoConfig properties file is not loaded");
+			}
 			return connInfoConfig;
 		} else if (name.equals("monitoringConfig")) {
+			if (monitoringConfig == null) {
+				throw new PropertyNotLoadedException("monitoringConfig properties file is not loaded");
+			}
 			return monitoringConfig;
+		}
+
+		if (combinedConfig == null) {
+			throw new PropertyNotLoadedException("combinedConfig properties file is not loaded");
 		}
 		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
 	}
@@ -243,7 +254,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	@Override
-	public void saveCommonConfig(Map<String, Object> values) {
+	public void saveCommonConfig(Map<String, Object> values) throws PropertyNotLoadedException {
 		PropertiesConfiguration config = getConfiguration("commonConfig");
 		for (String key : values.keySet()) {
 			config.setProperty(key, values.get(key));
@@ -252,13 +263,17 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	@Override
-	public void saveCommonConfig(String key, String value) {
+	public void saveCommonConfig(String key, String value) throws PropertyNotLoadedException {
 		PropertiesConfiguration config = getConfiguration("commonConfig");
 		config.setProperty(key, value);
 		save("./config/common.properties", config);
 	}
 
 	private static PropertiesConfiguration load(String filePath) {
+//		if (!new File(filePath).exists()) {
+//			throw new PropertyNotFoundException(filePath);
+//		}
+		
 		Parameters param = new Parameters();
 		PropertiesBuilderParameters propertyParameters = param.properties()
 				.setListDelimiterHandler(new DefaultListDelimiterHandler(',')).setThrowExceptionOnMissing(false)
@@ -280,7 +295,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * [/config/config_definition.xml] 파일을 읽어 CombinedConfiguration 객체를 초기화한다.
 	 * 
 	 * @param path
-	 * @throws Exception
+	 * @throws PropertyNotFoundException
 	 */
 	@Override
 	public void loadCombinedConfiguration() throws PropertyNotFoundException {
@@ -305,6 +320,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	/**
 	 * 접속정보 프로퍼티 파일을 Load한다.
 	 * 
+	 * @throws PropertyNotFoundException
+	 * 
 	 * @throws ConfigurationException
 	 */
 	@Override
@@ -314,6 +331,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	/**
 	 * 모니터링여부 프로퍼티 파일을 Load한다.
+	 * 
+	 * @throws PropertyNotFoundException
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -434,6 +453,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
 	 * 
 	 * @return
+	 * @throws PropertyNotFoundException 
 	 */
 	@Override
 	public String getLastUseMonitoringPresetName(String filePath) {

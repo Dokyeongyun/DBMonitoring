@@ -11,6 +11,7 @@ import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.utils.UnitUtils.FileSize;
 
 public interface PropertyService {
@@ -26,6 +27,7 @@ public interface PropertyService {
 	 * 모니터링 접속정보 설정파일의 경로를 반환한다.
 	 * 
 	 * @return
+	 * @throws PropertyNotFoundException 
 	 */
 	List<String> getConnectionInfoList() throws PropertyNotFoundException;
 
@@ -66,13 +68,13 @@ public interface PropertyService {
 	 */
 	List<MonitoringYN> getServerMonitoringYnList(String presetConfigFileName);
 
-	Map<String, String> getMonitoringPresetMap();
+	Map<String, String> getMonitoringPresetMap() throws PropertyNotLoadedException;
 
-	List<String> getMonitoringPresetFilePathList();
+	List<String> getMonitoringPresetFilePathList() throws PropertyNotLoadedException;
 
-	List<String> getMonitoringPresetNameList();
+	List<String> getMonitoringPresetNameList() throws PropertyNotLoadedException;
 
-	String getMonitoringPresetFilePath(String presetName);
+	String getMonitoringPresetFilePath(String presetName) throws PropertyNotLoadedException;
 
 	List<String> getMonitoringDBNameList();
 
@@ -123,22 +125,24 @@ public interface PropertyService {
 	 * @param key   설정정보 키
 	 * @param value 설정정보 값
 	 */
-	void saveCommonConfig(String key, String value);
+	void saveCommonConfig(String key, String value) throws PropertyNotLoadedException;
 
 	/**
 	 * 최근 사용한 접속정보 설정정보를 저장한다.
 	 * 
 	 * @param filePath
+	 * @throws PropertyNotLoadedException 
 	 */
-	void saveLastUseConnectionInfoSetting(String filePath);
+	void saveLastUseConnectionInfoSetting(String filePath) throws PropertyNotLoadedException;
 
 	/**
 	 * 접속정보 설정을 추가한다.
 	 * 
 	 * @param filePath
 	 * @return
+	 * @throws PropertyNotLoadedException 
 	 */
-	String addConnectionInfoSetting(String filePath);
+	String addConnectionInfoSetting(String filePath) throws PropertyNotLoadedException;
 
 	/**
 	 * 모니터링여부 Preset 설정을 추가한다.
@@ -146,7 +150,7 @@ public interface PropertyService {
 	 * @param connInfoSetting
 	 * @param presetName
 	 */
-	void addMonitoringPreset(String connInfoSetting, String presetName);
+	void addMonitoringPreset(String connInfoSetting, String presetName) throws PropertyNotLoadedException;
 
 	/**
 	 * 모니터링여부 Preset 설정을 저장한다.

@@ -21,6 +21,7 @@ import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
 import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.PropertyRepository;
 import root.core.service.contracts.PropertyService;
 import root.utils.UnitUtils.FileSize;
@@ -129,7 +130,7 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	@Override
-	public Map<String, String> getMonitoringPresetMap() {
+	public Map<String, String> getMonitoringPresetMap() throws PropertyNotLoadedException {
 		Map<String, String> result = new HashMap<>();
 
 		PropertiesConfiguration config = propRepo.getConfiguration("connInfoConfig");
@@ -147,17 +148,17 @@ public class FilePropertyService implements PropertyService {
 	}
 
 	@Override
-	public List<String> getMonitoringPresetFilePathList() {
+	public List<String> getMonitoringPresetFilePathList() throws PropertyNotLoadedException {
 		return new ArrayList<>(getMonitoringPresetMap().values());
 	}
 
 	@Override
-	public List<String> getMonitoringPresetNameList() {
+	public List<String> getMonitoringPresetNameList() throws PropertyNotLoadedException {
 		return new ArrayList<>(getMonitoringPresetMap().keySet());
 	}
 
 	@Override
-	public String getMonitoringPresetFilePath(String presetName) {
+	public String getMonitoringPresetFilePath(String presetName) throws PropertyNotLoadedException {
 		return getMonitoringPresetMap().get(presetName);
 	}
 
@@ -220,17 +221,19 @@ public class FilePropertyService implements PropertyService {
 
 	/**
 	 * 공통 설정정보를 저장한다.
+	 * @throws PropertyNotLoadedException 
 	 */
 	@Override
-	public void saveCommonConfig(String key, String value) {
+	public void saveCommonConfig(String key, String value) throws PropertyNotLoadedException {
 		propRepo.saveCommonConfig(key, value);
 	}
 
 	/**
 	 * 최근 사용한 접속정보 설정정보를 저장한다.
+	 * @throws PropertyNotLoadedException 
 	 */
 	@Override
-	public void saveLastUseConnectionInfoSetting(String filePath) {
+	public void saveLastUseConnectionInfoSetting(String filePath) throws PropertyNotLoadedException {
 		PropertiesConfiguration rememberConfig = propRepo.getConfiguration("rememberConfig");
 		rememberConfig.setProperty("filepath.config.lastuse", filePath.replace("\\", "/"));
 		propRepo.save(rememberConfig.getString("filepath.config.remember"), rememberConfig);
@@ -238,21 +241,25 @@ public class FilePropertyService implements PropertyService {
 
 	/**
 	 * 접속정보 설정을 추가한다.
+	 * @throws PropertyNotLoadedException 
 	 */
 	@Override
-	public String addConnectionInfoSetting(String fileName) {
+	public String addConnectionInfoSetting(String fileName) throws PropertyNotLoadedException {
 		String filePath = "./config/connectioninfo/" + fileName + ".properties";
 		propRepo.createNewPropertiesFile(filePath, "ConnectionInfo");
+		propRepo.loadConnectionInfoConfig(filePath);
 		addMonitoringPreset(filePath, "default");
 		return filePath;
 	}
 
 	/**
 	 * 모니터링여부 Preset 설정을 추가한다.
+	 * @throws PropertyNotLoadedException 
 	 */
 	@Override
-	public void addMonitoringPreset(String connInfoSetting, String presetName) {
-		String connInfoFileName = connInfoSetting.substring(0, connInfoSetting.indexOf(".properties"));
+	public void addMonitoringPreset(String connInfoSetting, String presetName) throws PropertyNotLoadedException {
+		String connInfoFileName = connInfoSetting.substring(connInfoSetting.lastIndexOf("/") + 1,
+				connInfoSetting.indexOf(".properties"));
 		String filePath = "./config/monitoring/" + connInfoFileName + "/" + presetName + ".properties";
 
 		propRepo.createNewPropertiesFile(filePath, "Monitoring");
