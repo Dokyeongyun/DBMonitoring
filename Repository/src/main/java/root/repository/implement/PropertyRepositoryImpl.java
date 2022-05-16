@@ -33,6 +33,8 @@ import root.common.database.implement.JdbcConnectionInfo;
 import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.ServerOS;
+import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.PropertyRepository;
 
 @Slf4j
@@ -41,9 +43,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	// Private 필드로 선언 후 Singletone으로 관리
 	private static PropertyRepository propRepo = new PropertyRepositoryImpl();
 
-	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 업애버림 => 안정적인 Singletone 관리방법
+	// 생성자를 Private으로 선언함으로써 해당 객체를 생성할 수 있는 방법을 없애버림 => 안정적인 Singletone 관리방법
 	private PropertyRepositoryImpl() {
-		loadCombinedConfiguration();
+		try {
+			loadCombinedConfiguration();
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+		}
 	}
 
 	// propertyService Field에 접근할 수 있는 유일한 방법 (Static Factory Pattern)
@@ -70,11 +76,21 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 의존성 제거목적으로 일단 이렇게 함..
 	 */
 	@Override
-	public PropertiesConfiguration getConfiguration(String name) {
+	public PropertiesConfiguration getConfiguration(String name) throws PropertyNotLoadedException {
 		if (name.equals("connInfoConfig")) {
+			if (connInfoConfig == null) {
+				throw new PropertyNotLoadedException("connInfoConfig properties file is not loaded");
+			}
 			return connInfoConfig;
 		} else if (name.equals("monitoringConfig")) {
+			if (monitoringConfig == null) {
+				throw new PropertyNotLoadedException("monitoringConfig properties file is not loaded");
+			}
 			return monitoringConfig;
+		}
+
+		if (combinedConfig == null) {
+			throw new PropertyNotLoadedException("combinedConfig properties file is not loaded");
 		}
 		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
 	}
@@ -122,7 +138,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> dbConfig) {
 		PropertiesConfiguration config = connInfoConfig;
-
+		
 		// TODO dbnames property..
 		String dbNames = "";
 		for (String dbName : dbConfig.keySet()) {
@@ -137,8 +153,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(dbName + ".jdbc.validation", jdbc.getJdbcValidation());
 			config.setProperty(dbName + ".jdbc.connections", jdbc.getJdbcConnections());
 		}
-
-		config.setProperty("dbnames", dbNames.substring(0, dbNames.length() - 1));
+		
+		String newDbNames = dbNames.length() == 0 ? "" : dbNames.substring(0, dbNames.length() - 1);
+		config.setProperty("dbnames", newDbNames);
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
@@ -197,7 +214,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 			config.setProperty(serverName + ".server.alertlog.filepath", jsch.getAlc().getReadFilePath());
 			config.setProperty(serverName + ".server.alertlog.readline", 500);
 		}
-		config.setProperty("servernames", serverNames.substring(0, serverNames.length() - 1));
+		
+		String newServerNames = serverNames.length() == 0 ? "" : serverNames.substring(0, serverNames.length() - 1);
+		config.setProperty("servernames", newServerNames);
 
 		PropertiesConfigurationLayout layout = config.getLayout();
 		try {
@@ -238,7 +257,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	@Override
-	public void saveCommonConfig(Map<String, Object> values) {
+	public void saveCommonConfig(Map<String, Object> values) throws PropertyNotLoadedException {
 		PropertiesConfiguration config = getConfiguration("commonConfig");
 		for (String key : values.keySet()) {
 			config.setProperty(key, values.get(key));
@@ -247,13 +266,17 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 	
 	@Override
-	public void saveCommonConfig(String key, String value) {
+	public void saveCommonConfig(String key, String value) throws PropertyNotLoadedException {
 		PropertiesConfiguration config = getConfiguration("commonConfig");
 		config.setProperty(key, value);
 		save("./config/common.properties", config);
 	}
 
 	private static PropertiesConfiguration load(String filePath) {
+//		if (!new File(filePath).exists()) {
+//			throw new PropertyNotFoundException(filePath);
+//		}
+		
 		Parameters param = new Parameters();
 		PropertiesBuilderParameters propertyParameters = param.properties()
 				.setListDelimiterHandler(new DefaultListDelimiterHandler(',')).setThrowExceptionOnMissing(false)
@@ -275,10 +298,10 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * [/config/config_definition.xml] 파일을 읽어 CombinedConfiguration 객체를 초기화한다.
 	 * 
 	 * @param path
-	 * @throws Exception
+	 * @throws PropertyNotFoundException
 	 */
 	@Override
-	public void loadCombinedConfiguration() {
+	public void loadCombinedConfiguration() throws PropertyNotFoundException {
 		Parameters params = new Parameters();
 
 		CombinedConfigurationBuilder builder = new CombinedConfigurationBuilder();
@@ -292,12 +315,15 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			combinedConfig = builder.getConfiguration();
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
+			throw new PropertyNotFoundException("there is no config_definition properties file");
 		}
 	}
 
 	/**
 	 * 접속정보 프로퍼티 파일을 Load한다.
+	 * 
+	 * @throws PropertyNotFoundException
 	 * 
 	 * @throws ConfigurationException
 	 */
@@ -308,6 +334,8 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	/**
 	 * 모니터링여부 프로퍼티 파일을 Load한다.
+	 * 
+	 * @throws PropertyNotFoundException
 	 */
 	@Override
 	public void loadMonitoringInfoConfig(String filePath) {
@@ -315,9 +343,13 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	}
 
 	@Override
-	public String[] getConnectionInfoFileNames() {
+	public String[] getConnectionInfoFileNames() throws PropertyNotFoundException {
 		String connInfoDirPath = "./config/connectioninfo";
 		String[] connInfoFileList = new File(connInfoDirPath).list();
+		if(connInfoFileList == null) {
+			throw new PropertyNotFoundException("there is no ConnectionInfo properties file");
+		}
+		
 		for (int i = 0; i < connInfoFileList.length; i++) {
 			connInfoFileList[i] = connInfoDirPath + "/" + connInfoFileList[i];
 		}
@@ -424,6 +456,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
 	 * 
 	 * @return
+	 * @throws PropertyNotFoundException 
 	 */
 	@Override
 	public String getLastUseMonitoringPresetName(String filePath) {
