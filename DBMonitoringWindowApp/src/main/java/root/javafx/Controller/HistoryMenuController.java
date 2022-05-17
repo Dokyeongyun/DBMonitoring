@@ -1,5 +1,6 @@
 package root.javafx.Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -9,7 +10,6 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
 import lombok.extern.slf4j.Slf4j;
 import root.common.database.implement.JdbcConnectionInfo;
@@ -29,7 +29,8 @@ import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
-import root.javafx.utils.AlertUtils;
+import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.SceneUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
@@ -57,6 +58,12 @@ public class HistoryMenuController implements Initializable {
 
 	@FXML
 	AnchorPane osDiskUsageTabAP;
+	
+	@FXML
+	AnchorPane topMenuBar;
+	
+	@FXML
+	AnchorPane noPropertyFileAP;
 
 	/* Custom View */
 	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
@@ -92,13 +99,18 @@ public class HistoryMenuController implements Initializable {
 				if (lastUseConnInfoFilePath != null) {
 					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 				}
+				
+				noPropertyFileAP.setVisible(false);
+				topMenuBar.setVisible(true);
 			} else {
-				AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+				noPropertyFileAP.setVisible(true);
+				topMenuBar.setVisible(false);
 				return;
 			}
 		} catch (PropertyNotFoundException e) {
 			log.error(e.getMessage());
-			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+			noPropertyFileAP.setVisible(true);
+			topMenuBar.setVisible(false);
 			return;
 		}
 
@@ -172,4 +184,15 @@ public class HistoryMenuController implements Initializable {
 		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
 		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
 	}
+	
+	/**
+	 * 설정 메뉴로 이동
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goSettingMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
+	}
+	
 }
