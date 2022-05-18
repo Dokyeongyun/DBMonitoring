@@ -1,5 +1,6 @@
 package root.javafx.Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -9,8 +10,8 @@ import com.jfoenix.controls.JFXComboBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.AnchorPane;
+import lombok.extern.slf4j.Slf4j;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschConnectionInfo;
@@ -20,6 +21,7 @@ import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringResult;
 import root.core.domain.OSDiskUsage;
 import root.core.domain.TableSpaceUsage;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
@@ -27,13 +29,15 @@ import root.core.usecase.constracts.DBCheckUsecase;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
 import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
-import root.javafx.utils.AlertUtils;
+import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.SceneUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
 import root.repository.implement.ReportFileRepo;
 import root.service.implement.FilePropertyService;
 
+@Slf4j
 public class HistoryMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -54,6 +58,12 @@ public class HistoryMenuController implements Initializable {
 
 	@FXML
 	AnchorPane osDiskUsageTabAP;
+	
+	@FXML
+	AnchorPane topMenuBar;
+	
+	@FXML
+	AnchorPane noPropertyFileAP;
 
 	/* Custom View */
 	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
@@ -76,19 +86,28 @@ public class HistoryMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// 접속정보 설정 프로퍼티 파일
-		List<String> connInfoFiles = propService.getConnectionInfoList();
-		if (connInfoFiles != null && connInfoFiles.size() != 0) {
-			// Connection Info ComboBox
-			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
-			runConnInfoFileComboBox.getSelectionModel().selectFirst();
+		List<String> connInfoFiles;
+		try {
+			connInfoFiles = propService.getConnectionInfoList();
+			if (connInfoFiles != null && connInfoFiles.size() != 0) {
+				// Connection Info ComboBox
+				runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
+				runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
-			if (lastUseConnInfoFilePath != null) {
-				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+				String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
+				if (lastUseConnInfoFilePath != null) {
+					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				}
+				
+				setNoPropertyUIVisible(false);
+			} else {
+				setNoPropertyUIVisible(true);
+				return;
 			}
-		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 DB/Server 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+			setNoPropertyUIVisible(true);
 			return;
 		}
 
@@ -161,5 +180,34 @@ public class HistoryMenuController implements Initializable {
 		tableSpaceUsageMAP.syncTableData(tableSpaceUsageMAP.getSelectedAliasComboBoxItem(), 0);
 		asmDiskUsageMAP.syncTableData(asmDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
 		osDiskUsageMAP.syncTableData(osDiskUsageMAP.getSelectedAliasComboBoxItem(), 0);
+	}
+	
+	/**
+	 * 설정 메뉴로 이동
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goSettingMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
+	}
+	
+	/**
+	 * 접속정보 설정파일 열기
+	 * 
+	 * @param e
+	 */
+	public void openPropertiesFile(ActionEvent e) {
+		
+	}
+	
+	/**
+	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
+	 * 
+	 * @param isVisible
+	 */
+	private void setNoPropertyUIVisible(boolean isVisible) {
+		noPropertyFileAP.setVisible(isVisible);
+		topMenuBar.setVisible(!isVisible);
 	}
 }

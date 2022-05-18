@@ -37,6 +37,8 @@ import root.core.domain.MonitoringYN.MonitoringTypeAndYN;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
+import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.service.contracts.PropertyService;
 import root.javafx.CustomView.ConnectionInfoVBox;
 import root.javafx.CustomView.DBConnInfoControl;
@@ -99,7 +101,12 @@ public class SettingMenuController implements Initializable {
 			// [설정] - [모니터링 여부 설정] - Preset 변경 Event
 			monitoringPresetComboBox.valueProperty().addListener((options, oldValue, newValue) -> {
 				if (newValue != null) {
-					loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
+					try {
+						loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(newValue));
+					} catch (PropertyNotLoadedException e) {
+						log.error(e.getMessage());
+						AlertUtils.showPropertyNotLoadedAlert();
+					}
 				}
 			});
 		} else {
@@ -111,7 +118,12 @@ public class SettingMenuController implements Initializable {
 		fileSizeCB.getItems().addAll(FileSize.values());
 		fileSizeCB.getSelectionModel().select(propService.getDefaultFileSizeUnit());
 		fileSizeCB.valueProperty().addListener((options, oldValue, newValue) -> {
-			propService.saveCommonConfig("unit.filesize", newValue.getUnit());
+			try {
+				propService.saveCommonConfig("unit.filesize", newValue.getUnit());
+			} catch (PropertyNotLoadedException e) {
+				log.error(e.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 		});
 
 		/* 실행 설정 탭 - 반올림 자릿수 콤보박스 */
@@ -119,7 +131,12 @@ public class SettingMenuController implements Initializable {
 		roundingDigitsCB.getItems().addAll(RoundingDigits.values());
 		roundingDigitsCB.getSelectionModel().select(propService.getDefaultRoundingDigits());
 		roundingDigitsCB.valueProperty().addListener((options, oldValue, newValue) -> {
-			propService.saveCommonConfig("unit.rounding", String.valueOf(newValue.getDigits()));
+			try {
+				propService.saveCommonConfig("unit.rounding", String.valueOf(newValue.getDigits()));
+			} catch (PropertyNotLoadedException e) {
+				log.error(e.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 		});
 		roundingDigitsCB.setConverter(new StringConverter<RoundingDigits>() {
 			@Override
@@ -137,7 +154,12 @@ public class SettingMenuController implements Initializable {
 		usageUICB.getItems().addAll(UsageUIType.values());
 		usageUICB.getSelectionModel().select(propService.getDefaultUsageUIType());
 		usageUICB.valueProperty().addListener((options, oldValue, newValue) -> {
-			propService.saveCommonConfig("usage-ui-type", newValue.getCode());
+			try {
+				propService.saveCommonConfig("usage-ui-type", newValue.getCode());
+			} catch (PropertyNotLoadedException e) {
+				log.error(e.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 		});
 		usageUICB.setConverter(new StringConverter<UsageUIType>() {
 			@Override
@@ -171,7 +193,12 @@ public class SettingMenuController implements Initializable {
 		result.ifPresent(input -> {
 			// TODO validate input value
 			// 1. Preset명 이용하여 설정파일 생성 + 접속정보설정파일에 Preset 설정파일 경로 추가
-			propService.addMonitoringPreset(fileChooserText.getText(), input);
+			try {
+				propService.addMonitoringPreset(fileChooserText.getText(), input);
+			} catch (PropertyNotLoadedException e1) {
+				log.error(e1.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 
 			// 3. 모니터링 여부 Config and Preset ComboBox 재로딩
 			reloadingMonitoringSetting(input);
@@ -249,6 +276,7 @@ public class SettingMenuController implements Initializable {
 	 * [설정] - [모니터링 여부 설정] - 모니터링 여부 설정파일을 불러온다.
 	 * 
 	 * @param filePath
+	 * @throws PropertyNotFoundException 
 	 */
 	private void loadMonitoringConfigFile(String filePath) {
 		log.debug("Load monitoring config file: " + filePath);
@@ -347,9 +375,10 @@ public class SettingMenuController implements Initializable {
 
 	/**
 	 * [설정] - 설정파일을 불러온 후, 동적 UI를 생성한다.
+	 * @throws PropertyNotFoundException 
 	 */
 	@SuppressWarnings("unchecked")
-	private void createSettingDynamicElements() {
+	private void createSettingDynamicElements() throws PropertyNotFoundException {
 
 		List<JdbcConnectionInfo> jdbcConnInfoList = propService
 				.getJdbcConnInfoList(propService.getMonitoringDBNameList());
@@ -392,6 +421,7 @@ public class SettingMenuController implements Initializable {
 	 * [설정] - [모니터링여부설정] - Preset을 다시 불러온다.
 	 * 
 	 * @param curPresetName
+	 * @throws PropertyNotFoundException 
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
 		// 최종 읽을 파일 경로
@@ -399,7 +429,12 @@ public class SettingMenuController implements Initializable {
 
 		// Preset Combo Clear
 		monitoringPresetComboBox.getItems().clear();
-		monitoringPresetComboBox.getItems().addAll(propService.getMonitoringPresetNameList());
+		try {
+			monitoringPresetComboBox.getItems().addAll(propService.getMonitoringPresetNameList());
+		} catch (PropertyNotLoadedException e) {
+			log.error(e.getMessage());
+			AlertUtils.showPropertyNotLoadedAlert();
+		}
 
 		// 지정된 Preset이 없다면 최근 사용된 Preset으로 세팅한다.
 		// 만약 최근 사용된 Preset이 없다면 첫번째 Preset으로 세팅한다.
@@ -419,7 +454,12 @@ public class SettingMenuController implements Initializable {
 		// ComboBox 선택 및 Preset 파일 읽기
 		if (!StringUtils.isEmpty(readPresetName)) {
 			monitoringPresetComboBox.getSelectionModel().select(readPresetName);
-			loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(readPresetName));
+			try {
+				loadMonitoringConfigFile(propService.getMonitoringPresetFilePath(readPresetName));
+			} catch (PropertyNotLoadedException e) {
+				log.error(e.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 		}
 	}
 
@@ -465,17 +505,22 @@ public class SettingMenuController implements Initializable {
 				AlertUtils.showAlert(AlertType.ERROR, "접속정보 설정파일 생성", "설정파일명을 입력해주세요.");
 				return;
 			}
+			
+			try {
+				// TODO 입력값 검사 (영어만)
+				// 1. 접속정보 설정파일 생성 + default 모니터링여부 Preset 설정파일 생성
+				String newSettingFile = propService.addConnectionInfoSetting(input);
+				
+				// 2. Set Node Visible
+				setVisible(noConnInfoConfigAP, false);
+				setVisible(noMonitoringConfigAP, false);
 
-			// TODO 입력값 검사 (영어만)
-			// 1. 접속정보 설정파일 생성 + default 모니터링여부 Preset 설정파일 생성
-			String newSettingFile = propService.addConnectionInfoSetting(input);
-
-			// 2. Set Node Visible
-			setVisible(noConnInfoConfigAP, false);
-			setVisible(noMonitoringConfigAP, false);
-
-			// 3. 생성된 설정파일 Load
-			loadSelectedConfigFile(newSettingFile);
+				// 3. 생성된 설정파일 Load
+				loadSelectedConfigFile(newSettingFile);
+			} catch (PropertyNotLoadedException e1) {
+				log.error(e1.getMessage());
+				AlertUtils.showPropertyNotLoadedAlert();
+			}
 		});
 	}
 }

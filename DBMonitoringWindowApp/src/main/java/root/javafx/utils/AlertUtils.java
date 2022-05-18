@@ -13,4 +13,8 @@ public class AlertUtils {
 		alert.getDialogPane().getStyleClass().add("basic-font");
 		alert.show();
 	}
+
+	public static void showPropertyNotLoadedAlert() {
+		showAlert(AlertType.ERROR, "설정파일 Load", "설정파일이 Load되지 않았습니다. 설정파일을 확인해주세요.");
+	}
 }

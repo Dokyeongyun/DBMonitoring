@@ -1,5 +1,6 @@
 package root.javafx.Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -26,6 +28,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import root.common.database.contracts.AbstractDatabase;
 import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
@@ -39,6 +42,8 @@ import root.core.domain.TableSpaceUsage;
 import root.core.domain.enums.MonitoringType;
 import root.core.domain.enums.RoundingDigits;
 import root.core.domain.enums.UsageUIType;
+import root.core.domain.exceptions.PropertyNotFoundException;
+import root.core.domain.exceptions.PropertyNotLoadedException;
 import root.core.repository.constracts.DBCheckRepository;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
@@ -48,6 +53,9 @@ import root.core.usecase.implement.DBCheckUsecaseImpl;
 import root.core.usecase.implement.ServerMonitoringUsecaseImpl;
 import root.javafx.CustomView.CustomTreeTableView;
 import root.javafx.CustomView.CustomTreeView;
+import root.javafx.DI.DependencyInjection;
+import root.javafx.utils.AlertUtils;
+import root.javafx.utils.SceneUtils;
 import root.repository.implement.DBCheckRepositoryImpl;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
@@ -55,6 +63,7 @@ import root.repository.implement.ReportFileRepo;
 import root.service.implement.FilePropertyService;
 import root.utils.UnitUtils.FileSize;
 
+@Slf4j
 public class RunMenuController implements Initializable {
 
 	/* Dependency Injection */
@@ -107,6 +116,12 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	HBox step3ToStep4Arrow;
+	
+	@FXML
+	AnchorPane noPropertyFileAP;
+	
+	@FXML
+	Button fileOpenBtn;
 
 	private MonitoringTableViewPagingBox dbResults;
 	private MonitoringTableViewPagingBox serverResults;
@@ -114,15 +129,21 @@ public class RunMenuController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 
-		/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
-		initRunStep1();
+		try {
+			/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
+			initRunStep1();
+			
+			/* 3. 기타 설정 및 실행 */
+			initRunStep3();
 
-		/* 3. 기타 설정 및 실행 */
-		initRunStep3();
+			/* 4. 실행결과 */
+			// initRunStep4();
 
-		/* 4. 실행결과 */
-		// initRunStep4();
-
+			setNoPropertyUIVisible(false);
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+			setNoPropertyUIVisible(true);
+		}
 	}
 
 	/**
@@ -211,7 +232,12 @@ public class RunMenuController implements Initializable {
 
 		String connInfoConfigFilePath = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		String presetName = presetFileListComboBox.getSelectionModel().getSelectedItem();
-		String presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		String presetConfigFilePath = null;
+		try {
+			presetConfigFilePath = propService.getMonitoringPresetFilePath(presetName);
+		} catch (PropertyNotLoadedException e2) {
+			AlertUtils.showPropertyNotLoadedAlert();
+		}
 		propService.loadConnectionInfoConfig(connInfoConfigFilePath);
 		propService.loadMonitoringInfoConfig(presetConfigFilePath);
 
@@ -282,8 +308,9 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 1. 모니터링 접속정보 설정 영역의 View를 초기화한다.
+	 * @throws PropertyNotFoundException 
 	 */
-	private void initRunStep1() {
+	private void initRunStep1() throws PropertyNotFoundException {
 		// 1-0. Clear
 		if (connInfoFileListComboBox.getItems().size() != 0) {
 			connInfoFileListComboBox.getItems().clear();
@@ -292,8 +319,8 @@ public class RunMenuController implements Initializable {
 		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
 		List<String> connInfoFileList = propService.getConnectionInfoList();
 		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO 접속정보 설정파일이 없는 경우
-			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
+			setNoPropertyUIVisible(true);
+//			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
 		}
@@ -329,7 +356,12 @@ public class RunMenuController implements Initializable {
 		// 2-1. 모니터링 여부 Preset 콤보박스 아이템 설정
 		String curConnInfoFile = connInfoFileListComboBox.getSelectionModel().getSelectedItem();
 		propService.loadMonitoringInfoConfig(curConnInfoFile);
-		List<String> presetFileList = propService.getMonitoringPresetNameList();
+		List<String> presetFileList = null;
+		try {
+			presetFileList = propService.getMonitoringPresetNameList();
+		} catch (PropertyNotLoadedException e) {
+			AlertUtils.showPropertyNotLoadedAlert();
+		}
 		if (presetFileList == null || presetFileList.size() == 0) {
 			// TODO 모니터링 여부 Preset 설정파일이 없는 경우
 			addMonitoringPresetPreview(new ArrayList<>(), new ArrayList<>());
@@ -418,5 +450,32 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setMinWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
+	}
+	
+	/**
+	 * 설정 메뉴로 이동
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goSettingMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
+	}
+	
+	/**
+	 * 접속정보 설정파일 열기
+	 * 
+	 * @param e
+	 */
+	public void openPropertiesFile(ActionEvent e) {
+	}
+	
+	/**
+	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
+	 * 
+	 * @param isVisible
+	 */
+	private void setNoPropertyUIVisible(boolean isVisible) {
+		noPropertyFileAP.setVisible(isVisible);
 	}
 }

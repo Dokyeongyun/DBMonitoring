@@ -1,5 +1,6 @@
 package root.javafx.Controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -35,6 +37,7 @@ import root.common.server.implement.JschServer;
 import root.common.server.implement.ServerOS;
 import root.core.domain.AlertLog;
 import root.core.domain.Log;
+import root.core.domain.exceptions.PropertyNotFoundException;
 import root.core.repository.constracts.ServerMonitoringRepository;
 import root.core.service.contracts.PropertyService;
 import root.core.usecase.constracts.ServerMonitoringUsecase;
@@ -44,7 +47,9 @@ import root.javafx.CustomView.AlertLogMonitoringSummaryAP;
 import root.javafx.CustomView.NumberTextFormatter;
 import root.javafx.CustomView.TagBar;
 import root.javafx.CustomView.dateCell.DisableAfterTodayDateCell;
+import root.javafx.DI.DependencyInjection;
 import root.javafx.utils.AlertUtils;
+import root.javafx.utils.SceneUtils;
 import root.repository.implement.LinuxServerMonitoringRepository;
 import root.repository.implement.PropertyRepositoryImpl;
 import root.repository.implement.ReportFileRepo;
@@ -90,6 +95,15 @@ public class AlertLogMonitoringMenuController implements Initializable {
 
 	@FXML
 	AnchorPane summaryNodataAP;
+	
+	@FXML
+	AnchorPane topMenuBar;
+	
+	@FXML
+	AnchorPane noPropertyFileAP;
+	
+	@FXML
+	Button fileOpenBtn;
 
 	TagBar tagBar = new TagBar();
 
@@ -107,19 +121,34 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 
 		// 접속정보 설정 프로퍼티 파일
-		List<String> connInfoFiles = propService.getConnectionInfoList();
-		if (connInfoFiles != null && connInfoFiles.size() != 0) {
-			// Connection Info ComboBox
-			runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
-			runConnInfoFileComboBox.getSelectionModel().selectFirst();
+		List<String> connInfoFiles;
+		try {
+			connInfoFiles = propService.getConnectionInfoList();
+			if (connInfoFiles != null && connInfoFiles.size() != 0) {
+				// Connection Info ComboBox
+				runConnInfoFileComboBox.getItems().addAll(connInfoFiles);
+				runConnInfoFileComboBox.getSelectionModel().selectFirst();
 
-			// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
-			String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
-			if (lastUseConnInfoFilePath != null) {
-				runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				// remember.properties 파일에서, 최근 사용된 설정파일 경로가 있다면 해당 설정파일을 불러온다.
+				String lastUseConnInfoFilePath = propService.getLastUseConnectionInfoFilePath();
+				if (lastUseConnInfoFilePath != null) {
+					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
+				}
+
+				System.out.println(propService.getMonitoringServerNameList());
+				if(propService.getMonitoringServerNameList().size() == 0) {
+					setNoPropertyUIVisible(true);	
+				} else {
+					setNoPropertyUIVisible(false);
+				}
+				
+			} else {
+				setNoPropertyUIVisible(true);
+				return;
 			}
-		} else {
-			AlertUtils.showAlert(AlertType.INFORMATION, "접속정보 설정", "설정된 접속정보가 없습니다.\n[설정]메뉴로 이동합니다.");
+		} catch (PropertyNotFoundException e) {
+			log.error(e.getMessage());
+			setNoPropertyUIVisible(true);
 			return;
 		}
 
@@ -386,5 +415,33 @@ public class AlertLogMonitoringMenuController implements Initializable {
 		});
 		statusTextUpdateThread.setDaemon(true);
 		statusTextUpdateThread.start();
+	}
+	
+	/**
+	 * 설정 메뉴로 이동
+	 * 
+	 * @param e
+	 * @throws IOException
+	 */
+	public void goSettingMenu(ActionEvent e) throws IOException {
+		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
+	}
+	
+	/**
+	 * 접속정보 설정파일 열기
+	 * 
+	 * @param e
+	 */
+	public void openPropertiesFile(ActionEvent e) {
+	}
+	
+	/**
+	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
+	 * 
+	 * @param isVisible
+	 */
+	private void setNoPropertyUIVisible(boolean isVisible) {
+		noPropertyFileAP.setVisible(isVisible);
+		topMenuBar.setVisible(!isVisible);
 	}
 }
