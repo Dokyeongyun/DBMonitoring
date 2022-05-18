@@ -476,6 +476,6 @@ public class RunMenuController implements Initializable {
 	 * @param isVisible
 	 */
 	private void setNoPropertyUIVisible(boolean isVisible) {
-		noPropertyFileAP.setVisible(true);
+		noPropertyFileAP.setVisible(isVisible);
 	}
 }

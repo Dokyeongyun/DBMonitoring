@@ -207,7 +207,7 @@ public class HistoryMenuController implements Initializable {
 	 * @param isVisible
 	 */
 	private void setNoPropertyUIVisible(boolean isVisible) {
-		noPropertyFileAP.setVisible(true);
-		topMenuBar.setVisible(false);
+		noPropertyFileAP.setVisible(isVisible);
+		topMenuBar.setVisible(!isVisible);
 	}
 }
