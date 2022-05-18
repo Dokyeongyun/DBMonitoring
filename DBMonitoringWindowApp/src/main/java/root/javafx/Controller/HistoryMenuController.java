@@ -100,17 +100,14 @@ public class HistoryMenuController implements Initializable {
 					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 				}
 				
-				noPropertyFileAP.setVisible(false);
-				topMenuBar.setVisible(true);
+				setNoPropertyUIVisible(false);
 			} else {
-				noPropertyFileAP.setVisible(true);
-				topMenuBar.setVisible(false);
+				setNoPropertyUIVisible(true);
 				return;
 			}
 		} catch (PropertyNotFoundException e) {
 			log.error(e.getMessage());
-			noPropertyFileAP.setVisible(true);
-			topMenuBar.setVisible(false);
+			setNoPropertyUIVisible(true);
 			return;
 		}
 
@@ -195,4 +192,22 @@ public class HistoryMenuController implements Initializable {
 		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
 	}
 	
+	/**
+	 * 접속정보 설정파일 열기
+	 * 
+	 * @param e
+	 */
+	public void openPropertiesFile(ActionEvent e) {
+		
+	}
+	
+	/**
+	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
+	 * 
+	 * @param isVisible
+	 */
+	private void setNoPropertyUIVisible(boolean isVisible) {
+		noPropertyFileAP.setVisible(true);
+		topMenuBar.setVisible(false);
+	}
 }

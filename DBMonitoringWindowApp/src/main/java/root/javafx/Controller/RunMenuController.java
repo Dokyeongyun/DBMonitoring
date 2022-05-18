@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -118,6 +119,9 @@ public class RunMenuController implements Initializable {
 	
 	@FXML
 	AnchorPane noPropertyFileAP;
+	
+	@FXML
+	Button fileOpenBtn;
 
 	private MonitoringTableViewPagingBox dbResults;
 	private MonitoringTableViewPagingBox serverResults;
@@ -135,10 +139,10 @@ public class RunMenuController implements Initializable {
 			/* 4. 실행결과 */
 			// initRunStep4();
 
-			noPropertyFileAP.setVisible(false);
+			setNoPropertyUIVisible(false);
 		} catch (PropertyNotFoundException e) {
 			log.error(e.getMessage());
-			noPropertyFileAP.setVisible(true);
+			setNoPropertyUIVisible(true);
 		}
 	}
 
@@ -315,8 +319,8 @@ public class RunMenuController implements Initializable {
 		// 1-1. 모니터링 접속정보 설정파일 콤보박스 아이템 설정
 		List<String> connInfoFileList = propService.getConnectionInfoList();
 		if (connInfoFileList == null || ArrayUtils.isEmpty(connInfoFileList.toArray())) {
-			// TODO 접속정보 설정파일이 없는 경우
-			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
+			setNoPropertyUIVisible(true);
+//			addMonitoringConnInfoPreview(new ArrayList<>(), new ArrayList<>());
 		} else {
 			connInfoFileListComboBox.getItems().addAll(connInfoFileList);
 		}
@@ -456,5 +460,22 @@ public class RunMenuController implements Initializable {
 	 */
 	public void goSettingMenu(ActionEvent e) throws IOException {
 		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
+	}
+	
+	/**
+	 * 접속정보 설정파일 열기
+	 * 
+	 * @param e
+	 */
+	public void openPropertiesFile(ActionEvent e) {
+	}
+	
+	/**
+	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
+	 * 
+	 * @param isVisible
+	 */
+	private void setNoPropertyUIVisible(boolean isVisible) {
+		noPropertyFileAP.setVisible(true);
 	}
 }
