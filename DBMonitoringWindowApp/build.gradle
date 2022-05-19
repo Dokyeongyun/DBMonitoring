@@ -43,9 +43,9 @@ dependencies {
     implementation 'ch.qos.logback:logback-classic:1.2.3'
 }
 
-group = 'DBMonitoring'
-version = '0.0.1-SNAPSHOT'
-description = 'DBMonitoring'
+group = 'DBMonitoringWindowApp'
+version = '1.0.0'
+description = 'DBMonitoringWindowApp'
 java.sourceCompatibility = JavaVersion.VERSION_15
 java.targetCompatibility = JavaVersion.VERSION_15
 
@@ -56,6 +56,19 @@ javafx {
 
 application {
     mainClass = 'root.applications.Program'
+}
+
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'root.applications.Program'
+	}
+	from {
+		configurations.runtimeClasspath.files.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
+	duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
 }
 
 run {   

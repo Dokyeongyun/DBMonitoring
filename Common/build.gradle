@@ -7,6 +7,10 @@ repositories {
 }
 
 dependencies {
+	
+	// ojdbc
+	implementation 'com.oracle.database.jdbc:ojdbc6:11.2.0.4'
+	implementation 'com.oracle.database.nls:orai18n:11.2.0.4'
 
 	// Apache commons pool2
 	implementation 'commons-io:commons-io:2.8.0'
