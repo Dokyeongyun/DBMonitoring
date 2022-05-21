@@ -44,6 +44,6 @@ public interface AbstractDatabase {
 	 * Rollback transaction
 	 * @return	true when succeeded, false when failed
 	 */
-	public boolean rollback(Connection conn);
+	public boolean rollbackTransaction(Connection conn);
 	
 }
