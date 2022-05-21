@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import lombok.Data;
 import root.common.database.contracts.AbstractDatabase;
 
 // TODO Builder Pattern �����ϱ�
@@ -14,7 +13,6 @@ import root.common.database.contracts.AbstractDatabase;
  * @author DKY
  *
  */
-@Data
 public class JdbcDatabase implements AbstractDatabase {
 	private JdbcConnectionInfo jdbc;
 	private JdbcDatabaseConnectionPool connPool = null;
@@ -62,7 +60,8 @@ public class JdbcDatabase implements AbstractDatabase {
 		try {
 			conn.setAutoCommit(val);
 			return true;
-		} catch (SQLException se) {
+		} catch (NullPointerException | SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -72,8 +71,8 @@ public class JdbcDatabase implements AbstractDatabase {
 		try {
 			conn.setAutoCommit(false);
 			return true;
-		} catch (SQLException se) {
-			se.printStackTrace();
+		} catch (NullPointerException | SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -84,20 +83,20 @@ public class JdbcDatabase implements AbstractDatabase {
 			conn.commit();
 			conn.setAutoCommit(false);
 			return true;
-		} catch (SQLException se) {
-			se.printStackTrace();
+		} catch (NullPointerException | SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	@Override
-	public boolean rollback(Connection conn) {
+	public boolean rollbackTransaction(Connection conn) {
 		try {
 			conn.rollback();
 			conn.setAutoCommit(true);
 			return true;
-		} catch (SQLException se) {
-			se.printStackTrace();
+		} catch (NullPointerException | SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -107,7 +106,7 @@ public class JdbcDatabase implements AbstractDatabase {
 	 * 
 	 * @param conn            the connection instance to check
 	 * @param validationQuery the query to be executed with the connection
-	 * @return 1 if valid, else return -1
+	 * @return true if valid, else return false
 	 */
 	public static boolean validateConn(Connection conn, String validationQuery) {
 		if (conn == null) {
@@ -115,11 +114,12 @@ public class JdbcDatabase implements AbstractDatabase {
 		}
 
 		try (Statement statement = conn.createStatement()) {
-			if (conn.isClosed() || !conn.isValid(3)) {
+			if (!conn.isValid(3)) {
 				return false;
 			}
 			statement.execute(validationQuery);
 		} catch (SQLException e) {
+			e.printStackTrace();
 			return false;
 		}
 

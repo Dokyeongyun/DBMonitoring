@@ -65,6 +65,7 @@ public class JdbcDatabaseConnectionPool implements AbstractDatabaseConnectionPoo
 			try {
 				conn = DriverManager.getConnection(jdbc.getJdbcUrl(), jdbc.getJdbcId(), jdbc.getJdbcPw());
 			} catch (SQLException e) {
+				e.printStackTrace();
 				log.error("Database getConnection Failed");
 			}
 			cm = new ConnMap(conn);
