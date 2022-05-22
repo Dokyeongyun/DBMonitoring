@@ -48,8 +48,9 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 	public String checkAlertLog(AlertLogCommand alc) {
 		String result = "";
 		try {
-			String command = String.format("tail -%d %s", alc.getReadLine(), alc.getReadFilePath());
+			String command = String.format("tail -%d %s", alc.getReadLine() - 1, alc.getReadFilePath());
 			result = jsch.executeCommand(command);
+			result = result.replace("\r\n", "\n");
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}
@@ -59,7 +60,6 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 
 	@Override
 	public List<OSDiskUsage> checkOSDiskUsage() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
