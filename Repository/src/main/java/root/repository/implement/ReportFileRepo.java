@@ -3,7 +3,6 @@ package root.repository.implement;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -48,10 +47,13 @@ public class ReportFileRepo implements ReportRepository {
 	 * 모니터링 결과를 파일에 기록한다.
 	 */
 	@Override
-	public <T> void writeReportFile(String filePath, String fileName, String fileExtension, List<T> monitoringResult,
-			Class<T> clazz) {
-
-		File file = new File(rootDirectory + "/" + filePath + "/" + fileName + fileExtension);
+	public <T> void writeReportFile(String fileName, String fileExtension, List<T> monitoringResult, Class<T> clazz) {
+		if (monitoringResult == null || monitoringResult.size() == 0) {
+			log.info("there is no monitoring result to write report");
+			return;
+		}
+		
+		File file = new File(monitoringFileDirMap.get(clazz) + "/" + fileName + fileExtension);
 		String content = null;
 		try {
 
@@ -70,7 +72,7 @@ public class ReportFileRepo implements ReportRepository {
 				content = StringUtils.joinWith(System.lineSeparator(), content, row);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		if (content == null) {
@@ -83,7 +85,7 @@ public class ReportFileRepo implements ReportRepository {
 			bw.flush();
 			bw.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -103,11 +105,9 @@ public class ReportFileRepo implements ReportRepository {
 				result.add(headerMap.get(i));
 			}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
-		}
+			log.error(e.getMessage());
+		} 
 
 		return result;
 	}
@@ -125,10 +125,8 @@ public class ReportFileRepo implements ReportRepository {
 				result.append(line).append(System.lineSeparator());
 			}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 
 		return result.toString();
