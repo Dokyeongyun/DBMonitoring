@@ -66,11 +66,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	/****************************************************************************/
 
-	@Override
-	public boolean isFileExist(String filePath) {
-		return new File(filePath).exists();
-	}
-
 	/**
 	 * Configuration 객체를 반환한다. TODO 굳이 메서드를 Wrapping 해서 호출할 필요가 있을까..? Controller와
 	 * 의존성 제거목적으로 일단 이렇게 함..
@@ -87,12 +82,15 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 				throw new PropertyNotLoadedException("monitoringConfig properties file is not loaded");
 			}
 			return monitoringConfig;
+		} else if (name.equals("commonConfig") || name.equals("rememberConfig")) {
+			Configuration config = combinedConfig.getConfiguration(name);
+			if (config == null) {
+				throw new PropertyNotLoadedException(name + " properties file is not loaded");
+			}
+			return (PropertiesConfiguration) config;
 		}
 
-		if (combinedConfig == null) {
-			throw new PropertyNotLoadedException("combinedConfig properties file is not loaded");
-		}
-		return (PropertiesConfiguration) combinedConfig.getConfiguration(name);
+		throw new PropertyNotLoadedException("there is no properties file");
 	}
 
 	/**
@@ -137,9 +135,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	@Override
 	public void saveDBConnectionInfo(String filePath, Map<String, JdbcConnectionInfo> dbConfig) {
+		loadConnectionInfoConfig(filePath);
 		PropertiesConfiguration config = connInfoConfig;
 		
-		// TODO dbnames property..
 		String dbNames = "";
 		for (String dbName : dbConfig.keySet()) {
 			dbNames += dbName + ",";
@@ -187,6 +185,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
+			writer.close();
 
 			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
@@ -197,9 +196,9 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 	@Override
 	public void saveServerConnectionInfo(String filePath, Map<String, JschConnectionInfo> serverConfig) {
+		loadConnectionInfoConfig(filePath);
 		PropertiesConfiguration config = connInfoConfig;
 
-		// TODO servernames property..
 		String serverNames = "";
 		for (String serverName : serverConfig.keySet()) {
 			serverNames += serverName + ",";
@@ -248,6 +247,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			writer.writeln(layout.getCanonicalFooterCooment(true));
 			writer.flush();
+			writer.close();
 
 			log.info("[" + filePath + "] 파일 저장이 성공적으로 완료되었습니다.");
 		} catch (Exception e) {
@@ -289,7 +289,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			return builder.getConfiguration();
 		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 			return null;
 		}
 	}
@@ -368,14 +368,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * commons.properties에서 값을 읽어 반환한다.
 	 */
 	@Override
-	public int getIntegerCommonResource(String key) {
-		return combinedConfig.getInt(key);
-	}
-
-	/**
-	 * commons.properties에서 값을 읽어 반환한다.
-	 */
-	@Override
 	public String[] getCommonResources(String key) {
 		return combinedConfig.getStringArray(key);
 	}
@@ -446,22 +438,12 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
 	 * 
 	 * @return
-	 */
-	@Override
-	public String getLastUseMonitoringPresetName() {
-		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
-	}
-	
-	/**
-	 * 최근 사용한 Monitoring Preset 이름을 반환한다. 단, 최근 사용한 Preset이 없을 때, NULL을 반환한다.
-	 * 
-	 * @return
 	 * @throws PropertyNotFoundException 
 	 */
 	@Override
 	public String getLastUseMonitoringPresetName(String filePath) {
 		load(filePath);
-		return connInfoConfig.subset("monitoring.setting.preset.lastuse").getString("");
+		return connInfoConfig.getString("monitoring.setting.preset.lastuse");
 	}
 
 	/**
@@ -478,11 +460,6 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 	@Override
 	public String[] getMonitoringServerNames() {
 		return connInfoConfig.getStringArray("servernames");
-	}
-
-	@Override
-	public boolean isMonitoringContent(String toggleId) {
-		return monitoringConfig.containsKey(toggleId) == false ? true : monitoringConfig.getBoolean(toggleId);
 	}
 
 	/**
@@ -519,7 +496,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		}
 	}
 
@@ -554,6 +531,7 @@ public class PropertyRepositoryImpl implements PropertyRepository {
 		try {
 			serverOS = ServerOS.valueOf(connInfoConfig.getString(serverName + ".server.os"));	
 		} catch (Exception e) {
+			log.error(e.getMessage());
 		}
 		String serverPort = connInfoConfig.getString(serverName + ".server.port");
 		String serverUserName = connInfoConfig.getString(serverName + ".server.username");

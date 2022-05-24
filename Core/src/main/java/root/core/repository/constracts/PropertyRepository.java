@@ -13,8 +13,6 @@ import root.core.domain.exceptions.PropertyNotLoadedException;
 
 public interface PropertyRepository {
 
-	boolean isFileExist(String filePath);
-
 	PropertiesConfiguration getConfiguration(String config) throws PropertyNotLoadedException;
 
 	void save(String filePath, PropertiesConfiguration config);
@@ -37,8 +35,6 @@ public interface PropertyRepository {
 
 	String getCommonResource(String key);
 
-	int getIntegerCommonResource(String key);
-
 	String[] getCommonResources(String key);
 
 	String[] getDBMonitoringContents();
@@ -53,15 +49,11 @@ public interface PropertyRepository {
 
 	Map<String, String> getMonitoringPresetMap();
 
-	String getLastUseMonitoringPresetName();
-
 	String getLastUseMonitoringPresetName(String filePath);
 
 	String[] getMonitoringDBNames();
 
 	String[] getMonitoringServerNames();
-
-	boolean isMonitoringContent(String toggleId);
 
 	void createNewPropertiesFile(String filePath, String type);
 
