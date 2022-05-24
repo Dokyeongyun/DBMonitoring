@@ -73,7 +73,7 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 		return list;
 	}
 
-	public List<OSDiskUsage> stringToOsDiskUsageList(String result) {
+	private List<OSDiskUsage> stringToOsDiskUsageList(String result) {
 		StringTokenizer st = new StringTokenizer(result);
 		List<String> header = Arrays
 				.asList(new String[] { "Filesystem", "1024-blocks", "Used", "Available", "Capacity", "Mounted on" });

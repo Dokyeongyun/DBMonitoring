@@ -1,6 +1,7 @@
 package root.repository.implement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,6 +23,7 @@ import root.common.server.implement.AlertLogCommand;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
 import root.common.server.implement.ServerOS;
+import root.core.domain.OSDiskUsage;
 import root.core.repository.constracts.ServerMonitoringRepository;
 
 public class WindowServerMonitoringRepositoryTest {
@@ -130,9 +133,9 @@ public class WindowServerMonitoringRepositoryTest {
 	public void testCheckOSDiskUsage() {
 		// Arrange
 		// Act
-		// List<OSDiskUsage> result = repo.checkOSDiskUsage();
+		 List<OSDiskUsage> result = repo.checkOSDiskUsage();
 
 		// Assert
-		// assertTrue(result.size() != 0);
+		 assertTrue(result.size() != 0);
 	}
 }
