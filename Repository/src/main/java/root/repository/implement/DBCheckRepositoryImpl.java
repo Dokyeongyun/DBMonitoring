@@ -8,12 +8,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import root.common.database.contracts.AbstractDatabase;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.TableSpaceUsage;
 import root.core.repository.constracts.DBCheckRepository;
 
+@Slf4j
 public class DBCheckRepositoryImpl implements DBCheckRepository {
 	private AbstractDatabase db;
 
@@ -32,9 +34,9 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 	}
 
 	@Override
-	public void endTran(Object conn) {
+	public void endTran(Connection conn) {
 		if (conn != null)
-			db.freeConn((Connection) conn);
+			db.freeConn(conn);
 	}
 
 	@Override
@@ -73,7 +75,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			this.endTran(conn);
 		}
@@ -124,7 +126,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			this.endTran(conn);
 		}
@@ -185,7 +187,7 @@ public class DBCheckRepositoryImpl implements DBCheckRepository {
 			}
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			log.error(e.getMessage());
 		} finally {
 			this.endTran(conn);
 		}
