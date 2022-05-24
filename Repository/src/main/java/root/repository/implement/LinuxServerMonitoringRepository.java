@@ -32,7 +32,13 @@ public class LinuxServerMonitoringRepository implements ServerMonitoringReposito
 		try {
 			String command = String.format("cat %s | wc -l", alc.getReadFilePath());
 			String executeResult = jsch.executeCommand(command);
-			fileLineCnt = Integer.parseInt(executeResult);
+			StringTokenizer st = new StringTokenizer(executeResult);
+			String lastToken = "0";
+			while (st.hasMoreTokens()) {
+				lastToken = st.nextToken();
+			}
+
+			fileLineCnt = Integer.parseInt(lastToken) + 1;
 		} catch (Exception e) {
 			log.error(e.getMessage());
 		}

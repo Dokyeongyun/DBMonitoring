@@ -257,8 +257,7 @@ public class ServerMonitoringUsecaseImpl implements ServerMonitoringUsecase {
 			os.setMonitoringDate(monitoringDate);
 			os.setMonitoringTime(monitoringTime);
 		}
-		reportRepository.writeReportFile("OSDiskUsage", serverCheckRepository.getServerName(), ".txt", result,
-				OSDiskUsage.class);
+		reportRepository.writeReportFile(serverCheckRepository.getServerName(), ".txt", result, OSDiskUsage.class);
 	}
 
 	@Override

@@ -16,6 +16,8 @@ dependencies {
     // Apache Commons Library
     implementation 'commons-io:commons-io:2.8.0'
     implementation 'org.apache.commons:commons-configuration2:2.7'
+    implementation 'org.apache.commons:commons-lang3:3.11'
+    implementation 'commons-beanutils:commons-beanutils:1.9.4'
     
     // Apache POI
     implementation 'org.apache.poi:poi:3.17'

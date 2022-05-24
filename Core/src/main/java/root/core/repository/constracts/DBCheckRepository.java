@@ -1,5 +1,6 @@
 package root.core.repository.constracts;
 
+import java.sql.Connection;
 import java.util.List;
 
 import root.core.domain.ASMDiskUsage;
@@ -9,9 +10,9 @@ import root.core.domain.TableSpaceUsage;
 public interface DBCheckRepository {
 	String getDBName();
 
-	Object getTran();
+	Connection getTran();
 
-	void endTran(Object conn);
+	void endTran(Connection conn);
 
 	List<ArchiveUsage> checkArchiveUsage();
 
