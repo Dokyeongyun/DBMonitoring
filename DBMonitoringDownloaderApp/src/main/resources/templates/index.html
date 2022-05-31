@@ -2,23 +2,73 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="ko">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title th:text="${title}"></title>
+
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/simplex/bootstrap.min.css"
+	integrity="sha512-0FG7nV64qlyGMQHtk7WOzPY1NZ6SKmjNee+PMX/7xbJu8Qx6LlHhCjSj9hRDJQ6QnlFsUrcKHKxli/9z4uhHrA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+	integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
+	crossorigin="anonymous" referrerpolicy="no-referrer">
 <link th:href="@{/css/home.css}" rel="stylesheet" type="text/css">
-<title>Home</title>
+
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+	integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.1/js/bootstrap.min.js"
+	integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="/js/main.js"></script>
+
 </head>
+
 <body>
-	<h1>DB Monitoring Program Download</h1>
-	<table>
-		<tbody>
-			<tr>
-				<th>Programs</th>
-			</tr>
-			<th:block th:each="downloadLink : ${downloadLinks}">
+	<div class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a href="/" class="navbar-brand" role="button">Project
+					DBMonitoring</a>
+				<button class="navbar-toggle" type="button" data-toggle="collapse"
+					data-target="#navbar-main" aria-label="Open Menu">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+			</div>
+			<div class="navbar-collapse collapse" id="navbar-main">
+				<ul class="nav navbar-nav">
+					<li class="dropdown"><a class="dropdown-toggle pointer"
+						data-toggle="dropdown" href="#" role="button">Community<span
+							class="caret"></span></a>
+						<ul class="dropdown-menu" aria-labelledby="themes">
+							<li><a
+								href="https://github.com/Dokyeongyun/DBMonitoring/issues">Issues</a></li>
+						</ul></li>
+					<li><a href="/download" role="button">Download</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid main-section" id="main-section">
+		<table>
+			<tbody>
 				<tr>
-					<td><a th:href="@{${downloadLink}}"><span
-							th:text="${downloadLink}"></span></a></td>
+					<th>Downloads</th>
 				</tr>
-			</th:block>
-		</tbody>
-	</table>
+				<th:block th:each="downloadLink : ${downloadLinks}">
+					<tr>
+						<td><a th:href="@{${downloadLink}}"><span
+								th:text="${downloadLink}"></span></a></td>
+					</tr>
+				</th:block>
+			</tbody>
+		</table>
+	</div>
 </body>
 </html>

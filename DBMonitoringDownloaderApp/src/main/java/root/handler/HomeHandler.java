@@ -12,6 +12,9 @@ public class HomeHandler {
 
 	@GetMapping(path = "/")
 	public String home(Model model) {
+		
+		model.addAttribute("title", "Home");
+		
 		List<String> downloadLinks = new ArrayList<>();
 		downloadLinks.add("https://DBMonitoring.co.kr/download/release-1.0.0");
 		downloadLinks.add("https://DBMonitoring.co.kr/download/release-1.0.1");
