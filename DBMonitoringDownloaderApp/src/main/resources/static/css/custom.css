@@ -505,3 +505,19 @@ body {
 a:not([role=button]):focus {
 	outline-offset: 2px;
 }
+
+.text-left {
+    text-align: left;
+}
+
+.release-table {
+    width:100%;
+}
+
+.release-table thead tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.release-table tr {
+    height: 40px;
+}
