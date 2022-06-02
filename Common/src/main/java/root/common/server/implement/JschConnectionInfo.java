@@ -28,20 +28,9 @@ public class JschConnectionInfo {
 	}
 
 	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, String port, String userName,
-			String password) {
+			String password, AlertLogCommand alc) {
 		this(serverName, serverOS, host, 22, userName, password);
-		this.setPort(port);
-	}
-
-	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, int port, String userName,
-			String password, AlertLogCommand alc) {
-		this(serverName, serverOS, host, port, userName, password);
-		this.alc = alc;
-	}
-
-	public JschConnectionInfo(String serverName, ServerOS serverOS, String host, String port, String userName,
-			String password, AlertLogCommand alc) {
-		this(serverName, serverOS, host, 22, userName, password, alc);
+		this.setAlc(alc);
 		this.setPort(port);
 	}
 
@@ -58,7 +47,11 @@ public class JschConnectionInfo {
 		try {
 			this.port = Integer.parseInt(portString);
 		} catch (NumberFormatException e) {
-			this.port = 22; // �⺻��
+			this.port = 22;
 		}
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

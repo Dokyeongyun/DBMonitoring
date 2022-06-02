@@ -2,7 +2,6 @@ package root.common.server.implement;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -21,80 +20,128 @@ import com.jcraft.jsch.Session;
 
 public class JschServerTest {
 
-	public static JschServer jsch;
+	public static JschServer windowJsch;
+	public static JschServer linuxJsch;
 
 	@BeforeAll
 	public static void setup() {
-		String serverName = "DKY SERVER";
-		ServerOS serverOS = ServerOS.WINDOW;
-		String host = "192.168.154.1";
-		String userName = "dky";
-		String port = "22";
-		String password = "ehruddbs1!";
-		jsch = new JschServer(new JschConnectionInfo(serverName, serverOS, host, port, userName, password));
+		String windowServerName = "DKY WINDOW SERVER";
+		ServerOS windowServerOS = ServerOS.WINDOW;
+		String windowHost = "192.168.154.1";
+		String windowUserName = "dky";
+		int windowPort = 22;
+		String windowPassword = "ehruddbs1!";
+		windowJsch = new JschServer(new JschConnectionInfo(windowServerName, windowServerOS, windowHost, windowPort, windowUserName, windowPassword));
+		windowJsch.init();
+		
+		String linuxServerName = "DKY LINUX SERVER";
+		ServerOS linuxServerOS = ServerOS.LINUX;
+		String linuxHost = "192.168.56.137";
+		String linuxUserName = "dokyeongyun";
+		int linuxPort = 22;
+		String linuxPassword = "ehruddbs1!";
+		linuxJsch = new JschServer(new JschConnectionInfo(linuxServerName, linuxServerOS, linuxHost, linuxPort, linuxUserName, linuxPassword));
+		linuxJsch.init();
+	}
+	
+	@Test
+	public void testGetServerName_Window() {
+		String serverName = windowJsch.getServerName();
+		assertEquals(serverName, "DKY WINDOW SERVER");
+	}
+	
+	@Test
+	public void testGetServerName_Linux() {
+		String serverName = linuxJsch.getServerName();
+		assertEquals(serverName, "DKY LINUX SERVER");
 	}
 
 	@Test
-	public void testInit_ValidConnInfo() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
+	public void testInit_ValidConnInfo_Window() throws Exception {
+		Session session = windowJsch.getSession();
+		assertNotNull(session);
+	}
+	
+	@Test
+	public void testInit_ValidConnInfo_Linux() throws Exception {
+		Session session = linuxJsch.getSession();
 		assertNotNull(session);
 	}
 
 	@Test
 	public void testInit_Fail_InvalidConnInfo() throws Exception {
 		JschServer jsch = new JschServer(new JschConnectionInfo());
-		jsch.init();
 		Session session = jsch.getSession();
 		assertNull(session);
 	}
 
 	@Test
-	public void testConnect_Success() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
+	public void testConnect_Success_Window() throws Exception {
+		Session session = windowJsch.getSession();
+		assertTrue(session.isConnected());
+	}
+	
+	@Test
+	public void testConnect_Success_Linux() throws Exception {
+		Session session = linuxJsch.getSession();
 		assertTrue(session.isConnected());
 	}
 
 	@Test
 	public void testDisConnect_DisConnectionSuccess() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
-
+		Session session = windowJsch.getSession();
 		assertTrue(session.isConnected());
 
-		jsch.disConnect(session);
+		windowJsch.disConnect(session);
 		assertFalse(session.isConnected());
 	}
 
 	@Test
 	public void testDisConnect_DisConnectionFail_SessionIsNull() throws Exception {
-		jsch.disConnect(null);
+		Session session = null;
+		windowJsch.disConnect(session);
+		assertNull(session);
 	}
 
 	@Test
-	public void testOpenExecChannel_Success() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
-
-		Channel channel = jsch.openExecChannel(session, "echo 1");
+	public void testOpenExecChannel_Success_Window() throws Exception {
+		Session session = windowJsch.getSession();
+		Channel channel = windowJsch.openExecChannel(session, "echo 1");
+		assertNotNull(channel);
+	}
+	
+	@Test
+	public void testOpenExecChannel_Success_Linux() throws Exception {
+		Session session = linuxJsch.getSession();
+		Channel channel = linuxJsch.openExecChannel(session, "echo 1");
 		assertNotNull(channel);
 	}
 
 	@Test
-	public void testOpenExecChannel_Success_WhenSessionIsNull() throws JSchException {
+	public void testOpenExecChannel_Fail_WhenSessionIsNull() throws JSchException {
 		Session session = null;
-		JSchException thrown = assertThrows(JSchException.class, () -> jsch.openExecChannel(session, "echo 1"));
+		JSchException thrown = assertThrows(JSchException.class, () -> windowJsch.openExecChannel(session, "echo 1"));
 		assertEquals("session is not valid", thrown.getMessage());
 	}
 
 	@Test
-	public void testConnectChannel_Success() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
+	public void testConnectChannel_Success_Window() throws Exception {
+		Session session = windowJsch.getSession();
+		Channel channel = windowJsch.openExecChannel(session, "echo 1");
+		InputStream in = windowJsch.connectChannel(channel);
 
-		Channel channel = jsch.openExecChannel(session, "echo 1");
-		InputStream in = jsch.connectChannel(channel);
+		assertNotNull(in);
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
+			String echoLine = br.readLine();
+			assertEquals(echoLine, "1");
+		}
+	}
+	
+	@Test
+	public void testConnectChannel_Success_Linux() throws Exception {
+		Session session = linuxJsch.getSession();
+		Channel channel = linuxJsch.openExecChannel(session, "echo 1");
+		InputStream in = linuxJsch.connectChannel(channel);
 
 		assertNotNull(in);
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(in))) {
@@ -104,50 +151,44 @@ public class JschServerTest {
 	}
 
 	@Test
-	public void testConnectChannel_Success_WhenSessionIsNull() throws Exception {
+	public void testConnectChannel_Fail_WhenSessionIsNull() throws Exception {
 		Session session = null;
-		assertThrows(JSchException.class, () -> jsch.openExecChannel(session, "echo 1"));
+		assertThrows(JSchException.class, () -> windowJsch.openExecChannel(session, "echo 1"));
 	}
 
 	@Test
 	public void testDisConnectChannel_Success() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
+		Session session = windowJsch.getSession();
 
-		Channel channel = jsch.openExecChannel(session, "echo 1");
-		jsch.connectChannel(channel);
+		Channel channel = windowJsch.openExecChannel(session, "echo 1");
+		windowJsch.connectChannel(channel);
 		assertTrue(channel.isConnected());
 
-		jsch.disConnectChannel(channel);
+		windowJsch.disConnectChannel(channel);
 		assertFalse(channel.isConnected());
 	}
 
 	@Test
-	public void testGetServerName() {
-		String serverName = jsch.getServerName();
-		assertEquals(serverName, "DKY SERVER");
+	public void testExecuteCommand_EchoCommand_Window() throws Exception {
+		Session session = windowJsch.getSession();
+		String result = windowJsch.executeCommand(session, "echo 1");
+		assertEquals("1", result.trim());
+		
+		result = windowJsch.executeCommand("echo 1");
+		assertEquals("1", result.trim());
 	}
-
+	
 	@Test
-	public void testExecuteCommand_EchoCommand() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
-		String result = jsch.executeCommand(session, "echo 1");
+	public void testExecuteCommand_EchoCommand_Linux() throws Exception {
+		Session session = linuxJsch.getSession();
+		String result = linuxJsch.executeCommand(session, "echo 1");
 		assertEquals("1", result.trim());
 	}
 
 	@Test
-	public void testExecuteCommand_TailCommand() throws Exception {
-		jsch.init();
-		Session session = jsch.getSession();
-		String result = jsch.executeCommand(session, "tail -500 C://Users/aserv/Desktop/alert_DB.log");
-		assertNotEquals(result, "");
-	}
-
-	@Test
 	public void testValidateConn_Valid() throws Exception {
-		jsch.init();
-		assertTrue(jsch.validateConn(jsch.getSession()));
+		windowJsch.init();
+		assertTrue(windowJsch.validateConn(windowJsch.getSession()));
 	}
 
 	@Test

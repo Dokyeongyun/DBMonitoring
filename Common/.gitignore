@@ -1,2 +1,4 @@
 /build/
 /bin/
+
+/src/test/resources/dbconfig.txt

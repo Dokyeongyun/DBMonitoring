@@ -1,5 +1,6 @@
 package root.service.implement;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,7 +61,7 @@ public class FilePropertyService implements PropertyService {
 	@Override
 	public String getLastUseConnectionInfoFilePath() {
 		String filePath = propRepo.getLastUseConnInfoFilePath();
-		return propRepo.isFileExist(filePath) ? filePath : null;
+		return new File(filePath).exists() ? filePath : null;
 	}
 
 	/**

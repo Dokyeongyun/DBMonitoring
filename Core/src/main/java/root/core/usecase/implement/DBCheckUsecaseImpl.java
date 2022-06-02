@@ -47,10 +47,9 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 				System.out.println("\t▶ Archive Usage Check : SUCCESS\n");
 			}
 		});
-		
+
 		try {
-			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, ArchiveUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -63,8 +62,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
 		System.out.println("\t▶ TableSpace Usage Check");
 		try {
-			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, TableSpaceUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -77,8 +75,7 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
 		System.out.println("\t▶ ASM Disk Usage Check");
 		try {
-			TextTable tt = new TextTable(
-					new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
+			TextTable tt = new TextTable(new CsvTableModel(CsvUtils.toCsvString(result, ASMDiskUsage.class)));
 			tt.printTable(System.out, 8);
 			System.out.println();
 		} catch (IOException e) {
@@ -110,13 +107,13 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 		String fileName = "DB관리대장_종합_" + year + "." + DateUtils.getTwoDigitDate(month);
 		String extension = ".xlsx";
 		File file = new File(filePath + fileName + extension);
-		
-		if(!file.exists()) {
+
+		if (!file.exists()) {
 			file.getParentFile().mkdirs();
 			DBManageExcel.createMonthlyReportInExcel(year, month);
 		}
-		
-		double archiveUsage = result.get(0).getUsedPercent(); 
+
+		double archiveUsage = result.get(0).getUsedPercent();
 		Workbook workbook = ExcelSheet.getWorkbook(new FileInputStream(file), fileName + extension);
 		Sheet sheet = workbook.getSheetAt(0);
 		sheet.getRow(rowIndex).getCell(colIndex).setCellValue(archiveUsage + "%");
@@ -127,19 +124,19 @@ public class DBCheckUsecaseImpl implements DBCheckUsecase {
 	@Override
 	public void writeCsvArchiveUsage() {
 		List<ArchiveUsage> result = dbCheckRepository.checkArchiveUsage();
-		reportRepository.writeReportFile("ArchiveUsage", dbCheckRepository.getDBName(), ".txt", result, ArchiveUsage.class);
+		reportRepository.writeReportFile(dbCheckRepository.getDBName(), ".txt", result, ArchiveUsage.class);
 	}
 
 	@Override
 	public void writeCsvTableSpaceUsage() {
 		List<TableSpaceUsage> result = dbCheckRepository.checkTableSpaceUsage();
-		reportRepository.writeReportFile("TableSpaceUsage", dbCheckRepository.getDBName(), ".txt", result, TableSpaceUsage.class);
+		reportRepository.writeReportFile(dbCheckRepository.getDBName(), ".txt", result, TableSpaceUsage.class);
 	}
 
 	@Override
 	public void writeCsvASMDiskUsage() {
 		List<ASMDiskUsage> result = dbCheckRepository.checkASMDiskUsage();
-		reportRepository.writeReportFile("ASMDiskUsage", dbCheckRepository.getDBName(), ".txt", result, ASMDiskUsage.class);
+		reportRepository.writeReportFile(dbCheckRepository.getDBName(), ".txt", result, ASMDiskUsage.class);
 	}
 
 	@Override
