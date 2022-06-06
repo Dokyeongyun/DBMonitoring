@@ -2,14 +2,14 @@
     -fx-border-color:lightgray;
     -fx-border-width: 0.8px;
     -fx-background-insets:0.0;
-    -fx-font-family: "Noto Sans Korean Regular";
+    -fx-font-family: "Noto Sans KR";
     -fx-font-size : 11.0;
 }
 
 .tree-table-view .column-header { 
  	-fx-background-color: #ddd;
     -fx-font-size : 11.0;
-    -fx-font-family: "Noto Sans Korean Medium";
+    -fx-font-family: "Noto Sans KR";
 } 	
 
 .tree-table-cell,
