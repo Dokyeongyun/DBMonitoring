@@ -49,7 +49,7 @@
                               <FontAwesomeIconView fill="#003b8e" glyphName="BAR_CHART_ALT" selectionEnd="0" selectionFill="BLACK" size="25" />
                            </graphic>
                            <font>
-                              <Font name="Noto Sans Korean Medium" size="13.0" />
+                              <Font name="Noto Sans KR" size="13.0" />
                            </font>
                         </Label>
                         <AnchorPane fx:id="topMenuBar" layoutX="217.0" layoutY="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -262,7 +262,7 @@
                                                                         <Insets left="10.0" />
                                                                      </HBox.margin>
                                                                      <font>
-                                                                        <Font name="Noto Sans Korean Bold Bold" size="12.0" />
+                                                                        <Font name="Noto Sans KR" size="12.0" />
                                                                      </font>
                                                                   </JFXButton>
                                                                </children>

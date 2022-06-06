@@ -70,7 +70,7 @@ public class MonitoringTableViewContainer extends HBox {
 
 	private Label createTitleLabel(Class<? extends MonitoringResult> type) {
 		Label titleLabel = new Label(titleMap.get(type), new FontAwesomeIconView(FontAwesomeIcon.ASTERISK, "9"));
-		titleLabel.setFont(Font.font("Noto Sans Korean Regular"));
+		titleLabel.setFont(Font.font("Noto Sans KR"));
 		return titleLabel;
 	}
 

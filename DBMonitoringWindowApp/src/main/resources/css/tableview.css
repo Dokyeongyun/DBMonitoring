@@ -1,6 +1,6 @@
 /* TableView */
 .table-view {
-	-fx-font-family: "Noto Sans Korean Regular";
+	-fx-font-family: "Noto Sans KR";
 	-fx-background-color: white;
 }
 
@@ -13,7 +13,7 @@
     -fx-background-color: linear-gradient(to bottom, #1dbbdd44 80%, #93f9b944);
     -fx-background-radius: 7px 7px 0px 0px;
     -fx-padding: 0 0 3px 0;
-	-fx-font-family: "Noto Sans Korean Medium";
+	-fx-font-family: "Noto Sans KR";
 }
 
 .table-view .column-header {
