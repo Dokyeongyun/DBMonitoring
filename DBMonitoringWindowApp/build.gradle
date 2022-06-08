@@ -32,10 +32,7 @@ dependencies {
     
     // JavaFx 
     implementation 'org.openjfx:javafx-controls:17'
-    implementation 'org.openjfx:javafx-graphics:17'
-    implementation 'org.openjfx:javafx-base:17'
     implementation 'org.openjfx:javafx-fxml:17'
-    implementation 'org.openjfx:javafx-media:17'
     implementation 'com.jfoenix:jfoenix:9.0.10'
     implementation 'de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2'
     implementation 'org.fxmisc.richtext:richtextfx:0.10.9'
