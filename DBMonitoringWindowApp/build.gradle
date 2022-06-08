@@ -63,7 +63,6 @@ application {
     mainClass = 'root.applications.Program'
 }
 
-
 jar {
 	manifest {
 		attributes 'Main-Class': 'root.applications.Program'
@@ -71,6 +70,31 @@ jar {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-run {   
-    systemProperties['resourceBaseDir'] = ''
+launch4j {
+    headerType ='gui'
+    mainClassName = 'root.applications.Program'
+    outfile = "DBMonitoring.exe"
+    jarTask = project.tasks.jar
+    jvmOptions.add("--module-path javafx-sdk-17.0.0.1/lib")
+    jvmOptions.add("--add-modules=javafx.controls,javafx.fxml")
 }
+
+distributions {
+    main {
+        contents {
+            from 'build/launch4j'
+            into('config') {
+                from 'config'
+                exclude 'connectioninfo'
+                exclude 'monitoring'
+            }
+            into('javafx-sdk-17.0.0.1') {
+                from 'libs/javafx-sdk-17.0.0.1'
+            }
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+    }
+}
+
+distTar.enabled = false
+distZip.dependsOn('createExe')
