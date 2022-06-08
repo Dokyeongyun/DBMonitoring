@@ -63,12 +63,7 @@ jar {
 	manifest {
 		attributes 'Main-Class': 'root.applications.Program'
 	}
-	from {
-		configurations.runtimeClasspath.files.collect {
-			it.isDirectory() ? it : zipTree(it)
-		}
-	}
-	duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 run {   
