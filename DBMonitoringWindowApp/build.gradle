@@ -2,6 +2,7 @@ plugins {
     id 'java'
 	id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'edu.sc.seis.launch4j' version '2.5.3'
 }
 
 repositories {
@@ -31,10 +32,7 @@ dependencies {
     
     // JavaFx 
     implementation 'org.openjfx:javafx-controls:17'
-    implementation 'org.openjfx:javafx-graphics:17'
-    implementation 'org.openjfx:javafx-base:17'
     implementation 'org.openjfx:javafx-fxml:17'
-    implementation 'org.openjfx:javafx-media:17'
     implementation 'com.jfoenix:jfoenix:9.0.10'
     implementation 'de.jensd:fontawesomefx-fontawesome:4.7.0-9.1.2'
     implementation 'org.fxmisc.richtext:richtextfx:0.10.9'
@@ -49,6 +47,10 @@ description = 'DBMonitoringWindowApp'
 java.sourceCompatibility = JavaVersion.VERSION_15
 java.targetCompatibility = JavaVersion.VERSION_15
 
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 javafx {
     version = '17'
     modules = [ 'javafx.controls', 'javafx.fxml' ]
@@ -58,19 +60,39 @@ application {
     mainClass = 'root.applications.Program'
 }
 
-
 jar {
 	manifest {
 		attributes 'Main-Class': 'root.applications.Program'
 	}
-	from {
-		configurations.runtimeClasspath.files.collect {
-			it.isDirectory() ? it : zipTree(it)
-		}
-	}
-	duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-run {   
-    systemProperties['resourceBaseDir'] = ''
+launch4j {
+    headerType ='gui'
+    mainClassName = 'root.applications.Program'
+    outfile = "DBMonitoring.exe"
+    jarTask = project.tasks.jar
+    jvmOptions.add("--module-path javafx-sdk-17.0.0.1/lib")
+    jvmOptions.add("--add-modules=javafx.controls,javafx.fxml")
 }
+
+distributions {
+    main {
+        contents {
+            from 'build/launch4j'
+            into('config') {
+                from 'config'
+                exclude 'connectioninfo'
+                exclude 'monitoring'
+            }
+            into('javafx-sdk-17.0.0.1') {
+                from 'libs/javafx-sdk-17.0.0.1'
+            }
+            exclude('**/DBMonitoringWindowApp-*.jar')
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        }
+    }
+}
+
+distTar.enabled = false
+distZip.dependsOn('createExe')
