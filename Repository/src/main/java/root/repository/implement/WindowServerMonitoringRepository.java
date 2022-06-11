@@ -108,7 +108,7 @@ public class WindowServerMonitoringRepository implements ServerMonitoringReposit
 					double free = row.getFreeSpace();
 					double used = total - free;
 					row.setUsedSpace(used);
-					row.setUsedPercent(used / total * 100);
+					row.setUsedPercent(Math.round(used / total * 10000) / 100.0);
 
 					list.add(row);
 					row = new OSDiskUsage();
