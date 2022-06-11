@@ -5,34 +5,33 @@
     <property name="LOG_PATTERN" value="%date %level [%thread] %logger{10} [%file:%line] - %msg%n%ex{full}"/>
     <property name="LOG_PATTERN1" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
     <property name="LOG_PATTERN2" value="%d{yyyy-MM-dd HH:mm:ss}[%-15thread] %-5level [%file:%line] - %msg%n%ex{full}"/>
-	<property name="LOG_DIR" value="./logs" />
-	<property name="LOG_FILE" value="agent" />
+    <property name="LOG_DIR" value="./logs"/>
+    <property name="LOG_FILE" value="agent"/>
 
-	<appender name="console"
-		class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+			<charset>UTF-8</charset>
             <pattern>${LOG_PATTERN}</pattern>
-		</encoder>
-	</appender>
+        </encoder>
+    </appender>
 
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<file>${LOG_DIR}/${LOG_FILE}.log</file>
-		<rollingPolicy
-			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-			<!-- daily rollover -->
-			<fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- daily rollover -->
+            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <maxHistory>100</maxHistory>
+            <totalSizeCap>500MB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+			<charset>UTF-8</charset>
+			<pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
 
-			<maxHistory>100</maxHistory>
-			<totalSizeCap>500MB</totalSizeCap>
-		</rollingPolicy>
-		<encoder>
-            <pattern>${LOG_PATTERN}</pattern>
-		</encoder>
-	</appender>
-		
-	<logger name="root" level="debug">
-		<appender-ref ref="console" />
-		<appender-ref ref="FILE" />
-	</logger>
+    <logger name="root" level="debug">
+        <appender-ref ref="console"/>
+        <appender-ref ref="FILE"/>
+    </logger>
 
 </configuration>
