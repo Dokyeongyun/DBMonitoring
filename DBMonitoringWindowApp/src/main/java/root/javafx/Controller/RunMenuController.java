@@ -34,6 +34,7 @@ import root.common.database.implement.JdbcConnectionInfo;
 import root.common.database.implement.JdbcDatabase;
 import root.common.server.implement.JschConnectionInfo;
 import root.common.server.implement.JschServer;
+import root.common.server.implement.ServerOS;
 import root.core.domain.ASMDiskUsage;
 import root.core.domain.ArchiveUsage;
 import root.core.domain.MonitoringYN;
@@ -56,10 +57,7 @@ import root.javafx.CustomView.CustomTreeView;
 import root.javafx.DI.DependencyInjection;
 import root.javafx.utils.AlertUtils;
 import root.javafx.utils.SceneUtils;
-import root.repository.implement.DBCheckRepositoryImpl;
-import root.repository.implement.LinuxServerMonitoringRepository;
-import root.repository.implement.PropertyRepositoryImpl;
-import root.repository.implement.ReportFileRepo;
+import root.repository.implement.*;
 import root.service.implement.FilePropertyService;
 import root.utils.UnitUtils.FileSize;
 
@@ -116,10 +114,10 @@ public class RunMenuController implements Initializable {
 
 	@FXML
 	HBox step3ToStep4Arrow;
-	
+
 	@FXML
 	AnchorPane noPropertyFileAP;
-	
+
 	@FXML
 	Button fileOpenBtn;
 
@@ -132,7 +130,7 @@ public class RunMenuController implements Initializable {
 		try {
 			/* 1. 모니터링 접속정보 설정 + 2. 모니터링 여부 설정 */
 			initRunStep1();
-			
+
 			/* 3. 기타 설정 및 실행 */
 			initRunStep3();
 
@@ -148,7 +146,7 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 실행메뉴 ScrollPane scroll event
-	 * 
+	 *
 	 * @param e
 	 */
 	public void scroll(ScrollEvent e) {
@@ -163,7 +161,7 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * AnchorPane의 Anchor를 한 줄로 설정하기 위한 메서드
-	 * 
+	 *
 	 * @param node   AnchorPane의 자식 노드
 	 * @param top    top anchor
 	 * @param right  right anchor
@@ -179,7 +177,7 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 설정된 모니터링 접속정보를 보여주는 TreeView를 생성 및 추가한다.
-	 * 
+	 *
 	 * @param dbNameList
 	 * @param serverNameList
 	 */
@@ -194,7 +192,7 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 설정된 모니터링 여부 Preset을 보여주는 TreeTableView를 생성 및 추가한다.
-	 * 
+	 *
 	 * @param monitoringYNList
 	 */
 	private void addMonitoringPresetPreview(List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
@@ -224,7 +222,7 @@ public class RunMenuController implements Initializable {
 
 	/**
 	 * 모니터링 실행
-	 * 
+	 *
 	 * @param e
 	 */
 	public void runMonitoring(ActionEvent e) {
@@ -283,14 +281,23 @@ public class RunMenuController implements Initializable {
 		for (JschConnectionInfo jsch : jschConnectionList) {
 			JschServer server = new JschServer(jsch);
 			server.init();
-			ServerMonitoringRepository repo = new LinuxServerMonitoringRepository(server);
-			ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
+
+            ServerMonitoringRepository repo;
+            if (jsch.getServerOS() == ServerOS.WINDOW) {
+                repo = new WindowServerMonitoringRepository(server);
+            } else if (jsch.getServerOS() == ServerOS.LINUX) {
+                repo = new LinuxServerMonitoringRepository(server);
+            } else {
+                return;
+            }
+
+            ServerMonitoringUsecase usecase = new ServerMonitoringUsecaseImpl(repo, ReportFileRepo.getInstance());
 
 			if (isSave) {
 				try {
 					usecase.writeCsvOSDiskUsage();
 				} catch (Exception e1) {
-					e1.printStackTrace();
+                    log.error(e1.getMessage());
 				}
 			}
 
@@ -299,16 +306,12 @@ public class RunMenuController implements Initializable {
 			serverResults.addMonitoringTableViewContainer(serverName, OSDiskUsage.class);
 			serverResults.setMonitoringTableViewUsageUIType(serverName, OSDiskUsage.class, usageUIType);
 			serverResults.setMonitoringTableViewData(serverName, OSDiskUsage.class, osDiskUsageList);
-
-			// AlertLogCommandPeriod alcp = new AlertLogCommandPeriod(jsch.getAlc(),
-			// DateUtils.addDate(DateUtils.getToday("yyyy-MM-dd"), 0, 0, -1),
-			// DateUtils.getToday("yyyy-MM-dd"));
 		}
 	}
 
 	/**
 	 * 1. 모니터링 접속정보 설정 영역의 View를 초기화한다.
-	 * @throws PropertyNotFoundException 
+	 * @throws PropertyNotFoundException
 	 */
 	private void initRunStep1() throws PropertyNotFoundException {
 		// 1-0. Clear
@@ -451,28 +454,28 @@ public class RunMenuController implements Initializable {
 		step3ToStep4Arrow.setMaxWidth(Control.USE_COMPUTED_SIZE);
 		step3ToStep4Arrow.setPrefWidth(Control.USE_COMPUTED_SIZE);
 	}
-	
+
 	/**
 	 * 설정 메뉴로 이동
-	 * 
+	 *
 	 * @param e
 	 * @throws IOException
 	 */
 	public void goSettingMenu(ActionEvent e) throws IOException {
 		SceneUtils.movePage(DependencyInjection.load("/fxml/SettingMenu.fxml"));
 	}
-	
+
 	/**
 	 * 접속정보 설정파일 열기
-	 * 
+	 *
 	 * @param e
 	 */
 	public void openPropertiesFile(ActionEvent e) {
 	}
-	
+
 	/**
 	 * 접속정보 설정 파일이 없을 때 UI Visible 변경
-	 * 
+	 *
 	 * @param isVisible
 	 */
 	private void setNoPropertyUIVisible(boolean isVisible) {
