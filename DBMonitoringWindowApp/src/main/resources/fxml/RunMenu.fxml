@@ -24,6 +24,7 @@
    <center>
       <StackPane>
          <children>
+            <JFXDrawer fx:id="leftDrawer" defaultDrawerSize="200.0" miniDrawerSize="0.0" />
             <ScrollPane fx:id="mainScrollPane" fitToHeight="true" onScroll="#scroll" pannable="true">
               <content>
                 <AnchorPane fx:id="scrollAP" onScroll="#scroll">
@@ -318,7 +319,6 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <JFXDrawer fx:id="leftDrawer" defaultDrawerSize="200.0" miniDrawerSize="0.0" />
          </children>
       </StackPane>
    </center>

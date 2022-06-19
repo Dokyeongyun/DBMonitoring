@@ -453,6 +453,12 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	}
 
 	public void toggleDrawer(ActionEvent e) {
-		leftDrawer.toggle();
+		if (leftDrawer.isOpened()) {
+			leftDrawer.close();
+			leftDrawer.toBack();
+		} else {
+			leftDrawer.open();
+			leftDrawer.toFront();
+		}
 	}
 }

@@ -26,7 +26,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <BorderPane style="-fx-background-color: white;" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.AlertLogMonitoringMenuController">
    <top>
       <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
@@ -66,6 +65,7 @@
    <center>
       <StackPane>
          <children>
+            <JFXDrawer fx:id="leftDrawer" defaultDrawerSize="200.0" />
             <AnchorPane minWidth="550.0" style="-fx-background-color: white;">
                <children>
                   <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
@@ -333,7 +333,6 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <JFXDrawer fx:id="leftDrawer" defaultDrawerSize="200.0" />
          </children>
       </StackPane>
    </center>
