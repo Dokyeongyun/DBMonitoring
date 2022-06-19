@@ -1,11 +1,16 @@
 package root.javafx.Controller;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import com.jfoenix.controls.JFXDrawer;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.BorderPane;
 import org.apache.commons.lang3.StringUtils;
 
 import com.jfoenix.controls.JFXComboBox;
@@ -58,7 +63,7 @@ public class SettingMenuController implements Initializable {
 
 	/* View Binding */
 	@FXML
-	SplitPane rootSplitPane;
+	BorderPane root;
 
 	@FXML
 	AnchorPane noConnInfoConfigAP; // [설정] - [접속정보 설정] 설정파일이 지정되지 않았을 때 보여줄 AnchorPane
@@ -86,6 +91,9 @@ public class SettingMenuController implements Initializable {
 
 	@FXML
 	JFXComboBox<UsageUIType> usageUICB;
+
+	@FXML
+	JFXDrawer leftDrawer;
 
 	MonitoringYNVBox monitoringYNVBox = new MonitoringYNVBox();
 
@@ -172,6 +180,18 @@ public class SettingMenuController implements Initializable {
 				return UsageUIType.find(string);
 			}
 		});
+
+		// Set drawer content
+		try {
+			AnchorPane leftMenu = FXMLLoader.load(
+					Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
+
+			leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 	/**
@@ -227,7 +247,7 @@ public class SettingMenuController implements Initializable {
 		fileChooser.setInitialDirectory(new File("./config"));
 
 		// 파일 선택창 열고, 선택된 파일 반환받음
-		File selectedFile = fileChooser.showOpenDialog((Stage) rootSplitPane.getScene().getWindow());
+		File selectedFile = fileChooser.showOpenDialog(root.getScene().getWindow());
 
 		if (selectedFile != null) {
 			if (selectedFile.isFile() && selectedFile.exists()) {
@@ -244,7 +264,7 @@ public class SettingMenuController implements Initializable {
 	/**
 	 * [설정] - 프로퍼티파일을 읽는다.
 	 * 
-	 * @param filePath
+	 * @param absoluteFilePath
 	 */
 	private void loadSelectedConfigFile(String absoluteFilePath) {
 		try {
@@ -420,7 +440,7 @@ public class SettingMenuController implements Initializable {
 	/**
 	 * [설정] - [모니터링여부설정] - Preset을 다시 불러온다.
 	 * 
-	 * @param curPresetName
+	 * @param presetName
 	 * @throws PropertyNotFoundException 
 	 */
 	private void reloadingMonitoringSetting(String presetName) {
@@ -522,5 +542,15 @@ public class SettingMenuController implements Initializable {
 				AlertUtils.showPropertyNotLoadedAlert();
 			}
 		});
+	}
+
+	public void toggleDrawer(ActionEvent e) {
+		if (leftDrawer.isOpened()) {
+			leftDrawer.close();
+			leftDrawer.toBack();
+		} else {
+			leftDrawer.open();
+			leftDrawer.toFront();
+		}
 	}
 }

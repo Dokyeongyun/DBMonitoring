@@ -3,11 +3,11 @@ package root.javafx.Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.events.JFXDrawerEvent;
+import javafx.fxml.FXMLLoader;
 import org.apache.commons.lang3.StringUtils;
 
 import com.jfoenix.controls.JFXComboBox;
@@ -105,6 +105,9 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	@FXML
 	Button fileOpenBtn;
 
+	@FXML
+	JFXDrawer leftDrawer;
+
 	TagBar tagBar = new TagBar();
 
 	Map<String, AlertLog> alertLogMonitoringResultMap;
@@ -135,9 +138,8 @@ public class AlertLogMonitoringMenuController implements Initializable {
 					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 				}
 
-				System.out.println(propService.getMonitoringServerNameList());
 				if(propService.getMonitoringServerNameList().size() == 0) {
-					setNoPropertyUIVisible(true);	
+					setNoPropertyUIVisible(true);
 				} else {
 					setNoPropertyUIVisible(false);
 				}
@@ -146,7 +148,13 @@ public class AlertLogMonitoringMenuController implements Initializable {
 				setNoPropertyUIVisible(true);
 				return;
 			}
-		} catch (PropertyNotFoundException e) {
+
+			// Set drawer content
+			AnchorPane leftMenu = FXMLLoader.load(
+					Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
+			leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
+		} catch (PropertyNotFoundException | IOException e) {
 			log.error(e.getMessage());
 			setNoPropertyUIVisible(true);
 			return;
@@ -443,5 +451,15 @@ public class AlertLogMonitoringMenuController implements Initializable {
 	private void setNoPropertyUIVisible(boolean isVisible) {
 		noPropertyFileAP.setVisible(isVisible);
 		topMenuBar.setVisible(!isVisible);
+	}
+
+	public void toggleDrawer(ActionEvent e) {
+		if (leftDrawer.isOpened()) {
+			leftDrawer.close();
+			leftDrawer.toBack();
+		} else {
+			leftDrawer.open();
+			leftDrawer.toFront();
+		}
 	}
 }

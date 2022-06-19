@@ -3,12 +3,15 @@ package root.javafx.Controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import com.jfoenix.controls.JFXComboBox;
 
+import com.jfoenix.controls.JFXDrawer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.AnchorPane;
 import lombok.extern.slf4j.Slf4j;
@@ -65,6 +68,9 @@ public class HistoryMenuController implements Initializable {
 	@FXML
 	AnchorPane noPropertyFileAP;
 
+	@FXML
+	JFXDrawer leftDrawer;
+
 	/* Custom View */
 	MonitoringAPController<ArchiveUsage> archiveUsageMAP;
 	MonitoringAPController<TableSpaceUsage> tableSpaceUsageMAP;
@@ -99,13 +105,20 @@ public class HistoryMenuController implements Initializable {
 				if (lastUseConnInfoFilePath != null) {
 					runConnInfoFileComboBox.getSelectionModel().select(lastUseConnInfoFilePath);
 				}
-				
+
+				// Set drawer content
+				AnchorPane leftMenu = FXMLLoader.load(
+						Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
+
+				leftDrawer.setSidePane(leftMenu);
+				leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
+
 				setNoPropertyUIVisible(false);
 			} else {
 				setNoPropertyUIVisible(true);
 				return;
 			}
-		} catch (PropertyNotFoundException e) {
+		} catch (PropertyNotFoundException | IOException e) {
 			log.error(e.getMessage());
 			setNoPropertyUIVisible(true);
 			return;
@@ -136,7 +149,6 @@ public class HistoryMenuController implements Initializable {
 	 * @param parentAP
 	 * @param labelText
 	 * @param comboBoxItems
-	 * @param tableColumns
 	 */
 	private <T extends MonitoringResult> void initAndAddMonitoringAnchorPane(MonitoringAPController<T> monitoringAP,
 			AnchorPane parentAP, String labelText, List<String> comboBoxItems) {
@@ -209,5 +221,15 @@ public class HistoryMenuController implements Initializable {
 	private void setNoPropertyUIVisible(boolean isVisible) {
 		noPropertyFileAP.setVisible(isVisible);
 		topMenuBar.setVisible(!isVisible);
+	}
+
+	public void toggleDrawer(ActionEvent e) {
+		if (leftDrawer.isOpened()) {
+			leftDrawer.close();
+			leftDrawer.toBack();
+		} else {
+			leftDrawer.open();
+			leftDrawer.toFront();
+		}
 	}
 }

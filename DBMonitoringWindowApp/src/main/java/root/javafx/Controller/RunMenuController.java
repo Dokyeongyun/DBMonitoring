@@ -2,12 +2,11 @@ package root.javafx.Controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.jfoenix.controls.JFXDrawer;
+import javafx.fxml.FXMLLoader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -121,6 +120,9 @@ public class RunMenuController implements Initializable {
 	@FXML
 	Button fileOpenBtn;
 
+	@FXML
+	JFXDrawer leftDrawer;
+
 	private MonitoringTableViewPagingBox dbResults;
 	private MonitoringTableViewPagingBox serverResults;
 
@@ -137,8 +139,15 @@ public class RunMenuController implements Initializable {
 			/* 4. 실행결과 */
 			// initRunStep4();
 
+            // Set drawer content
+            AnchorPane leftMenu = FXMLLoader.load(
+                    Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
+
+            leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
+
 			setNoPropertyUIVisible(false);
-		} catch (PropertyNotFoundException e) {
+		} catch (PropertyNotFoundException | IOException e) {
 			log.error(e.getMessage());
 			setNoPropertyUIVisible(true);
 		}
@@ -193,7 +202,7 @@ public class RunMenuController implements Initializable {
 	/**
 	 * 설정된 모니터링 여부 Preset을 보여주는 TreeTableView를 생성 및 추가한다.
 	 *
-	 * @param monitoringYNList
+	 * @param
 	 */
 	private void addMonitoringPresetPreview(List<MonitoringYN> dbYnList, List<MonitoringYN> serverYnList) {
 
@@ -481,4 +490,14 @@ public class RunMenuController implements Initializable {
 	private void setNoPropertyUIVisible(boolean isVisible) {
 		noPropertyFileAP.setVisible(isVisible);
 	}
+
+    public void toggleDrawer(ActionEvent e) {
+		if (leftDrawer.isOpened()) {
+			leftDrawer.close();
+			leftDrawer.toBack();
+		} else {
+			leftDrawer.open();
+			leftDrawer.toFront();
+		}
+    }
 }
