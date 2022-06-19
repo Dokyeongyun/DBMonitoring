@@ -2,13 +2,13 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXComboBox?>
+<?import com.jfoenix.controls.JFXDrawer?>
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -18,135 +18,126 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<SplitPane dividerPositions="0.15" minHeight="650.0" minWidth="1200.0" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.HistoryMenuController">
-   <items>
-      <AnchorPane maxWidth="200.0" minWidth="150.0" style="-fx-background-color: white;">
-         <fx:include source="LeftMenu.fxml" />
-      </AnchorPane>
-      <AnchorPane minHeight="600.0" minWidth="550.0" style="-fx-background-color: white;">
+
+<BorderPane style="-fx-background-color: white;" stylesheets="@../css/javaFx.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="root.javafx.Controller.HistoryMenuController">
+   <center>
+      <StackPane>
          <children>
-            <BorderPane style="-fx-background-color: white;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-               <top>
-                  <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+            <AnchorPane minWidth="550.0" style="-fx-background-color: white;">
+               <children>
+                  <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
+                     <tabs>
+                        <Tab text="Archive Usage">
+                           <content>
+                              <AnchorPane fx:id="archiveUsageTabAP" />
+                           </content>
+                        </Tab>
+                        <Tab text="TableSpace Usage">
+                           <content>
+                              <AnchorPane fx:id="tableSpaceUsageTabAP" />
+                           </content>
+                        </Tab>
+                        <Tab text="ASM Disk Usage">
+                           <content>
+                              <AnchorPane fx:id="asmDiskUsageTabAP" />
+                           </content>
+                        </Tab>
+                        <Tab text="OS Disk Usage">
+                           <content>
+                              <AnchorPane fx:id="osDiskUsageTabAP" />
+                           </content>
+                        </Tab>
+                     </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="noPropertyFileAP" style="-fx-background-color: white;">
+               <children>
+                  <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <Button graphicTextGap="0.0" layoutX="4.099999904632568" layoutY="10.399999618530273" mnemonicParsing="false" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
-                           <cursor>
-                              <Cursor fx:constant="HAND" />
-                           </cursor>
-                           <graphic>
-                              <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
-                           </graphic>
-                        </Button>
-                        <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" text="모니터링 기록 조회" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
-                           <graphic>
-                              <FontAwesomeIconView fill="#003b8e" glyphName="BAR_CHART_ALT" selectionEnd="0" selectionFill="BLACK" size="25" />
-                           </graphic>
-                           <font>
-                              <Font name="Noto Sans KR" size="13.0" />
-                           </font>
-                        </Label>
-                        <AnchorPane fx:id="topMenuBar" layoutX="217.0" layoutY="5.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <HBox alignment="CENTER">
                            <children>
-                              <JFXComboBox fx:id="runConnInfoFileComboBox" minWidth="300.0" styleClass="basic-font" stylesheets="@../../../../../../../DBMonitoring/DBMonitoring/src/main/resources/css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
-                              <Button fx:id="monitoringRunBtn" layoutX="540.6000061035156" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
+                              <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="접속정보 설정파일이 없습니다.">
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#1f6cc4" glyphName="ARCHIVE" size="40" text="" />
+                                 </graphic>
+                                 <styleClass>
+                                    <String fx:value="basic-font" />
+                                    <String fx:value="bold" />
+                                 </styleClass>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" spacing="20.0">
+                           <children>
+                              <JFXButton fx:id="goSettingMenuBtn1" alignment="CENTER" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#goSettingMenu" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="설정하기">
                                  <cursor>
                                     <Cursor fx:constant="HAND" />
                                  </cursor>
                                  <graphic>
-                                    <FontAwesomeIconView fill="#4a892f" glyphName="PLAY_CIRCLE" size="22" />
+                                    <FontAwesomeIconView fill="#1f6cc4" glyphName="ARROW_CIRCLE_RIGHT" selectionEnd="0" selectionStart="0" size="13" />
                                  </graphic>
-                              </Button>
+                                 <HBox.margin>
+                                    <Insets left="15.0" />
+                                 </HBox.margin>
+                              </JFXButton>
+                              <JFXButton fx:id="fileOpenBtn" alignment="CENTER" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#openPropertiesFile" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="파일열기">
+                                 <cursor>
+                                    <Cursor fx:constant="HAND" />
+                                 </cursor>
+                                 <graphic>
+                                    <FontAwesomeIconView fill="#1f6cc4" glyphName="FOLDER_OPEN" selectionEnd="0" selectionStart="0" size="13" />
+                                 </graphic>
+                              </JFXButton>
                            </children>
-                        </AnchorPane>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </HBox>
                      </children>
-                  </AnchorPane>
-               </top>
-               <center>
-                  <StackPane>
-                     <children>
-                        <AnchorPane minWidth="550.0" style="-fx-background-color: white;">
-                           <children>
-                              <TabPane tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="4.0">
-                                 <tabs>
-                                    <Tab text="Archive Usage">
-                                       <content>
-                                          <AnchorPane fx:id="archiveUsageTabAP" />
-                                       </content>
-                                    </Tab>
-                                    <Tab text="TableSpace Usage">
-                                       <content>
-                                          <AnchorPane fx:id="tableSpaceUsageTabAP" />
-                                       </content>
-                                    </Tab>
-                                    <Tab text="ASM Disk Usage">
-                                       <content>
-                                          <AnchorPane fx:id="asmDiskUsageTabAP" />
-                                       </content>
-                                    </Tab>
-                                    <Tab text="OS Disk Usage">
-                                       <content>
-                                          <AnchorPane fx:id="osDiskUsageTabAP" />
-                                       </content>
-                                    </Tab>
-                                 </tabs>
-                              </TabPane>
-                           </children>
-                        </AnchorPane>
-                        <AnchorPane fx:id="noPropertyFileAP" style="-fx-background-color: white;">
-                           <children>
-                              <VBox alignment="CENTER" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <children>
-                                    <HBox alignment="CENTER">
-                                       <children>
-                                          <Label graphicTextGap="13.0" style="-fx-alignment: center;" text="접속정보 설정파일이 없습니다.">
-                                             <graphic>
-                                                <FontAwesomeIconView fill="#1f6cc4" glyphName="ARCHIVE" size="40" text="" />
-                                             </graphic>
-                                             <styleClass>
-                                                <String fx:value="basic-font" />
-                                                <String fx:value="bold" />
-                                             </styleClass>
-                                          </Label>
-                                       </children>
-                                    </HBox>
-                                    <HBox alignment="CENTER" spacing="20.0">
-                                       <children>
-                                          <JFXButton fx:id="goSettingMenuBtn1" alignment="CENTER" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#goSettingMenu" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="설정하기">
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <graphic>
-                                                <FontAwesomeIconView fill="#1f6cc4" glyphName="ARROW_CIRCLE_RIGHT" selectionEnd="0" selectionStart="0" size="13" />
-                                             </graphic>
-                                             <HBox.margin>
-                                                <Insets left="15.0" />
-                                             </HBox.margin>
-                                          </JFXButton>
-                                          <JFXButton fx:id="fileOpenBtn" alignment="CENTER" contentDisplay="RIGHT" ellipsisString="" graphicTextGap="5.0" minWidth="70.0" onAction="#openPropertiesFile" ripplerFill="BLACK" style="-fx-border-color: #ddd; -fx-font-size: 12px; -fx-border-radius: 30px; -fx-text-fill: black;" styleClass="basic-font" text="파일열기">
-                                             <cursor>
-                                                <Cursor fx:constant="HAND" />
-                                             </cursor>
-                                             <graphic>
-                                                <FontAwesomeIconView fill="#1f6cc4" glyphName="FOLDER_OPEN" selectionEnd="0" selectionStart="0" size="13" />
-                                             </graphic>
-                                          </JFXButton>
-                                       </children>
-                                       <VBox.margin>
-                                          <Insets top="10.0" />
-                                       </VBox.margin>
-                                    </HBox>
-                                 </children>
-                              </VBox>
-                           </children>
-                        </AnchorPane>
-                     </children>
-                  </StackPane>
-               </center>
-               <bottom>
-                  <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
-               </bottom>
-            </BorderPane>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <JFXDrawer fx:id="leftDrawer" defaultDrawerSize="200.0" />
+         </children>
+      </StackPane>
+   </center>
+   <top>
+      <AnchorPane prefHeight="40.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button graphicTextGap="0.0" layoutX="4.099999904632568" layoutY="10.399999618530273" mnemonicParsing="false" onAction="#toggleDrawer" style="-fx-background-color: transparent; -fx-alignment: CENTER_LEFT;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <graphic>
+                  <FontAwesomeIconView fill="#969696" glyphName="BARS" size="25" />
+               </graphic>
+            </Button>
+            <Label graphicTextGap="10.0" layoutX="57.69999694824219" layoutY="10.399999618530273" text="모니터링 기록 조회" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="45.0" AnchorPane.topAnchor="0.0">
+               <graphic>
+                  <FontAwesomeIconView fill="#003b8e" glyphName="BAR_CHART_ALT" selectionEnd="0" selectionFill="BLACK" size="25" />
+               </graphic>
+               <font>
+                  <Font name="Noto Sans KR" size="13.0" />
+               </font>
+            </Label>
+            <AnchorPane fx:id="topMenuBar" layoutX="217.0" layoutY="5.0" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="250.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <JFXComboBox fx:id="runConnInfoFileComboBox" minWidth="300.0" styleClass="basic-font" stylesheets="@../../../../../../../DBMonitoring/DBMonitoring/src/main/resources/css/javaFx.css" unFocusColor="#ececec" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="5.0" />
+                  <Button fx:id="monitoringRunBtn" layoutX="540.6000061035156" mnemonicParsing="false" onAction="#runMonitoring" style="-fx-background-color: transparent;" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="5.0">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                     <graphic>
+                        <FontAwesomeIconView fill="#4a892f" glyphName="PLAY_CIRCLE" size="22" />
+                     </graphic>
+                  </Button>
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
-   </items>
-</SplitPane>
+   </top>
+   <bottom>
+      <AnchorPane maxHeight="30.0" minHeight="30.0" style="-fx-background-color: #f7f7f7; -fx-border-width: 0.2px; -fx-border-color: gray;" BorderPane.alignment="CENTER" />
+   </bottom>
+</BorderPane>
