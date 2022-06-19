@@ -144,6 +144,7 @@ public class RunMenuController implements Initializable {
                     Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
 
             leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
 
 			setNoPropertyUIVisible(false);
 		} catch (PropertyNotFoundException | IOException e) {

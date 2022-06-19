@@ -187,6 +187,7 @@ public class SettingMenuController implements Initializable {
 					Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
 
 			leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}

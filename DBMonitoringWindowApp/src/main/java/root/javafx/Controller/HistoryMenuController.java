@@ -111,7 +111,8 @@ public class HistoryMenuController implements Initializable {
 						Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
 
 				leftDrawer.setSidePane(leftMenu);
-				
+				leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
+
 				setNoPropertyUIVisible(false);
 			} else {
 				setNoPropertyUIVisible(true);

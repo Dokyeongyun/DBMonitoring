@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.events.JFXDrawerEvent;
 import javafx.fxml.FXMLLoader;
 import org.apache.commons.lang3.StringUtils;
 
@@ -151,8 +152,8 @@ public class AlertLogMonitoringMenuController implements Initializable {
 			// Set drawer content
 			AnchorPane leftMenu = FXMLLoader.load(
 					Objects.requireNonNull(getClass().getResource("/fxml/LeftMenu.fxml")));
-
 			leftDrawer.setSidePane(leftMenu);
+			leftDrawer.setOnDrawerClosed(e -> leftDrawer.toBack());
 		} catch (PropertyNotFoundException | IOException e) {
 			log.error(e.getMessage());
 			setNoPropertyUIVisible(true);
